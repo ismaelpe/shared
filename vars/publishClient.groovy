@@ -31,12 +31,12 @@ def call(PomXmlStructure pomXml, PipelineData pipeline, boolean localContracts =
 		
 
 		// Generamos el contrato para Absis2
-		printOpen("Publishing ABSIS2 client...", EchoLevel.INFO)
+		printOpen("Publishing ALM2 client...", EchoLevel.INFO)
 		isAbsis2 = true
 		
 		generateContractPom(pomXml, pipeline, isAbsis2)
 		installDeployClientArtifact(pomXml, pipeline, false, isAbsis2)
-		printOpen("ABSIS2 client has been published", EchoLevel.INFO)
+		printOpen("ALM2 client has been published", EchoLevel.INFO)
 
 		// Borramos los contratos remotos
 		cleanTmp()
@@ -56,12 +56,12 @@ def generateClients(PomXmlStructure pomXml, PipelineData pipeline) {
 	pipeline.clientRoutesToNexus = NexusUtils.extractArtifactsFromLog(commitLog)
 	printOpen("OpenServices client has been published", EchoLevel.INFO)
 	
-	printOpen("Publishing ABSIS2 client...", EchoLevel.INFO)
+	printOpen("Publishing ALM2 client...", EchoLevel.INFO)
 	isAbsis2 = true
 	
 	generateContractPom(pomXml, pipeline, isAbsis2)
 	installDeployClientArtifact(pomXml, pipeline, false, isAbsis2)
-	printOpen("ABSIS2 client has been published", EchoLevel.INFO)
+	printOpen("ALM2 client has been published", EchoLevel.INFO)
 
 	// Borramos los contratos remotos
 	cleanTmp()

@@ -14,9 +14,9 @@ def call(PomXmlStructure pomXml, PipelineData pipeline) {
 
 			def response = sendRequestToAbsis3MS(
                 'GET',
-                "${GlobalVars.URL_CATALOGO_ABSIS3_PRO}/app/${componentType}/${component}",
+                "${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${componentType}/${component}",
                 null,
-                "${GlobalVars.CATALOGO_ABSIS3_ENV}",
+                "${GlobalVars.CATALOGO_ALM_ENV}",
                 200,
                 [
                     kpiAlmEvent: new KpiAlmEvent(
@@ -43,7 +43,7 @@ def call(PomXmlStructure pomXml, PipelineData pipeline) {
 				}
 			}
 		} catch (Exception ex) {
-			printOpen("Error al consultar el catalogo de absis3: ", EchoLevel.ALL)
+			printOpen("Error al consultar el catalogo de alm: ", EchoLevel.ALL)
 			if (pipeline.bmxStructure.environment == GlobalVars.PRO_ENVIRONMENT) {
 				throw ex
 			}

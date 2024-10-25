@@ -30,7 +30,7 @@ def call(Map pipelineParameters) {
 
     gitURL = 'https://git.svb.lacaixa.es/'
     gitCredentials = 'GITLAB_CREDENTIALS'
-    jenkinsPath = 'absis3/services'
+    jenkinsPath = 'alm/services'
 
     originType = params.originTypeParam
     pathToRepo = params.pathToRepoParam
@@ -57,8 +57,8 @@ def call(Map pipelineParameters) {
         }
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
-            ICP_CERT = credentials('icp-absis3-pro-cert')
-            ICP_PASS = credentials('icp-absis3-pro-cert-passwd')
+            ICP_CERT = credentials('icp-alm-pro-cert')
+            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
@@ -111,9 +111,9 @@ def runRemoteItStep() {
     String url
     if ('APIGW-EXTERNO' == endpoint) {
         if (pomXmlStructure.isArchProject()) {
-            url = "https://api.${icpEnv.toLowerCase()}.internal.caixabank.com/tech/absis3-alm/arch-service/${pomXmlStructure.getBmxAppId()}"
+            url = "https://api.${icpEnv.toLowerCase()}.internal.project.com/tech/alm-alm/arch-service/${pomXmlStructure.getBmxAppId()}"
         }else {
-            url = "https://api.${icpEnv.toLowerCase()}.internal.caixabank.com/tech/absis3-alm/${pomXmlStructure.getBmxAppId()}"
+            url = "https://api.${icpEnv.toLowerCase()}.internal.project.com/tech/alm-alm/${pomXmlStructure.getBmxAppId()}"
         }
     }else {
         if (pomXmlStructure.isArchProject()) {
@@ -126,7 +126,7 @@ def runRemoteItStep() {
     def additionalParameters = ''
 
     if ('pro'.equals(icpEnv.toLowerCase())) {
-        withCredentials([string(credentialsId: "ABSIS3_TOKEN_${icpEnv.toUpperCase()}_V2", variable: 'tokenAbsis3')]) {
+        withCredentials([string(credentialsId: "ALM_TOKEN_${icpEnv.toUpperCase()}_V2", variable: 'tokenAbsis3')]) {
             additionalParameters += '-P it-pro '
             additionalParameters += '-Dskip-it=true '
             additionalParameters += "-Dauthorization-token=${tokenAbsis3} "
@@ -139,7 +139,7 @@ def runRemoteItStep() {
             performRunRemoteITWithRetries(cmd)
         }
     }else {
-        withCredentials([string(credentialsId: "ABSIS3_TOKEN_${icpEnv.toUpperCase()}_V2", variable: 'tokenAbsis3')]) {
+        withCredentials([string(credentialsId: "ALM_TOKEN_${icpEnv.toUpperCase()}_V2", variable: 'tokenAbsis3')]) {
             additionalParameters += "-Dauthorization-token=${tokenAbsis3} "
 
             def cmd = "mvn <Default_Maven_Settings> -Dhttps.proxyHost=${env.proxyHost} -Dhttps.proxyPort=${env.proxyPort} -Dhttp.proxyHost=${env.proxyHost} -Dhttp.proxyPort=${env.proxyPort} verify -Dmicro-url=${url} -Dskip-ut=true ${additionalParameters} -Denvironment=${icpEnv} -Dskip-it=false"

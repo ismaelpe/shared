@@ -36,7 +36,7 @@ def call(PomXmlStructure pomXml, PipelineData pipelineData, String pipelineOrigI
             path              : "${env.JOB_NAME}",
             runId             : "${env.BUILD_NUMBER}",
             //serverUrl         : "${env.JENKINS_URL}",
-            //serverUrl         : "https://jnkmsv.pro.int.srv.caixabank.com/jenkins",
+            //serverUrl         : "https://jnkmsv.pro.int.srv.project.com/jenkins",
             serverUrl         : "${env.JNKMSV_DEVPORTAL_URL}",
             //jenkinsUserId     : "${GPL_USR}",
             //jenkinsUserToken  : "${GPL_PSW}"
@@ -109,9 +109,9 @@ def call(PipelineData pipelineData, String garAppType, String garAppName, String
 
         def response = sendRequestToAbsis3MS(
             'GET',
-            "${GlobalVars.URL_CATALOGO_ABSIS3_PRO}/app/${garAppType}/${garAppName}",
+            "${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${garAppType}/${garAppName}",
             null,
-            "${GlobalVars.CATALOGO_ABSIS3_ENV}",
+            "${GlobalVars.CATALOGO_ALM_ENV}",
             [
                 kpiAlmEvent: new KpiAlmEvent(
                     null, null,
@@ -128,9 +128,9 @@ def call(PipelineData pipelineData, String garAppType, String garAppName, String
 
             response = sendRequestToAbsis3MS(
                 'GET',
-                "${GlobalVars.URL_CATALOGO_ABSIS3_PRO}/app/${garAppType}/${garAppName}/version/${major}/environment/${environment}",
+                "${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${garAppType}/${garAppName}/version/${major}/environment/${environment}",
                 null,
-                "${GlobalVars.CATALOGO_ABSIS3_ENV}",
+                "${GlobalVars.CATALOGO_ALM_ENV}",
                 [
                     kpiAlmEvent: new KpiAlmEvent(
                         null, null,

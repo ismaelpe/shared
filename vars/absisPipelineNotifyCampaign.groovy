@@ -58,8 +58,8 @@ def call(Map pipelineParameters) {
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
             JNKMSV = credentials('JNKMSV-USER-TOKEN')
-            ICP_CERT = credentials('icp-absis3-pro-cert')
-            ICP_PASS = credentials('icp-absis3-pro-cert-passwd')
+            ICP_CERT = credentials('icp-alm-pro-cert')
+            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
@@ -121,7 +121,7 @@ def initDataStep() {
     clientInfo.setArtifactVersion('1.0.0')
     clientInfo.setArtifactType(ArtifactType.SIMPLE)
     clientInfo.setArtifactSubType(ArtifactSubType.GLOBAL_PIPELINE)
-    clientInfo.setGroupId('com.caixabank.absis')
+    clientInfo.setGroupId('com.project.absis')
     pipelineData = new PipelineData(PipelineStructureType.NOTIFY_END_CAMPAIGN, "${env.BUILD_TAG}", env.JOB_NAME, params)
     pipelineData.pushUser = user
     //Cambiar por entorno de DEV para hacer pruebas

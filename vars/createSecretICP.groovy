@@ -152,9 +152,9 @@ def call(String environment, String secret, String username, String password, St
 		//Consultaremos el componente
 		 response1 = sendRequestToAbsis3MS(
 			 'GET',
-			 "${GlobalVars.URL_CATALOGO_ABSIS3_PRO}/app/${tipoApp}/${app}",			 
+			 "${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${tipoApp}/${app}",			 
 			 null,
-			 "${GlobalVars.CATALOGO_ABSIS3_ENV}",			 
+			 "${GlobalVars.CATALOGO_ALM_ENV}",			 
 			 [
 				 kpiAlmEvent: new KpiAlmEvent(
 					 null, null,
@@ -193,9 +193,9 @@ def call(String environment, String secret, String username, String password, St
 	    }
 		response = sendRequestToAbsis3MS(
 			'PUT',
-			"${GlobalVars.URL_CATALOGO_ABSIS3_PRO}/app",			
+			"${GlobalVars.URL_CATALOGO_ALM_PRO}/app",			
 			microOwnerOfTheSecret,
-			"${GlobalVars.CATALOGO_ABSIS3_ENV}",			
+			"${GlobalVars.CATALOGO_ALM_ENV}",			
 			[
 				kpiAlmEvent: new KpiAlmEvent(
 					null, null,

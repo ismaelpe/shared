@@ -59,8 +59,8 @@ def call(Map pipelineParameters) {
         }
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
-            ICP_CERT = credentials('icp-absis3-pro-cert')
-            ICP_PASS = credentials('icp-absis3-pro-cert-passwd')
+            ICP_CERT = credentials('icp-alm-pro-cert')
+            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
@@ -143,7 +143,7 @@ def gitPullRepoStep() {
  * Stage 'buildStep'
  */
 def buildStep() {
-    configFileProvider([configFile(fileId: 'absis3-maven-settings-with-singulares', variable: 'MAVEN_SETTINGS')]) {
+    configFileProvider([configFile(fileId: 'alm-maven-settings-with-singulares', variable: 'MAVEN_SETTINGS')]) {
         for (it = 0; it < iterations; it++) {
             printOpen("Building iteration: ${it}")
         
@@ -166,7 +166,7 @@ def sonarScanStep() {
     for (it = 0; it < iterations; it++) {
         printOpen("Sonar Scan: ${it}")
         withSonarQubeEnv('sonarqube') {  
-            configFileProvider([configFile(fileId: 'absis3-maven-settings-with-singulares', variable: 'MAVEN_SETTINGS')]) {
+            configFileProvider([configFile(fileId: 'alm-maven-settings-with-singulares', variable: 'MAVEN_SETTINGS')]) {
                 sh "export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64 && mvn --no-transfer-progress -Dhttp.proxyHost=${env.proxyHost} -Dhttp.proxyPort=${env.proxyPort} -Dhttps.proxyHost=${env.proxyHost} -Dhttps.proxyPort=${env.proxyPort} -s $MAVEN_SETTINGS  ${GlobalVars.GLOBAL_MVN_PARAMS} org.sonarsource.scanner.maven:sonar-maven-plugin:3.6.0.1398:sonar -Dsonar.projectKey=${env.sonarProjectName} -Dsonar.projectName=${env.sonarProjectName}"
             }
         }

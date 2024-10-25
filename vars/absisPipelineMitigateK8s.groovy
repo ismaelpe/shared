@@ -33,8 +33,8 @@ def call(Map pipelineParameters) {
         }
         //Environment sobre el qual se ejecuta este tipo de job
         environment {
-            ICP_CERT = credentials('icp-absis3-pro-cert')
-            ICP_PASS = credentials('icp-absis3-pro-cert-passwd')
+            ICP_CERT = credentials('icp-alm-pro-cert')
+            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
@@ -115,8 +115,8 @@ def enableDisableAliveOcp(def environment, def center, def action) {
 		values:"deployment:\n  readinessProbe:\n    initialDelaySeconds: 50\n    periodSeconds: 50\n    timeoutSeconds: 25\n    failureThreshold: 10\n  livenessProbe:\n    initialDelaySeconds: 50\n  "+
 			"  periodSeconds: 50\n    timeoutSeconds: 25\n    failureThreshold: 10\nlocal:\n  app:\n    enableNonMtls: true\n    gateway:\n      enabled: false\n      gatewayWildCard: gw-wildcard-absis-nsn\n   "+ " ingress:\n      enabled: true\n      deploymentArea: absis\n      defineBodySize: true\n"+
 			"      maxBodySize: 30m\n      defineTimeout: true\n      sendTimeout: 100\n      readTimeout: 100\n      connectTimeout: 15\n      absis:\n        enabled: true\n      mtls:\n        enabled: true\n      "+
-			"  needsSystemRoute: true\n        route: null\n        needsSpecialVerifyDepth: false\n        verifyDepth: 2\n    envVars:\n    - name: NO_PROXY\n      value: cxb-ab3cor-dev\nabsis:\n  app:\n   "+ " loggingElkStack: absis30\n    replicas: ${numReplicas}\n    instance: alive1\n    name: alive\n    type: ARQ.MIA\n   "+
-			" stoppableByPlatform: true\n  resources:\n    requests:\n      memory: 200Mi\n      cpu: 16m\n    limits:\n      memory: 300Mi\n      cpu: 250m\n  apps:\n    envQualifier:\n      stable:\n        id:"+ " alive-b\n        colour: B\n        image: docker-registry.cloud.caixabank.com/containers/ab3app/alive2:2.1.0\n        version: 1.31.0-SNAPSHOT\n        stable: false\n    "+
+			"  needsSystemRoute: true\n        route: null\n        needsSpecialVerifyDepth: false\n        verifyDepth: 2\n    envVars:\n    - name: NO_PROXY\n      value: cxb-ab3cor-dev\nabsis:\n  app:\n   "+ " loggingElkStack: alm0\n    replicas: ${numReplicas}\n    instance: alive1\n    name: alive\n    type: ARQ.MIA\n   "+
+			" stoppableByPlatform: true\n  resources:\n    requests:\n      memory: 200Mi\n      cpu: 16m\n    limits:\n      memory: 300Mi\n      cpu: 250m\n  apps:\n    envQualifier:\n      stable:\n        id:"+ " alive-b\n        colour: B\n        image: docker-registry.cloud.project.com/containers/ab3app/alive2:2.1.0\n        version: 1.31.0-SNAPSHOT\n        stable: false\n    "+
 			"    new: false\n        replicas: ${numReplicas}\n        readinessProbePath: /actuator/health\n        livenessProbePath: /actuator/health\n        envVars:\n          SPRING_PROFILES_ACTIVE: cloud\n       "+ " requests_memory: 200Mi\n        requests_cpu: 16m\n        limits_memory: 300Mi\n        limits_cpu: 350m\n  services:\n    envQualifier:\n      stable:\n        id: "+
 			"ab3app-ab3alive\n        targetColour: B\n  istio:\n    side"+
 			"car:\n      size:\n        enabled: true\n        requests:\n          memory: 400Mi\n          cpu: 5m\n        limits:\n          memory: 400Mi\n          cpu: 300m"
@@ -159,9 +159,9 @@ def enableDisableAliveIcp(def environment, def center, def action) {
 	def body = [
 		az: "${center}",
 		environment: "${environment.toUpperCase()}",
-		values:"init:\n  image: docker-registry.cloud.caixabank.com/catalog/docker-init-setup:2.5.0\nglobal:\n  image:\n    repository: docker-registry.cloud.caixabank.com/containers/ab3cor/ab3cor\n    tag: 0.0.7\ningressAlive:\n  enabled: true\n  ingressClass: absis\n  hosts:\n    - d"+
-		"omain: 'alive.${environment.toLowerCase()}.ext.srv.caixabank.com'\n      serviceName: ''\n      servicePort: 80\n      tlsCertificate:\n        enabled: true\n        secretName: crt-ext-srv-caixabank-com\n    - domain: 'alive.${environment.toLowerCase()}.in"+
-		"t.srv.caixabank.com'\n      serviceName: ''\n      servicePort: 80\n      tlsCertificate:\n        enabled: true\n        secretName: crt-int-srv-caixabank-com"
+		values:"init:\n  image: docker-registry.cloud.project.com/catalog/docker-init-setup:2.5.0\nglobal:\n  image:\n    repository: docker-registry.cloud.project.com/containers/ab3cor/ab3cor\n    tag: 0.0.7\ningressAlive:\n  enabled: true\n  ingressClass: absis\n  hosts:\n    - d"+
+		"omain: 'alive.${environment.toLowerCase()}.ext.srv.project.com'\n      serviceName: ''\n      servicePort: 80\n      tlsCertificate:\n        enabled: true\n        secretName: crt-ext-srv-project-com\n    - domain: 'alive.${environment.toLowerCase()}.in"+
+		"t.srv.project.com'\n      serviceName: ''\n      servicePort: 80\n      tlsCertificate:\n        enabled: true\n        secretName: crt-int-srv-project-com"
 		]
 	def	response = null
 	printOpen("El body para el deploy es el siguiente ${body}",EchoLevel.INFO)

@@ -50,7 +50,7 @@ def call(Map pipelineParameters) {
 
     gitURL = "https://git.svb.lacaixa.es/"
     gitCredentials = "GITLAB_CREDENTIALS"
-    jenkinsPath = "absis3/services"
+    jenkinsPath = "alm/services"
 
     // las variables que se obtienen como parametro del job no es necesario
     // redefinirlas, se hace por legibilidad del codigo
@@ -96,8 +96,8 @@ def call(Map pipelineParameters) {
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
 			JNKMSV = credentials('JNKMSV-USER-TOKEN')
-            ICP_CERT = credentials('icp-absis3-pro-cert')
-            ICP_PASS = credentials('icp-absis3-pro-cert-passwd')
+            ICP_CERT = credentials('icp-alm-pro-cert')
+            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
@@ -349,17 +349,17 @@ def deployToCloudICPStep() {
         String aplicacion = MavenUtils.sanitizeArtifactName(pomXmlStructure.artifactName, pipelineData.garArtifactType)
         def nameComponentInICP = aplicacion + pomXmlStructure.getArtifactMajorVersion()
 
-        //String newImage="pro-registry.pro.caas.caixabank.com/containers/ab3cor/monitoring1:${version}"
+        //String newImage="pro-registry.pro.caas.project.com/containers/ab3cor/monitoring1:${version}"
         String newImage = "${env.ICP_REGISTRY_URL}/${icpArch}/${nameComponentInICP.toLowerCase()}:${version}"
 
         icpStateUtilitity = deployICP(pomXmlStructure, pipelineData, "NoTenemosID", newImage)
             
-        sendEmail(" Resultado ejecucion app ${artifactApp} - ${pipelineData.getPipelineBuildName()}  OK ", env.ABSIS3_SERVICES_EMAIL_ICP_DEPLOY_RESULT, "${artifactApp} rama ${pipelineData.getPipelineBuildName()}", "OK en el paso DEPLOY")
+        sendEmail(" Resultado ejecucion app ${artifactApp} - ${pipelineData.getPipelineBuildName()}  OK ", env.ALM_SERVICES_EMAIL_ICP_DEPLOY_RESULT, "${artifactApp} rama ${pipelineData.getPipelineBuildName()}", "OK en el paso DEPLOY")
         kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.DEPLOY_FINISHED, KpiLifeCycleStatus.OK, "BETA")
      
         sendStageEndToGPL(pomXmlStructure, pipelineData, "400", null, pipelineData.bmxStructure.environment)
     } catch (Exception e) {
-        sendEmail(" Resultado ejecucion app ${artifactApp} - ${pipelineData.getPipelineBuildName()}  KO - DEPLOY", env.ABSIS3_SERVICES_EMAIL_ICP_DEPLOY_RESULT, "${artifactApp} rama ${pipelineData.getPipelineBuildName()}", "KO en el paso DEPLOY")
+        sendEmail(" Resultado ejecucion app ${artifactApp} - ${pipelineData.getPipelineBuildName()}  KO - DEPLOY", env.ALM_SERVICES_EMAIL_ICP_DEPLOY_RESULT, "${artifactApp} rama ${pipelineData.getPipelineBuildName()}", "KO en el paso DEPLOY")
         kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.DEPLOY_FINISHED, KpiLifeCycleStatus.KO, "BETA")
         printOpen("Error en el deploy a ICP:  ${e.getMessage()}", EchoLevel.ERROR)
         sendStageEndToGPL(pomXmlStructure, pipelineData, "400", null, null, "error")
@@ -384,7 +384,7 @@ def postDeployStep() {
  * Step runRemoteITStep
  */
 def runRemoteITStep() {
-    absisPipelineStageRunRemoteIT(pomXmlStructure, pipelineData, "500", "<phase>-runRemoteIT", icpStateUtilitity, "${GlobalVars.ABSIS3_SERVICES_EXECUTE_IT_PRO}")
+    absisPipelineStageRunRemoteIT(pomXmlStructure, pipelineData, "500", "<phase>-runRemoteIT", icpStateUtilitity, "${GlobalVars.ALM_SERVICES_EXECUTE_IT_PRO}")
 }
 
 /**
@@ -402,7 +402,7 @@ def redirectAllAervicesToNewMicroStep() {
         def nameComponentInICP = aplicacion + pomXmlStructure.getArtifactMajorVersion()
         printOpen("nameComponentInICP: ${nameComponentInICP}", EchoLevel.INFO)
 
-        //String newImage="pro-registry.pro.caas.caixabank.com/containers/ab3cor/monitoring1:${version}"
+        //String newImage="pro-registry.pro.caas.project.com/containers/ab3cor/monitoring1:${version}"
         String newImage = "${env.ICP_REGISTRY_URL}/${icpArch}/${nameComponentInICP.toLowerCase()}:${version}"
         printOpen("newImage: ${newImage}", EchoLevel.INFO)
         
@@ -410,7 +410,7 @@ def redirectAllAervicesToNewMicroStep() {
 
         sendStageEndToGPL(pomXmlStructure, pipelineData, "600")
     } catch (Exception e) {
-        sendEmail(" Resultado ejecucion app ${artifactApp} - ${pipelineData.getPipelineBuildName()}  KO - DEPLOY", env.ABSIS3_SERVICES_EMAIL_ICP_DEPLOY_RESULT, "${artifactApp} rama ${pipelineData.getPipelineBuildName()}", "KO en el paso REDIRECT SERVICES")
+        sendEmail(" Resultado ejecucion app ${artifactApp} - ${pipelineData.getPipelineBuildName()}  KO - DEPLOY", env.ALM_SERVICES_EMAIL_ICP_DEPLOY_RESULT, "${artifactApp} rama ${pipelineData.getPipelineBuildName()}", "KO en el paso REDIRECT SERVICES")
         printOpen("Error al intentar realizar el redireccionado al nuevo micro: ${e.getMessage()}", EchoLevel.ERROR)
         sendStageEndToGPL(pomXmlStructure, pipelineData, "600", null, null, "error")
         throw e

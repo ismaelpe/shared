@@ -7,7 +7,7 @@ class MavenGoalExecutionFailureDueToOpenApiGenerationLogParser implements MavenG
 
     def parseErrors(String log) {
 
-        def patternForUnableToLoadContractServerFailure = /(?ms)\[WARNING] Exception while reading:\njava\.lang\.RuntimeException: Unable to load URL ref: https:\/\/contractserver-micro-server-\d+\.pro\.int\.srv\.caixabank\.com.*?^\[/
+        def patternForUnableToLoadContractServerFailure = /(?ms)\[WARNING] Exception while reading:\njava\.lang\.RuntimeException: Unable to load URL ref: https:\/\/contractserver-micro-server-\d+\.pro\.int\.srv\.project\.com.*?^\[/
         Matcher matches = log =~ patternForUnableToLoadContractServerFailure
 
         if (matches.getCount()) {

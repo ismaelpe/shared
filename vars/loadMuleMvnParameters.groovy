@@ -8,10 +8,10 @@ def call(pipelineData, pomXmlStructure = null) {
     printOpen("Build workspace for '$environment'")
 
     if (pomXmlStructure.contractVersion) {
-        if (env.ABSIS3_MULE_PROPERTIES) {
+        if (env.ALM_MULE_PROPERTIES) {
             printOpen("Exists 'contract.version=$pomXmlStructure.contractVersion' in pom.xml, build for '$environment' environment", EchoLevel.INFO)  
        
-            def mapMuleParams = new JsonSlurperClassic().parseText(env.ABSIS3_MULE_PROPERTIES)
+            def mapMuleParams = new JsonSlurperClassic().parseText(env.ALM_MULE_PROPERTIES)
             def mapMvnBuildMuleParams = mapMuleParams.collectEntries{key, value -> ["-D$key", value]}
             
             // Seteamos el entorno cuando no sea dev y eden
@@ -27,10 +27,10 @@ def call(pipelineData, pomXmlStructure = null) {
 
             def muleParams = [ config: mapMvnBuildMuleParams, contract: mapMvnClientMuleParams]
 
-            printOpen("Exists 'env.ABSIS3_MULE_PROPERTIES': $muleParams", EchoLevel.INFO) 
+            printOpen("Exists 'env.ALM_MULE_PROPERTIES': $muleParams", EchoLevel.INFO) 
             return muleParams
         } else {
-            throw new Exception("Required 'env.ABSIS3_MULE_PROPERTIES', check jenkins env vars!")
+            throw new Exception("Required 'env.ALM_MULE_PROPERTIES', check jenkins env vars!")
         }
     } else {
         return [:]

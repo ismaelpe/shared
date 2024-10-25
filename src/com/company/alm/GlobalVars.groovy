@@ -2,8 +2,8 @@ package com.project.alm
 
 class GlobalVars {
 	
-	static String URL_API_PORTAL = "https://l.tf7.lacaixa.es/absis3/developerportal/ADPFrontend/services"
-	static String URL_REDIRECTORA_JENKINS = "https://jnkmsv.pro.int.srv.caixabank.com/jenkins/"
+	static String URL_API_PORTAL = "https://l.tf7.lacaixa.es/alm/developerportal/ADPFrontend/services"
+	static String URL_REDIRECTORA_JENKINS = "https://jnkmsv.pro.int.srv.project.com/jenkins/"
 	static String PROFILES_SPRING="SPRING_PROFILES_ACTIVE"
 	
 	static Float ICP_RATIO_CPU_PRO = 1.05
@@ -28,21 +28,21 @@ class GlobalVars {
 	static String CAMPAIGN_GAR_APP = "CampaignIOP" 
 	static String DEFAULT_DEPLOYMENT_TYPE = "D"
 	
-	static String EMAIL_FROM_ALM = "openservices.alm@caixabank.com"    
+	static String EMAIL_FROM_ALM = "openservices.alm@project.com"    
     static String JENKINS_CURRENT_LOGIN_USER = "admin"
 
-	//static String ICP_LIQUIBASE_IMAGE = "docker-registry.cloud.caixabank.com/containers/ab3app/arqrunbbdd" 
+	//static String ICP_LIQUIBASE_IMAGE = "docker-registry.cloud.project.com/containers/ab3app/arqrunbbdd" 
 	//static String ICP_LIQUIBASE_IMAGE_VERSION = "1.4.0"
 
-	//static String ICP_PROTOTYPE_IMAGE = "docker-registry.cloud.caixabank.com/containers/ab3app/demoprototype1"
+	//static String ICP_PROTOTYPE_IMAGE = "docker-registry.cloud.project.com/containers/ab3app/demoprototype1"
 	//static String ICP_PROTOTYPE_IMAGE_VERSION = "0.0.2"
 	
-	//static String ICP_LIQUIBASE_IMAGE = "docker-registry.cloud.caixabank.com/containers/ab3app/arqrunbbdd" 
+	//static String ICP_LIQUIBASE_IMAGE = "docker-registry.cloud.project.com/containers/ab3app/arqrunbbdd" 
 	//static String ICP_LIQUIBASE_IMAGE_VERSION = "1.4.0"
-	static String ICP_LIQUIBASE_IMAGE = "docker-registry.cloud.caixabank.com/containers/ab3cor/liquibasedemo1"
+	static String ICP_LIQUIBASE_IMAGE = "docker-registry.cloud.project.com/containers/ab3cor/liquibasedemo1"
 	static String ICP_LIQUIBASE_IMAGE_VERSION = "4.5.0"
 	
-	static String ICP_PROTOTYPE_IMAGE = "docker-registry.cloud.caixabank.com/containers/ab3app/demoprototype1"
+	static String ICP_PROTOTYPE_IMAGE = "docker-registry.cloud.project.com/containers/ab3app/demoprototype1"
 	static String ICP_PROTOTYPE_IMAGE_VERSION = "2.5.0"
 	
 	static int MAX_DEV_ICP_RESTARTS = 2
@@ -50,7 +50,7 @@ class GlobalVars {
 	static int TIMEOUT_ICP = 16
 	static int TIMEOUT_MAX_ICP = 30
 	
-	static String JENKINS_GIT_USER = "SVC_ABSIS_CONTDELIVE"
+	static String JENKINS_GIT_USER = "SVC_ALM_CONTDELIVE"
 	static String SQL_SCRIPT_FILENAME = "script.sql"
 	
 	static String LIQUIBASE_CHANGE_SET_POM_FILENAME = "sqlchangeSets.xml"
@@ -64,12 +64,12 @@ class GlobalVars {
 	
     static String reportToEmailList = "malvarez@silk.es"
 
-    static String ARCH_ARTIFACT = "absis3core"
+    static String ARCH_ARTIFACT = "almcore"
 
-    static String ABSIS_CORE_GROUPID = "com.caixabank.absis"
-    static String ABSIS_CORE_ARTIFACTID = "absis3core-lib"
+    static String ALM_CORE_GROUPID = "com.project.absis"
+    static String ALM_CORE_ARTIFACTID = "almcore-lib"
 
-    static String EMAIL_REPORT = "absis3.microservices.support@caixabank.com"
+    static String EMAIL_REPORT = "alm.microservices.support@project.com"
     static String PROJECTS_LIST_SEPARATOR = ";"
     static String LIST_SEPARATOR = ";"
     static String GIT_CREDENTIAL_PROFILE_ID = "GITLAB_CREDENTIALS"
@@ -102,7 +102,7 @@ class GlobalVars {
     //No tiene afectacion ninguna
     static String MINIMUM_VERSION_ARCH_PRO = "1.1.0"
 
-    static String ABSIS3_SKIP_MINIMUM_VERSION_VALIDATION_LIST = "tauxconnector-micro"
+    static String ALM_SKIP_MINIMUM_VERSION_VALIDATION_LIST = "tauxconnector-micro"
 
     /**
      * Minimum arch version that needs JDK 1.11
@@ -124,16 +124,16 @@ class GlobalVars {
     /**
      * Dependency validations
      */
-    static String ABSIS3_SERVICES_DEPENDENCY_WHITELIST_BFF = "{}"
-    static String ABSIS3_SERVICES_DEPENDENCY_WHITELIST_DATASERVICE = "{}"
+    static String ALM_SERVICES_DEPENDENCY_WHITELIST_BFF = "{}"
+    static String ALM_SERVICES_DEPENDENCY_WHITELIST_DATASERVICE = "{}"
 
     /**
      * Micros that require special deployment scheme (p.e. almlogcollector-micro)
      */
 
-    static String ABSIS3_SERVICES_EXECUTE_IT_PRO = ""
-    static String ABSIS3_SERVICES_IT_TEST_JARS_GENERATION_WHITELIST = ""
-    static String ABSIS3_SERVICES_SIMPLIFIED_ALM_WHITELIST = ""
+    static String ALM_SERVICES_EXECUTE_IT_PRO = ""
+    static String ALM_SERVICES_IT_TEST_JARS_GENERATION_WHITELIST = ""
+    static String ALM_SERVICES_SIMPLIFIED_ALM_WHITELIST = ""
 
     /**
      * JSON used in pushCatalog
@@ -144,72 +144,72 @@ class GlobalVars {
 	static String CATALOG_CAMPAIGN_CANNARY_TYPE = "C"
 	static String CATALOG_DEVOPS_CANNARY_TYPE = "D"
 	
-	static String ALM_JOB_CLONE_TO_OCP = "job/absis3/job/services/job/arch/job/alm/job/job-clone-micro-to-ocp"
+	static String ALM_JOB_CLONE_TO_OCP = "job/alm/job/services/job/arch/job/alm/job/job-clone-micro-to-ocp"
 	
-    static String CANNARY_PERCENTAGE_ABSIS = "info.beta-traffic.percentage"
-	static String CAMPAIGN_CANNARY_PERCENTAGE_ABSIS = "info.campaign-beta-traffic.percentage"
-    static String ALM_JOB_MANUAL_COPY = "absis3/services/arch/alm/job-manual-Copy"
-    static String ALM_JOB_CREATE_RC = "absis3/services/arch/alm/job-create-RC"
-	static String ALM_JOB_DEPLOY_PROTOTYPE = "absis3/services/arch/alm/job-deploy-Prototype-to-ICP"
-	static String ALM_JOB_CREATE_RC_CONFIGLIB = "absis3/services/arch/alm/job-create-RC-configlib"
-    static String ALM_JOB_CREATE_RELEASE = "absis3/services/arch/alm/job-create-Release"
-	static String ALM_JOB_CREATE_RELEASE_CONFIGLIB = "absis3/services/arch/alm/job-create-Release-configlib"
-    static String ALM_JOB_DEPLOY_PRO = "absis3/services/arch/alm/job-deploy-to-PRO"
-	static String ALM_JOB_DEPLOY_PRO_CONFIGLIB = "absis3/services/arch/alm/job-deploy-to-PRO-configlib"
-	static String ALM_JOB_DEPLOY_PRO_CONFIGFIX = "absis3/services/arch/alm/job-deploy-to-PRO-configfix"
-    static String ALM_JOB_ROLLBACK = "absis3/services/arch/alm/job-rollback-artifact"
-    static String ALM_JOB_CIERRE_RELEASE = "absis3/services/arch/alm/job-cierre-Release"
-	static String ALM_JOB_CIERRE_RELEASE_CONFIGLIB = "absis3/services/arch/alm/job-cierre-Release-configlib"
-    static String ALM_JOB_DELETE_COMPONENT = "absis3/services/arch/alm/job-delete-component-version"
-    static String ALM_JOB_INCREMENT_CANNARY = "absis3/services/arch/alm/job-inc-cannary"
-    static String ALM_JOB_INCREMENT_CAMPAIGN_CANNARY = "absis3/services/arch/alm/job-inc-campaign-cannary"
-    static String ALM_JOB_CREATE_FIX = "absis3/services/arch/alm/job-create-fix"
-    static String ALM_JOB_CREATE_CONFIGFIX = "absis3/services/arch/alm/job-create-configuration-fix"
-	static String ALM_JOB_CREATE_CONFIGLIBFIX = "absis3/services/arch/alm/job-create-configlib-fix"
-    static String ALM_JOB_RETRY_CI = "absis3/services/arch/alm/job-retry-ci"
-	static String ALM_JOB_REFRESH_BUS = "absis3/services/arch/alm/job-call-refresh-bus"
-	static String ALM_JOB_CREATE_CONFIGURATION_RELEASE = "absis3/services/arch/alm/job-create-configuration-Release"
-    static String ALM_JOB_VALIDATE_BBDD_SCRIPTS = "absis3/services/arch/alm/bbdd/job-validate-bbdd-script"
-	static String ALM_JOB_CLOSE_CAMPAIGN = "absis3/services/arch/alm/job-close-campaign"
-	static String ALM_JOB_NOTIFY_CLOSE_CAMPAIGN = "absis3/services/arch/alm/job-notify-close-campaign"
-    static String ALM_JOB_STRESS_TEST = "absis3/services/arch/alm/job-prepare-stress-tests"
-    static String ALM_JOB_SONAR = "absis3/services/arch/alm/job-sonar-scan"
-    static String ALM_JOB_ACTUATOR_ENV = "absis3/services/arch/alm/job-call-actuator-env"
+    static String CANNARY_PERCENTAGE_ALM = "info.beta-traffic.percentage"
+	static String CAMPAIGN_CANNARY_PERCENTAGE_ALM = "info.campaign-beta-traffic.percentage"
+    static String ALM_JOB_MANUAL_COPY = "alm/services/arch/alm/job-manual-Copy"
+    static String ALM_JOB_CREATE_RC = "alm/services/arch/alm/job-create-RC"
+	static String ALM_JOB_DEPLOY_PROTOTYPE = "alm/services/arch/alm/job-deploy-Prototype-to-ICP"
+	static String ALM_JOB_CREATE_RC_CONFIGLIB = "alm/services/arch/alm/job-create-RC-configlib"
+    static String ALM_JOB_CREATE_RELEASE = "alm/services/arch/alm/job-create-Release"
+	static String ALM_JOB_CREATE_RELEASE_CONFIGLIB = "alm/services/arch/alm/job-create-Release-configlib"
+    static String ALM_JOB_DEPLOY_PRO = "alm/services/arch/alm/job-deploy-to-PRO"
+	static String ALM_JOB_DEPLOY_PRO_CONFIGLIB = "alm/services/arch/alm/job-deploy-to-PRO-configlib"
+	static String ALM_JOB_DEPLOY_PRO_CONFIGFIX = "alm/services/arch/alm/job-deploy-to-PRO-configfix"
+    static String ALM_JOB_ROLLBACK = "alm/services/arch/alm/job-rollback-artifact"
+    static String ALM_JOB_CIERRE_RELEASE = "alm/services/arch/alm/job-cierre-Release"
+	static String ALM_JOB_CIERRE_RELEASE_CONFIGLIB = "alm/services/arch/alm/job-cierre-Release-configlib"
+    static String ALM_JOB_DELETE_COMPONENT = "alm/services/arch/alm/job-delete-component-version"
+    static String ALM_JOB_INCREMENT_CANNARY = "alm/services/arch/alm/job-inc-cannary"
+    static String ALM_JOB_INCREMENT_CAMPAIGN_CANNARY = "alm/services/arch/alm/job-inc-campaign-cannary"
+    static String ALM_JOB_CREATE_FIX = "alm/services/arch/alm/job-create-fix"
+    static String ALM_JOB_CREATE_CONFIGFIX = "alm/services/arch/alm/job-create-configuration-fix"
+	static String ALM_JOB_CREATE_CONFIGLIBFIX = "alm/services/arch/alm/job-create-configlib-fix"
+    static String ALM_JOB_RETRY_CI = "alm/services/arch/alm/job-retry-ci"
+	static String ALM_JOB_REFRESH_BUS = "alm/services/arch/alm/job-call-refresh-bus"
+	static String ALM_JOB_CREATE_CONFIGURATION_RELEASE = "alm/services/arch/alm/job-create-configuration-Release"
+    static String ALM_JOB_VALIDATE_BBDD_SCRIPTS = "alm/services/arch/alm/bbdd/job-validate-bbdd-script"
+	static String ALM_JOB_CLOSE_CAMPAIGN = "alm/services/arch/alm/job-close-campaign"
+	static String ALM_JOB_NOTIFY_CLOSE_CAMPAIGN = "alm/services/arch/alm/job-notify-close-campaign"
+    static String ALM_JOB_STRESS_TEST = "alm/services/arch/alm/job-prepare-stress-tests"
+    static String ALM_JOB_SONAR = "alm/services/arch/alm/job-sonar-scan"
+    static String ALM_JOB_ACTUATOR_ENV = "alm/services/arch/alm/job-call-actuator-env"
 	
-	static String ALM_JOB_REPORT_LIQUIBASE = "absis3/services/arch/alm/bbdd/job-liquibase-report"
-    static String ALM_JOB_CREATE_BBDD_RC = "absis3/services/arch/alm/bbdd/job-create-BBDD-RC"
-    static String ALM_JOB_DEPLOY_BBDD_RELEASE = "absis3/services/arch/alm/bbdd/job-deploy-BBDD-release"
+	static String ALM_JOB_REPORT_LIQUIBASE = "alm/services/arch/alm/bbdd/job-liquibase-report"
+    static String ALM_JOB_CREATE_BBDD_RC = "alm/services/arch/alm/bbdd/job-create-BBDD-RC"
+    static String ALM_JOB_DEPLOY_BBDD_RELEASE = "alm/services/arch/alm/bbdd/job-deploy-BBDD-release"
 
-    static String ALM_JOB_START_STOP = "absis3/services/arch/alm/go-utilities/job-start-stop-app/"
-    static String ALM_JOB_RESTART = "absis3/services/arch/alm/go-utilities/job-restart-pods"
-    static String ALM_JOB_REFRESH_LITMID = "absis3/services/arch/alm/go-utilities/job-litmid-literals-refresh"
-    static String ALM_JOB_RESIZE = "absis3/services/arch/alm/go-utilities/job-redimensionate-app"
+    static String ALM_JOB_START_STOP = "alm/services/arch/alm/go-utilities/job-start-stop-app/"
+    static String ALM_JOB_RESTART = "alm/services/arch/alm/go-utilities/job-restart-pods"
+    static String ALM_JOB_REFRESH_LITMID = "alm/services/arch/alm/go-utilities/job-litmid-literals-refresh"
+    static String ALM_JOB_RESIZE = "alm/services/arch/alm/go-utilities/job-redimensionate-app"
     
 
     /**
      * CICS
      */
-    static String ALM_JOB_CREATE_RC_CICS = "absis3/services/arch/alm/cics/job-provisioning-CICS"
-    static String ALM_JOB_CIERRE_RELEASE_CICS = "absis3/services/arch/alm/cics/job-cierre-Release-CICS"
+    static String ALM_JOB_CREATE_RC_CICS = "alm/services/arch/alm/cics/job-provisioning-CICS"
+    static String ALM_JOB_CIERRE_RELEASE_CICS = "alm/services/arch/alm/cics/job-cierre-Release-CICS"
 
 
     /**
      * ADS
      */
-    static String ALM_JOB_CREATE_RC_ADS = "absis3/services/arch/alm/ads/job-provisioning-ADS"
-    static String ALM_JOB_CIERRE_RELEASE_ADS = "absis3/services/arch/alm/ads/job-cierre-Release-ADS"
+    static String ALM_JOB_CREATE_RC_ADS = "alm/services/arch/alm/ads/job-provisioning-ADS"
+    static String ALM_JOB_CIERRE_RELEASE_ADS = "alm/services/arch/alm/ads/job-cierre-Release-ADS"
 	
 	/**
 	 * TANDEM
 	 */
-	static String ALM_JOB_PROVISIONING_TANDEM = "absis3/services/arch/alm/tandem/job-provisioning-TANDEM"
-	static String ALM_JOB_CIERRE_RELEASE_TANDEM = "absis3/services/arch/alm/tandem/job-cierre-Release-TANDEM"
+	static String ALM_JOB_PROVISIONING_TANDEM = "alm/services/arch/alm/tandem/job-provisioning-TANDEM"
+	static String ALM_JOB_CIERRE_RELEASE_TANDEM = "alm/services/arch/alm/tandem/job-cierre-Release-TANDEM"
 	
 	/**
 	 * CGS
 	 */
-	static String ALM_JOB_CREATE_RC_CGS = "absis3/services/arch/alm/cgs/job-provisioning-CGS"
-	static String ALM_JOB_CIERRE_RELEASE_CGS = "absis3/services/arch/alm/cgs/job-cierre-Release-CGS"
+	static String ALM_JOB_CREATE_RC_CGS = "alm/services/arch/alm/cgs/job-provisioning-CGS"
+	static String ALM_JOB_CIERRE_RELEASE_CGS = "alm/services/arch/alm/cgs/job-cierre-Release-CGS"
 
 
     /**
@@ -219,10 +219,10 @@ class GlobalVars {
     static String ENDPOINT_INFO = "actuator/info"
     static String ENDPOINT_ENV = "actuator/env"
     static String ENDPOINT_THREADDUMP = "actuator/threaddump"
-    static String PLATAFORMA_GPL = "absis3"
+    static String PLATAFORMA_GPL = "alm"
     static String GPL_STATE_RUNNING = "running"
 
-    static String INTERNAL_BUILDPACK = "git.svb.lacaixa.es/cbk/cf/absis3/java-buildpack.git/#"
+    static String INTERNAL_BUILDPACK = "git.svb.lacaixa.es/cbk/cf/alm/java-buildpack.git/#"
     static String INTERNAL_BUILDPACK_JAVA8 = GlobalVars.INTERNAL_BUILDPACK + "v4.8_Absis_1.0"
     static String INTERNAL_BUILDPACK_JAVA11 = GlobalVars.INTERNAL_BUILDPACK + "v4.20_Absis_1.2"
 
@@ -230,46 +230,46 @@ class GlobalVars {
      * END GPL
      */
 
-    static String domainTst = "tst.int.srv.caixabank.com"
-    static String domainPre = "pre.int.srv.caixabank.com"
-    static String domainPro = "pro.int.srv.caixabank.com"
+    static String domainTst = "tst.int.srv.project.com"
+    static String domainPre = "pre.int.srv.project.com"
+    static String domainPro = "pro.int.srv.project.com"
 
     static String nexusDownloadRepository = "http://eibcmasp03.lacaixa.es:8081/nexus/repository/npm-group/"
 
     static String bpGeneric = "staticfile_buildpack"
     static String bpApps = "staticfile_buildpack"
     static String bpStatic = "https://apiclasp-b3.svb.lacaixa.es:2443/buildpacks-cbk/staticfile-buildpack.git"
-    static String containerAppName = "absis3"
+    static String containerAppName = "alm"
 
     static String GIT_REPO_APP_DATA_SERVICE = "/data-service/"
 	static String GIT_REPO_APP_BFF_SERVICE = "/bff/"
     static String GIT_REPO_APP_SERVICE = "/service/"
     static String GIT_REPO_APP_LIBRARY = "/common/"
-    static String GIT_REPO_ARCH = "absis3/services/arch"
-    static String GIT_REPO_DEFINITIONS = "absis3/services/definitions"
+    static String GIT_REPO_ARCH = "alm/services/arch"
+    static String GIT_REPO_DEFINITIONS = "alm/services/definitions"
     static String GIT_REPO_APP_CONF_LIBRARY = "/conf/"
 
     static String blueMixUrl = "https://api.intra1.lacaixa.bluemix.net"
 
-    static String NEXUS_URL_BASE = "artifacts.cloud.caixabank.com"
+    static String NEXUS_URL_BASE = "artifacts.cloud.project.com"
     static String NEXUS_URL = "https://$NEXUS_URL_BASE/"
     static String NEXUS_PUBLIC_REPO_NAME = "arq-openservices-maven-public"
     static String NEXUS_RELEASES_REPO_NAME = "arq-openservices-maven-releases"
     static String NEXUS_SNAPSHOTS_REPO_NAME = "arq-openservices-maven-snapshots"
 
     // Default values for deployments repos
-	static String MVN_RELEASE_DEPLOYMENT_REPO = "maven-releases::default::https://artifacts.cloud.caixabank.com/artifactory/arq-openservices-maven-releases"
+	static String MVN_RELEASE_DEPLOYMENT_REPO = "maven-releases::default::https://artifacts.cloud.project.com/artifactory/arq-openservices-maven-releases"
 	static String MVN_RELEASE_DEPLOYMENT_REPO_NAME = "maven-releases"
-	static String MVN_RELEASE_DEPLOYMENT_REPO_URL = "https://artifacts.cloud.caixabank.com/artifactory/arq-openservices-maven-releases"
-    static String MVN_SNAPSHOT_DEPLOYMENT_REPO = "maven-snapshots::default::https://artifacts.cloud.caixabank.com/artifactory/arq-openservices-maven-snapshots"
+	static String MVN_RELEASE_DEPLOYMENT_REPO_URL = "https://artifacts.cloud.project.com/artifactory/arq-openservices-maven-releases"
+    static String MVN_SNAPSHOT_DEPLOYMENT_REPO = "maven-snapshots::default::https://artifacts.cloud.project.com/artifactory/arq-openservices-maven-snapshots"
 	static String MVN_SNAPSHOT_DEPLOYMENT_REPO_NAME = "maven-snapshots"
-	static String MVN_SNAPSHOT_DEPLOYMENT_REPO_URL = "https://artifacts.cloud.caixabank.com/artifactory/arq-openservices-maven-snapshots"
+	static String MVN_SNAPSHOT_DEPLOYMENT_REPO_URL = "https://artifacts.cloud.project.com/artifactory/arq-openservices-maven-snapshots"
 
     // Default Maven Settings if from configfiles
-    //static String MVN_DEFAULT_SETTINGS = "absis3-maven-settings-with-singulares"
-	static String MVN_DEFAULT_SETTINGS = "absis3-maven-settings-sin-proxy-with-singulares"
+    //static String MVN_DEFAULT_SETTINGS = "alm-maven-settings-with-singulares"
+	static String MVN_DEFAULT_SETTINGS = "alm-maven-settings-sin-proxy-with-singulares"
 
-    static String CONTRACT_MICRO_URL = "https://contractserver-micro-server-1.pro.int.srv.caixabank.com"
+    static String CONTRACT_MICRO_URL = "https://contractserver-micro-server-1.pro.int.srv.project.com"
 
     static String blueMixUrl_CD1_TST = "https://api.intra1.lacaixa.bluemix.net"
     static String blueMixUrl_CD2_TST = "https://api.intra2.lacaixa.bluemix.net"
@@ -301,13 +301,13 @@ class GlobalVars {
     static String BMX_CD1 = "1"
     static String BMX_CD2 = "2"
 
-    static String BMX_TST_ORG_CD1 = "TST_ABSIS3_CD1"
-    static String BMX_PRE_ORG_CD1 = "PRE_ABSIS3_CD1"
-    static String BMX_PRO_ORG_CD1 = "PRO_ABSIS3_CD1"
+    static String BMX_TST_ORG_CD1 = "TST_ALM_CD1"
+    static String BMX_PRE_ORG_CD1 = "PRE_ALM_CD1"
+    static String BMX_PRO_ORG_CD1 = "PRO_ALM_CD1"
 
-    static String BMX_TST_ORG_CD2 = "TST_ABSIS3_CD2"
-    static String BMX_PRE_ORG_CD2 = "PRE_ABSIS3_CD2"
-    static String BMX_PRO_ORG_CD2 = "PRO_ABSIS3_CD2"
+    static String BMX_TST_ORG_CD2 = "TST_ALM_CD2"
+    static String BMX_PRE_ORG_CD2 = "PRE_ALM_CD2"
+    static String BMX_PRO_ORG_CD2 = "PRO_ALM_CD2"
 
     static String BMX_DEV_SPACE = "SRV_TST"
     static String BMX_TST_SPACE = "SRV_TST"
@@ -324,17 +324,17 @@ class GlobalVars {
     static String LOG_LEVEL_INFO_TAG = "loglevelinfo"
     static String DO_NOT_CI_TAG = "donotci"
 	
-    static String DOMAIN_INT_URL_TST = "tst.int.srv.caixabank.com"
-    static String DOMAIN_EXT_URL_TST = "tst.ext.srv.caixabank.com"
-    static String DOMAIN_INT_CENTER_URL_TST = "tst<center>.int.srv.caixabank.com"
+    static String DOMAIN_INT_URL_TST = "tst.int.srv.project.com"
+    static String DOMAIN_EXT_URL_TST = "tst.ext.srv.project.com"
+    static String DOMAIN_INT_CENTER_URL_TST = "tst<center>.int.srv.project.com"
 
-    static String DOMAIN_INT_URL_PRE = "pre.int.srv.caixabank.com"
-    static String DOMAIN_EXT_URL_PRE = "pre.ext.srv.caixabank.com"
-    static String DOMAIN_INT_CENTER_URL_PRE = "pre<center>.int.srv.caixabank.com"
+    static String DOMAIN_INT_URL_PRE = "pre.int.srv.project.com"
+    static String DOMAIN_EXT_URL_PRE = "pre.ext.srv.project.com"
+    static String DOMAIN_INT_CENTER_URL_PRE = "pre<center>.int.srv.project.com"
 
-    static String DOMAIN_INT_URL_PRO = "pro.int.srv.caixabank.com"
-    static String DOMAIN_EXT_URL_PRO = "pro.ext.srv.caixabank.com"
-    static String DOMAIN_INT_CENTER_URL_PRO = "pro<center>.int.srv.caixabank.com"
+    static String DOMAIN_INT_URL_PRO = "pro.int.srv.project.com"
+    static String DOMAIN_EXT_URL_PRO = "pro.ext.srv.project.com"
+    static String DOMAIN_INT_CENTER_URL_PRO = "pro<center>.int.srv.project.com"
 
     static String FEATURE_NUM_SEPARATOR = "#"
     static String FEATURE_NUM_SEPARATOR1 = "/"
@@ -378,18 +378,18 @@ class GlobalVars {
     static String proxyCaixa = "http://${GlobalVars.proxyCaixaHost}:${GlobalVars.proxyCaixaPort}"
 
     //List separated by commas
-    static String HTTP_ADDITIONAL_NON_PROXY_HOSTS = "pro.k8i-singulars.intranet.cloud.lacaixa.es,pre.k8i-singulars.intranet.cloud.lacaixa.es,tst.k8i-singulars.intranet.cloud.lacaixa.es,api.tst.internal.cer.caixabank.com,api.pre.internal.cer.caixabank.com,api.pro.internal.cer.caixabank.com,apigwi.pre.serveis.absiscloud.lacaixa.es,apigwi.pro.serveis.absiscloud.lacaixa.es"
+    static String HTTP_ADDITIONAL_NON_PROXY_HOSTS = "pro.k8i-singulars.intranet.cloud.lacaixa.es,pre.k8i-singulars.intranet.cloud.lacaixa.es,tst.k8i-singulars.intranet.cloud.lacaixa.es,api.tst.internal.cer.project.com,api.pre.internal.cer.project.com,api.pro.internal.cer.project.com,apigwi.pre.serveis.absiscloud.lacaixa.es,apigwi.pro.serveis.absiscloud.lacaixa.es"
 
-    static String URL_ZIP_INITIALIZR_DEV = "https://k8sgateway.dev.int.srv.caixabank.com/arch-service/absisinitializr-micro-1/absis/starter.zip"
-	static String URL_ZIP_INITIALIZR_PRO = "https://absisinitializr-micro-1.pro.int.srv.caixabank.com/absis/starter.zip"
+    static String URL_ZIP_INITIALIZR_DEV = "https://k8sgateway.dev.int.srv.project.com/arch-service/absisinitializr-micro-1/absis/starter.zip"
+	static String URL_ZIP_INITIALIZR_PRO = "https://absisinitializr-micro-1.pro.int.srv.project.com/absis/starter.zip"
 	
 	static String INITITALIZR_DEFAULT_BOOT_VERSION = "2.3.4.RELEASE"
 
-    static String K8S_URL = "https://k8sgateway.{environment}.int.srv.caixabank.com"
+    static String K8S_URL = "https://k8sgateway.{environment}.int.srv.project.com"
     static String K8S_CENTER_URL = "https://k8sgateway.{environment}.icp-{datacenter}.absis.cloud.lacaixa.es"
 
 
-    static String urlZipInitializrTST = "https://k8sgateway.tst.int.srv.caixabank.com/arch-service/absisinitializr-micro-1/absis/starter.zip"
+    static String urlZipInitializrTST = "https://k8sgateway.tst.int.srv.project.com/arch-service/absisinitializr-micro-1/absis/starter.zip"
     static String initializrDefaultBootVersion = "2.3.4.RELEASE"
 
     static String EDEN_APPS_REGEX = /.*\-[[:digit:]]{1,}\-[[:graph:]]{1,16}\-[[:digit:]]{8}/
@@ -415,19 +415,19 @@ class GlobalVars {
 
     static String CONTRACT_VERSION_PROP = "contract.version"
 	
-	static String GIT_DEMO_PROTOTYPE_REPO_URL = "https://git.svb.lacaixa.es/cbk/absis3/services/arch/icp/demo-prototype.git"
+	static String GIT_DEMO_PROTOTYPE_REPO_URL = "https://git.svb.lacaixa.es/cbk/alm/services/arch/icp/demo-prototype.git"
 	
-    static String GIT_CONFIG_REPO_URL_TST = "https://git.svb.lacaixa.es/cbk/absis3/config/repository-tst.git"
-    static String GIT_CONFIG_REPO_URL_PRE = "https://git.svb.lacaixa.es/cbk/absis3/config/repository-pre.git"
-    static String GIT_CONFIG_REPO_URL_PRO = "https://git.svb.lacaixa.es/cbk/absis3/config/repository-pro.git"
+    static String GIT_CONFIG_REPO_URL_TST = "https://git.svb.lacaixa.es/cbk/alm/config/repository-tst.git"
+    static String GIT_CONFIG_REPO_URL_PRE = "https://git.svb.lacaixa.es/cbk/alm/config/repository-pre.git"
+    static String GIT_CONFIG_REPO_URL_PRO = "https://git.svb.lacaixa.es/cbk/alm/config/repository-pro.git"
 
-    static String GIT_CERTS_REPO_URL_TST = "https://git.svb.lacaixa.es/cbk/absis3/config/certs-tst.git"
-    static String GIT_CERTS_REPO_URL_PRE = "https://git.svb.lacaixa.es/cbk/absis3/config/certs-pre.git"
-    static String GIT_CERTS_REPO_URL_PRO = "https://git.svb.lacaixa.es/cbk/absis3/config/certs-pro.git"
+    static String GIT_CERTS_REPO_URL_TST = "https://git.svb.lacaixa.es/cbk/alm/config/certs-tst.git"
+    static String GIT_CERTS_REPO_URL_PRE = "https://git.svb.lacaixa.es/cbk/alm/config/certs-pre.git"
+    static String GIT_CERTS_REPO_URL_PRO = "https://git.svb.lacaixa.es/cbk/alm/config/certs-pro.git"
 
-    static String GIT_CONFIG_REPO_TTSS_URL_TST = "https://git.svb.lacaixa.es/cbk/absis3/services/config-sys/repository-tst.git"
-    static String GIT_CONFIG_REPO_TTSS_URL_PRE = "https://git.svb.lacaixa.es/cbk/absis3/services/config-sys/repository-pre.git"
-    static String GIT_CONFIG_REPO_TTSS_URL_PRO = "https://git.svb.lacaixa.es/cbk/absis3/services/config-sys/repository-pro.git"
+    static String GIT_CONFIG_REPO_TTSS_URL_TST = "https://git.svb.lacaixa.es/cbk/alm/services/config-sys/repository-tst.git"
+    static String GIT_CONFIG_REPO_TTSS_URL_PRE = "https://git.svb.lacaixa.es/cbk/alm/services/config-sys/repository-pre.git"
+    static String GIT_CONFIG_REPO_TTSS_URL_PRO = "https://git.svb.lacaixa.es/cbk/alm/services/config-sys/repository-pro.git"
 	
 	static String CONFIG_SERVER_URL = "https://k8sgateway.{environment}.icp-{datacenter}.absis.cloud.lacaixa.es/arch-service/config-server-1"
 	
@@ -455,9 +455,9 @@ class GlobalVars {
     static int HTTP_REQUEST_MAX_RETRIES = 5
     static String DEFAULT_RETRY_DELETE_APP_POLICY = 2
 	
-	static int DEFAULT_ABSIS3_MS_REQUEST_RETRIES_TIMEOUT = 5
-	static String ABSIS3_MS_VALID_RESPONSE_STATUS = "100:599"
-	static int ABSIS3_MS_TIMEOUT = 100
+	static int DEFAULT_ALM_MS_REQUEST_RETRIES_TIMEOUT = 5
+	static String ALM_MS_VALID_RESPONSE_STATUS = "100:599"
+	static int ALM_MS_TIMEOUT = 100
 
     static int GITLAB_API_REQUEST_RETRIES_TIMEOUT = 5
     static int GITLAB_API_REQUEST_MAX_RETRIES_DUE_TO_EXCEPTION = 3
@@ -513,8 +513,8 @@ class GlobalVars {
      */
     static String CATALOG_URL = "https://idegsa.pro.absiscloud.lacaixa.es"
     static String CATALOG_URL_PRE = "https://idegsa.pre.absiscloud.lacaixa.es"
-    static String PATH_CATALOG_PIPELINE = "/api/v1/absis3/insertComponenteABSIS3"
-	static String GSA_ACTUAL_INSTALLATION_PATH = "/api/v1/absis3/actualInstallationABSIS3/{garType}/{application}/{component}"
+    static String PATH_CATALOG_PIPELINE = "/api/v1/alm/insertComponenteALM"
+	static String GSA_ACTUAL_INSTALLATION_PATH = "/api/v1/alm/actualInstallationALM/{garType}/{application}/{component}"
 	
 
     static boolean PUSH_CATALOG_PRE = false
@@ -538,22 +538,22 @@ class GlobalVars {
 	static String URL_ERRORMGNT_PRO = "https://k8sgateway.dev.icp-1.absis.cloud.lacaixa.es/arch-service/errormanagement-micro-server-1"
 	*/
 	//DEV debe apuntar a TST	
-	static String URL_ERRORMGNT_DEV = "https://api.tst.internal.caixabank.com/apps/absis3arq/error-management"
-	static String URL_ERRORMGNT_TST = "https://api.tst.internal.caixabank.com/apps/absis3arq/error-management"
-	static String URL_ERRORMGNT_PRE = "https://api.pre.internal.caixabank.com/apps/absis3arq/error-management"
-	static String URL_ERRORMGNT_PRO = "https://api.pro.internal.caixabank.com/apps/absis3arq/error-management"
+	static String URL_ERRORMGNT_DEV = "https://api.tst.internal.project.com/apps/almarq/error-management"
+	static String URL_ERRORMGNT_TST = "https://api.tst.internal.project.com/apps/almarq/error-management"
+	static String URL_ERRORMGNT_PRE = "https://api.pre.internal.project.com/apps/almarq/error-management"
+	static String URL_ERRORMGNT_PRO = "https://api.pro.internal.project.com/apps/almarq/error-management"
 	/*
-	static String URL_CATALOGO_ABSIS3_TST = "https://k8sgateway.dev.icp-1.absis.cloud.lacaixa.es/arch-service/catmsv-micro-server-1"
-	static String URL_CATALOGO_ABSIS3_PRE = "https://k8sgateway.dev.icp-1.absis.cloud.lacaixa.es/arch-service/catmsv-micro-server-1"
-	static String URL_CATALOGO_ABSIS3_PRO = "https://k8sgateway.dev.icp-1.absis.cloud.lacaixa.es/arch-service/catmsv-micro-server-1"
+	static String URL_CATALOGO_ALM_TST = "https://k8sgateway.dev.icp-1.absis.cloud.lacaixa.es/arch-service/catmsv-micro-server-1"
+	static String URL_CATALOGO_ALM_PRE = "https://k8sgateway.dev.icp-1.absis.cloud.lacaixa.es/arch-service/catmsv-micro-server-1"
+	static String URL_CATALOGO_ALM_PRO = "https://k8sgateway.dev.icp-1.absis.cloud.lacaixa.es/arch-service/catmsv-micro-server-1"
     */
-	static String CATALOGO_ABSIS3_ENV = "PRO"
-	//static String URL_CATALOGO_ABSIS3_TST = "https://api.tst.internal.caixabank.com/dev/tech/catmsv/1"
-	static String URL_CATALOGO_ABSIS3_TST = "https://catmsv-micro-server-1.tst.int.srv.caixabank.com"
-	static String URL_CATALOGO_ABSIS3_PRE = "https://api.pre.internal.caixabank.com/tech/catmsv/1"
-	//static String URL_CATALOGO_ABSIS3_PRO = "https://api.pro.internal.caixabank.com/tech/catmsv/1"
-	//static String URL_CATALOGO_ABSIS3_PRO = "https://catmsv-micro-server-1.pro.int.srv.caixabank.com"
-	static String URL_CATALOGO_ABSIS3_PRO = "https://catmsv-micro-server-1.pro.int.srv.caixabank.com"  
+	static String CATALOGO_ALM_ENV = "PRO"
+	//static String URL_CATALOGO_ALM_TST = "https://api.tst.internal.project.com/dev/tech/catmsv/1"
+	static String URL_CATALOGO_ALM_TST = "https://catmsv-micro-server-1.tst.int.srv.project.com"
+	static String URL_CATALOGO_ALM_PRE = "https://api.pre.internal.project.com/tech/catmsv/1"
+	//static String URL_CATALOGO_ALM_PRO = "https://api.pro.internal.project.com/tech/catmsv/1"
+	//static String URL_CATALOGO_ALM_PRO = "https://catmsv-micro-server-1.pro.int.srv.project.com"
+	static String URL_CATALOGO_ALM_PRO = "https://catmsv-micro-server-1.pro.int.srv.project.com"  
 	static String URL_API_TRANSLATIONS = "/translations"
 	static String URL_API_UNMMAPPED_TRANSLATIONS = "/unmapped-translations"
 	static String TEMP_FILE_UNMAPPED_TRANSLATIONS = "unmapped-translations.json"
@@ -561,7 +561,7 @@ class GlobalVars {
     /**
      * Envelope MuleSoft Contracts
      */
-	static String URL_ARCH_API_MANAGEMENT_ALM = "https://api.pro.internal.caixabank.com/tech/ArchApiManagementLifecycle/1"
+	static String URL_ARCH_API_MANAGEMENT_ALM = "https://api.pro.internal.project.com/tech/ArchApiManagementLifecycle/1"
 
 	/**
 	 * LIQUIBASE
@@ -601,24 +601,24 @@ class GlobalVars {
 	 * CHECKMARX VARIABLES
 	 */
 	static String URL_CHECKMARX_SERVER = "https://checkmarx.lacaixa.es/CxWebClient"
-	static String JENKINS_CREDENTIALS_ID_CHECKMARX = "absis3mscheckmarx"
+	static String JENKINS_CREDENTIALS_ID_CHECKMARX = "almmscheckmarx"
 	static String GROUP_TEAM_ID_CHECKMARX = "563e3977-6832-451d-bcae-e31f33171c3f"
-	static String TEAM_PATH_CHECKMARX = "CxServer\\Ackcent\\Caixabank\\ABSIS3SRV"
-	static String ABSIS3_PRESET_CHECKMARX = "100026" // ABSIS3 preset in Checkmarx
-	static String FROM_SECURITY_EMAIL_CHECKMARX = "noreply@absis3.caixabank.com"
+	static String TEAM_PATH_CHECKMARX = "CxServer\\Ackcent\\Caixabank\\ALMSRV"
+	static String ALM_PRESET_CHECKMARX = "100026" // ALM preset in Checkmarx
+	static String FROM_SECURITY_EMAIL_CHECKMARX = "noreply@alm.project.com"
 	static String ENV_CHECKMARX="PRO"
 
     /**
      * MAXIMOS AUTOMATICOS
      */
-    static String EMAIL_CREACION_MAXIMOS = "incidencias.maximo@caixabank.com"
+    static String EMAIL_CREACION_MAXIMOS = "incidencias.maximo@project.com"
 	
     /**
      * KPI VARIABLES
      */   
     static String URL_KPI = "https://internal-reca3i-reca3i.pro.intranet.cloud.lacaixa.es/api/elk/logs"
     //static String URL_ALMMETRICS = "https://k8sgateway.pre.icp-1.absis.cloud.lacaixa.es/arch-service/almlogcollector-micro-1/api/elk/logs"
-	static String URL_ALMMETRICS = "https://almlogcollector.pro.int.srv.caixabank.com/api/elk/logs"
+	static String URL_ALMMETRICS = "https://almlogcollector.pro.int.srv.project.com/api/elk/logs"
     static String ALMENV_ALMMETRICS = "pro"
 	//static String ALMENV_ALMMETRICS = "dev"
     static String SONAR_URL = null
@@ -631,7 +631,7 @@ class GlobalVars {
     static int SONAR_RETRY_POLICY = 4
     static int SONAR_TIMEOUT = 120
     static Boolean IS_KPI_ENABLED = false
-    static Boolean ABSIS3_SERVICES_SEND_ALM_METRICS = false
+    static Boolean ALM_SERVICES_SEND_ALM_METRICS = false
 
     // Semaphores
     static Boolean KPILOGGER_IS_NOW_ACTIVE = false
@@ -651,17 +651,17 @@ class GlobalVars {
 	static def LIMIT_LENGTH_FOR_PODNAME_WITHOUT_K8_SUFFIX = 34
 	static def LIMIT_LENGTH_FOR_SERVICE_WITHOUT_K8_SUFFIX = 50
 	
-	static String ABSIS3_SERVICES_SKIP_VALIDATION_CLOSE_RELEASE_LIST = ""
-	static String ABSIS3_SERVICES_SKIP_VALIDATION_DEPENDENCIES_LIST = ""
-	static String ABSIS3_SERVICES_SKIP_VALIDATION_AUTH_LIST = ""
-	static String ABSIS3_SERVICES_SKIP_VALIDATION_CONTRACT_LIST = ""
-	static String ABSIS3_SERVICES_SKIP_VALIDATION_SECRETS_LIST = ""
+	static String ALM_SERVICES_SKIP_VALIDATION_CLOSE_RELEASE_LIST = ""
+	static String ALM_SERVICES_SKIP_VALIDATION_DEPENDENCIES_LIST = ""
+	static String ALM_SERVICES_SKIP_VALIDATION_AUTH_LIST = ""
+	static String ALM_SERVICES_SKIP_VALIDATION_CONTRACT_LIST = ""
+	static String ALM_SERVICES_SKIP_VALIDATION_SECRETS_LIST = ""
 	
-	static String ABSIS3_SERVICES_SKIP_VALIDATION_CLOSE_RELEASE_ALL = false
-	static String ABSIS3_SERVICES_SKIP_VALIDATION_DEPENDENCIES_ALL = false
-	static String ABSIS3_SERVICES_SKIP_VALIDATION_AUTH_ALL = false
-	static String ABSIS3_SERVICES_SKIP_VALIDATION_CONTRACT_ALL = false
-	static String ABSIS3_SERVICES_SKIP_VALIDATION_SECRETS_ALL = false
+	static String ALM_SERVICES_SKIP_VALIDATION_CLOSE_RELEASE_ALL = false
+	static String ALM_SERVICES_SKIP_VALIDATION_DEPENDENCIES_ALL = false
+	static String ALM_SERVICES_SKIP_VALIDATION_AUTH_ALL = false
+	static String ALM_SERVICES_SKIP_VALIDATION_CONTRACT_ALL = false
+	static String ALM_SERVICES_SKIP_VALIDATION_SECRETS_ALL = false
 	
 	static String ICP_CUSTOM_LIVENESSPROBE_APPLICATIONS = ""
 	static String REVAPI_SKIP_VALIDATION = "Bajo responsabilidad del equipo de desarrollo no se ejecutará la validación de versión. Esta versión rompe contrato con su major vigente"

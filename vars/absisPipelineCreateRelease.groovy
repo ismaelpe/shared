@@ -57,7 +57,7 @@ def call(Map pipelineParameters) {
 
     gitURL = "https://git.svb.lacaixa.es/"
     gitCredentials = "GITLAB_CREDENTIALS"
-    jenkinsPath = "absis3/services"
+    jenkinsPath = "alm/services"
 
     // las variables que se obtienen como parametro del job no es necesario
     // redefinirlas, se hace por legibilidad del codigo
@@ -105,8 +105,8 @@ def call(Map pipelineParameters) {
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
 			JNKMSV = credentials('JNKMSV-USER-TOKEN')
-            ICP_CERT = credentials('icp-absis3-pro-cert')
-            ICP_PASS = credentials('icp-absis3-pro-cert-passwd')
+            ICP_CERT = credentials('icp-alm-pro-cert')
+            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
@@ -751,7 +751,7 @@ def deployToCloudTstICPStep() {
         
         resultDeployICP = "KO"
         printOpen("Error en el deploy a ICP, de momento nos comemos el error hasta que esto sea estable ${e}", EchoLevel.DEBUG)
-        sendEmail(" Resultado ejecucion app ${artifactAppAbort} - ${pipelineData.getPipelineBuildName()}  KO - ${deployICPPhases}", env.ABSIS3_SERVICES_EMAIL_ICP_DEPLOY_RESULT, "${artifactAppAbort} rama ${pipelineData.getPipelineBuildName()}", "KO en el paso ${deployICPPhases}")
+        sendEmail(" Resultado ejecucion app ${artifactAppAbort} - ${pipelineData.getPipelineBuildName()}  KO - ${deployICPPhases}", env.ALM_SERVICES_EMAIL_ICP_DEPLOY_RESULT, "${artifactAppAbort} rama ${pipelineData.getPipelineBuildName()}", "KO en el paso ${deployICPPhases}")
         kpiLogger(pomXmlStructure, pipelineData,KpiLifeCycleStage.DEPLOY_FINISHED, resultDeployICP)
         
         abortPipelineICP(pomXmlStructure, pipelineData, " Resultado ejecucion app ${artifactAppAbort} - ${pipelineData.getPipelineBuildName()}  KO - ${deployICPPhases}")

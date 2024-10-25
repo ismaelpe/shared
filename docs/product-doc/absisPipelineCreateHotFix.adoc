@@ -1,5 +1,5 @@
 
-## absisPipelineCreateHotFix
+## almPipelineCreateHotFix
 
 This pipeline runs manually when the user wants to generate a fix of a version. 
 

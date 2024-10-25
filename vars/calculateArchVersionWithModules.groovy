@@ -11,7 +11,7 @@ def call(PomXmlStructure pomXmlStructure) {
             printOpen("content of childPomXml.xml: ${childPomXml}", EchoLevel.DEBUG)
             def childProject = new XmlSlurper().parseText(childPomXml)
 
-            if (GlobalVars.ABSIS3_SERVICES_SIMPLIFIED_ALM_WHITELIST.contains(pomXmlStructure.artifactName)) {
+            if (GlobalVars.ALM_SERVICES_SIMPLIFIED_ALM_WHITELIST.contains(pomXmlStructure.artifactName)) {
 
                 pomXmlStructure.archVersion = GlobalVars.MINIMUM_VERSION_ARCH_PRO
                 printOpen("Calculated archVersion is ${GlobalVars.MINIMUM_VERSION_ARCH_PRO} as this component is on the simplified ALM whitelist", EchoLevel.INFO)

@@ -14,9 +14,9 @@ def updateDb2Flag(String DS) {
 	
 	def response = sendRequestToAbsis3MS(
 		'GET',
-		"${GlobalVars.URL_CATALOGO_ABSIS3_PRO}/app/SRV.DS/${DS}",
+		"${GlobalVars.URL_CATALOGO_ALM_PRO}/app/SRV.DS/${DS}",
 		null,
-		"${GlobalVars.CATALOGO_ABSIS3_ENV}",
+		"${GlobalVars.CATALOGO_ALM_ENV}",
 		[
 			kpiAlmEvent: new KpiAlmEvent(
 				null, null,
@@ -34,9 +34,9 @@ def updateDb2Flag(String DS) {
 			DSObject.isDB2=true
 			def response1 = sendRequestToAbsis3MS(
 				'PUT',
-				"${GlobalVars.URL_CATALOGO_ABSIS3_PRO}/app",
+				"${GlobalVars.URL_CATALOGO_ALM_PRO}/app",
 				DSObject,
-				"${GlobalVars.CATALOGO_ABSIS3_ENV}",
+				"${GlobalVars.CATALOGO_ALM_ENV}",
 				[
 					kpiAlmEvent: new KpiAlmEvent(
 						null, null,
@@ -75,8 +75,8 @@ def call(Map pipelineParameters) {
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
 			JNKMSV = credentials('JNKMSV-USER-TOKEN')
-            ICP_CERT = credentials('icp-absis3-pro-cert')
-            ICP_PASS = credentials('icp-absis3-pro-cert-passwd')            
+            ICP_CERT = credentials('icp-alm-pro-cert')
+            ICP_PASS = credentials('icp-alm-pro-cert-passwd')            
             http_proxy = "${GlobalVars.proxyCaixa}"
 			https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"

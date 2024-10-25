@@ -53,8 +53,8 @@ abstract class ResultPipelineData {
     }
 
 	boolean isAuthExcluded() {
-		def exclusionList = GlobalVars.ABSIS3_SERVICES_SKIP_VALIDATION_AUTH_LIST.split(";")
-		return "true".equals(GlobalVars.ABSIS3_SERVICES_SKIP_VALIDATION_AUTH_ALL) || Arrays.asList(exclusionList).contains(component)
+		def exclusionList = GlobalVars.ALM_SERVICES_SKIP_VALIDATION_AUTH_LIST.split(";")
+		return "true".equals(GlobalVars.ALM_SERVICES_SKIP_VALIDATION_AUTH_ALL) || Arrays.asList(exclusionList).contains(component)
 	}
 
 	    public String incFix(String versionAIncrementar) {

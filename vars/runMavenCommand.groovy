@@ -14,7 +14,7 @@ def call(String mvnCommand, Map parameters = [:]) {
 		boolean printLogIfFails = parameters.get("printLogIfFails", true)
 		boolean showOnlyMvnErrorsInLog = parameters.get("showOnlyMvnErrorsInLog", true)
 		Integer showOnlyLastNLinesInLog = parameters.get("showOnlyLastNLinesInLog")
-		//String maven_settings = parameters.get("withThisGlobalMavenSettings", "absis3-maven-settings-with-singulares")
+		//String maven_settings = parameters.get("withThisGlobalMavenSettings", "alm-maven-settings-with-singulares")
 		String maven_settings = GlobalVars.MVN_DEFAULT_SETTINGS
 		
 		configFileProvider([configFile(fileId: maven_settings, variable: 'MAVEN_SETTINGS')]) {

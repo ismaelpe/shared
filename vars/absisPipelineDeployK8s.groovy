@@ -79,8 +79,8 @@ def call(Map pipelineParameters) {
         }
 	    environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
-            ICP_CERT = credentials('icp-absis3-pro-cert')
-            ICP_PASS = credentials('icp-absis3-pro-cert-passwd')
+            ICP_CERT = credentials('icp-alm-pro-cert')
+            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
@@ -126,7 +126,7 @@ def call(Map pipelineParameters) {
 def initStep() {
 	initGlobalVars(pipelineParams)
 
-	pathToRepo = "https://git.svb.lacaixa.es/cbk/absis3/services/arch/tool/${microservice}.git"
+	pathToRepo = "https://git.svb.lacaixa.es/cbk/alm/services/arch/tool/${microservice}.git"
 	repoName = microservice - "micro"
 	icpApplicationId = "27587"
 	if (microservice == "k8sapigateway-micro") {
@@ -212,7 +212,7 @@ def buildStep() {
 def buildIcpImageStep() {
 	//Build 
 	def body = [
-			extraArgs: "GROUP_ID=com.caixabank.absis.arch.tool,VERSION_ARTIFACT=${pomXmlStructure.artifactVersion},ARTIFACT_ID=${microservice}",
+			extraArgs: "GROUP_ID=com.project.absis.arch.tool,VERSION_ARTIFACT=${pomXmlStructure.artifactVersion},ARTIFACT_ID=${microservice}",
 			version: "${pomXmlStructure.artifactVersion}"
 	]	
 	ICPApiResponse response=null
@@ -265,7 +265,7 @@ def deployIcpImage() {
 	def bodyDeploy=[
 		az: "ALL",
 		environment: "${environmentDest.toUpperCase()}",
-		values: "local:\n  app:\n    ingress:\n      connectTimeout: 10\n      readTimeout: 240\n      sendTimeout: 240\n      defineTimeout: true\n      defineBodySize: true\n      maxBodySize: 30m\n      enabled: true\n      deploymentArea: absis\n      absis:\n        enabled: true\n      mtls:\n        enabled: true\n        needsSystemRoute: true\n        needsSpecialVerifyDepth: false\n    envVars:\n      - name: ABSIS_ICP_ENVIRONMENT\n        value: ${environmentDest.toLowerCase()}\n      - name: ABSIS_APP_ID\n        value: ${variableKubernetesInstance}\n      - name: ABSIS_ENVIRONMENT\n        value: ${environmentDest.toUpperCase()}\n      - name: ABSIS_APP_SUBDOMAIN\n        value: NO_SUBDOMAIN\n      - name: ABSIS_APP_COMPANY\n        value: CBK\n      - name: JAVA_OPTS\n        value: '-Dspring.cloud.config.failFast=false'\n      - name: nonProxyHosts\n        value: '*.cxb-pasdev-tst|*.cxb-ab3app-${environmentDest.toLowerCase()}|*.cxb-ab3cor-${environmentDest.toLowerCase()}'\n      - name: http.additionalNonProxyHosts\n        value: 'cxb-pasdev-${environmentDest.toLowerCase()},cxb-ab3app-dev,cxb-ab3cor-${environmentDest.toLowerCase()}'\n      - name: NO_PROXY\n        value: cxb-ab3cor-${environmentDest.toLowerCase()}\n      - name: CF_INSTANCE_INDEX\n        value: 1\n      - name: SPRING_PROFILES_ACTIVE\n        value: cloud,${environmentDest.toLowerCase()},icp\n${secrets}absis:\n  app:\n    loggingElkStack: absis30\n    replicas: 1\n    instance:  ${variableKubernetesInstance}\n    name: ${variableKubernetesInstance}\n  resources:\n    requests:\n      memory: 500Mi\n      cpu: 500m\n    limits:\n       memory: 786Mi\n       cpu: 1000m\n  apps:\n    envQualifier:\n      stable:\n        id:  ${variableKubernetes}\n        colour: G\n        image: ${imageIcp}:${pomXmlStructure.artifactVersion}\n        version: ${pomXmlStructure.artifactVersion}\n        stable: false\n        new: false\n        replicas: 1\n        requests_memory: 100Mi\n        requests_cpu: 25m\n        limits_memory: 600Mi\n        limits_cpu: 700m\n  services:\n    envQualifier:\n      stable:\n        id: ${variableKubernetesInstance}\n        targetColour: G\n"
+		values: "local:\n  app:\n    ingress:\n      connectTimeout: 10\n      readTimeout: 240\n      sendTimeout: 240\n      defineTimeout: true\n      defineBodySize: true\n      maxBodySize: 30m\n      enabled: true\n      deploymentArea: absis\n      absis:\n        enabled: true\n      mtls:\n        enabled: true\n        needsSystemRoute: true\n        needsSpecialVerifyDepth: false\n    envVars:\n      - name: ALM_ICP_ENVIRONMENT\n        value: ${environmentDest.toLowerCase()}\n      - name: ALM_APP_ID\n        value: ${variableKubernetesInstance}\n      - name: ALM_ENVIRONMENT\n        value: ${environmentDest.toUpperCase()}\n      - name: ALM_APP_SUBDOMAIN\n        value: NO_SUBDOMAIN\n      - name: ALM_APP_COMPANY\n        value: CBK\n      - name: JAVA_OPTS\n        value: '-Dspring.cloud.config.failFast=false'\n      - name: nonProxyHosts\n        value: '*.cxb-pasdev-tst|*.cxb-ab3app-${environmentDest.toLowerCase()}|*.cxb-ab3cor-${environmentDest.toLowerCase()}'\n      - name: http.additionalNonProxyHosts\n        value: 'cxb-pasdev-${environmentDest.toLowerCase()},cxb-ab3app-dev,cxb-ab3cor-${environmentDest.toLowerCase()}'\n      - name: NO_PROXY\n        value: cxb-ab3cor-${environmentDest.toLowerCase()}\n      - name: CF_INSTANCE_INDEX\n        value: 1\n      - name: SPRING_PROFILES_ACTIVE\n        value: cloud,${environmentDest.toLowerCase()},icp\n${secrets}absis:\n  app:\n    loggingElkStack: alm0\n    replicas: 1\n    instance:  ${variableKubernetesInstance}\n    name: ${variableKubernetesInstance}\n  resources:\n    requests:\n      memory: 500Mi\n      cpu: 500m\n    limits:\n       memory: 786Mi\n       cpu: 1000m\n  apps:\n    envQualifier:\n      stable:\n        id:  ${variableKubernetes}\n        colour: G\n        image: ${imageIcp}:${pomXmlStructure.artifactVersion}\n        version: ${pomXmlStructure.artifactVersion}\n        stable: false\n        new: false\n        replicas: 1\n        requests_memory: 100Mi\n        requests_cpu: 25m\n        limits_memory: 600Mi\n        limits_cpu: 700m\n  services:\n    envQualifier:\n      stable:\n        id: ${variableKubernetesInstance}\n        targetColour: G\n"
 	]
 	
 	printOpen("Deploy value ${bodyDeploy}", EchoLevel.ALL)

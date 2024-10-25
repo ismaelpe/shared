@@ -2,14 +2,14 @@ package com.project.alm
 
 /**
  * Arquitectura
- * Propuesta Tipo: ABSIS3 . Architecture Library 
- * Propuesta Tipo: ABSIS3 . Architecture Micro Architecture Plugin 
- * Propuesta Tipo: ABSIS3 . Architecture Micro Architecture 
+ * Propuesta Tipo: ALM . Architecture Library 
+ * Propuesta Tipo: ALM . Architecture Micro Architecture Plugin 
+ * Propuesta Tipo: ALM . Architecture Micro Architecture 
 
  * Aplicaciones
- * Propuesta Tipo: ABSIS3 . Library
- * Propuesta Tipo: ABSIS3 . Micro Service
- * Propuesta Tipo: ABSIS3 . Data Service
+ * Propuesta Tipo: ALM . Library
+ * Propuesta Tipo: ALM . Micro Service
+ * Propuesta Tipo: ALM . Data Service
  * @author u0180790*
  */
 public enum GarAppType {

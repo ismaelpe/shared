@@ -1,13 +1,13 @@
-## absisPipelineBuild
+## almPipelineBuild
 
 This pipeline runs with the CI, after every push (or merge request) to the repository. 
 
 Every git project has configured the integration with the jenkins. One git project one jenkins job. 
 
-Every job works whith a docker machine started with this parameters : "-v /apps/idejen/data:/root/.m2 -v /root/.m2/repository/com/caixabank"
+Every job works whith a docker machine started with this parameters : "-v /apps/idejen/data:/root/.m2 -v /root/.m2/repository/com/project"
 
 - Every job that run this pipeline use a shared folder '/apps/idejen/data' in order to cache the local repository to avoid download the jars from Nexus all the time.
-- In order to avoid conflicts every job use ther own copy of /root/.m2/repository/com/caixabank
+- In order to avoid conflicts every job use ther own copy of /root/.m2/repository/com/project
 
 All the parameters are supplied by the jenkins integration CI, these are the most importants.
 

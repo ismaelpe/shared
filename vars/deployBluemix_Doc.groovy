@@ -75,12 +75,12 @@ def call(body) {
     // - name: REPO_NAME
     //   memory: 48M
     //   disk_quota: 64M
-    //   buildpack: https://gitlab-ci-token:gy2Mzz5PovhjgdxeqJy2@git.svb.lacaixa.es/cbk/cf/absis3/nginx-buildpack.git
+    //   buildpack: https://gitlab-ci-token:gy2Mzz5PovhjgdxeqJy2@git.svb.lacaixa.es/cbk/cf/alm/nginx-buildpack.git
     //   path: build
     //   routes:
-    //   - route: container.tst.ca.caixabank.com/repo_name
+    //   - route: container.tst.ca.project.com/repo_name
     //
-    // cf push ${deployUrl} -p ${distFolder} -m 48M -k 64M -b staticfile_buildpack -d tst.ca.caixabank.com -n container --route-path app2
+    // cf push ${deployUrl} -p ${distFolder} -m 48M -k 64M -b staticfile_buildpack -d tst.ca.project.com -n container --route-path app2
 
 /*
 printOpen("############# DATOS BLUEMIX ##################################", EchoLevel.ALL)

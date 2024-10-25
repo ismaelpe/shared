@@ -52,11 +52,11 @@ def call(String typeAppParam, String nameAppParam, String gitAppURLParam) {
 
     emailext(
           mimeType: 'text/html',
-          replyTo: 'absis3.microservices.support@caixabank.com',
+          replyTo: 'alm.microservices.support@project.com',
           body: emailContent,
           subject: "Welcome to OpenServices ${typeAppParam} ${nameAppParam}", 
-          from: 'noreply@absis3.caixabank.com', 
-          to: "${emailTo}, onboarding.opennow@caixabanktech.com, v.escalzo.rubio@accenture.com, a.fernandez.cristobo@accenture.com, jasaizt@caixabanktech.com"
+          from: 'noreply@alm.project.com', 
+          to: "${emailTo}, onboarding.opennow@projecttech.com, v.escalzo.rubio@accenture.com, a.fernandez.cristobo@accenture.com, jasaizt@projecttech.com"
       )
 
     

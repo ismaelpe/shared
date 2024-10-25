@@ -95,8 +95,8 @@ def call(Map pipelineParameters) {
         }
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
-            ICP_CERT = credentials('icp-absis3-pro-cert')
-            ICP_PASS = credentials('icp-absis3-pro-cert-passwd')
+            ICP_CERT = credentials('icp-alm-pro-cert')
+            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
 			JNKMSV = credentials('JNKMSV-USER-TOKEN')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
@@ -273,7 +273,7 @@ def createJobStep() {
             typeApp: typeApp, 
             modulo: modulo, 
             empresa: empresa.toLowerCase(),
-            jenkinsPath: "absis3/services",
+            jenkinsPath: "alm/services",
             gitCredentials: "GITLAB_CREDENTIALS",
             createJobOndemand: "$env.CREATE_ONDEMAND_JOB_IN_PROVISIONING".toBoolean()
         ])
@@ -444,9 +444,9 @@ def addToProvisioning() {
 
     def response = sendRequestToAbsis3MS(
         'PUT',
-        "${GlobalVars.URL_CATALOGO_ABSIS3_PRO}/app",
+        "${GlobalVars.URL_CATALOGO_ALM_PRO}/app",
         app,
-        "${GlobalVars.CATALOGO_ABSIS3_ENV}",
+        "${GlobalVars.CATALOGO_ALM_ENV}",
         [
             kpiAlmEvent: new KpiAlmEvent(
                 null, null,
@@ -491,6 +491,6 @@ def endPipelineFailureStep() {
  * Obtiene el job de provisioning de la rama configurada en la configuracion global del jenkins
  */
 def getSharedDefaultVersion() {
-    def libraryConfiguration = jenkins.model.Jenkins.getInstance().getDescriptor("org.jenkinsci.plugins.workflow.libs.GlobalLibraries").getLibraries().find { it.getName() == 'absis3-services'}
+    def libraryConfiguration = jenkins.model.Jenkins.getInstance().getDescriptor("org.jenkinsci.plugins.workflow.libs.GlobalLibraries").getLibraries().find { it.getName() == 'alm-services'}
     return libraryConfiguration.getDefaultVersion()
 }

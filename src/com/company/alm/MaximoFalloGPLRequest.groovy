@@ -7,7 +7,7 @@ class MaximoFalloGPLRequest extends MaximoAbstractFallo {
         this.resumen = "Una o más peticiones contra GPL han fallado"
         this.descripcion =
                 "<p>Se han detectado fallos al hacer peticiones a GPL, la hora aproximada es: ${new Date().toString()}.</p>" +
-                "<p>El framework de la aplicación es ABSIS3-SRV, la aplicación es ${applicationName} y el stage que ha fallado es ${stageName}</p>" +
+                "<p>El framework de la aplicación es ALM-SRV, la aplicación es ${applicationName} y el stage que ha fallado es ${stageName}</p>" +
                 "<p>La petición que ha generado el error ha sido un ${httpMethod} a la URI <code>${url}</code> con el siguiente body:</p>" +
                 "<pre>${body ? '<code>'+body+'</code>' : '(La petición no tenía body o no era serializable)'}</pre>" +
                 "<p>El log del error ha sido:</p>" +

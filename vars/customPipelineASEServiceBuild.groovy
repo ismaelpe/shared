@@ -70,8 +70,8 @@ def call(Map pipelineParameters) {
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
             JNKMSV = credentials('JNKMSV-USER-TOKEN')
-            ICP_CERT = credentials('icp-absis3-pro-cert')
-            ICP_PASS = credentials('icp-absis3-pro-cert-passwd')
+            ICP_CERT = credentials('icp-alm-pro-cert')
+            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
@@ -331,7 +331,7 @@ def deployingNewProjectStep() {
     def mvnLog = null
     printOpen("Deploying ${aseClientArtifactId} project", EchoLevel.INFO)
 
-    def cmd = "cd generated-client/${aseClientArtifactId} && export JAVA_HOME=${GlobalVars.JAVA_HOME_11} && mvn -Dhttp.proxyHost=${env.proxyHost} -Dhttp.proxyPort=${env.proxyPort} -Dhttps.proxyHost=${env.proxyHost} -Dhttps.proxyPort=${env.proxyPort} <Only_Maven_Settings> clean deploy -Dmaven.install.skip -Dmaven.deploy.skip=false -DgenerateBodyErrorWrappingExceptions=${exceptionNameTemplate} -Dcontract.package=com.caixabank.absis.arch.backend.ase.seconnectorstarter.${serviceName.toLowerCase()}"
+    def cmd = "cd generated-client/${aseClientArtifactId} && export JAVA_HOME=${GlobalVars.JAVA_HOME_11} && mvn -Dhttp.proxyHost=${env.proxyHost} -Dhttp.proxyPort=${env.proxyPort} -Dhttps.proxyHost=${env.proxyHost} -Dhttps.proxyPort=${env.proxyPort} <Only_Maven_Settings> clean deploy -Dmaven.install.skip -Dmaven.deploy.skip=false -DgenerateBodyErrorWrappingExceptions=${exceptionNameTemplate} -Dcontract.package=com.project.absis.arch.backend.ase.seconnectorstarter.${serviceName.toLowerCase()}"
 
     mvnLog = runMavenGoalWithRetries(pomXmlStructure, asePipelineData, cmd, [
         kpiAlmEvent: new KpiAlmEvent(

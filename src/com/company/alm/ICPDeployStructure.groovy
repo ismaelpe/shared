@@ -83,7 +83,7 @@ class ICPDeployStructure extends DeployStructure{
 	
 	public String getUrlPrefixTesting(boolean affinityUrlUp = true) {
 		if ("pro".equals(env.toLowerCase()) && affinityUrlUp) {
-			 return "https://api.pro.internal.caixabank.com"
+			 return "https://api.pro.internal.project.com"
 		} else {
 			 return "https://k8sgateway"
 		}
@@ -91,7 +91,7 @@ class ICPDeployStructure extends DeployStructure{
 	
 	public String getUrlSuffixIntegrationTesting(String center, boolean affinityUrlUp = true) {
 		if ("pro".equals(env.toLowerCase()) && affinityUrlUp) {
-			return "/tech/absis3-alm"
+			return "/tech/alm-alm"
 		}else {
 			return getUrlSuffixTesting(center)
 		}		
@@ -104,7 +104,7 @@ class ICPDeployStructure extends DeployStructure{
 	public String getUrlSuffixTesting(String center = "ALL") {
 		//new-democonnecta2-micro-2.dev.ap.intranet.cloud.lacaixa.es
 		if (center=="ALL") {
-			return "."+envICP.toLowerCase()+".int.srv.caixabank.com"
+			return "."+envICP.toLowerCase()+".int.srv.project.com"
 		}else {
 			if (center=="AZ1") {
 				return "."+envICP.toLowerCase()+".icp-1.absis.cloud.lacaixa.es"
@@ -117,7 +117,7 @@ class ICPDeployStructure extends DeployStructure{
 	
 	public String getUrlPrefixApiGateway(String center = "ALL") {
 		if (center=="ALL") {
-			return "https://api-gateway-1." + envICP.toLowerCase() +".int.srv.caixabank.com"
+			return "https://api-gateway-1." + envICP.toLowerCase() +".int.srv.project.com"
 		}else {
 			if (center=="AZ1") {
 				return "https://api-gateway-1." + envICP.toLowerCase() +".icp-1.absis.cloud.lacaixa.es"
@@ -168,7 +168,7 @@ class ICPDeployStructure extends DeployStructure{
 	
 	
 	public String getEnvVariables(String garAppType, String appName,String appMajorVersion,String domain,String subDomain,String company) {
-		String ABSIS_BlueGreen="'\n    ABSIS_BLUE_GREEN: G'"
+		String ALM_BlueGreen="'\n    ALM_BLUE_GREEN: G'"
 		
 		String additionalNonProxyHosts = "gelogasr01.lacaixa.es,"+this.url_int+","+this.url_ext+","+GlobalVars.HTTP_ADDITIONAL_NON_PROXY_HOSTS;
 		if (this.env.equalsIgnoreCase("eden") || this.env.equalsIgnoreCase("dev")) {
@@ -227,19 +227,19 @@ class ICPDeployStructure extends DeployStructure{
 			   "        needsSpecialVerifyDepth: "+needsSpecialVerifyDepth+ "\n"+
 			   "        verifyDepth: "+verifyDepth+"\n"+
 		       "    envVars:\n"+
-			   "      - name: ABSIS_APP_ID\n"+
+			   "      - name: ALM_APP_ID\n"+
 			   "        value: "+appName+"\n"+
-			   "      - name: ABSIS_CENTER_ID\n"+
+			   "      - name: ALM_CENTER_ID\n"+
 			   "        value: 1\n"+
-			   "      - name: ABSIS_APP_TYPE\n"+
+			   "      - name: ALM_APP_TYPE\n"+
 			   "        value: "+garAppType+"\n"+
-			   "      - name: ABSIS_ENVIRONMENT\n"+
+			   "      - name: ALM_ENVIRONMENT\n"+
 			   "        value: "+env.toLowerCase()+"\n"+
-			   "      - name: ABSIS_APP_DOMAIN\n"+
+			   "      - name: ALM_APP_DOMAIN\n"+
 			   "        value: "+domain+"\n"+
-			   "      - name: ABSIS_APP_SUBDOMAIN\n"+
+			   "      - name: ALM_APP_SUBDOMAIN\n"+
 			   "        value: "+subDomain+"\n"+
-			   "      - name: ABSIS_APP_COMPANY\n"+
+			   "      - name: ALM_APP_COMPANY\n"+
 			   "        value: "+company+"\n"+
 			   "      - name: JAVA_OPTS\n"+
 			   "        value: '-Dspring.cloud.config.failFast=true'\n"+
@@ -255,7 +255,7 @@ class ICPDeployStructure extends DeployStructure{
 			   "        value: true\n"+
 			   "      - name: SPRING_PROFILES_ACTIVE\n"+
 			   "        value: "+springProfilesActive+"\n"+
-			   "      - name: ABSIS_ICP_ENVIRONMENT\n"+
+			   "      - name: ALM_ICP_ENVIRONMENT\n"+
 			   "        value: "+this.envICP.toLowerCase()+"\n"+
 			   "      - name: "+GlobalVars.CANARY_TYPE_PROPERTY+"\n"+
 			   "        value: "+this.cannaryType+"\n"
@@ -338,7 +338,7 @@ class ICPDeployStructure extends DeployStructure{
 		
 		Map valuesDeployed=(Map)yaml.load( content)
 		
-		//[applications:[[memory:786M, env:[SPRING_PROFILES_ACTIVE:cloud,pro, JAVA_OPTS:-Dspring.cloud.config.failFast=true, ABSIS_APP_ID:demoConnectA2, ABSIS_APP_TYPE:SRV.MS, ABSIS_CENTER_ID:1, ABSIS_ENVIRONMENT:pro, ABSIS_SPACE:SRV_PRO, ABSIS_APP_DOMAIN:demoArquitectura, ABSIS_APP_SUBDOMAIN:NO_SUBDOMAIN, ABSIS_APP_COMPANY:CBK, http.additionalNonProxyHosts:pro.int.srv.caixabank.com,pro.ext.srv.caixabank.com, ABSIS_BLUE_GREEN:G, JBP_CONFIG_OPEN_JDK_JRE:{ jre: { version: 11.+ } }], services:[configserver]]]]
+		//[applications:[[memory:786M, env:[SPRING_PROFILES_ACTIVE:cloud,pro, JAVA_OPTS:-Dspring.cloud.config.failFast=true, ALM_APP_ID:demoConnectA2, ALM_APP_TYPE:SRV.MS, ALM_CENTER_ID:1, ALM_ENVIRONMENT:pro, ALM_SPACE:SRV_PRO, ALM_APP_DOMAIN:demoArquitectura, ALM_APP_SUBDOMAIN:NO_SUBDOMAIN, ALM_APP_COMPANY:CBK, http.additionalNonProxyHosts:pro.int.srv.project.com,pro.ext.srv.project.com, ALM_BLUE_GREEN:G, JBP_CONFIG_OPEN_JDK_JRE:{ jre: { version: 11.+ } }], services:[configserver]]]]
 		Map application=valuesDeployed.get('applications').getAt(0)
 	
 		if (application.get('memory')!=null) {

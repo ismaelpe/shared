@@ -217,7 +217,7 @@ It uses the maven task, dependency:get.
 
 #### Steps
 
-. Download the absis3 artifact
+. Download the alm artifact
 
 #### Result
 
@@ -251,7 +251,7 @@ It uses the maven task, dependency:get.
 
 #### Steps
 
-. Download the absis3 artifact
+. Download the alm artifact
 
 #### Result
 
@@ -290,7 +290,7 @@ This stage updates the pom of the artifact to a RC0 or RELEASE version depending
 
 #### Conditional execution
 
-This stage runs on the absisPipelineCreateRelease or absisPipelineCreateRC
+This stage runs on the almPipelineCreateRelease or almPipelineCreateRC
 
 #### Steps
 
@@ -314,7 +314,7 @@ This stage runs always.
 #### Steps
 
 . inits pipelineData
-. send pipeline start to GPL (in case of absisPipelineBuild )
+. send pipeline start to GPL (in case of almPipelineBuild )
 . inits branchStructure
 . sets up currentBuild display name
 
@@ -335,7 +335,7 @@ This stage runs always.
 #### Steps
 
 . inits pomXml structure
-. send pipeline update to GPL (in case of absisPipelineBuild )
+. send pipeline update to GPL (in case of almPipelineBuild )
 . prints debug information
 . validates branch
 
@@ -621,7 +621,7 @@ This stage only runs when deployment is required, and the update to TST is selec
 
 #### Description
 
-Publishes the client artifacts for absis3 and absis2 for the microservice.
+Publishes the client artifacts for alm and alm2 for the microservice.
 
 #### Conditional execution
 
@@ -633,21 +633,21 @@ This stage only runs for micro services or data services (`MICRO_APP`).
 +
 First step is cleaning the source folder in the temporary directory created in the <<validate-version>> stage.
 
-. *Generate contract pom for absis3 client*
+. *Generate contract pom for alm client*
 +
 It fulfills the _fake_ pom with the maven details of the microservice and copies both the pom and the Swagger contract into the temporary folder. See <<validate-version, validate-version, step 1>> for more details.
 
-. *Install deploy client artifact for absis3*
+. *Install deploy client artifact for alm*
 +
-Deploys the client artifact for absis3 in nexus using the _fake_ pom recently copied into the temporary directory, using the maven profile `generateAbsisClient` and the goal `deploy`.
+Deploys the client artifact for alm in nexus using the _fake_ pom recently copied into the temporary directory, using the maven profile `generateAlmClient` and the goal `deploy`.
 
-. *Generate contract pom for absis2 client*
+. *Generate contract pom for alm2 client*
 +
-It fulfills the _fake_ pom with the maven details of the microservice and copies both the pom and the Swagger contract to the temporary folder. In this case, not only the groupId changes: the artifactId concats the keyword `Absis2` to the current artifactId. See <<validate-version, validate-version, step 1>> for more details.
+It fulfills the _fake_ pom with the maven details of the microservice and copies both the pom and the Swagger contract to the temporary folder. In this case, not only the groupId changes: the artifactId concats the keyword `Alm2` to the current artifactId. See <<validate-version, validate-version, step 1>> for more details.
 
-. *Install deploy client artifact for absis3*
+. *Install deploy client artifact for alm*
 +
-Deploys the client artifact for absis2 in nexus using the _fake_ pom recently copied into the temporary directory, using the maven profile `generateAbsis2Client` and the goal `deploy`.
+Deploys the client artifact for alm2 in nexus using the _fake_ pom recently copied into the temporary directory, using the maven profile `generateAlm2Client` and the goal `deploy`.
 
 #### Result
 
@@ -658,7 +658,7 @@ If there are no failures during the deployment process, the stage will end succe
 
 #### Description
 
-Publishes the artifact details to the Absis catalog.
+Publishes the artifact details to the Alm catalog.
 
 #### Conditional execution
 
@@ -816,12 +816,12 @@ Registers the swagger contract (if applies) into API Manager (adpbdd-micro).
 
 #### Conditional execution
 
-This stage runs if ABSIS3_SERVICES_APIMANAGER_TECHNICALSERVICES_REGISTRATION_ENABLED is true and pomXml.artifactName is not in the ABSIS3_SERVICES_APIMANAGER_TECHNICALSERVICES_REGISTRATION_SKIP_LIST.
+This stage runs if ALM_SERVICES_APIMANAGER_TECHNICALSERVICES_REGISTRATION_ENABLED is true and pomXml.artifactName is not in the ALM_SERVICES_APIMANAGER_TECHNICALSERVICES_REGISTRATION_SKIP_LIST.
 
 #### Steps
 
 1. Performs registration
-2. If fails, pipeline aborts if ABSIS3_SERVICES_APIMANAGER_TECHNICALSERVICES_REGISTRATION_IF_ERROR_THEN_PIPELINE_FAILS is true
+2. If fails, pipeline aborts if ALM_SERVICES_APIMANAGER_TECHNICALSERVICES_REGISTRATION_IF_ERROR_THEN_PIPELINE_FAILS is true
 
 #### Result
 

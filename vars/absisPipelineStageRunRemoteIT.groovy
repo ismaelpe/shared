@@ -12,7 +12,7 @@ import com.project.alm.MavenGoalExecutionException
 
 def call(PomXmlStructure pomXmlStructure, PipelineData pipelineData, String stageId, String deployICPPhasesPattern, ICPStateUtility icpStateUtility) {
 
-    if (GlobalVars.ABSIS3_SERVICES_SIMPLIFIED_ALM_WHITELIST.contains(pomXmlStructure.artifactName)) {
+    if (GlobalVars.ALM_SERVICES_SIMPLIFIED_ALM_WHITELIST.contains(pomXmlStructure.artifactName)) {
         return
     }
 
@@ -45,7 +45,7 @@ def call(PomXmlStructure pomXmlStructure, PipelineData pipelineData, String stag
         this.resultDeployICP = "KO"
 
         if (pipelineData.isCreateRelease()) {
-            sendEmail(" Resultado ejecucion app ${artifactAppAbort} - ${pipelineData.getPipelineBuildName()}  KO - ${this.deployICPPhases}", env.ABSIS3_SERVICES_EMAIL_ICP_DEPLOY_RESULT, "${artifactAppAbort} rama ${pipelineData.getPipelineBuildName()}", "KO en el paso ${this.deployICPPhases}")
+            sendEmail(" Resultado ejecucion app ${artifactAppAbort} - ${pipelineData.getPipelineBuildName()}  KO - ${this.deployICPPhases}", env.ALM_SERVICES_EMAIL_ICP_DEPLOY_RESULT, "${artifactAppAbort} rama ${pipelineData.getPipelineBuildName()}", "KO en el paso ${this.deployICPPhases}")
         }
 
         kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.IT_TEST_FINISHED, KpiLifeCycleStatus.KO, pipelineData.bmxStructure.environment)
@@ -68,7 +68,7 @@ def call(PomXmlStructure pomXmlStructure, PipelineData pipelineData, String stag
 
     }
 
-    if (GlobalVars.ABSIS3_SERVICES_SIMPLIFIED_ALM_WHITELIST.contains(pomXmlStructure.artifactName)) {
+    if (GlobalVars.ALM_SERVICES_SIMPLIFIED_ALM_WHITELIST.contains(pomXmlStructure.artifactName)) {
         pipelineData.onlyProductionTests = false
     }
 

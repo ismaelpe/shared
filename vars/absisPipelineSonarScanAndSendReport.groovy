@@ -75,16 +75,16 @@ def call() {
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
             JNKMSV = credentials('JNKMSV-USER-TOKEN')
-            ICP_CERT = credentials('icp-absis3-pro-cert')
-            ICP_PASS = credentials('icp-absis3-pro-cert-passwd')
+            ICP_CERT = credentials('icp-alm-pro-cert')
+            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
             proxyPort = "${GlobalVars.proxyCaixaPort}"
             gitURL = 'https://git.svb.lacaixa.es/'
             gitCredentials = 'GITLAB_CREDENTIALS'
-            jenkinsPath = 'absis3/services'
-            APIGW_TOKEN = credentials('ABSIS3_TOKEN_PRO')
+            jenkinsPath = 'alm/services'
+            APIGW_TOKEN = credentials('ALM_TOKEN_PRO')
             SONAR_TOKEN = credentials('sonartoken')
             sendLogsToGpl = true
         }
@@ -303,7 +303,7 @@ def sonarSendReportStep() {
 
             def sonarProjectName="${pipelineData.getGarArtifactType().getGarName()}.${pomXmlStructure.getSpringAppName()}"
     
-            sonarSendReport apigwToken: APIGW_TOKEN, sonarUrl: GlobalVars.SONAR_URL, sonarToken: SONAR_TOKEN, projectKey: sonarProjectName, emailSender: "sonar@caixabanktech.com", emailReceivers: destinationEmails
+            sonarSendReport apigwToken: APIGW_TOKEN, sonarUrl: GlobalVars.SONAR_URL, sonarToken: SONAR_TOKEN, projectKey: sonarProjectName, emailSender: "sonar@projecttech.com", emailReceivers: destinationEmails
             
             def msgFinal
             if (msg) {

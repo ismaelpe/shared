@@ -9,14 +9,14 @@ def call(def namespace, def type, def app, def major, def environment) {
 
 	if (environment=='EDEN') environment='DEV'
 	def response = null
-	if (env.SEND_TO_ABSIS3_CATALOG!="" && env.SEND_TO_ABSIS3_CATALOG=="true") {
+	if (env.SEND_TO_ALM_CATALOG!="" && env.SEND_TO_ALM_CATALOG=="true") {
 		try{
 
 			response = sendRequestToAbsis3MS(
                 'GET',
-                "${GlobalVars.URL_CATALOGO_ABSIS3_PRO}/app/${type}/${app}/${major}/config?env=${environment}",
+                "${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${type}/${app}/${major}/config?env=${environment}",
                 null,
-                "${GlobalVars.CATALOGO_ABSIS3_ENV}",
+                "${GlobalVars.CATALOGO_ALM_ENV}",
                 [
                     kpiAlmEvent: new KpiAlmEvent(
                         null, null,
@@ -31,13 +31,13 @@ def call(def namespace, def type, def app, def major, def environment) {
 			}
 			
 		}catch(Exception ex) {
-			printOpen("Error en el envio al catalogo de absis3 ", EchoLevel.ERROR)
-			if (env.SEND_TO_ABSIS3_CATALOG_REQUIRED!=null && env.SEND_TO_ABSIS3_CATALOG_REQUIRED!="true") {
+			printOpen("Error en el envio al catalogo de alm ", EchoLevel.ERROR)
+			if (env.SEND_TO_ALM_CATALOG_REQUIRED!=null && env.SEND_TO_ALM_CATALOG_REQUIRED!="true") {
 				throw new Exception("Unexpected response from CATMSV, services catalog ")
 			}
 		}
 	}else {
-		printOpen("El catalogo de absis3 esta desconnectado", EchoLevel.INFO)
+		printOpen("El catalogo de alm esta desconnectado", EchoLevel.INFO)
 
 	}	
 	

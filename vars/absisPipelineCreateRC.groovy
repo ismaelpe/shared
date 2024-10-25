@@ -40,7 +40,7 @@ def call(Map pipelineParameters) {
 
     gitURL = "https://git.svb.lacaixa.es/"
     gitCredentials = "GITLAB_CREDENTIALS"
-    jenkinsPath = "absis3/services"
+    jenkinsPath = "alm/services"
 
     // las variables que se obtienen como parametro del job no es necesario
     // redefinirlas, se hace por legibilidad del codigo
@@ -89,8 +89,8 @@ def call(Map pipelineParameters) {
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
 			JNKMSV = credentials('JNKMSV-USER-TOKEN')
-            ICP_CERT = credentials('icp-absis3-pro-cert')
-            ICP_PASS = credentials('icp-absis3-pro-cert-passwd')
+            ICP_CERT = credentials('icp-alm-pro-cert')
+            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
@@ -218,10 +218,10 @@ def verifyProState() {
     try {
         sendStageStartToGPL(pomXmlStructure, pipelineData, "150")
 
-        def exclusionList = GlobalVars.ABSIS3_SERVICES_SKIP_VALIDATION_CLOSE_RELEASE_LIST.split(";")
+        def exclusionList = GlobalVars.ALM_SERVICES_SKIP_VALIDATION_CLOSE_RELEASE_LIST.split(";")
         boolean excluded = Arrays.asList(exclusionList).contains(pomXmlStructure.artifactName)
         
-        if("true".equals(GlobalVars.ABSIS3_SERVICES_SKIP_VALIDATION_CLOSE_RELEASE_ALL) || excluded) {
+        if("true".equals(GlobalVars.ALM_SERVICES_SKIP_VALIDATION_CLOSE_RELEASE_ALL) || excluded) {
 
             printOpen("Element ${pomXmlStructure.artifactName} excluded for verify-PRO-state stage. The skipped component list contain it.", EchoLevel.INFO)
 

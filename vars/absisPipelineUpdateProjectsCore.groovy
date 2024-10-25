@@ -50,8 +50,8 @@ def call(Map pipelineParameters) {
         }
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
-            ICP_CERT = credentials('icp-absis3-pro-cert')
-            ICP_PASS = credentials('icp-absis3-pro-cert-passwd')
+            ICP_CERT = credentials('icp-alm-pro-cert')
+            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
@@ -104,13 +104,13 @@ def getCoreVersionStep() {
         printOpen("La versión del core se ha forzado a: ${lastVersionCore}", EchoLevel.INFO)
     } else {
         if (buildType == 'RELEASE') {
-            lastVersionCore = nexus.getLastVersionNumber(GlobalVars.ABSIS_CORE_GROUPID, GlobalVars.ABSIS_CORE_ARTIFACTID, null, GlobalVars.NEXUS_RELEASES_REPO_NAME, BuildType.FINAL)
+            lastVersionCore = nexus.getLastVersionNumber(GlobalVars.ALM_CORE_GROUPID, GlobalVars.ALM_CORE_ARTIFACTID, null, GlobalVars.NEXUS_RELEASES_REPO_NAME, BuildType.FINAL)
             printOpen("La última versión RELEASE del core es: ${lastVersionCore}", EchoLevel.INFO)
         } else if (buildType == 'RC') {
-            lastVersionCore = nexus.getLastVersionNumber(GlobalVars.ABSIS_CORE_GROUPID, GlobalVars.ABSIS_CORE_ARTIFACTID, null, GlobalVars.NEXUS_RELEASES_REPO_NAME, BuildType.RELEASE_CANDIDATE)
+            lastVersionCore = nexus.getLastVersionNumber(GlobalVars.ALM_CORE_GROUPID, GlobalVars.ALM_CORE_ARTIFACTID, null, GlobalVars.NEXUS_RELEASES_REPO_NAME, BuildType.RELEASE_CANDIDATE)
             printOpen("La última versión RC del core es: ${lastVersionCore}", EchoLevel.INFO)
         } else {
-            lastVersionCore = nexus.getLastVersionNumber(GlobalVars.ABSIS_CORE_GROUPID, GlobalVars.ABSIS_CORE_ARTIFACTID, null, GlobalVars.NEXUS_PUBLIC_REPO_NAME, BuildType.SNAPSHOT)
+            lastVersionCore = nexus.getLastVersionNumber(GlobalVars.ALM_CORE_GROUPID, GlobalVars.ALM_CORE_ARTIFACTID, null, GlobalVars.NEXUS_PUBLIC_REPO_NAME, BuildType.SNAPSHOT)
             printOpen("La última versión SNAPSHOT del core es: ${lastVersionCore}", EchoLevel.INFO)
         }
     }
@@ -143,7 +143,7 @@ def checkProjectsStep() {
                 String branchName = "${GlobalVars.FEATURE_BRANCH}/UpgradeParentVersion_${lastVersionCore}_${env.BUILD_ID}"
                 sh "cd ${it} && git checkout -b ${branchName}" // Creamos la rama feature
                 try {
-                    configFileProvider([configFile(fileId: 'absis3-maven-settings-with-singulares', variable: 'MAVEN_SETTINGS')]) {
+                    configFileProvider([configFile(fileId: 'alm-maven-settings-with-singulares', variable: 'MAVEN_SETTINGS')]) {
                         sh "cd ${it} && mvn -Dhttp.proxyHost=${env.proxyHost} -Dhttp.proxyPort=${env.proxyPort} -Dhttps.proxyHost=${env.proxyHost} -Dhttps.proxyPort=${env.proxyPort} -s $MAVEN_SETTINGS  ${GlobalVars.GLOBAL_MVN_PARAMS} versions:update-parent -DallowSnapshots=true -DparentVersion=[${lastVersionCore}] -DgenerateBackupPoms=false"
                     } // Actualizamos versión de Parent con la versión del Core última
                     sh "cd ${it} && git add . && git commit -m 'Upgrading parent version to ${lastVersionCore} and deploy with executionProfile[SCHEDULED_CORE_UPDATE]' --allow-empty"

@@ -54,10 +54,10 @@ def call(Map pipelineParameters) {
                 def fileOutput = null
 
                 if ('true'.equals(getInfoFromLocal)) {
-                    fileOutput = CopyGlobalLibraryScript('GAR_APL_ABSIS3.csv')
+                    fileOutput = CopyGlobalLibraryScript('GAR_APL_ALM.csv')
                     printOpen("El fichero es de ${fileOutput}", EchoLevel.INFO)
                 }else {
-                    csvAbsis3 = 'https://eideswasp.svb.lacaixa.es/apw61/idegar/api/interfaz/v1/descargaFichero/00001/GAR_APL_ABSIS3.csv'
+                    csvAbsis3 = 'https://eideswasp.svb.lacaixa.es/apw61/idegar/api/interfaz/v1/descargaFichero/00001/GAR_APL_ALM.csv'
                     fileOutput = CopyGlobalLibraryScript('', null, 'garAplAbsis3.csv', EchoLevel.INFO)
                     sh(script: "curl ${csvAbsis3} -X GET --output ${fileOutput} ", returnStdout:true)
                 }
@@ -150,7 +150,7 @@ def call(Map pipelineParameters) {
                             }
                             if (parcialPath != null) {
                                 increaseStatistics(statisticsApp, registroParcial['typeApp'])
-                                String rutaProyecto = 'cbk/absis3/services' + parcialPath
+                                String rutaProyecto = 'cbk/alm/services' + parcialPath
                                 printOpen("El path es de ${rutaProyecto} ${rutaProyecto.substring(4)}", EchoLevel.INFO)
 
                                 withCredentials([

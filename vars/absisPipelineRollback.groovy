@@ -48,7 +48,7 @@ def call(Map pipelineParameters) {
     //Mantener estos parametros/variables por si se deben generar estructuras de datos para enviar a GPL
     gitURL = "https://git.svb.lacaixa.es/"
     gitCredentials = "GITLAB_CREDENTIALS"
-    jenkinsPath = "absis3/services"
+    jenkinsPath = "alm/services"
 
     originBranch = params.originBranchParam
     pathToRepo = params.pathToRepoParam
@@ -99,8 +99,8 @@ def call(Map pipelineParameters) {
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
 			JNKMSV = credentials('JNKMSV-USER-TOKEN')			
-            ICP_CERT = credentials('icp-absis3-pro-cert')
-            ICP_PASS = credentials('icp-absis3-pro-cert-passwd')
+            ICP_CERT = credentials('icp-alm-pro-cert')
+            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"

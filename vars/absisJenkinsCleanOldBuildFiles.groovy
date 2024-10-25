@@ -51,7 +51,7 @@ def call(Map pipelineParameters) {
  */
 def removeStep() {
     sh '''#!/bin/bash
-         for i in $(find /var/jenkins_home/jobs/absis3/jobs -name "builds"); do find $i -type f -mtime +7 -not -path "*/libs/*" -exec rm -rfv -- '{}' \\; ; done
+         for i in $(find /var/jenkins_home/jobs/alm/jobs -name "builds"); do find $i -type f -mtime +7 -not -path "*/libs/*" -exec rm -rfv -- '{}' \\; ; done
     '''
 }
 

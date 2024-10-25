@@ -9,7 +9,7 @@ def call(def namespace, def type, def app, def major, def environment, def cpu, 
 
 	
 	def response = null
-	if (env.SEND_TO_ABSIS3_CATALOG!="" && env.SEND_TO_ABSIS3_CATALOG=="true") {
+	if (env.SEND_TO_ALM_CATALOG!="" && env.SEND_TO_ALM_CATALOG=="true") {
 		try{
 		
 			def bodyResize = [
@@ -21,9 +21,9 @@ def call(def namespace, def type, def app, def major, def environment, def cpu, 
 
 			response = sendRequestToAbsis3MS(
                 'PUT',
-                "${GlobalVars.URL_CATALOGO_ABSIS3_PRO}/app/${type}/${app}/${major}/config?env=${environment}",
+                "${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${type}/${app}/${major}/config?env=${environment}",
                 bodyResize,
-                "${GlobalVars.CATALOGO_ABSIS3_ENV}",
+                "${GlobalVars.CATALOGO_ALM_ENV}",
                 [
                     kpiAlmEvent: new KpiAlmEvent(
                         null, null,
@@ -39,12 +39,12 @@ def call(def namespace, def type, def app, def major, def environment, def cpu, 
 			}
 			
 		}catch(Exception ex) {
-			printOpen("Error en el envio al catalogo de absis3 ", EchoLevel.ALL)
+			printOpen("Error en el envio al catalogo de alm ", EchoLevel.ALL)
 			throw new Exception("Unexpected response from CATMSV, services catalog ")
 			
 		}
 	}else {
-		printOpen("El catalogo de absis3 esta desconnectado", EchoLevel.ALL)
+		printOpen("El catalogo de alm esta desconnectado", EchoLevel.ALL)
 
 	}	
 	

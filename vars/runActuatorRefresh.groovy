@@ -20,7 +20,7 @@ def call(String microurl, PomXmlStructure pomXml, PipelineData pipelineData) {
 	
 	printOpen("Iniciando runActuatorRefresh", EchoLevel.ALL)
 
-	def whiteListApps = "${env.ABSIS3_SERVICES_SKIP_CHECK_HEALTH_REFRESH}".split(";")
+	def whiteListApps = "${env.ALM_SERVICES_SKIP_CHECK_HEALTH_REFRESH}".split(";")
 	List<String> list = Arrays.asList(whiteListApps)
 	boolean skip = false
 	for ( String item : list ) {

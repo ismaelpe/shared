@@ -1,5 +1,5 @@
 
-## absisPipelineCreateRelease
+## almPipelineCreateRelease
 
 This pipeline runs manually when a new Release has to be created. 
 

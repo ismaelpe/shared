@@ -53,7 +53,7 @@ def icpDeployException(PipelineData pipelineData, PomXmlStructure pomXml, def re
 
         throw new Exception(validateAndReplace(fallo.pipelineExceptionErrorMessage))
 
-    } else if (!"${env.ABSIS3_SERVICES_MAXIMO_INCIDENTS_REGISTRATION_ENABLED}".toBoolean()) {
+    } else if (!"${env.ALM_SERVICES_MAXIMO_INCIDENTS_REGISTRATION_ENABLED}".toBoolean()) {
 
         throw new Exception("Se ha producido un error. Si el error persiste abrid máximo al Servicio TI: ${fallo.equipoResponsable.servicioTI}")
 
@@ -90,7 +90,7 @@ def kubernetesDisabledException(PipelineData pipelineData, PomXmlStructure pomXm
 
         throw new Exception(validateAndReplace(fallo.pipelineExceptionErrorMessage))
 
-    } else if (!"${env.ABSIS3_SERVICES_MAXIMO_INCIDENTS_REGISTRATION_ENABLED}".toBoolean()) {
+    } else if (!"${env.ALM_SERVICES_MAXIMO_INCIDENTS_REGISTRATION_ENABLED}".toBoolean()) {
 
         throw new Exception("Se ha producido un error. Si el error persiste abrid máximo al Servicio TI: ${fallo.equipoResponsable.servicioTI}")
 
@@ -144,7 +144,7 @@ def deployBuildDockerImageFailure(PipelineData pipelineData, PomXmlStructure pom
 
         throw new Exception(validateAndReplace(fallo.pipelineExceptionErrorMessage))
 
-    } else if (!"${env.ABSIS3_SERVICES_MAXIMO_INCIDENTS_REGISTRATION_ENABLED}".toBoolean()) {
+    } else if (!"${env.ALM_SERVICES_MAXIMO_INCIDENTS_REGISTRATION_ENABLED}".toBoolean()) {
 
         throw new Exception("Se ha producido un error. Si el error persiste abrid máximo al Servicio TI: ${fallo.equipoResponsable.servicioTI}")
 
@@ -197,7 +197,7 @@ def gplRequestException(PipelineData pipelineData, def pomXmlOrIClientInfo, def 
 
         throw new Exception(validateAndReplace(fallo.pipelineExceptionErrorMessage))
 
-    } else if (!"${env.ABSIS3_SERVICES_MAXIMO_INCIDENTS_REGISTRATION_ENABLED}".toBoolean()) {
+    } else if (!"${env.ALM_SERVICES_MAXIMO_INCIDENTS_REGISTRATION_ENABLED}".toBoolean()) {
 
         throw new Exception("Se ha producido un error. Si el error persiste abrid máximo al Servicio TI: ${fallo.equipoResponsable.servicioTI}")
 
@@ -247,7 +247,7 @@ def gplRequestException(String artifactGarAppName, String artifactGarType, def r
 
         throw new Exception(validateAndReplace(fallo.pipelineExceptionErrorMessage))
 
-    } else if (!"${env.ABSIS3_SERVICES_MAXIMO_INCIDENTS_REGISTRATION_ENABLED}".toBoolean()) {
+    } else if (!"${env.ALM_SERVICES_MAXIMO_INCIDENTS_REGISTRATION_ENABLED}".toBoolean()) {
 
         throw new Exception("Se ha producido un error. Si el error persiste abrid máximo al Servicio TI: ${fallo.equipoResponsable.servicioTI}")
 
@@ -315,7 +315,7 @@ def sslEventualErrorWhileDoingITTest(PipelineData pipelineData, PomXmlStructure 
 
         throw new Exception(validateAndReplace(fallo.pipelineExceptionErrorMessage))
 
-    } else if (!"${env.ABSIS3_SERVICES_MAXIMO_INCIDENTS_REGISTRATION_ENABLED}".toBoolean()) {
+    } else if (!"${env.ALM_SERVICES_MAXIMO_INCIDENTS_REGISTRATION_ENABLED}".toBoolean()) {
 
         throw new Exception("Se ha producido un error. Si el error persiste abrid máximo al Servicio TI: ${fallo.equipoResponsable.servicioTI}")
 
@@ -353,7 +353,7 @@ def sslEventualErrorWhileExecutingMavenGoal(PipelineData pipelineData, PomXmlStr
 
         throw new Exception(validateAndReplace(fallo.pipelineExceptionErrorMessage))
 
-    } else if (!"${env.ABSIS3_SERVICES_MAXIMO_INCIDENTS_REGISTRATION_ENABLED}".toBoolean()) {
+    } else if (!"${env.ALM_SERVICES_MAXIMO_INCIDENTS_REGISTRATION_ENABLED}".toBoolean()) {
 
         throw new Exception("Se ha producido un error. Si el error persiste abrid máximo al Servicio TI: ${fallo.equipoResponsable.servicioTI}")
 
@@ -391,7 +391,7 @@ def icpSecretsVerificationFailed(PipelineData pipelineData, PomXmlStructure pomX
 
         throw new Exception(validateAndReplace(fallo.pipelineExceptionErrorMessage))
 
-    } else if (!"${env.ABSIS3_SERVICES_MAXIMO_INCIDENTS_REGISTRATION_ENABLED}".toBoolean()) {
+    } else if (!"${env.ALM_SERVICES_MAXIMO_INCIDENTS_REGISTRATION_ENABLED}".toBoolean()) {
 
         throw new Exception("Se ha producido un error. Si el error persiste abrid máximo al Servicio TI: ${fallo.equipoResponsable.servicioTI}")
 
@@ -431,7 +431,7 @@ def genericFailureWhileDoingActuatorRefresh(PipelineData pipelineData, PomXmlStr
 
         throw new Exception(validateAndReplace(fallo.pipelineExceptionErrorMessage))
 
-    } else if (!"${env.ABSIS3_SERVICES_MAXIMO_INCIDENTS_REGISTRATION_ENABLED}".toBoolean()) {
+    } else if (!"${env.ALM_SERVICES_MAXIMO_INCIDENTS_REGISTRATION_ENABLED}".toBoolean()) {
 
         throw new Exception("Se ha producido un error. Si el error persiste abrid máximo al Servicio TI: ${fallo.equipoResponsable.servicioTI}")
 
@@ -469,7 +469,7 @@ def nexusDownloadExceptionDueToAConnectivityIssue(PipelineData pipelineData, Pom
 
         throw new Exception(validateAndReplace(fallo.pipelineExceptionErrorMessage))
 
-    } else if (!"${env.ABSIS3_SERVICES_MAXIMO_INCIDENTS_REGISTRATION_ENABLED}".toBoolean()) {
+    } else if (!"${env.ALM_SERVICES_MAXIMO_INCIDENTS_REGISTRATION_ENABLED}".toBoolean()) {
 
         throw new Exception("Se ha producido un error. Si el error persiste abrid máximo al Servicio TI: ${fallo.equipoResponsable.servicioTI}")
 
@@ -508,7 +508,7 @@ def nexusDownloadExceptionDueToANonPresentPluginDependencyThatWasPreviouslyOnNex
 
         throw new Exception(validateAndReplace(fallo.pipelineExceptionErrorMessage))
 
-    } else if (!"${env.ABSIS3_SERVICES_MAXIMO_INCIDENTS_REGISTRATION_ENABLED}".toBoolean()) {
+    } else if (!"${env.ALM_SERVICES_MAXIMO_INCIDENTS_REGISTRATION_ENABLED}".toBoolean()) {
 
         throw new Exception("Se ha producido un error. Si el error persiste abrid máximo al Servicio TI: ${fallo.equipoResponsable.servicioTI}")
 
@@ -523,7 +523,7 @@ def nexusDownloadExceptionDueToANonPresentPluginDependencyThatWasPreviouslyOnNex
 
 
 def validateAndReplace(String message){
-	boolean openMaximo = "${env.ABSIS3_SERVICES_MAXIMO_INCIDENTS_REGISTRATION_ENABLED}".toBoolean()
+	boolean openMaximo = "${env.ALM_SERVICES_MAXIMO_INCIDENTS_REGISTRATION_ENABLED}".toBoolean()
 	
 	if (openMaximo) {
 		return newMessage
@@ -561,7 +561,7 @@ def sonarScanExceptionDueToAConnectivityIssue(PipelineData pipelineData, PomXmlS
 
         throw new Exception(validateAndReplace(fallo.pipelineExceptionErrorMessage))
 
-    } else if (!"${env.ABSIS3_SERVICES_MAXIMO_INCIDENTS_REGISTRATION_ENABLED}".toBoolean()) {
+    } else if (!"${env.ALM_SERVICES_MAXIMO_INCIDENTS_REGISTRATION_ENABLED}".toBoolean()) {
 
         throw new Exception("Se ha producido un error. Si el error persiste abrid máximo al Servicio TI: ${fallo.equipoResponsable.servicioTI}")
 
@@ -596,7 +596,7 @@ def waitForQualityGateException(PipelineData pipelineData, PomXmlStructure pomXm
 
         throw new Exception(validateAndReplace(fallo.pipelineExceptionErrorMessage))
 
-    } else if (!"${env.ABSIS3_SERVICES_MAXIMO_INCIDENTS_REGISTRATION_ENABLED}".toBoolean()) {
+    } else if (!"${env.ALM_SERVICES_MAXIMO_INCIDENTS_REGISTRATION_ENABLED}".toBoolean()) {
 
         throw new Exception("Se ha producido un error. Si el error persiste abrid máximo al Servicio TI: ${fallo.equipoResponsable.servicioTI}")
 

@@ -1,5 +1,5 @@
 
-## absisPipelineRollback
+## almPipelineRollback
 
 This pipeline can make a rollback of a micro, it depends if the artifact has an ancient (the previous version) or not.
 

@@ -2,7 +2,7 @@ import com.project.alm.*
 
 def call(MaximoCreationRequest request, boolean forceExecution = false) {
 
-    boolean openMaximo = forceExecution || "${env.ABSIS3_SERVICES_MAXIMO_INCIDENTS_REGISTRATION_ENABLED}".toBoolean()
+    boolean openMaximo = forceExecution || "${env.ALM_SERVICES_MAXIMO_INCIDENTS_REGISTRATION_ENABLED}".toBoolean()
 
     MaximoAbstractFallo fallo = request.tipoFallo
     String subject = "${fallo.tipoMaximo} ${fallo.equipoResponsable.servicioTI}${fallo.propietario ? ' '+fallo.propietario : ''} # ${fallo.resumen}"

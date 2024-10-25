@@ -53,13 +53,13 @@ The pipeline validates the artifact architecture version to ensure that is minum
 
 The global variables are:
 
-* ABSIS3_SRV_MINIMUM_VERSION_ARCH_DEV
-* ABSIS3_SRV_MINIMUM_VERSION_ARCH_TST
-* ABSIS3_SRV_MINIMUM_VERSION_ARCH_PRE
-* ABSIS3_SRV_MINIMUM_VERSION_ARCH_PRO
+* ALM_SRV_MINIMUM_VERSION_ARCH_DEV
+* ALM_SRV_MINIMUM_VERSION_ARCH_TST
+* ALM_SRV_MINIMUM_VERSION_ARCH_PRE
+* ALM_SRV_MINIMUM_VERSION_ARCH_PRO
 
 image::./assets/globalVariablesArchVersion.png[Global configuration]
 
 ## Configure architecture the destination email address
 
-You can configure the email destination in the global variables. The variables is *ABSIS3_SERVICES_EMAIL_DISTRIBUTION_LIST*
+You can configure the email destination in the global variables. The variables is *ALM_SERVICES_EMAIL_DISTRIBUTION_LIST*

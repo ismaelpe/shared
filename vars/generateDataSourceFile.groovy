@@ -36,8 +36,8 @@ def call(PomXmlStructure pomXml, PipelineData pipeline) {
 
         Map tenantsApp = [:]
 
-        String disableGetTenants = "${env.ABSIS3_SERVICES_SKIP_TENANT_GENERATION}"
-        def whiteListAppsTemants = "${env.ABSIS3_SERVICES_SKIP_TENANT_GENERATION_LIST}".split(";")
+        String disableGetTenants = "${env.ALM_SERVICES_SKIP_TENANT_GENERATION}"
+        def whiteListAppsTemants = "${env.ALM_SERVICES_SKIP_TENANT_GENERATION_LIST}".split(";")
 
         if ("true".equals(disableGetTenants) || Arrays.asList(whiteListAppsTemants).contains(pomXml.artifactName)) {
 

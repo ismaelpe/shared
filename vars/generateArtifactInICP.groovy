@@ -59,7 +59,7 @@ def generatePostCreateComponent(String application, String componentName, boolea
 			chart: [ id:"${isWiremock?env.WIREMOCK_CHART_ID:getChartId(application)}"], //Identificador del component
 			componentType: "PAAS",
 			deploymentArea: "INTRANET",
-			loggingStack: "absis30",
+			loggingStack: "alm0",
 			loginType: "NONE",
 			mutualTLS: false,
 			name: componentName,

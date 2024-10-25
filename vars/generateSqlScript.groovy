@@ -333,7 +333,7 @@ def sendEmailToAT(PomXmlStructure artifactPom, PipelineData pipeline,def errores
 	def app = artifactPom.getApp(pipeline.garArtifactType)
 	def date = new Date()
 	String datePart = date.format("dd/MM/yyyy")
-	def to = "arquitectura.tecnica@caixabank.com"
+	def to = "arquitectura.tecnica@project.com"
 	
 	String bodyEmail = "<p>Buenos dias, </p><p>La app ${app} va a requerir de una validación en su rama ${pipeline.branchStructure.branchName} en la fecha ${datePart}.</p>"+
 	                   "<p>Tienen la merge request en la siguiente url del git. ${pipeline.gitUrl}</p>"+

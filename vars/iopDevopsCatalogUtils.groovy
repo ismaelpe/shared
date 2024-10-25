@@ -16,8 +16,8 @@ import groovy.json.JsonSlurperClassic
 
 def getOpenedMicros(def days) {
     
-    //def response=sendRequestToAbsis3MS('GET', "${GlobalVars.URL_CATALOGO_ABSIS3_TST}/app/traceability/PRO/BETA?daysToDest=${days}&onlyInstalled=true",null, "TST")
-    def response=sendRequestToAbsis3MS('GET', "${GlobalVars.URL_CATALOGO_ABSIS3_PRO}/app/traceability/PRO/BETA?daysToDest=${days}&onlyInstalled=true",null, "${GlobalVars.CATALOGO_ABSIS3_ENV}")
+    //def response=sendRequestToAbsis3MS('GET', "${GlobalVars.URL_CATALOGO_ALM_TST}/app/traceability/PRO/BETA?daysToDest=${days}&onlyInstalled=true",null, "TST")
+    def response=sendRequestToAbsis3MS('GET', "${GlobalVars.URL_CATALOGO_ALM_PRO}/app/traceability/PRO/BETA?daysToDest=${days}&onlyInstalled=true",null, "${GlobalVars.CATALOGO_ALM_ENV}")
     if (response.status == 200) {
        printOpen("Devolveremos los micros abiertos", EchoLevel.ALL)
        
@@ -48,7 +48,7 @@ private sendEmail(def subject, def body, def replyTo, def from, def to) {
 }
 
 def notifyToAppTeam(def micros) {
-    if (env.SEND_TO_ABSIS3_CATALOG!="" && env.SEND_TO_ABSIS3_CATALOG=="true") {
+    if (env.SEND_TO_ALM_CATALOG!="" && env.SEND_TO_ALM_CATALOG=="true") {
         micros.each{
             x-> 
                 printOpen("Se procede notificar a la aplicacion ${x.appType}${x.garApp} para el cierre la ${x.major}.${x.minor}.${x.fix}.${x.typeVersion}", EchoLevel.ALL)
@@ -68,7 +68,7 @@ def notifyToAppTeam(def micros) {
 def validateCoherence(def type, def application, def major, def minor, def fix, def versionType, def enviroment) {
 
     ///app/${type}/${application}/version/${major}/${minor}/${fix}/${versionType}/dependency/validate/${enviroment}
-    def response=sendRequestToAbsis3MS('GET', "${GlobalVars.URL_CATALOGO_ABSIS3_PRO}/app/${type}/${application}/version/${major}/${minor}/${fix}/${versionType}/dependency/validate/${enviroment}", null, "${GlobalVars.CATALOGO_ABSIS3_ENV}")
+    def response=sendRequestToAbsis3MS('GET', "${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${type}/${application}/version/${major}/${minor}/${fix}/${versionType}/dependency/validate/${enviroment}", null, "${GlobalVars.CATALOGO_ALM_ENV}")
     printOpen("El status de las peticiones son de ${response.status}", EchoLevel.ALL)
     if (response.status == 200) {
        printOpen("Validaciones de depencias correctas", EchoLevel.ALL)

@@ -6,8 +6,8 @@ class ApiManagerTechnicalServicesRequest {
     boolean contractShouldBeSent
     String contractPath = "./contract/swagger-micro-contract.yaml"
     String apiManagerUri
-    String absis3TokenName
-    int timeout = GlobalVars.ABSIS3_MS_TIMEOUT
+    String almTokenName
+    int timeout = GlobalVars.ALM_MS_TIMEOUT
 
     static ApiManagerTechnicalServicesRequest fromPipelineAndPomData(PipelineData pipelineData, PomXmlStructure pomXml) {
 

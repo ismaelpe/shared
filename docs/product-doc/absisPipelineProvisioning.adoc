@@ -1,5 +1,5 @@
 
-## absisPipelineProvisioning
+## almPipelineProvisioning
 
 This pipeline is executed during the provisioning process. The main purpose is to create the jenkins jobs (continous integration for the git repo). 
 Also, this pipeline adds some flags to the git repo.

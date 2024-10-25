@@ -31,7 +31,7 @@ private pluginUpgradeVersion(PomXmlStructure pomXml) {
         pomXml.revision = pomXml.artifactVersion
 
         try {
-            configFileProvider([configFile(fileId: 'absis3-maven-settings-with-singulares', variable: 'MAVEN_SETTINGS')]) {
+            configFileProvider([configFile(fileId: 'alm-maven-settings-with-singulares', variable: 'MAVEN_SETTINGS')]) {
                 /*sh "mvn  ${GlobalVars.GLOBAL_MVN_PARAMS} -Dhttp.proxyHost=${env.proxyHost} -Dhttp.proxyPort=${env.proxyPort} -Dhttps.proxyHost=${env.proxyHost} -Dhttps.proxyPort=${env.proxyPort} -s $MAVEN_SETTINGS versions:set -DgenerateBackupPoms=false -DnewVersion=${pomXml.artifactVersion} -DgroupId=* -DartifactId=*"
                 sh "mvn  ${GlobalVars.GLOBAL_MVN_PARAMS} -Dhttp.proxyHost=${env.proxyHost} -Dhttp.proxyPort=${env.proxyPort} -Dhttps.proxyHost=${env.proxyHost} -Dhttps.proxyPort=${env.proxyPort} -s $MAVEN_SETTINGS versions:set-property -DgenerateBackupPoms=false -Dproperty=revision -DnewVersion=${pomXml.revision} -N"*/
 				cmd = "mvn  ${GlobalVars.GLOBAL_MVN_PARAMS} -s $MAVEN_SETTINGS versions:set -DgenerateBackupPoms=false -DnewVersion=${pomXml.artifactVersion} -DgroupId=* -DartifactId=*"
@@ -40,7 +40,7 @@ private pluginUpgradeVersion(PomXmlStructure pomXml) {
                 runMavenCommand(cmd)
             }
         } catch (Throwable t) {
-            configFileProvider([configFile(fileId: 'absis3-maven-settings-with-singulares', variable: 'MAVEN_SETTINGS')]) {
+            configFileProvider([configFile(fileId: 'alm-maven-settings-with-singulares', variable: 'MAVEN_SETTINGS')]) {
                 /* Cuidado, deben mantenerse los dos parametros "-Dmaven.test.skip=true -DskipTests" para evitar la compilacion de tests pero tambien
                    la ejecucion en caso de realizarse con un target ya generado anteriormente */
                 /*sh "mvn  ${GlobalVars.GLOBAL_MVN_PARAMS} -Dhttp.proxyHost=${env.proxyHost} -Dhttp.proxyPort=${env.proxyPort} -Dhttps.proxyHost=${env.proxyHost} -Dhttps.proxyPort=${env.proxyPort} -s $MAVEN_SETTINGS clean verify -Dmaven.test.skip=true -DskipTests"
@@ -55,7 +55,7 @@ private pluginUpgradeVersion(PomXmlStructure pomXml) {
             }
         }
     } else {
-        configFileProvider([configFile(fileId: 'absis3-maven-settings-with-singulares', variable: 'MAVEN_SETTINGS')]) {
+        configFileProvider([configFile(fileId: 'alm-maven-settings-with-singulares', variable: 'MAVEN_SETTINGS')]) {
             cmd = "mvn  ${GlobalVars.GLOBAL_MVN_PARAMS} -Dhttp.proxyHost=${env.proxyHost} -Dhttp.proxyPort=${env.proxyPort} -Dhttps.proxyHost=${env.proxyHost} -Dhttps.proxyPort=${env.proxyPort} -s $MAVEN_SETTINGS versions:set -DgenerateBackupPoms=false -DnewVersion=${pomXml.artifactVersion} -DgroupId=* -DartifactId=*"
             runMavenCommand(cmd)
         }
@@ -72,14 +72,14 @@ private defaultUpgradeVersion(PomXmlStructure pomXml) {
         pomXml.revision = pomXml.artifactVersion
 
         try {
-            configFileProvider([configFile(fileId: 'absis3-maven-settings-with-singulares', variable: 'MAVEN_SETTINGS')]) {
+            configFileProvider([configFile(fileId: 'alm-maven-settings-with-singulares', variable: 'MAVEN_SETTINGS')]) {
                 cmd = "mvn  ${GlobalVars.GLOBAL_MVN_PARAMS} -Dhttp.proxyHost=${env.proxyHost} -Dhttp.proxyPort=${env.proxyPort} -Dhttps.proxyHost=${env.proxyHost} -Dhttps.proxyPort=${env.proxyPort} -s $MAVEN_SETTINGS versions:set -DgenerateBackupPoms=false -DnewVersion=${pomXml.artifactVersion} -DoldVersion=* -DgroupId=* -DartifactId=*"
                 runMavenCommand(cmd)
                 cmd = "mvn  ${GlobalVars.GLOBAL_MVN_PARAMS} -Dhttp.proxyHost=${env.proxyHost} -Dhttp.proxyPort=${env.proxyPort} -Dhttps.proxyHost=${env.proxyHost} -Dhttps.proxyPort=${env.proxyPort} -s $MAVEN_SETTINGS versions:set-property -DgenerateBackupPoms=false -Dproperty=revision -DnewVersion=${pomXml.revision} -N"
                 runMavenCommand(cmd)
             }
         } catch (Throwable t) {
-            configFileProvider([configFile(fileId: 'absis3-maven-settings-with-singulares', variable: 'MAVEN_SETTINGS')]) {
+            configFileProvider([configFile(fileId: 'alm-maven-settings-with-singulares', variable: 'MAVEN_SETTINGS')]) {
                 /* Cuidado, deben mantenerse los dos parametros "-Dmaven.test.skip=true -DskipTests" para evitar la compilacion de tests pero tambien
                    la ejecucion en caso de realizarse con un target ya generado anteriormente */
                 cmd = "mvn  ${GlobalVars.GLOBAL_MVN_PARAMS} -Dhttp.proxyHost=${env.proxyHost} -Dhttp.proxyPort=${env.proxyPort} -Dhttps.proxyHost=${env.proxyHost} -Dhttps.proxyPort=${env.proxyPort} -s $MAVEN_SETTINGS clean verify -Dmaven.test.skip=true -DskipTests"
@@ -91,7 +91,7 @@ private defaultUpgradeVersion(PomXmlStructure pomXml) {
             }
         }
     } else {
-        configFileProvider([configFile(fileId: 'absis3-maven-settings-with-singulares', variable: 'MAVEN_SETTINGS')]) {
+        configFileProvider([configFile(fileId: 'alm-maven-settings-with-singulares', variable: 'MAVEN_SETTINGS')]) {
             cmd = "mvn  ${GlobalVars.GLOBAL_MVN_PARAMS} -Dhttp.proxyHost=${env.proxyHost} -Dhttp.proxyPort=${env.proxyPort} -Dhttps.proxyHost=${env.proxyHost} -Dhttps.proxyPort=${env.proxyPort} -s $MAVEN_SETTINGS versions:set -DgenerateBackupPoms=false -DnewVersion=${pomXml.artifactVersion} -DoldVersion=* -DgroupId=* -DartifactId=*"
             runMavenCommand(cmd)
         }

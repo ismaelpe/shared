@@ -88,7 +88,7 @@ A deployStructure contains the data specific data of a specific environment, for
 .Most important methods
 |===
 |Name|Description
-|getEnvVariables|this method is used during the generation of the app manifest, it return all the information to bind the push with the environment variables, like the ABSIS_SPACE. This information could be used by the runtime to modify the behavior.
+|getEnvVariables|this method is used during the generation of the app manifest, it return all the information to bind the push with the environment variables, like the ALM_SPACE. This information could be used by the runtime to modify the behavior.
 |=== 
 
 ### BmxStructure

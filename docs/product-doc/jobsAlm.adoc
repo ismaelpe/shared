@@ -24,7 +24,7 @@ This jobs executes a rollback in the selected environment. It will recover the p
 * *Type:* Declarative Pipeline
 * *Trigger Type:* The previous job is any of the job that can deploy to any environment
 * *Build Trigger:* N/A
-* *Script:* absisPipelineRollback
+* *Script:* almPipelineRollback
 * *space affected:* srv_pro (PRO), srv_pre (PRE), srv_tst (TST, EDEN)
 * *Parameters:*
   ** pathToRepoParam The url path to the git repo
@@ -48,7 +48,7 @@ This jobs deploy the RELEASE artifact to the PRO environment, also it will copy 
 * *Type:* Declarative Pipeline
 * *Trigger Type:* The previous job is the Create Release job
 * *Build Trigger:* N/A
-* *Script:* absisPipelineDeployToPro
+* *Script:* almPipelineDeployToPro
 * *space affected:* srv_pro
 * *Parameters:*
   ** pathToRepoParam The url path to the git repo
@@ -67,7 +67,7 @@ This jobs creates the release from the origin branch, the final artifact is depl
 * *Type:* Declarative Pipeline
 * *Trigger Type:* The previous job is the Continous Integration executed on event push to the release branch (RC)
 * *Build Trigger:* N/A
-* *Script:* absisPipelineCreateRelease
+* *Script:* almPipelineCreateRelease
 * *space affected:* srv_pre and optionally to srv_tst
 * *Parameters:*
   ** pathToRepoParam The url path to the git repo
@@ -88,7 +88,7 @@ This jobs creates the release branch from the master, the CI will compile and ge
 * *Type:* Declarative Pipeline
 * *Trigger Type:* The previous job is the Continous Integration executed on event push to the master branch (SNAPSHOT)
 * *Build Trigger:* N/A
-* *Script:* absisPipelineCreateRC
+* *Script:* almPipelineCreateRC
 * *space affected:* This pipeline doesn't deploy a micro, only prepares the branch
 * *Parameters:*
   ** pathToRepoParam The url path to the git repo
@@ -106,7 +106,7 @@ This jobs executes a close release in the PRO environment. It will recover the p
 * *Type:* Declarative Pipeline
 * *Trigger Type:* The previous job is job-deploy-to-PRO
 * *Build Trigger:* N/A
-* *Script:* absisPipelineClose
+* *Script:* almPipelineClose
 * *space affected:* srv_pro (PRO)
 * *Parameters:*
   ** pathToRepoParam The url path to the git repo
@@ -131,7 +131,7 @@ This jobs modifies the percentatge of request load to the micro.
 * *Type:* Declarative Pipeline
 * *Trigger Type:* The previous job is job-deploy-to-PRO
 * *Build Trigger:* N/A
-* *Script:* absisPipelineCannaryRelease
+* *Script:* almPipelineCannaryRelease
 * *space affected:* srv_pro (PRO)
 * *Parameters:*
   ** pipelineOrigId The id of the previous pipeline, this parameter only affects to GPL

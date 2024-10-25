@@ -29,7 +29,7 @@ class RouteUtilities {
         return isAlive;
     }
 
-    //service-manager-micro-server-1            started             1/1          1G        1G      service-manager-micro-server-1-beta.pro.ext.srv.caixabank.com, service-manager-micro-server-1-beta.pro.int.srv.caixabank.com, service-manager-micro-server-1-beta.pro1.int.srv.caixabank.com
+    //service-manager-micro-server-1            started             1/1          1G        1G      service-manager-micro-server-1-beta.pro.ext.srv.project.com, service-manager-micro-server-1-beta.pro.int.srv.project.com, service-manager-micro-server-1-beta.pro1.int.srv.project.com
     static AppCloud getAppInfo(String appRoute) {
         int column = 0
         AppCloud appCloud = new AppCloud()

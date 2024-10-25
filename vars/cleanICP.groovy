@@ -68,9 +68,9 @@ def deleteAllSampleAPPS(ICPApiResponse response, String icpAppId, String icpAppN
 def deleteEvent(def id) {
 	def response = sendRequestToAbsis3MS(
 		'DELETE',
-		"${GlobalVars.URL_CATALOGO_ABSIS3_PRO}/audit/${id}",
+		"${GlobalVars.URL_CATALOGO_ALM_PRO}/audit/${id}",
 		null,
-		"${GlobalVars.CATALOGO_ABSIS3_ENV}")
+		"${GlobalVars.CATALOGO_ALM_ENV}")
 	if (response.status == 200) {
 		printOpen("Elemento eliminado", EchoLevel.ALL)
 	}else {
@@ -82,9 +82,9 @@ def getPrototypeEvents(def app) {
 	
 	def response = sendRequestToAbsis3MS(
 		'GET',
-		"${GlobalVars.URL_CATALOGO_ABSIS3_PRO}/audit/PRT/${app}",
+		"${GlobalVars.URL_CATALOGO_ALM_PRO}/audit/PRT/${app}",
 		null,
-		"${GlobalVars.CATALOGO_ABSIS3_ENV}")
+		"${GlobalVars.CATALOGO_ALM_ENV}")
 
 	if (response.status == 200) {
 		//def json=readJSON text: response.content
@@ -179,7 +179,7 @@ def deleteAndUndeployApps(ICPApiResponse response, String icpAppId, String icpAp
 					//Delete App
 					printOpen("The first installation date of the artifact is ${date}", EchoLevel.ALL)
 					
-					String mantainEdenMicro = "${env.ABSIS3_SERVICES_MANTAIN_EDEN_MICRO}"
+					String mantainEdenMicro = "${env.ALM_SERVICES_MANTAIN_EDEN_MICRO}"
 			
 					
 					if (mantainEdenMicro!=null && mantainEdenMicro.contains(it.name)) {

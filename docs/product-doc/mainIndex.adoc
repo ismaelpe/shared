@@ -1,28 +1,28 @@
 # Jenkins Shared Library
 
-This library contains the implementation of the Jenkins pipelines used in Absis3 projects.
+This library contains the implementation of the Jenkins pipelines used in Alm3 projects.
 
 ## Index
 
 . <<jobsAlm.adoc#,Jenkins ALM jobs>> 
-. Absis3 Pipelines
-.. <<absisPipelineBuild.adoc#,Continous Integration Pipeline>>
-.. <<absisPipelineCreateRC.adoc#,Create Release Candidate Pipeline>>
-.. <<absisPipelineCreateRelease.adoc#,Create Release Pipeline>>
-.. <<absisPipelineDeployToPro.adoc#,Deploy to Pro>>
-.. <<absisPipelineRollback.adoc#,Rollback an artifact>>
-.. <<absisPipelineDeleteComponentVersion.adoc#,Delete a Major Version of Component>>
-.. <<absisPipelineClose.adoc#,Close Release>>
-.. <<absisPipelineReloadDataSources.adoc#,Refresh all the dataServices micros>>
-.. <<absisPipelineCreateHotFix.adoc#,Create a new hotfix branch>>
-.. <<absisPipelineProvisioning.adoc#,Generates a jenkins job and adds some useful flags to the the gitlab repo>>
-.. <<absisPipelineReportCannary.adoc#,Create a report of the micros in the production environment>>
+. Alm3 Pipelines
+.. <<almPipelineBuild.adoc#,Continous Integration Pipeline>>
+.. <<almPipelineCreateRC.adoc#,Create Release Candidate Pipeline>>
+.. <<almPipelineCreateRelease.adoc#,Create Release Pipeline>>
+.. <<almPipelineDeployToPro.adoc#,Deploy to Pro>>
+.. <<almPipelineRollback.adoc#,Rollback an artifact>>
+.. <<almPipelineDeleteComponentVersion.adoc#,Delete a Major Version of Component>>
+.. <<almPipelineClose.adoc#,Close Release>>
+.. <<almPipelineReloadDataSources.adoc#,Refresh all the dataServices micros>>
+.. <<almPipelineCreateHotFix.adoc#,Create a new hotfix branch>>
+.. <<almPipelineProvisioning.adoc#,Generates a jenkins job and adds some useful flags to the the gitlab repo>>
+.. <<almPipelineReportCannary.adoc#,Create a report of the micros in the production environment>>
 .. <<jobProvisioning.adoc#,Generates a jenkins job>>
 .. <<customPipelineCicsWsdlBuild.adoc#, The Continous Integration Pipeline of a cics artifact>>
-.. <<absisPipelineCannaryRelease.adoc#, This jobs increases the request load>>
+.. <<almPipelineCannaryRelease.adoc#, This jobs increases the request load>>
 . <<mainGroovyClasses.adoc#, Most important groovy classes>>
 . <<scriptsGroovy.adoc#, Groovy Scripts>>
-. <<lifecycleManagement.adoc#, Absis3 Lifecycle>>
+. <<lifecycleManagement.adoc#, Alm3 Lifecycle>>
 . <<stagesAndAuthorization.adoc#, Lifecycle phases and Authorizations>>
 . <<usefulInformation.adoc#, ALM useful information>>
 . <<howTo.adoc#,How To?>>

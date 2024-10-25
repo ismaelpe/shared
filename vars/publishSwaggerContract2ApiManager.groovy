@@ -7,7 +7,7 @@ def call(PipelineData pipelineData, PomXmlStructure pomXml, Environment environm
 
         ApiManagerTechnicalServicesRequest request = ApiManagerTechnicalServicesRequest.fromPipelineAndPomData(pipelineData, pomXml)
         request.apiManagerUri = resolveApiManagerUri(environment, gateway)
-        request.absis3TokenName = resolveApiManagerTokenName(environment)
+        request.almTokenName = resolveApiManagerTokenName(environment)
 
         ApiManagerTechnicalServicesResponse response = sendRequestToApiManager(request)
 
@@ -27,7 +27,7 @@ def call(PipelineData pipelineData, PomXmlStructure pomXml, Environment environm
 
 def shouldWeAbortThePipe() {
 
-	boolean abortThePipe = Utilities.getBooleanPropertyOrDefault(env.ABSIS3_SERVICES_APIMANAGER_TECHNICALSERVICES_REGISTRATION_IF_ERROR_THEN_PIPELINE_FAILS, true)
+	boolean abortThePipe = Utilities.getBooleanPropertyOrDefault(env.ALM_SERVICES_APIMANAGER_TECHNICALSERVICES_REGISTRATION_IF_ERROR_THEN_PIPELINE_FAILS, true)
     printOpen("Looking if we have to abort the pipe: ${abortThePipe}", EchoLevel.INFO)
 
 	return abortThePipe
@@ -40,7 +40,7 @@ def resolveApiManagerUri(Environment env, Gateway gateway) {
 
     if (Environment.PRO == env && Gateway.EXTERNAL == gateway) {
 
-        return "https://api.pro.internal.caixabank.com/tech/apimanager/technicalServices"
+        return "https://api.pro.internal.project.com/tech/apimanager/technicalServices"
 
     } else if (Environment.PRE == env && Gateway.INTERNAL == gateway) {
 
@@ -60,8 +60,8 @@ def resolveApiManagerTokenName(Environment environment) {
     environment = environment == null ? Environment.PRO : environment
 
     def tokenEnv = Environment.EDEN == environment ? Environment.DEV.toString() : environment.toString()
-    def absis3TokenName = "ABSIS3_TOKEN_${tokenEnv}_V2"
+    def almTokenName = "ALM_TOKEN_${tokenEnv}_V2"
 
-    return absis3TokenName
+    return almTokenName
 
 }

@@ -89,7 +89,7 @@ def call(PomXmlStructure pomXml, PipelineData pipeline, ICPStateUtility icpState
         }
 		
 		if(pipeline.onlyProductionTests) {
-			withCredentials([string(credentialsId: "ABSIS3_TOKEN_${icpStateUtility.icpDeployStructure.envICP.toUpperCase()}_V2", variable: 'tokenAbsis3')]) {
+			withCredentials([string(credentialsId: "ALM_TOKEN_${icpStateUtility.icpDeployStructure.envICP.toUpperCase()}_V2", variable: 'tokenAbsis3')]) {
 			
 				additionalParameters += "-P it-pro "
 				additionalParameters += "-Dskip-it=true "

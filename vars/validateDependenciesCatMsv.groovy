@@ -27,9 +27,9 @@ def call(PipelineData pipelineData, PomXmlStructure pomXml, boolean isCampaign, 
 	if (isCampaign) {
 		response = sendRequestToAbsis3MS(
 			'GET',
-			"${GlobalVars.URL_CATALOGO_ABSIS3_PRO}/iop/dependency/validate/${environment}",
+			"${GlobalVars.URL_CATALOGO_ALM_PRO}/iop/dependency/validate/${environment}",
 			null,
-			"${GlobalVars.CATALOGO_ABSIS3_ENV}",501,
+			"${GlobalVars.CATALOGO_ALM_ENV}",501,
 			[
 				kpiAlmEvent: new KpiAlmEvent(
 					pomXml, pipelineData,
@@ -51,9 +51,9 @@ def call(PipelineData pipelineData, PomXmlStructure pomXml, boolean isCampaign, 
 			
 	     response = sendRequestToAbsis3MS(
 			'GET',
-			"${GlobalVars.URL_CATALOGO_ABSIS3_PRO}/app/${pipelineData.getGarArtifactType().getGarName()}/${pomXml.getApp(pipelineData.garArtifactType)}/version/${pomXml.artifactMajorVersion}/${pomXml.artifactMinorVersion}/${pomXml.artifactFixVersion}/${typeVersion}/dependency/validate/${environment}",
+			"${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${pipelineData.getGarArtifactType().getGarName()}/${pomXml.getApp(pipelineData.garArtifactType)}/version/${pomXml.artifactMajorVersion}/${pomXml.artifactMinorVersion}/${pomXml.artifactFixVersion}/${typeVersion}/dependency/validate/${environment}",
 			null,
-			"${GlobalVars.CATALOGO_ABSIS3_ENV}",
+			"${GlobalVars.CATALOGO_ALM_ENV}",
 			[
 				kpiAlmEvent: new KpiAlmEvent(
 					pomXml, pipelineData,

@@ -26,8 +26,8 @@ def call(pipelineParams = [:], body) {
 				 withCredentials([usernamePassword(credentialsId: 'ALM_LOGCOLLECTOR_CREDENTIALS', passwordVariable: 'ALM_LOGCOLLECTOR_PASSWORD', usernameVariable: 'ALM_LOGCOLLECTOR_USERNAME')]) {
 					 
 				 }
-				 withCredentials([string(credentialsId: 'icp-absis3-pro-cert-passwd', variable: 'ICP_PASS_CRED'),
-								  file(credentialsId: 'icp-absis3-pro-cert', variable: 'ICP_CERT_CRED'),
+				 withCredentials([string(credentialsId: 'icp-alm-pro-cert-passwd', variable: 'ICP_PASS_CRED'),
+								  file(credentialsId: 'icp-alm-pro-cert', variable: 'ICP_CERT_CRED'),
 								  usernamePassword(credentialsId: 'ALM_LOGCOLLECTOR_CREDENTIALS', passwordVariable: 'ALM_LOGCOLLECTOR_PASSWORD_CRED', usernameVariable: 'ALM_LOGCOLLECTOR_USERNAME'),
 								  usernamePassword(credentialsId: 'IDECUA-JENKINS-USER-TOKEN', passwordVariable: 'GPL_PSW', usernameVariable: 'GPL_USR')]){
 					 
@@ -99,8 +99,8 @@ def call(pipelineParams = [:], body) {
 				 def https_proxy="https_proxy=${GlobalVars.proxyCaixa}"
 				 def http_proxy="http_proxy =${GlobalVars.proxyCaixa}"
 				 
-				 withCredentials([string(credentialsId: 'icp-absis3-pro-cert-passwd', variable: 'ICP_PASS_CRED'),
-								  file(credentialsId: 'icp-absis3-pro-cert', variable: 'ICP_CERT_CRED'),
+				 withCredentials([string(credentialsId: 'icp-alm-pro-cert-passwd', variable: 'ICP_PASS_CRED'),
+								  file(credentialsId: 'icp-alm-pro-cert', variable: 'ICP_CERT_CRED'),
 								  usernamePassword(credentialsId: 'ALM_LOGCOLLECTOR_CREDENTIALS', passwordVariable: 'ALM_LOGCOLLECTOR_PASSWORD_CRED', usernameVariable: 'ALM_LOGCOLLECTOR_USERNAME'),
 								  usernamePassword(credentialsId: 'IDECUA-JENKINS-USER-TOKEN', passwordVariable: 'GPL_PSW', usernameVariable: 'GPL_USR')]){
 					 

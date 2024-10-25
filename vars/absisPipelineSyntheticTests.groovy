@@ -38,8 +38,8 @@ def call(Map pipelineParameters) {
         }
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
-            ICP_CERT = credentials('icp-absis3-pro-cert')
-            ICP_PASS = credentials('icp-absis3-pro-cert-passwd')
+            ICP_CERT = credentials('icp-alm-pro-cert')
+            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
@@ -118,8 +118,8 @@ def stageInitStep() {
  * Stage 'createListStep'
  */
 def createListStep() {
-    def whiteListArch = "${env.ABSIS3_ARCH_SERVICES_ALLOWED_SYNTHETIC_TESTS}".split(';')
-    def whiteListApps = "${env.ABSIS3_APPS_SERVICES_ALLOWED_SYNTHETIC_TESTS}".split(';')
+    def whiteListArch = "${env.ALM_ARCH_SERVICES_ALLOWED_SYNTHETIC_TESTS}".split(';')
+    def whiteListApps = "${env.ALM_APPS_SERVICES_ALLOWED_SYNTHETIC_TESTS}".split(';')
 
     appsList = new ArrayList<SyntheticTestStructure>()
 
@@ -240,7 +240,7 @@ def stageExecuteTestsStep() {
             String goal = 'verify'
 
             try {
-                configFileProvider([configFile(fileId: 'absis3-maven-settings-with-singulares', variable: 'MAVEN_SETTINGS')]) {
+                configFileProvider([configFile(fileId: 'alm-maven-settings-with-singulares', variable: 'MAVEN_SETTINGS')]) {
                     //ICP
                     def cmd = ''
                     if (item.isArchMicro) {
@@ -323,7 +323,7 @@ def endiPipelineAlwaysStep() {
                             , replyTo: ''
                             , from: "${GlobalVars.EMAIL_FROM_ALM}"
                             , recipientProviders: [[$class: 'DevelopersRecipientProvider']]
-                            , to: "${env.ABSIS3_SERVICES_EMAIL_SYNTHETIC_TEST_DISTRIBUTION_LIST}"
+                            , to: "${env.ALM_SERVICES_EMAIL_SYNTHETIC_TEST_DISTRIBUTION_LIST}"
                             , subject: "[Absis3] Resultado Jenkins Test Sintéticos - enviroment:${enviromentParam} - dataCenter:${dataCenterParam} - ${appNameParam} - build:${env.BUILD_NUMBER}")
     }
 

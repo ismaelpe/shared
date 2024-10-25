@@ -141,7 +141,7 @@ def call(def body, PipelineData pipelineData, PomXmlStructure pomXml, ICPStateUt
 	if (pomXml!=null) {
 		archVersion=pomXml.archVersion
 	}
-	if (env.SEND_TO_ABSIS3_CATALOG!="" && env.SEND_TO_ABSIS3_CATALOG=="true") {
+	if (env.SEND_TO_ALM_CATALOG!="" && env.SEND_TO_ALM_CATALOG=="true") {
 		try {
 			printOpen("Sending data to Open's catalogue.", EchoLevel.INFO)
 			
@@ -204,8 +204,8 @@ def call(def body, PipelineData pipelineData, PomXmlStructure pomXml, ICPStateUt
 			}
 			
 		} catch(Exception ex) {
-			printOpen("Error en el envio al catalogo de absis3 ", EchoLevel.ERROR)
-			if (env.SEND_TO_ABSIS3_CATALOG_REQUIRED!=null && env.SEND_TO_ABSIS3_CATALOG_REQUIRED!="true") {
+			printOpen("Error en el envio al catalogo de alm ", EchoLevel.ERROR)
+			if (env.SEND_TO_ALM_CATALOG_REQUIRED!=null && env.SEND_TO_ALM_CATALOG_REQUIRED!="true") {
 				throw new Exception("Unexpected response from CATMSV, services catalog ")
 			}
 		}
@@ -218,9 +218,9 @@ def createOrUpdateAppInCatalog(def body, PipelineData pipelineData, PomXmlStruct
 	printOpen("$body", EchoLevel.INFO)
 	return sendRequestToAbsis3MS(
 		'PUT',
-		"$GlobalVars.URL_CATALOGO_ABSIS3_PRO/app",
+		"$GlobalVars.URL_CATALOGO_ALM_PRO/app",
 		body,
-		"$GlobalVars.CATALOGO_ABSIS3_ENV",
+		"$GlobalVars.CATALOGO_ALM_ENV",
 		[
 			kpiAlmEvent: new KpiAlmEvent(
 				pomXml, pipelineData,
@@ -234,9 +234,9 @@ def updateVersionAppInCatalog(def body, def type, def application, PipelineData 
 	printOpen("$body", EchoLevel.INFO)
 	return sendRequestToAbsis3MS(
 		'PUT',
-		"$GlobalVars.URL_CATALOGO_ABSIS3_PRO/app/$type/$application/version",
+		"$GlobalVars.URL_CATALOGO_ALM_PRO/app/$type/$application/version",
 		body,
-		"$GlobalVars.CATALOGO_ABSIS3_ENV",
+		"$GlobalVars.CATALOGO_ALM_ENV",
 		[
 			kpiAlmEvent: new KpiAlmEvent(
 				pomXml, pipelineData,

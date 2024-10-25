@@ -63,7 +63,7 @@ private increaseCampaignCannaryPercentage(String baseFolder, int newPercentage) 
 
         //No existe el fichero lo voy a generar
         printOpen("Setting ${actualIntPercentage} to file ${fileName}", EchoLevel.ALL)
-        sh "echo '${GlobalVars.CAMPAIGN_CANNARY_PERCENTAGE_ABSIS}: ${actualIntPercentage}' >  ${fileName}"
+        sh "echo '${GlobalVars.CAMPAIGN_CANNARY_PERCENTAGE_ALM}: ${actualIntPercentage}' >  ${fileName}"
 
     } else {
 
@@ -72,8 +72,8 @@ private increaseCampaignCannaryPercentage(String baseFolder, int newPercentage) 
         String actualPercentage = ''
 
         appYaml.tokenize('\n').each { x ->
-            if (x.contains(GlobalVars.CAMPAIGN_CANNARY_PERCENTAGE_ABSIS)) {
-                actualPercentage = x - "${GlobalVars.CAMPAIGN_CANNARY_PERCENTAGE_ABSIS}: "
+            if (x.contains(GlobalVars.CAMPAIGN_CANNARY_PERCENTAGE_ALM)) {
+                actualPercentage = x - "${GlobalVars.CAMPAIGN_CANNARY_PERCENTAGE_ALM}: "
                 actualIntPercentage = actualPercentage.trim().toInteger()
                 printOpen("The actual Percentatge is ${actualIntPercentage} the new is ${newPercentage}", EchoLevel.ALL)
             } else {
@@ -82,7 +82,7 @@ private increaseCampaignCannaryPercentage(String baseFolder, int newPercentage) 
         }
 
         sh "echo ${newYaml} > ${fileName}"
-        sh "echo '${GlobalVars.CAMPAIGN_CANNARY_PERCENTAGE_ABSIS}: ${newPercentage}' >>  ${fileName}"
+        sh "echo '${GlobalVars.CAMPAIGN_CANNARY_PERCENTAGE_ALM}: ${newPercentage}' >>  ${fileName}"
 
     }
 

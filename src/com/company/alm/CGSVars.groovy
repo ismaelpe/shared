@@ -14,7 +14,7 @@ class CGSVars {
     static String APP_TYPE = 'SIMPLE'
     static String APP_SUBTYPE = 'APP_LIB'
 
-    static String LIB_GROUPID = "com.caixabank.absis.cgs.operation"
+    static String LIB_GROUPID = "com.project.absis.cgs.operation"
 
 
 }

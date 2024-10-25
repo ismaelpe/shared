@@ -203,7 +203,7 @@ def call( PomXmlStructure pomXml, PipelineData pipeline, String buildIdMain, Str
                 "The component Id of the new componnet ${pipeline.componentId} of the component ${component} The artifact is ${pomXml.artifactMicro} is Arch ${pomXml.isArchProject()}",
                 EchoLevel.DEBUG)
 		
-			//"pro-registry.pro.caas.caixabank.com/containers/pasdev/democonnecta22:latest
+			//"pro-registry.pro.caas.project.com/containers/pasdev/democonnecta22:latest
 			def versionImage=pomXml.artifactVersion
 			
 			if (pomXml.artifactVersion.contains('SNAPSHOT')) {

@@ -82,7 +82,7 @@ def call(String repoGit) {
                      "closed_by":{"id":1376,"name":"LEONARDO TORRES ALTEZ","username":"U0185731","state":"active","avatar_url":"https://secure.gravatar.com/avatar/765ac6b99497bf42f6c3c32b77733784?s=80\u0026d=identicon","web_url":"https://git.svb.lacaixa.es/U0185731"},
                      "closed_at":"2019-05-29T13:45:37.161Z","target_branch":"master","source_branch":"feature/us20202_soporte_n4__decplugin","user_notes_count":3,"upvotes":0,"downvotes":0,"assignee":null,
                      "author":{"id":1376,"name":"LEONARDO TORRES ALTEZ","username":"U0185731","state":"active","avatar_url":"https://secure.gravatar.com/avatar/765ac6b99497bf42f6c3c32b77733784?s=80\u0026d=identicon","web_url":"https://git.svb.lacaixa.es/U0185731"},
-                     "assignees":[],"source_project_id":6203,"target_project_id":6203,"labels":["MR ABSIS3 SERVICIOS"],"work_in_progress":false,"milestone":null,"merge_when_pipeline_succeeds":false,"merge_status":"can_be_merged","sha":"712968d470a6192dfd3c43039ca24e2f6f259bc8","merge_commit_sha":null,"discussion_locked":null,"should_remove_source_branch":null,"force_remove_source_branch":false,"reference":"!35","web_url":"https://git.svb.lacaixa.es/cbk/absis3
+                     "assignees":[],"source_project_id":6203,"target_project_id":6203,"labels":["MR ALM SERVICIOS"],"work_in_progress":false,"milestone":null,"merge_when_pipeline_succeeds":false,"merge_status":"can_be_merged","sha":"712968d470a6192dfd3c43039ca24e2f6f259bc8","merge_commit_sha":null,"discussion_locked":null,"should_remove_source_branch":null,"force_remove_source_branch":false,"reference":"!35","web_url":"https://git.svb.lacaixa.es/cbk/alm
                      */
                     //Tiene una MR abierta?
 
@@ -172,7 +172,7 @@ def call(String repoGit) {
 				    , replyTo: ''
 				    , from: "${GlobalVars.EMAIL_FROM_ALM}"
                     , recipientProviders: [[$class: 'DevelopersRecipientProvider']]
-                    , to: "${env.ABSIS3_SERVICES_EMAIL_DISTRIBUTION_LIST}"
+                    , to: "${env.ALM_SERVICES_EMAIL_DISTRIBUTION_LIST}"
                     , subject: "[Absis3 PRO] Branch Report ${repoGit} ${datePart} ")
         }
 

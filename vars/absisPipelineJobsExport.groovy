@@ -35,8 +35,8 @@ def call(Map pipelineParameters) {
         }
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
-            ICP_CERT = credentials('icp-absis3-pro-cert')
-            ICP_PASS = credentials('icp-absis3-pro-cert-passwd')
+            ICP_CERT = credentials('icp-alm-pro-cert')
+            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
@@ -90,7 +90,7 @@ def getGitRepoStep() {
 
     String enviroment = System.getProperty('jenkins.environment')
    
-    gitRepoUrl = "https://git.svb.lacaixa.es/cbk/absis3/config/jenkins-${enviroment}.git"
+    gitRepoUrl = "https://git.svb.lacaixa.es/cbk/alm/config/jenkins-${enviroment}.git"
 
     printOpen("Pull from '$enviroment' and '$jobBranch' branch, gitUrl is $gitRepoUrl", EchoLevel.INFO)
 

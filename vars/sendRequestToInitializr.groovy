@@ -28,14 +28,14 @@ class Maps {
 		"absisApp": "MICRO_SERVICE",
 		"packaging": "jar",
 		"description":"Micro_Service_aplicativo",
-		"groupId": "com.caixabank.absis.apps.service"
+		"groupId": "com.project.absis.apps.service"
 		
 	]
 	
 	public static dataServiceSimple = [
 		"simpleProject": "true",
 		"absisApp": "DATA_SERVICE",
-		"groupId": "com.caixabank.absis.apps.dataservice",
+		"groupId": "com.project.absis.apps.dataservice",
 		"description": "Dataservice_aplicativo",
 		"packaging": "jar"
 	]
@@ -43,7 +43,7 @@ class Maps {
 	public static bffServiceSimple = [
 		"simpleProject": "true",
 		"absisApp": "BFF_SERVICE",
-		"groupId": "com.caixabank.absis.apps.bff",
+		"groupId": "com.project.absis.apps.bff",
 		"description": "Backend_for_FrontEnd",
 		"packaging": "jar"
 	]
@@ -52,7 +52,7 @@ class Maps {
 	public static appCommonLibSimple = [
 		"simpleProject": "true",
 		"absisApp": "APP_COMMON_LIB",
-		"groupId": "com.caixabank.absis.apps.lib",
+		"groupId": "com.project.absis.apps.lib",
 		"description": "Librería_común_de_aplicaciones",
 		"packaging": "jar"
 	]
@@ -61,7 +61,7 @@ class Maps {
 	public static appCommonLibAgregador = [
 		"simpleProject": "false",
 		"aggregator": "APP_LIB",
-		"groupId": "com.caixabank.absis.apps.lib",
+		"groupId": "com.project.absis.apps.lib",
 		"description": "Librería_común_de_aplicaciones_con_sample_app",
 		"packaging": "jar"
 	]
@@ -71,7 +71,7 @@ class Maps {
 		"aggregator": "MICRO_ARCH",
 		"packaging": "jar",
 		"description":"Micro_Service_arquitectura",
-		"groupId": "com.caixabank.absis.arch"
+		"groupId": "com.project.absis.arch"
 		
 	]
 	
@@ -80,13 +80,13 @@ class Maps {
 		"aggregator": "PLUGIN",
 		"packaging": "jar",
 		"description":"Plugin_arquitectura",
-		"groupId": "com.caixabank.absis.arch"
+		"groupId": "com.project.absis.arch"
 	]
 	
 	public static archConfig = [
 		"simpleProject": "true",
 		"absisApp": "ARCH_CFG",
-		"groupId": "com.caixabank.absis.arch.config.lib",
+		"groupId": "com.project.absis.arch.config.lib",
 		"description": "Librería_de_configuracion_de_aplicaciones",
 		"packaging": "jar"
 	]
@@ -95,7 +95,7 @@ class Maps {
 	public static srvConfig = [
 		"simpleProject": "true",
 		"absisApp": "SRV_CFG",
-		"groupId": "com.caixabank.absis.apps.config.lib",
+		"groupId": "com.project.absis.apps.config.lib",
 		"description": "Librería_de_configuracion_de_aplicaciones",
 		"packaging": "jar"
 	]
@@ -104,7 +104,7 @@ class Maps {
 	public static archCommonLib = [
 		"simpleProject": "true",
 		"absisApp": "ARCH_API_LIB",
-		"groupId": "com.caixabank.absis.arch",
+		"groupId": "com.project.absis.arch",
 		"description": "Librería_común_de_arquitectura",
 		"packaging": "jar"
 	]
@@ -112,7 +112,7 @@ class Maps {
 	public static archStarterLib = [
 		"simpleProject": "false",
 		"aggregator": "ARCH_LIB",
-		"groupId": "com.caixabank.absis.arch",
+		"groupId": "com.project.absis.arch",
 		"description": "Librería_starter_de_arquitectura",
 		"packaging": "jar"
 	]
@@ -182,7 +182,7 @@ def call(String empresa,String nameApp,String typeApp,String domain) {
 
 def call(String empresa,String nameApp,String typeApp,String domain,String zipFileName) {
 
-    printOpen("Performing ABSIS3 request to Initlizr", EchoLevel.ERROR)
+    printOpen("Performing ALM request to Initlizr", EchoLevel.ERROR)
 	
 	
 	if(!empresa || !nameApp || !typeApp || !domain){
@@ -199,7 +199,7 @@ def call(String empresa,String nameApp,String typeApp,String domain,String zipFi
 	GplRequestStatus statusGpl = new GplRequestStatus()
 	def fecha = null
 	
-    timeout(GlobalVars.DEFAULT_ABSIS3_MS_REQUEST_RETRIES_TIMEOUT) {
+    timeout(GlobalVars.DEFAULT_ALM_MS_REQUEST_RETRIES_TIMEOUT) {
         waitUntil(initialRecurrencePeriod: 15000) {
             try {
                 fecha = new Date()

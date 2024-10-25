@@ -84,9 +84,9 @@ def call(PomXmlStructure artifactPom, PipelineData pipeline, String environmentD
 def generateWiremockEvent(def environment, def componentName) {
 	def response = sendRequestToAbsis3MS(
 		'GET',
-		"${GlobalVars.URL_CATALOGO_ABSIS3_PRO}/audit/WIR/${componentName}",
+		"${GlobalVars.URL_CATALOGO_ALM_PRO}/audit/WIR/${componentName}",
 		null,
-		"${GlobalVars.CATALOGO_ABSIS3_ENV}")
+		"${GlobalVars.CATALOGO_ALM_ENV}")
 	if (response.status == 200) {
 		//def json=readJSON text: response.content
 		def json=response.content
@@ -95,9 +95,9 @@ def generateWiremockEvent(def environment, def componentName) {
 				if (environment.equals(it.description)) {
 					printOpen("Tenemos que eliminar este evento ${it.id} para el entorno ${environment}", EchoLevel.ALL)
 					def responseUndeploy=sendRequestToAbsis3MS( 'DELETE',
-		                                                        "${GlobalVars.URL_CATALOGO_ABSIS3_PRO}/audit/${it.id}",
+		                                                        "${GlobalVars.URL_CATALOGO_ALM_PRO}/audit/${it.id}",
 		                                                        null,
-		                                                        "${GlobalVars.CATALOGO_ABSIS3_ENV}")
+		                                                        "${GlobalVars.CATALOGO_ALM_ENV}")
 					if (responseUndeploy.status == 200) {
 						printOpen("Elemento eliminado ${it.id} en el entorno ${environment}", EchoLevel.ALL)
 					}
@@ -121,9 +121,9 @@ def generateWiremockEvent(def environment, def componentName) {
 		   user: "USER"
 		]
 	def responseHire = sendRequestToAbsis3MS( 'PUT',
-											   "${GlobalVars.URL_CATALOGO_ABSIS3_PRO}/audit",
+											   "${GlobalVars.URL_CATALOGO_ALM_PRO}/audit",
 											   nuevoEvento,
-												   "${GlobalVars.CATALOGO_ABSIS3_ENV}")
+												   "${GlobalVars.CATALOGO_ALM_ENV}")
 	if (responseHire.status == 200) {
 		printOpen("Evento Generado", EchoLevel.ALL)
 	}else {
@@ -235,7 +235,7 @@ def _deployWiremockServerToKubernetes(String group, String artifact, String vers
 	def bodyDeploy=[
 		az: "${icpDistCenter}",
 		environment: "${deployStructure.envICP.toUpperCase()}",
-		values:"deployment:\n  readinessProbe:\n    initialDelaySeconds: 120\n    periodSeconds: 60\n    timeoutSeconds: 50\n    failureThreshold: 5\n  livenessProbe:\n    initialDelaySeconds: 120\n    periodSeconds: 60\n    timeoutSeconds: 50\n    failureThreshold: 5\nlocal:\n  app:\n    enableNonMtls: true\n    ingress:\n      enabled: false\n      deploymentArea: absis\n    envVars:\n      - name: jvmConfig\n        value: \"-XX:MaxRAMPercentage=50.0\"\n      - name: ARTIFACT_ID\n        value: ${artifact}\n      - name: VERSION_ARTIFACT\n        value: ${version}\n      - name: GROUP_ID\n        value: ${group}\n      - name: ABSIS_APP_ID\n        value: ${appName}\n      - name: ABSIS_CENTER_ID\n        value: 1\n      - name: ABSIS_APP_TYPE\n        value: ${garAppType}\n      - name: ABSIS_ENVIRONMENT\n        value: ${environmentDest.toUpperCase()}\n      - name: ABSIS_APP_DOMAIN\n        value: ${domain}\n      - name: ABSIS_APP_SUBDOMAIN\n        value: ${subDomain}\n      - name: ABSIS_APP_COMPANY\n        value: ${company}\n      - name: JAVA_OPTS\n        value: '-Dspring.cloud.config.failFast=true'\n      - name: nonProxyHosts\n        value: '*.cxb-pasdev-tst|*.cxb-ab3app-${environmentDest.toLowerCase()}|*.cxb-ab3cor-${environmentDest.toLowerCase()}'\n      - name: http.additionalNonProxyHosts\n        value: 'cxb-pasdev-${environmentDest.toLowerCase()},cxb-ab3app-dev,cxb-ab3cor-${environmentDest.toLowerCase()}'\n      - name: NO_PROXY\n        value: cxb-ab3cor-dev\n      - name: CF_INSTANCE_INDEX\n        value: 1\n      - name: spring.cloud.config.failFast\n        value: true\n      - name: SPRING_PROFILES_ACTIVE\n        value: standalone\n      - name: ABSIS_ICP_ENVIRONMENT\n        value: ${environmentDest.toLowerCase()}\n    secrets:\nabsis:\n  app:\n    loggingElkStack: absis30\n    replicas: 1\n    instance: ${componentName}\n    name: ${applicationName}\n  resources:\n    requests:\n      memory: 450Mi\n      cpu: 5m\n    limits:\n       memory: 450Mi\n       cpu: 400m\n  apps:\n    envQualifier:\n      stable:\n        id: ${componentName}\n        colour: B\n        image: ${response.body.imageRepo1}:${artifactPom.artifactVersion}\n        version: ${artifactPom.artifactVersion}\n        stable: false\n        new: false\n        replicas: 1\n        readinessProbePath: /actuator/health\n        livenessProbePath: /actuator/health\n        envVars:\n          SPRING_PROFILES_ACTIVE: standalone\n          forceDeploy: ${forceDeploy}\n        requests_memory: 350Mi\n        requests_cpu: 5m\n        limits_memory: 350Mi\n        limits_cpu: 400m\n  services:\n    envQualifier:\n      stable:\n        id: ${pathWiremock}\n        targetColour: B\n"
+		values:"deployment:\n  readinessProbe:\n    initialDelaySeconds: 120\n    periodSeconds: 60\n    timeoutSeconds: 50\n    failureThreshold: 5\n  livenessProbe:\n    initialDelaySeconds: 120\n    periodSeconds: 60\n    timeoutSeconds: 50\n    failureThreshold: 5\nlocal:\n  app:\n    enableNonMtls: true\n    ingress:\n      enabled: false\n      deploymentArea: absis\n    envVars:\n      - name: jvmConfig\n        value: \"-XX:MaxRAMPercentage=50.0\"\n      - name: ARTIFACT_ID\n        value: ${artifact}\n      - name: VERSION_ARTIFACT\n        value: ${version}\n      - name: GROUP_ID\n        value: ${group}\n      - name: ALM_APP_ID\n        value: ${appName}\n      - name: ALM_CENTER_ID\n        value: 1\n      - name: ALM_APP_TYPE\n        value: ${garAppType}\n      - name: ALM_ENVIRONMENT\n        value: ${environmentDest.toUpperCase()}\n      - name: ALM_APP_DOMAIN\n        value: ${domain}\n      - name: ALM_APP_SUBDOMAIN\n        value: ${subDomain}\n      - name: ALM_APP_COMPANY\n        value: ${company}\n      - name: JAVA_OPTS\n        value: '-Dspring.cloud.config.failFast=true'\n      - name: nonProxyHosts\n        value: '*.cxb-pasdev-tst|*.cxb-ab3app-${environmentDest.toLowerCase()}|*.cxb-ab3cor-${environmentDest.toLowerCase()}'\n      - name: http.additionalNonProxyHosts\n        value: 'cxb-pasdev-${environmentDest.toLowerCase()},cxb-ab3app-dev,cxb-ab3cor-${environmentDest.toLowerCase()}'\n      - name: NO_PROXY\n        value: cxb-ab3cor-dev\n      - name: CF_INSTANCE_INDEX\n        value: 1\n      - name: spring.cloud.config.failFast\n        value: true\n      - name: SPRING_PROFILES_ACTIVE\n        value: standalone\n      - name: ALM_ICP_ENVIRONMENT\n        value: ${environmentDest.toLowerCase()}\n    secrets:\nabsis:\n  app:\n    loggingElkStack: alm0\n    replicas: 1\n    instance: ${componentName}\n    name: ${applicationName}\n  resources:\n    requests:\n      memory: 450Mi\n      cpu: 5m\n    limits:\n       memory: 450Mi\n       cpu: 400m\n  apps:\n    envQualifier:\n      stable:\n        id: ${componentName}\n        colour: B\n        image: ${response.body.imageRepo1}:${artifactPom.artifactVersion}\n        version: ${artifactPom.artifactVersion}\n        stable: false\n        new: false\n        replicas: 1\n        readinessProbePath: /actuator/health\n        livenessProbePath: /actuator/health\n        envVars:\n          SPRING_PROFILES_ACTIVE: standalone\n          forceDeploy: ${forceDeploy}\n        requests_memory: 350Mi\n        requests_cpu: 5m\n        limits_memory: 350Mi\n        limits_cpu: 400m\n  services:\n    envQualifier:\n      stable:\n        id: ${pathWiremock}\n        targetColour: B\n"
 	]
 	
 	printOpen("Deploy Image ...", EchoLevel.ALL)

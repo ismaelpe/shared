@@ -23,7 +23,7 @@ def call(PomXmlStructure pomXml, PipelineData pipelineData) {
     }
     printOpen("publishSurefireReports.groovy", EchoLevel.ALL)
 
-    String catalogRepoUri = "https://git.svb.lacaixa.es/cbk/absis3/services/documentation/services-catalog.git"
+    String catalogRepoUri = "https://git.svb.lacaixa.es/cbk/alm/services/documentation/services-catalog.git"
     String repositoryName = "services-catalog"
     FileUtils fileUtils = new FileUtils(this)
 

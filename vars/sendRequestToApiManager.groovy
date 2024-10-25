@@ -10,10 +10,10 @@ def call(ApiManagerTechnicalServicesRequest request) {
 
     String technicalServicesInputAsJson = prepareJsonFrom(request)
 
-    timeout(GlobalVars.DEFAULT_ABSIS3_MS_REQUEST_RETRIES_TIMEOUT) {
+    timeout(GlobalVars.DEFAULT_ALM_MS_REQUEST_RETRIES_TIMEOUT) {
         waitUntil(initialRecurrencePeriod: 15000) {
 
-            withCredentials([string(credentialsId: "${request.absis3TokenName}", variable: 'tokenAbsis3')]) {
+            withCredentials([string(credentialsId: "${request.almTokenName}", variable: 'tokenAbsis3')]) {
 
                 def profileHeader =
                     goesThroughExternalGateway(request.apiManagerUri) ?
@@ -90,6 +90,6 @@ private String prepareJsonFrom(ApiManagerTechnicalServicesRequest request) {
 
 private boolean goesThroughExternalGateway(String uri) {
 
-    return uri.contains(".internal.caixabank.com")
+    return uri.contains(".internal.project.com")
 
 }

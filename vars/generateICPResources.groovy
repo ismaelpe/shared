@@ -15,9 +15,9 @@ def setICPResources( def type, def app, def major, def environment, def namespac
 
     def response = sendRequestToAbsis3MS(
         'GET',
-        "${GlobalVars.URL_CATALOGO_ABSIS3_PRO}/app/${type}/${app}/${major}/config?env=${environment}",
+        "${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${type}/${app}/${major}/config?env=${environment}",
         null,
-        "${GlobalVars.CATALOGO_ABSIS3_ENV}",
+        "${GlobalVars.CATALOGO_ALM_ENV}",
         [
             kpiAlmEvent: new KpiAlmEvent(
                 null, null,
@@ -67,9 +67,9 @@ def setICPResources( def type, def app, def major, def environment, def namespac
 
 		response = sendRequestToAbsis3MS(
             'GET',
-            "${GlobalVars.URL_CATALOGO_ABSIS3_PRO}/config/micro-size/${namespace}/${type}/${environment}/M/M/M",
+            "${GlobalVars.URL_CATALOGO_ALM_PRO}/config/micro-size/${namespace}/${type}/${environment}/M/M/M",
             null,
-            "${GlobalVars.CATALOGO_ABSIS3_ENV}",
+            "${GlobalVars.CATALOGO_ALM_ENV}",
             [
                 kpiAlmEvent: new KpiAlmEvent(
                     null, null,

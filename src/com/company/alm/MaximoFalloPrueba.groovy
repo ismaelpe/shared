@@ -3,7 +3,7 @@ package com.project.alm;
 class MaximoFalloPrueba extends MaximoAbstractFallo {
 
     MaximoFalloPrueba() {
-        this.equipoResponsable = MaximoEquipoResponsable.ARQUITECTURA_ABSIS3
+        this.equipoResponsable = MaximoEquipoResponsable.ARQUITECTURA_ALM
         this.resumen = "Esto es una incidencia de test"
         this.descripcion = "<p>Este es el texto HTML</p><p>de la incidencia de test a ${this.equipoResponsable.servicioTI}</p>"
         this.pipelineExceptionErrorMessage = "Esto es un ejemplo de mensaje de error en la pipeline."

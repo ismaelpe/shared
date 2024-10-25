@@ -36,16 +36,16 @@ class DeployStructure {
     public String getEnvVariables(String garAppType, String appName,String appMajorVersion, String domain, String subDomain, String company) {
         String absisBlueGreen = getAbsisBlueGreen()
 
-        return "'\n    ABSIS_APP_ID: " + appName + "'" +
-                "'\n    ABSIS_APP_TYPE: " + garAppType + "'" +
-                "'\n    ABSIS_CENTER_ID: " + this.idCenter + "'" +
-                "'\n    ABSIS_ENVIRONMENT: " + this.environment + "'" +
-                "'\n    ABSIS_SPACE: " + this.space + "'" +
-                "'\n    ABSIS_APP_DOMAIN: " + domain + "'" +
-                "'\n    ABSIS_APP_SUBDOMAIN: " + subDomain + "'" +
-                "'\n    ABSIS_APP_COMPANY: " + company + "'" +
+        return "'\n    ALM_APP_ID: " + appName + "'" +
+                "'\n    ALM_APP_TYPE: " + garAppType + "'" +
+                "'\n    ALM_CENTER_ID: " + this.idCenter + "'" +
+                "'\n    ALM_ENVIRONMENT: " + this.environment + "'" +
+                "'\n    ALM_SPACE: " + this.space + "'" +
+                "'\n    ALM_APP_DOMAIN: " + domain + "'" +
+                "'\n    ALM_APP_SUBDOMAIN: " + subDomain + "'" +
+                "'\n    ALM_APP_COMPANY: " + company + "'" +
                 "'\n    http.additionalNonProxyHosts: " + this.url_int + "," + this.url_ext + "," + GlobalVars.HTTP_ADDITIONAL_NON_PROXY_HOSTS + "'" +
-				"'\n    ABSIS_BLUE_GREEN: " + absisBlueGreen + "'" +
+				"'\n    ALM_BLUE_GREEN: " + absisBlueGreen + "'" +
                 "'\n    SPRING_PROFILES_ACTIVE: " + springProfilesActive + "'"
 
     }

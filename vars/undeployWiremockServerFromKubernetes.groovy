@@ -27,9 +27,9 @@ def deleteEvent(def id) {
     printOpen("Intentamos eliminar el evento ${id}", EchoLevel.DEBUG)
 	def response = sendRequestToAbsis3MS(
 		'DELETE',
-		"${GlobalVars.URL_CATALOGO_ABSIS3_PRO}/audit/${id}",
+		"${GlobalVars.URL_CATALOGO_ALM_PRO}/audit/${id}",
 		null,
-		"${GlobalVars.CATALOGO_ABSIS3_ENV}")
+		"${GlobalVars.CATALOGO_ALM_ENV}")
 	if (response.status == 200) {
 		printOpen("Elemento eliminado", EchoLevel.ALL)
 	}else {
@@ -42,9 +42,9 @@ def getEvents(def componentName) {
     printOpen("Intentamos obtener el evento de la app ${componentName}", EchoLevel.DEBUG)
 	def response = sendRequestToAbsis3MS(
 		'GET',
-		"${GlobalVars.URL_CATALOGO_ABSIS3_PRO}/audit/WIR/${componentName}",
+		"${GlobalVars.URL_CATALOGO_ALM_PRO}/audit/WIR/${componentName}",
 		null,
-		"${GlobalVars.CATALOGO_ABSIS3_ENV}")
+		"${GlobalVars.CATALOGO_ALM_ENV}")
 
 	if (response.status == 200) {
 		//def json=readJSON text: response.content

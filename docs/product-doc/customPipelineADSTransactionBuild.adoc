@@ -2,11 +2,11 @@
 
 Build que permite generar librerías de ADS asociadas al XML subido al siguiente repositorio:
 
-	https://git.svb.lacaixa.es/cbk/absis3/services/definitions/ads/ads-app-transactions
+	https://git.svb.lacaixa.es/cbk/alm/services/definitions/ads/ads-app-transactions
 
 Dicho job se apoya en las siguientes librerías para la generación
 
-	https://git.svb.lacaixa.es/cbk/absis3/services/arch/backend/ads/adstransaction-lib
+	https://git.svb.lacaixa.es/cbk/alm/services/arch/backend/ads/adstransaction-lib
 
 Los pasos son los siguientes:
 
@@ -16,7 +16,7 @@ Los pasos son los siguientes:
 
 		```	
 		<dependency>
-			<groupId>com.caixabank.absis.ads.transaction</groupId>
+			<groupId>com.project.alm.ads.transaction</groupId>
 			<artifactId>ads-ads0000a-lib</artifactId>
 			<version>${ads0000a.version}</version>
 		</dependency>
@@ -29,7 +29,7 @@ Los pasos son los siguientes:
 		
 		```
 		<parent>
-			<groupId>com.caixabank.absis.ads.transaction</groupId>
+			<groupId>com.project.alm.ads.transaction</groupId>
 			<artifactId>ads-app-transactions-parent</artifactId>
 			<version>1.1.0-SNAPSHOT</version>
 		</parent>
@@ -42,7 +42,7 @@ Los pasos son los siguientes:
 		
 		```
 		<parent>
-			<groupId>com.caixabank.absis.ads.transaction</groupId>
+			<groupId>com.project.alm.ads.transaction</groupId>
 			<artifactId>ads-app-transactions-parent</artifactId>
 			<version>1.1.0-SNAPSHOT</version>
 		</parent>

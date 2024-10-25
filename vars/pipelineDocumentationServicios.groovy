@@ -13,7 +13,7 @@ def call(domain) {
         agent {
             docker {
                 // FIXME: ¿Por que tenemos esta Imagen docker Referenciando a Canal?
-                image "absis3/alm-canal:latest"
+                image "alm/alm-canal:latest"
                 args "$env.DOCKER_AGENT_MVN_LOCAL_REPO"
                 registryUrl "$env.DOCKER_REGISTRY_URL"
             }
@@ -36,8 +36,8 @@ def call(domain) {
             stage('Deploy') {
                 environment {
                     GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
-                    ICP_CERT = credentials('icp-absis3-pro-cert')
-                    ICP_PASS = credentials('icp-absis3-pro-cert-passwd')                    
+                    ICP_CERT = credentials('icp-alm-pro-cert')
+                    ICP_PASS = credentials('icp-alm-pro-cert-passwd')                    
                     BLUEMIX_CREDENTIALS = credentials('BLUEMIX_CREDENTIALS')
                     http_proxy = "${GlobalVars.proxyCaixa}"
                     https_proxy = "${GlobalVars.proxyCaixa}"

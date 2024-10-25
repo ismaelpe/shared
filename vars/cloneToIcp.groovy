@@ -143,9 +143,9 @@ def migrateResourcesTo(Map resources, String environment,String micro, String ma
 	
 	def response = sendRequestToAbsis3MS(
 		'GET',
-		"${GlobalVars.URL_CATALOGO_ABSIS3_PRO}/app/${microType}/${micro}/${major}/config?env=${environment}",
+		"${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${microType}/${micro}/${major}/config?env=${environment}",
 		null,
-		"${GlobalVars.CATALOGO_ABSIS3_ENV}",
+		"${GlobalVars.CATALOGO_ALM_ENV}",
 		[
 			kpiAlmEvent: new KpiAlmEvent(
 				null, null,
@@ -217,7 +217,7 @@ def validateDefinitionImageMigrated(def image) {
 		printOpen("La imagen ya contiene el MIGRATED ${definition}",EchoLevel.INFO)
 	}else {
 		printOpen("La imagen NO es apta para OCP no tiene el MIGRATED ${definition}",EchoLevel.INFO)
-		//docker-registry.cloud.caixabank.com/containers/ab3app/arqrun2:MIGRATED-2.17.0-SNAPSHOT-C
+		//docker-registry.cloud.project.com/containers/ab3app/arqrun2:MIGRATED-2.17.0-SNAPSHOT-C
 		String[] imageString=definition.split(':')
 		if (imageString.size()>1) {
 			definition=imageString[0]+":"+"MIGRATED-"+imageString[1]	
@@ -229,7 +229,7 @@ def validateDefinitionImageMigrated(def image) {
 
 def getInfoVersionFromImage(def image) {
 	def definition=image["image"]
-	//docker-registry.cloud.caixabank.com/containers/ab3app/arqrun2:MIGRATED-2.17.0-SNAPSHOT-B
+	//docker-registry.cloud.project.com/containers/ab3app/arqrun2:MIGRATED-2.17.0-SNAPSHOT-B
 	versionImage=definition.split(':')[1]-'MIGRATED-'
 	versionMicro=versionImage//Eliminamos por si acaso el -MIGRATED
 	if (versionImage.contains('-SNAPSHOT-')) {
@@ -257,9 +257,9 @@ def putImageDockerCompiled(def componentName, def image, boolean isRc) {
 		user: "USER"
 	 ]
  def responseHire = sendRequestToAbsis3MS( 'PUT',
-											"${GlobalVars.URL_CATALOGO_ABSIS3_PRO}/audit",
+											"${GlobalVars.URL_CATALOGO_ALM_PRO}/audit",
 											nuevoEvento,
-											"${GlobalVars.CATALOGO_ABSIS3_ENV}")
+											"${GlobalVars.CATALOGO_ALM_ENV}")
  
 	
 }
@@ -267,9 +267,9 @@ def imageDockesIsCompiled(def app, def version, boolean isRc) {
 	def appM=app.toUpperCase()
 	def response = sendRequestToAbsis3MS(
 		'GET',
-		"${GlobalVars.URL_CATALOGO_ABSIS3_PRO}/audit/OCP/${appM}",
+		"${GlobalVars.URL_CATALOGO_ALM_PRO}/audit/OCP/${appM}",
 		null,
-		"${GlobalVars.CATALOGO_ABSIS3_ENV}")
+		"${GlobalVars.CATALOGO_ALM_ENV}")
 
 	if (response.status == 200) {
 		//def json=readJSON text: response.content
@@ -362,7 +362,7 @@ def buildImageDocker(def app, def path, def micro, def namespace, def versionScr
 					" -l '${GlobalVars.URL_ALMMETRICS}' -A ${namespace} -V ${versionScript} -T ${microType} -C ${nameComponentPom} -E ${environment} -B '${buildCode}' -k ${k8sdestination} "+
 					" -i '${groupId}:${versionScriptBuild}:${nameComponentPom}:${additionalBuildParam}:${versionDelMicroBuild}' ")
 					
-				/*{"id":448619,"extraArgs":"[GROUP_ID=com.caixabank.absis.apps.dataservice.demo, VERSION_ARTIFACT=2.17.0-SNAPSHOT, ARTIFACT_ID=arqrun-micro]","version":"MIGRATED-2.17.0-SNAPSHOT-A","status":"OK","imageRepo1":"docker-registry.cloud.caixabank.com/containers/ab3app/arqrun2","imageRepo2":"docker-registry.cloud.caixabank.com/containers/ab3app/arqrun2"}*/
+				/*{"id":448619,"extraArgs":"[GROUP_ID=com.project.absis.apps.dataservice.demo, VERSION_ARTIFACT=2.17.0-SNAPSHOT, ARTIFACT_ID=arqrun-micro]","version":"MIGRATED-2.17.0-SNAPSHOT-A","status":"OK","imageRepo1":"docker-registry.cloud.project.com/containers/ab3app/arqrun2","imageRepo2":"docker-registry.cloud.project.com/containers/ab3app/arqrun2"}*/
 				end=new Date()
 				printOpen("El resultado build ${resultScript}   Duration: ${(end.getTime()-start.getTime())/1000}sec ",EchoLevel.INFO)
 				
@@ -473,9 +473,9 @@ def generateArtifact(def path, def micro, def namespace, def versionScript, def 
 def getInfoApp(def path, def micro, def namespace, def versionScript, def microType, def componentPom, def environment, def buildCode) {
 	try {
 		
-		printOpen("${path}/getArtifactCatMsv.sh -h '${GlobalVars.URL_CATALOGO_ABSIS3_PRO}' -M ${micro}"+
+		printOpen("${path}/getArtifactCatMsv.sh -h '${GlobalVars.URL_CATALOGO_ALM_PRO}' -M ${micro}"+
 			" -l '${GlobalVars.URL_ALMMETRICS}' -A ${namespace} -V ${versionScript} -T ${microType} -C ${micro}-micro -E ${environment} -B '${buildCode}'  ",EchoLevel.INFO)
-		resultScript = sh( returnStdout: true, script: "${path}/getArtifactCatMsv.sh -h '${GlobalVars.URL_CATALOGO_ABSIS3_PRO}' -M ${micro}"+
+		resultScript = sh( returnStdout: true, script: "${path}/getArtifactCatMsv.sh -h '${GlobalVars.URL_CATALOGO_ALM_PRO}' -M ${micro}"+
 			" -l '${GlobalVars.URL_ALMMETRICS}' -A ${namespace} -V ${versionScript} -T ${microType} -C ${componentPom} -E ${environment} -B '${buildCode}' "
 			)
 		//Tenemos un fichero dado de alta
@@ -747,7 +747,7 @@ def call(String path, String environment, String micro, String version, String n
 				}
 				if (newApp!=null) {
 					def currentImage=newApp["image"]
-					//docker-registry.cloud.caixabank.com/containers/ab3app/arqrun2:2.17.0-SNAPSHOT-A
+					//docker-registry.cloud.project.com/containers/ab3app/arqrun2:2.17.0-SNAPSHOT-A
 					newApp=migrateProfileAndResources(stableApp,environment,k8sOrigin,k8sDestination,absis["resources"])
 					printOpen("El currentImage es de JSON ${currentImage} new",EchoLevel.INFO)
 				}else {
@@ -755,7 +755,7 @@ def call(String path, String environment, String micro, String version, String n
 				}
 				if (oldApp!=null) {
 					def currentImage=oldApp["image"]
-					//docker-registry.cloud.caixabank.com/containers/ab3app/arqrun2:2.17.0-SNAPSHOT-A
+					//docker-registry.cloud.project.com/containers/ab3app/arqrun2:2.17.0-SNAPSHOT-A
 					oldApp=migrateProfileAndResources(stableApp,environment,k8sOrigin,k8sDestination,absis["resources"])
 					printOpen("El currentImage es de JSON ${currentImage} old",EchoLevel.INFO)
 				}else {

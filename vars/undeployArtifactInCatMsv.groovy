@@ -9,7 +9,7 @@ def call(PipelineData pipelineData, PomXmlStructure pomXml, String environment, 
 
 	
 	def response = null
-	if (env.SEND_TO_ABSIS3_CATALOG!="" && env.SEND_TO_ABSIS3_CATALOG=="true") {
+	if (env.SEND_TO_ALM_CATALOG!="" && env.SEND_TO_ALM_CATALOG=="true") {
 		
 		/**
 	@DeleteMapping(value = "/app/{type}/{application}/version/{major}/environment/{environment}", produces = "application/json")	
@@ -25,7 +25,7 @@ def call(PipelineData pipelineData, PomXmlStructure pomXml, String environment, 
 		}
 				
 		try {
-			printOpen("Procedemos al envio del deploy contra el catalogo de absis3", EchoLevel.ALL)
+			printOpen("Procedemos al envio del deploy contra el catalogo de alm", EchoLevel.ALL)
 		
 			def environmentOther =  environment
 			
@@ -36,9 +36,9 @@ def call(PipelineData pipelineData, PomXmlStructure pomXml, String environment, 
 			
 			response = sendRequestToAbsis3MS(
                 'DELETE',
-                "${GlobalVars.URL_CATALOGO_ABSIS3_PRO}/app/${pipelineData.getGarArtifactType().getGarName()}/${pomXml.getApp(pipelineData.garArtifactType)}/version/${pomXml.artifactMajorVersion}/environment/${environmetNew.toUpperCase()}?isRollback=${isRollback}",
+                "${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${pipelineData.getGarArtifactType().getGarName()}/${pomXml.getApp(pipelineData.garArtifactType)}/version/${pomXml.artifactMajorVersion}/environment/${environmetNew.toUpperCase()}?isRollback=${isRollback}",
                 null,
-                "${GlobalVars.CATALOGO_ABSIS3_ENV}",
+                "${GlobalVars.CATALOGO_ALM_ENV}",
                 [
                     kpiAlmEvent: new KpiAlmEvent(
                         pomXml, pipelineData,
@@ -57,13 +57,13 @@ def call(PipelineData pipelineData, PomXmlStructure pomXml, String environment, 
 			}
 			
 		}catch(Exception ex) {
-			printOpen("Error en el envio al catalogo de absis3 ", EchoLevel.ALL)
-			if (env.SEND_TO_ABSIS3_CATALOG_REQUIRED!=null && env.SEND_TO_ABSIS3_CATALOG_REQUIRED!="true") {
+			printOpen("Error en el envio al catalogo de alm ", EchoLevel.ALL)
+			if (env.SEND_TO_ALM_CATALOG_REQUIRED!=null && env.SEND_TO_ALM_CATALOG_REQUIRED!="true") {
 				throw new Exception("Unexpected response from CATMSV, services catalog ")
 			}
 		}
 	}else {
-		printOpen("El catalogo de absis3 esta desconnectado", EchoLevel.ALL)
+		printOpen("El catalogo de alm esta desconnectado", EchoLevel.ALL)
 
 	}	
 	

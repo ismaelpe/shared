@@ -2,7 +2,7 @@ package com.project.alm
 
 enum MaximoEquipoResponsable {
 
-    ARQUITECTURA_ABSIS3("ABSIS3CORE.ARQ.LIB"),
+    ARQUITECTURA_ALM("ALMCORE.ARQ.LIB"),
     ICP("CLDALM.PCLD"),
     GPL("IDEGPL.PCLD"),
     ELK("RECA3I.PCLD"), //Esto parece pertenecer al grupo de la recolectora de Canal y no ELK. Confirmar que podemos abrir máximos ahí por el tema de KPIs

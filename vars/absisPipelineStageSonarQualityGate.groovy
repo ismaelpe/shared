@@ -14,15 +14,15 @@ def call(PomXmlStructure pomXmlStructure, PipelineData pipelineData, String stag
 		boolean ifSonarQualityGateOK = false
 	
 		boolean sonarScanDisabled =
-			"${env.ABSIS3_SERVICES_SKIP_SONAR_SCAN_LIST}".contains(pomXmlStructure.artifactName) ||
-				'true'.equals("${env.ABSIS3_SERVICES_SKIP_SONAR_SCAN_ALL}".toString())
+			"${env.ALM_SERVICES_SKIP_SONAR_SCAN_LIST}".contains(pomXmlStructure.artifactName) ||
+				'true'.equals("${env.ALM_SERVICES_SKIP_SONAR_SCAN_ALL}".toString())
 	
-		boolean sonarQualityGateDisabled = "${env.ABSIS3_SERVICES_SKIP_SONAR_QUALITY_GATE}".contains(pomXmlStructure.artifactName) ||
-			'true'.equals("${env.ABSIS3_SERVICES_SKIP_SONAR_QUALITY_GATE_ALL}".toString())
+		boolean sonarQualityGateDisabled = "${env.ALM_SERVICES_SKIP_SONAR_QUALITY_GATE}".contains(pomXmlStructure.artifactName) ||
+			'true'.equals("${env.ALM_SERVICES_SKIP_SONAR_QUALITY_GATE_ALL}".toString())
 			
-		printOpen("${env.ABSIS3_SERVICES_SKIP_SONAR_QUALITY_GATE}", EchoLevel.DEBUG)
+		printOpen("${env.ALM_SERVICES_SKIP_SONAR_QUALITY_GATE}", EchoLevel.DEBUG)
 		
-		printOpen("${env.ABSIS3_SERVICES_SKIP_SONAR_QUALITY_GATE_ALL}", EchoLevel.DEBUG)
+		printOpen("${env.ALM_SERVICES_SKIP_SONAR_QUALITY_GATE_ALL}", EchoLevel.DEBUG)
 	
 		if (sonarScanDisabled && ( ! sonarQualityGateDisabled ) ) {
 			def msg = "It seems that Sonar Scan has been disabled globally or just for this component but Sonar Quality Gate is enabled." +
@@ -92,7 +92,7 @@ private void dealWithSonarQualityGateFailure(PomXmlStructure pomXmlStructure, Pi
 
     String errorQualityGate = "<Warning_or_Error> stage sonar-quality-gate" + "\n" + "<a href='${pipelineData.testData}'>${pipelineData.testData}</a>"
 
-    def whiteListApps = "${env.ABSIS3_SERVICES_SKIP_SONAR_QUALITY_GATE_PIPELINE_ABORT_WHEN_FAIL}".split(";")
+    def whiteListApps = "${env.ALM_SERVICES_SKIP_SONAR_QUALITY_GATE_PIPELINE_ABORT_WHEN_FAIL}".split(";")
 
     printOpen("Check quality gate for ${pomXmlStructure.artifactName}", EchoLevel.ERROR)
 

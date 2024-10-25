@@ -91,9 +91,9 @@ def call(def valuesDeployed, String componentType, String component, String majo
     printOpen("Antes de llamar a recuperar el id de componente", EchoLevel.DEBUG)
 	def response = sendRequestToAbsis3MS(
 					'GET',
-					"${GlobalVars.URL_CATALOGO_ABSIS3_PRO}/app/${componentType}/${component}",
+					"${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${componentType}/${component}",
 					null,
-					"${GlobalVars.CATALOGO_ABSIS3_ENV}",
+					"${GlobalVars.CATALOGO_ALM_ENV}",
 					200,
 					[
 							kpiAlmEvent: new KpiAlmEvent(
@@ -113,9 +113,9 @@ def call(def valuesDeployed, String componentType, String component, String majo
 	//Validar que estemos aun desplegando
 	response = sendRequestToAbsis3MS(
 		'GET',
-		"${GlobalVars.URL_CATALOGO_ABSIS3_PRO}/app/${componentType}/${component}/version/${major}/environment/${environment}",
+		"${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${componentType}/${component}/version/${major}/environment/${environment}",
 		null,
-		"${GlobalVars.CATALOGO_ABSIS3_ENV}",
+		"${GlobalVars.CATALOGO_ALM_ENV}",
 		
 		[
 			kpiAlmEvent: new KpiAlmEvent(

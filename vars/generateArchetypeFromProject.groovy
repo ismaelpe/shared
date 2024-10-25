@@ -14,7 +14,7 @@ def call(String archetypeModel) {
     printOpen("Archetype properties file: " +
         (archetypePropertiesPath == '' ? 'NOT FOUND. PIPELINE WILL FAIL' : archetypePropertiesPath), EchoLevel.DEBUG)
 
-    configFileProvider([configFile(fileId: 'absis3-maven-settings-with-singulares', variable: 'MAVEN_SETTINGS')]) {
+    configFileProvider([configFile(fileId: 'alm-maven-settings-with-singulares', variable: 'MAVEN_SETTINGS')]) {
         archetypeVersionOnPom = sh(
                 returnStdout: true,
                 script: "mvn  ${GlobalVars.GLOBAL_MVN_PARAMS} -Dhttp.proxyHost=${env.proxyHost} -Dhttp.proxyPort=${env.proxyPort} -Dhttps.proxyHost=${env.proxyHost} -Dhttps.proxyPort=${env.proxyPort} " +

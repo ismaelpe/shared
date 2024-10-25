@@ -62,12 +62,12 @@ def getYamlDeploy( def body) {
 	Map app1 = appsDefinition["stable"]
 	if (app1!=null) {
 		app1['replicas']=0
-		app1['image']='docker-registry.cloud.caixabank.com/'+(app1['image']-'pro-registry.pro.caas.caixabank.com/')//Correccion por si estaban desplegado en el nexus 
+		app1['image']='docker-registry.cloud.project.com/'+(app1['image']-'pro-registry.pro.caas.project.com/')//Correccion por si estaban desplegado en el nexus 
 	}
 	app1 = appsDefinition["new"]
 	if (app1!=null) {
 		app1['replicas']=0
-		app1['image']='docker-registry.cloud.caixabank.com/'+(app1['image']-'pro-registry.pro.caas.caixabank.com/')//Correccion por si estaban desplegado en el nexus 
+		app1['image']='docker-registry.cloud.project.com/'+(app1['image']-'pro-registry.pro.caas.project.com/')//Correccion por si estaban desplegado en el nexus 
 	}
 	Map services = servicesDefinition['stable']
 	if (services!=null) {
@@ -87,12 +87,12 @@ def getYamlDeploy( def body) {
 		services['targetName']='redirecttodev'
 		services['targetInstance']='redirecttodev'
 	}
-	def absis3 = [
+	def alm = [
 		service: [enabled:true],
 		serviceexternal: [enabled:true]
 	]
 	
-	microRedirgido['absis3']=absis3
+	microRedirgido['alm']=alm
 	return yaml.dumpAsMap(microRedirgido)
 	
 }
@@ -143,9 +143,9 @@ def getMicrosNotRedirected(def environment, def redirected=false) {
 def getMicrosNotRedirected(def environment, def redirected, def redirectedInterested) {
 	def response=null
 	if (redirectedInterested) {
-		response=sendRequestToAbsis3MS('GET', "${GlobalVars.URL_CATALOGO_ABSIS3_PRO}/app/${environment}?isRedirected=${redirected}",null, "${GlobalVars.CATALOGO_ABSIS3_ENV}")
+		response=sendRequestToAbsis3MS('GET', "${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${environment}?isRedirected=${redirected}",null, "${GlobalVars.CATALOGO_ALM_ENV}")
 	}else {
-		response=sendRequestToAbsis3MS('GET', "${GlobalVars.URL_CATALOGO_ABSIS3_PRO}/app/${environment}",null, "${GlobalVars.CATALOGO_ABSIS3_ENV}")
+		response=sendRequestToAbsis3MS('GET', "${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${environment}",null, "${GlobalVars.CATALOGO_ALM_ENV}")
 	}
 	
 	if (response.status == 200) {
@@ -280,9 +280,9 @@ def deployRedirectedCatMsv(def micro) {
 	printOpen("Se procede a updatear el catalogo los siguientes valores ${bodyDeploy} para el micro ${micro.appType}${micro.appName} ${micro.major}/${micro.minor}/${micro.fix}/${micro.typeVersion}",EchoLevel.INFO)
 	def response = sendRequestToAbsis3MS(
 		'PUT',
-		"${GlobalVars.URL_CATALOGO_ABSIS3_PRO}/app/${micro.appType}/${micro.garApp}/version/${micro.major}/${micro.minor}/${micro.fix}/${micro.typeVersion}/deploy",
+		"${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${micro.appType}/${micro.garApp}/version/${micro.major}/${micro.minor}/${micro.fix}/${micro.typeVersion}/deploy",
 		bodyDeploy,
-		"${GlobalVars.CATALOGO_ABSIS3_ENV}")
+		"${GlobalVars.CATALOGO_ALM_ENV}")
 	if (response.status == 200) {
 		printOpen("Micro Redirigido correctamenhte",EchoLevel.ERROR)
 		return true

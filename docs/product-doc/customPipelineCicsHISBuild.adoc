@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document describes the `customPipelineCicsHISBuild`, which is a custom pipeline (thus not following the standard lifecycle defined by `absisPipelineBuild`)
+This document describes the `customPipelineCicsHISBuild`, which is a custom pipeline (thus not following the standard lifecycle defined by `almPipelineBuild`)
 meant to built transaction-oriented CICS clients. Those clients are built as Spring Boot starters.
 
 This pipeline is fired by the project `cics-his` via a direct call on its `Jenkinsfile`.
@@ -24,10 +24,10 @@ and are based on the respective `{type}` archetype. Each archetype is used to bu
 
 ### Overview
 
-The maven archetype for each CICS transaction type is built by the pipeline `absisPipelineBuild` which uses the maven
+The maven archetype for each CICS transaction type is built by the pipeline `almPipelineBuild` which uses the maven
 goal `archetype:create-from-project`. Those projects follow the standard lifecycle described in the aforementioned pipeline.
 
-The project `absisPipelineBuild` uses to generate the archetype is a client implementation for each type of transaction on the form of an Spring Boot starter,
+The project `almPipelineBuild` uses to generate the archetype is a client implementation for each type of transaction on the form of an Spring Boot starter,
 plus a sample app. Those two artifacts are bundled together in a multi-module project. For example:
 
 * `cics-normal-starter`

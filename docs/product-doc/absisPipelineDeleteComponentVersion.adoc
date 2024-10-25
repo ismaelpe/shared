@@ -1,5 +1,5 @@
 
-## absisPipelineDeleteComponentVersion
+## almPipelineDeleteComponentVersion
 
 This pipeline runs manually when a user wants to delete a major version of a component
 

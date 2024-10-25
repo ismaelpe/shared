@@ -9,17 +9,17 @@ def call(PomXmlStructure pomXmlStructure, PipelineData pipelineData, String stag
 	}else {
 		sendStageStartToGPL(pomXmlStructure, pipelineData, stageId)
 		
-			def whiteListDataServicesAllowedClients = "${env.ABSIS3_DATA_SERVICES_ALLOWED_ANY_CLIENT}".split(";")
+			def whiteListDataServicesAllowedClients = "${env.ALM_DATA_SERVICES_ALLOWED_ANY_CLIENT}".split(";")
 			//step must be after build in order to check json dependencies
 			validateDependenciesForDataServices(pomXmlStructure, pipelineData, whiteListDataServicesAllowedClients)
 			try {
 		
 					   
 				boolean sonarScanDisabled =
-					"${env.ABSIS3_SERVICES_SKIP_SONAR_SCAN_LIST}".contains(pomXmlStructure.artifactName) ||
-					'true'.equals("${env.ABSIS3_SERVICES_SKIP_SONAR_SCAN_ALL}".toString())
+					"${env.ALM_SERVICES_SKIP_SONAR_SCAN_LIST}".contains(pomXmlStructure.artifactName) ||
+					'true'.equals("${env.ALM_SERVICES_SKIP_SONAR_SCAN_ALL}".toString())
 				
-					printOpen("Sonar Scan starting... ${pipelineData.branchStructure.branchType} ${sonarScanDisabled} XXX${env.ABSIS3_SERVICES_SKIP_SONAR_SCAN_ALL}XXX", EchoLevel.DEBUG)
+					printOpen("Sonar Scan starting... ${pipelineData.branchStructure.branchType} ${sonarScanDisabled} XXX${env.ALM_SERVICES_SKIP_SONAR_SCAN_ALL}XXX", EchoLevel.DEBUG)
 					
 				if (sonarScanDisabled) {
 		

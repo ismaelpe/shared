@@ -59,8 +59,8 @@ def call(Map pipelineParameters) {
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
             JNKMSV = credentials('JNKMSV-USER-TOKEN')
-            ICP_CERT = credentials('icp-absis3-pro-cert')
-            ICP_PASS = credentials('icp-absis3-pro-cert-passwd')
+            ICP_CERT = credentials('icp-alm-pro-cert')
+            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
@@ -180,7 +180,7 @@ def stageExecuteActuatorEnvStep() {
     String prettyResult = ""
 
     try {
-        timeout(GlobalVars.DEFAULT_ABSIS3_MS_REQUEST_RETRIES_TIMEOUT) {
+        timeout(GlobalVars.DEFAULT_ALM_MS_REQUEST_RETRIES_TIMEOUT) {
             waitUntil(initialRecurrencePeriod: 15000) {
 
                 withCredentials([usernamePassword(credentialsId: "K8SGATEWAY_${icpEnv.toUpperCase()}", usernameVariable: 'K8SGATEWAY_USERNAME', passwordVariable: 'K8SGATEWAY_PASSWORD')]) {
@@ -189,7 +189,7 @@ def stageExecuteActuatorEnvStep() {
                     String auth = microBasicCredentials.bytes.encodeBase64().toString()
 
                     def customHeaders = "Authorization: Basic ${auth}"
-                    def command="curl -k --write-out '%{http_code}' -o ${fileOutput} -s -X GET ${url} --proxy ${GlobalVars.proxyCaixa} --connect-timeout ${GlobalVars.ABSIS3_MS_TIMEOUT} -H  'Content-Type: application/json' -H \"${customHeaders}\""
+                    def command="curl -k --write-out '%{http_code}' -o ${fileOutput} -s -X GET ${url} --proxy ${GlobalVars.proxyCaixa} --connect-timeout ${GlobalVars.ALM_MS_TIMEOUT} -H  'Content-Type: application/json' -H \"${customHeaders}\""
 
                     printOpen("Invoking url ['GET'] ${url}", EchoLevel.DEBUG)
                     

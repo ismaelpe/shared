@@ -35,7 +35,7 @@ def call(PomXmlStructure pomXml, PipelineData pipeline, String mvnInputParameter
         def commitLog = null
 
         boolean testJarsApplyAsPerMicroType = (pomXml.artifactSubType == ArtifactSubType.MICRO_APP || pomXml.artifactSubType == ArtifactSubType.MICRO_ARCH || pomXml.artifactSubType == ArtifactSubType.SAMPLE_APP)
-        boolean notWhitelistedForTestJars = ! env.ABSIS3_SERVICES_IT_TEST_JARS_GENERATION_WHITELIST.contains(pomXml.artifactName)
+        boolean notWhitelistedForTestJars = ! env.ALM_SERVICES_IT_TEST_JARS_GENERATION_WHITELIST.contains(pomXml.artifactName)
 
         //Si se trata de un prototipo generamos el jar de prototype
         if (pipeline.branchStructure.branchType == BranchType.PROTOTYPE) {

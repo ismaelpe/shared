@@ -65,7 +65,7 @@ def call(PomXmlStructure pomXmlStructure, PipelineData pipeline) {
 
         }
 
-		if("true".equals(GlobalVars.ABSIS3_SERVICES_SKIP_VALIDATION_DEPENDENCIES_ALL) || isInExclusionList(pomXmlStructure.artifactName)) {
+		if("true".equals(GlobalVars.ALM_SERVICES_SKIP_VALIDATION_DEPENDENCIES_ALL) || isInExclusionList(pomXmlStructure.artifactName)) {
 			printOpen("Skipping dependencies validation for ${pomXmlStructure.artifactName}", EchoLevel.INFO)
 		} else {
 	        if (hasSnapshotDependencies && (pipeline.isCreateRC() || pipeline.isCIReleaseBranch())) {
@@ -90,7 +90,7 @@ def call(PomXmlStructure pomXmlStructure, PipelineData pipeline) {
 
 def isInExclusionList(String component) {
 	printOpen("List of skipped components", EchoLevel.DEBUG)
-	def exclusionList = GlobalVars.ABSIS3_SERVICES_SKIP_VALIDATION_DEPENDENCIES_LIST.split(";")
+	def exclusionList = GlobalVars.ALM_SERVICES_SKIP_VALIDATION_DEPENDENCIES_LIST.split(";")
 	printOpen("La lista de exclusiones es la siguiente ${Arrays.asList(exclusionList)}", EchoLevel.DEBUG)
 	printOpen("La lista contiene el valor ${component} ${Arrays.asList(exclusionList).contains(component)}", EchoLevel.DEBUG)
 	

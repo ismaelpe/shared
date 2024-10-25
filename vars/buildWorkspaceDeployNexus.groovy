@@ -16,7 +16,7 @@ def call(PomXmlStructure pomXml, PipelineData pipeline) {
     //Si se trata de un micro y no una libreria entonces generamos los jars para tests de integracion, tienen sufijo test.jar
 
     boolean testJarsApplyAsPerMicroType = pomXml.artifactSubType == ArtifactSubType.MICRO_APP || pomXml.artifactSubType == ArtifactSubType.MICRO_ARCH || pomXml.artifactSubType == ArtifactSubType.SAMPLE_APP
-    boolean notWhitelisted = ! env.ABSIS3_SERVICES_IT_TEST_JARS_GENERATION_WHITELIST.contains(pomXml.artifactName)
+    boolean notWhitelisted = ! env.ALM_SERVICES_IT_TEST_JARS_GENERATION_WHITELIST.contains(pomXml.artifactName)
 
     if (testJarsApplyAsPerMicroType && notWhitelisted) {
         mvnParameters = " ${mvnParameters} -P generate-absis-it-test-jars "

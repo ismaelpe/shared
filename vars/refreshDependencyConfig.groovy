@@ -59,9 +59,9 @@ def call(PomXmlStructure pomXmlStructure, PipelineData pipelineData, String data
 	
 	response = sendRequestToAbsis3MS(
         'GET',
-        "${GlobalVars.URL_CATALOGO_ABSIS3_PRO}/app/${type}/${application}/version/${major}/${minor}/${fix}/${typeVersion}/dependency/invokers/${environmentUpperCase}?recursive=true&ignoreFix=true",
+        "${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${type}/${application}/version/${major}/${minor}/${fix}/${typeVersion}/dependency/invokers/${environmentUpperCase}?recursive=true&ignoreFix=true",
         null,
-        "${GlobalVars.CATALOGO_ABSIS3_ENV}",
+        "${GlobalVars.CATALOGO_ALM_ENV}",
         [
             kpiAlmEvent: new KpiAlmEvent(
                 pomXmlStructure, pipelineData,

@@ -103,7 +103,7 @@ def call(def appsList) {
 				String goal = "verify"
 
 				try {
-					configFileProvider([configFile(fileId: 'absis3-maven-settings-with-singulares', variable: 'MAVEN_SETTINGS')]) {
+					configFileProvider([configFile(fileId: 'alm-maven-settings-with-singulares', variable: 'MAVEN_SETTINGS')]) {
 						//ICP
                         def cmd = ""
                         if (item.isArchMicro) {

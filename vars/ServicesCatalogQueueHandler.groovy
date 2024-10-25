@@ -3,9 +3,9 @@ import com.project.alm.*
 class ServicesCatalogQueueHandler extends AbstractQueueHandler implements Serializable {
  
     static final String SCU_QUEUE_NAME = "services-catalog"
-    static final String SCU_SERVICES_CATALOG_REPO_URL = "https://git.svb.lacaixa.es/cbk/absis3/services/documentation/services-catalog.git"
+    static final String SCU_SERVICES_CATALOG_REPO_URL = "https://git.svb.lacaixa.es/cbk/alm/services/documentation/services-catalog.git"
     static final String SCU_GIT_REPO_PATH = "services-catalog-git-repo"
-    //static final String SCU_JOB_URL = "http://buildasp07.lacaixa.es:8090/job/absis3/job/services/job/arch/job/alm/job/job-services-catalog-updater/build?token=EDTLz6zHeUtyc5yUXZdAnR7BqtA7unuW"
+    //static final String SCU_JOB_URL = "http://buildasp07.lacaixa.es:8090/job/alm/job/services/job/arch/job/alm/job/job-services-catalog-updater/build?token=EDTLz6zHeUtyc5yUXZdAnR7BqtA7unuW"
  
     ServicesCatalogQueueHandler(scriptContext, gitRepoUrl, gitRepoPath) {
         super(scriptContext, gitRepoUrl, gitRepoPath)
@@ -29,6 +29,6 @@ class ServicesCatalogQueueHandler extends AbstractQueueHandler implements Serial
  
     @Override
     String getJenkinsUpdaterJobName() {        
-        return "${scriptContext.env.JENKINS_URL}/job/absis3/job/services/job/arch/job/alm/job/job-services-catalog-updater/build?token=${scriptContext.env.GPL_PSWR}";
+        return "${scriptContext.env.JENKINS_URL}/job/alm/job/services/job/arch/job/alm/job/job-services-catalog-updater/build?token=${scriptContext.env.GPL_PSWR}";
     }
 }

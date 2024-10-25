@@ -12,9 +12,9 @@ def validateEnvironment(String appType, String application, String environment, 
 
     response = sendRequestToAbsis3MS(
         'GET',
-        "${GlobalVars.URL_CATALOGO_ABSIS3_PRO}/app/${appType}/${application}/version/environment/${environment}",
+        "${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${appType}/${application}/version/environment/${environment}",
         null,
-        "${GlobalVars.CATALOGO_ABSIS3_ENV}",
+        "${GlobalVars.CATALOGO_ALM_ENV}",
         [
             kpiAlmEvent: new KpiAlmEvent(
                 null, null,
@@ -34,7 +34,7 @@ def validateEnvironment(String appType, String application, String environment, 
 			//Detectamos todas estas majors instaladas
 			printOpen("Tenemos estas majors instaladas en el entorno de ${environmetNew} de un numero de ${json.size()} ", EchoLevel.ALL)
 			//Este micro esta en la white list
-			if (env.ABSIS3_SERVICES_SKIP_MAJOR_CONTROL_LIST!=null && env.ABSIS3_SERVICES_SKIP_MAJOR_CONTROL.indexOf("${pomXml.getApp(pipelineData.garArtifactType)}")!=-1) {
+			if (env.ALM_SERVICES_SKIP_MAJOR_CONTROL_LIST!=null && env.ALM_SERVICES_SKIP_MAJOR_CONTROL.indexOf("${pomXml.getApp(pipelineData.garArtifactType)}")!=-1) {
 				printOpen("El micro se ha salvado... puede tener las majors que le de la gana", EchoLevel.ALL)
 			}else {
 				//El nombre de micros supera el numero maximo de micros por entorno
@@ -87,7 +87,7 @@ def call(PipelineData pipelineData, PomXmlStructure pomXml) {
 	
 	def response = null
 	def toManyMajors = false
-	if (env.SEND_TO_ABSIS3_CATALOG!="" && env.SEND_TO_ABSIS3_CATALOG=="true") {
+	if (env.SEND_TO_ALM_CATALOG!="" && env.SEND_TO_ALM_CATALOG=="true") {
 		
 		/**
 	@GetMapping(value = "/app/{type}/{application}/version/environment/{environment}", produces = "application/json")	
@@ -108,7 +108,7 @@ def call(PipelineData pipelineData, PomXmlStructure pomXml) {
 		}
 				
 		try {
-			printOpen("Sending deploy against absis3 catalog", EchoLevel.INFO)
+			printOpen("Sending deploy against alm catalog", EchoLevel.INFO)
 		
 			status=validateEnvironment(pipelineData.getGarArtifactType().getGarName(),pomXml.getApp(pipelineData.garArtifactType),environmetNew,pomXml.getMajorVersion())			
 			
@@ -124,8 +124,8 @@ def call(PipelineData pipelineData, PomXmlStructure pomXml) {
 			if (toManyMajors) {
 				throw ex
 			}
-			printOpen("Error sending to absis3 catalog", EchoLevel.ERROR)
-			if (env.SEND_TO_ABSIS3_CATALOG_REQUIRED!=null && env.SEND_TO_ABSIS3_CATALOG_REQUIRED!="true") {
+			printOpen("Error sending to alm catalog", EchoLevel.ERROR)
+			if (env.SEND_TO_ALM_CATALOG_REQUIRED!=null && env.SEND_TO_ALM_CATALOG_REQUIRED!="true") {
 				throw new Exception("Unexpected response from CATMSV (services catalog)")
 			}
 		}

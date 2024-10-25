@@ -266,7 +266,7 @@ class ICPStateUtility {
         }
         return "absis:\n"+
             "  app:\n"+
-            "    loggingElkStack: absis30\n"+
+            "    loggingElkStack: alm0\n"+
             "    replicas: 1\n"+
             "    instance: "+applicationName+"\n"+
             "    name: "+aplicacion+"\n"+

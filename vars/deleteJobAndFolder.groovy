@@ -17,9 +17,9 @@ def call(def typeApp, def nameApp) {
 	def microOwnerOfTheSecret
 	def response1 = sendRequestToAbsis3MS(
 			 'GET',
-			 "${GlobalVars.URL_CATALOGO_ABSIS3_PRO}/app/${typeApp}/${nameAppRegularizado}",
+			 "${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${typeApp}/${nameAppRegularizado}",
 			 null,
-			 "${GlobalVars.CATALOGO_ABSIS3_ENV}",
+			 "${GlobalVars.CATALOGO_ALM_ENV}",
 			 [
 				 kpiAlmEvent: new KpiAlmEvent(
 					 null, null,
@@ -37,9 +37,9 @@ def call(def typeApp, def nameApp) {
 		 }
     def response = sendRequestToAbsis3MS(
 			'PUT',
-			"${GlobalVars.URL_CATALOGO_ABSIS3_PRO}/app",
+			"${GlobalVars.URL_CATALOGO_ALM_PRO}/app",
 			microOwnerOfTheSecret,
-			"${GlobalVars.CATALOGO_ABSIS3_ENV}",
+			"${GlobalVars.CATALOGO_ALM_ENV}",
 			[
 				kpiAlmEvent: new KpiAlmEvent(
 					null, null,
@@ -59,7 +59,7 @@ def call(def typeApp, def nameApp) {
 def call(def typeApp, def domain, def nameApp, def empresa, def modulo) {
 	
 	def folder=new ArrayList()
-	folder.add("absis3")
+	folder.add("alm")
 	folder.add("services")
 	
 	int nivel=0
@@ -74,7 +74,7 @@ def call(def typeApp, def domain, def nameApp, def empresa, def modulo) {
 		if (!nameApp.contains('-conf')) nameApp = nameApp + '-conf'
 	}
 	def isArq = true
-	def jenkinsPath = "absis3/services" 
+	def jenkinsPath = "alm/services" 
 	
 	if (typeApp == "Library" || typeApp == "MicroService" || typeApp == "DataService"
 		|| typeApp == "SRV.LIB" || typeApp == "SRV.DS" || typeApp == "SRV.MS" || typeApp == "SRV.CFG" ) {

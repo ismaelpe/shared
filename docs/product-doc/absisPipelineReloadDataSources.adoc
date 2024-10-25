@@ -1,5 +1,5 @@
 
-## absisPipelineReloadDataSources
+## almPipelineReloadDataSources
 
 This pipeline runs manually invoked by TTSS team (ItNow).
 

@@ -22,7 +22,7 @@ def call(PomXmlStructure pomXmlStructure, PipelineData pipelineData, String stag
 			status=validateMicrosMajor(pipelineData,pomXmlStructure)
 			
 			if (!"true".equals(status)) {
-				String disableValidateMajor = "${env.ABSIS3_SERVICES_SKIP_MAJOR_CONTROL}"
+				String disableValidateMajor = "${env.ALM_SERVICES_SKIP_MAJOR_CONTROL}"
 				if (disableValidateMajor!=null && disableValidateMajor=="false") {
 					throw new Exception(status)
 				}else {

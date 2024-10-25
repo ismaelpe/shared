@@ -1,5 +1,5 @@
 
-## absisPipelineCannaryRelease 
+## almPipelineCannaryRelease 
 
 This pipeline increases the percentatge of the micro request load. Used with the cannary deployment.
 

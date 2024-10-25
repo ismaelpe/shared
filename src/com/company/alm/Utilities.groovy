@@ -196,7 +196,7 @@ class Utilities {
 			// Reading file
 			String currentFileContent = scriptContext.sh(returnStdout: true, script: "cat ${parentPath}${filenameToUpdate}")
 			if (almFolder) {
-				String needle1 = "@Library(\"absis3-services"
+				String needle1 = "@Library(\"alm-services"
 				String needle2 = ")"
 				String insert1 = "@${almBranch.trim()}"
 				String insert2 = ", almFolder: '${almFolderJenkins}'"
@@ -261,7 +261,7 @@ class Utilities {
             // Reading file
             String currentFileContent = scriptContext.sh(returnStdout: true, script: "cat ${parentPath}${filenameToUpdate}")
             if (almFolder) {
-                String needle1 = "@Library(\"absis3-services"
+                String needle1 = "@Library(\"alm-services"
                 String needle2 = ")"
                 String insert1 = "@${almBranch.trim()}"
                 String insert2 = ", almFolder: '${almFolder}'"

@@ -40,8 +40,8 @@ def call(Map pipelineParameters) {
         //Environment sobre el qual se ejecuta este tipo de job
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
-            ICP_CERT = credentials('icp-absis3-pro-cert')
-            ICP_PASS = credentials('icp-absis3-pro-cert-passwd')
+            ICP_CERT = credentials('icp-alm-pro-cert')
+            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
@@ -129,12 +129,12 @@ def processAppsStep() {
 	
 	try {
 		if (GlobalVars.TST_ENVIRONMENT == catalogEnvironment) {
-			catalogUrl = "${GlobalVars.URL_CATALOGO_ABSIS3_TST}"
+			catalogUrl = "${GlobalVars.URL_CATALOGO_ALM_TST}"
 		} else if (GlobalVars.PRE_ENVIRONMENT == catalogEnvironment) {
-			catalogUrl = "${GlobalVars.URL_CATALOGO_ABSIS3_PRE}"
+			catalogUrl = "${GlobalVars.URL_CATALOGO_ALM_PRE}"
 		} else if (GlobalVars.PRO_ENVIRONMENT == catalogEnvironment) {
 			throw new Exception("PRO environment not yet supported")
-			//catalogUrl = "${GlobalVars.URL_CATALOGO_ABSIS3_PRO}"
+			//catalogUrl = "${GlobalVars.URL_CATALOGO_ALM_PRO}"
 		} else {
 			throw new Exception("${catalogEnvironment} is not a valid Catalog Environment param")
 		}

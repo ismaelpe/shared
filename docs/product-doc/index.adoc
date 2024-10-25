@@ -1,9 +1,9 @@
 # Jenkins Shared Library
 
-This library contains the implementation of the Jenkins pipelines used in Absis3 projects.
+This library contains the implementation of the Jenkins pipelines used in Alm3 projects.
 
 
-## absisPipelineBuild
+## almPipelineBuild
 
 This pipeline runs with the CI, after every push to the repository. This pipeline has the following stages:
 
@@ -23,7 +23,7 @@ This pipeline runs with the CI, after every push to the repository. This pipelin
 . generate-report
 . <<publish-artifact-catalog>>
 
-## absisPipelineCreateRC
+## almPipelineCreateRC
 
 This pipeline runs manually when a new Release Candidate has to be created. It receives the following parameters:
 
@@ -63,7 +63,7 @@ These are the stages of the pipeline:
 . next-Minor-Master
 . push-repo-url
 
-## absisPipelineCreateRelease
+## almPipelineCreateRelease
 
 This pipeline runs manually when a new Release has to be created. It receives the following parameters:
 
@@ -296,7 +296,7 @@ Generate a file CHANGELOG.md in the repository root once a merge request is laun
 
 #### Conditional execution
 
-Only with user push action, skip the execution when is absis3user 
+Only with user push action, skip the execution when is almuser 
 Only if changelog param is activated
 Only in feature branch
 Only when target branch is master
@@ -313,7 +313,7 @@ Add the user history (if not exists) in the version that correspond.
 
 #### Description
 
-Publishes the client artifacts for absis3 and absis2 for the microservice.
+Publishes the client artifacts for alm and alm2 for the microservice.
 
 #### Conditional execution
 
@@ -325,21 +325,21 @@ This stage only runs for micro services or data services (`MICRO_APP`).
 +
 First step is cleaning the source folder in the temporary directory created in the <<validate-version>> stage.
 
-. *Generate contract pom for absis3 client*
+. *Generate contract pom for alm client*
 +
 It fulfills the _fake_ pom with the maven details of the microservice and copies both the pom and the Swagger contract into the temporary folder. See <<validate-version, validate-version, step 1>> for more details.
 
-. *Install deploy client artifact for absis3*
+. *Install deploy client artifact for alm*
 +
-Deploys the client artifact for absis3 in nexus using the _fake_ pom recently copied into the temporary directory, using the maven profile `generateAbsisClient` and the goal `deploy`.
+Deploys the client artifact for alm in nexus using the _fake_ pom recently copied into the temporary directory, using the maven profile `generateAlmClient` and the goal `deploy`.
 
-. *Generate contract pom for absis2 client*
+. *Generate contract pom for alm2 client*
 +
-It fulfills the _fake_ pom with the maven details of the microservice and copies both the pom and the Swagger contract to the temporary folder. In this case, not only the groupId changes: the artifactId concats the keyword `Absis2` to the current artifactId. See <<validate-version, validate-version, step 1>> for more details.
+It fulfills the _fake_ pom with the maven details of the microservice and copies both the pom and the Swagger contract to the temporary folder. In this case, not only the groupId changes: the artifactId concats the keyword `Alm2` to the current artifactId. See <<validate-version, validate-version, step 1>> for more details.
 
-. *Install deploy client artifact for absis3*
+. *Install deploy client artifact for alm*
 +
-Deploys the client artifact for absis2 in nexus using the _fake_ pom recently copied into the temporary directory, using the maven profile `generateAbsis2Client` and the goal `deploy`.
+Deploys the client artifact for alm2 in nexus using the _fake_ pom recently copied into the temporary directory, using the maven profile `generateAlm2Client` and the goal `deploy`.
 
 #### Result
 
@@ -350,7 +350,7 @@ If there are no failures during the deployment process, the stage will end succe
 
 #### Description
 
-Publishes the artifact details to the Absis catalog.
+Publishes the artifact details to the Alm catalog.
 
 #### Conditional execution
 

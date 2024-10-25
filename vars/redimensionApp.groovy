@@ -98,16 +98,16 @@ def call(Map valuesDeployed, String app, String center, String namespace, String
 }
 
 private def updateCat(def type, def app, def environment, def garApp, ICPAppResources icpResources) {
-	if (env.SEND_TO_ABSIS3_CATALOG!="" && env.SEND_TO_ABSIS3_CATALOG=="true" && icpResources!=null) {
+	if (env.SEND_TO_ALM_CATALOG!="" && env.SEND_TO_ALM_CATALOG=="true" && icpResources!=null) {
 		
 		def major=app-garApp
-		//https://catmsv-micro-server-1.pro.int.srv.caixabank.com/app/ARQ.MIA/catmsv/version/1/environment/PRO
+		//https://catmsv-micro-server-1.pro.int.srv.project.com/app/ARQ.MIA/catmsv/version/1/environment/PRO
 
         def response = sendRequestToAbsis3MS(
             'GET',			
-            "${GlobalVars.URL_CATALOGO_ABSIS3_PRO}/app/${type}/${garApp}/version/${major}/environment/${environment}",			
+            "${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${type}/${garApp}/version/${major}/environment/${environment}",			
             null,
-            "${GlobalVars.CATALOGO_ABSIS3_ENV}",		
+            "${GlobalVars.CATALOGO_ALM_ENV}",		
 			
             [
                 kpiAlmEvent: new KpiAlmEvent(
@@ -130,7 +130,7 @@ private def updateCat(def type, def app, def environment, def garApp, ICPAppReso
 
 //Tenemos que recoger esta info del catalogo
 private def updateCatMsv(def type, def app, def major, def minor, def fix, def typeVersion, def environmetNew, ICPAppResources icpResources) {
-	if (env.SEND_TO_ABSIS3_CATALOG!="" && env.SEND_TO_ABSIS3_CATALOG=="true" && icpResources!=null) {
+	if (env.SEND_TO_ALM_CATALOG!="" && env.SEND_TO_ALM_CATALOG=="true" && icpResources!=null) {
 
 		def deployParams = 
 		   [ 
@@ -147,9 +147,9 @@ private def updateCatMsv(def type, def app, def major, def minor, def fix, def t
 
 		def response = sendRequestToAbsis3MS(
             'PUT',
-            "${GlobalVars.URL_CATALOGO_ABSIS3_PRO}/app/${type}/${app}/version/${major}/${minor}/${fix}/${typeVersion}/deploy",
+            "${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${type}/${app}/version/${major}/${minor}/${fix}/${typeVersion}/deploy",
             deployParams,
-            "${GlobalVars.CATALOGO_ABSIS3_ENV}",			
+            "${GlobalVars.CATALOGO_ALM_ENV}",			
             [
                 kpiAlmEvent: new KpiAlmEvent(
                     null, null,

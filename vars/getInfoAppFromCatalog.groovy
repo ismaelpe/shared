@@ -12,9 +12,9 @@ def call(String componentType, String component) {
 	try {
 		def response = sendRequestToAbsis3MS(
 			'GET',
-			"${GlobalVars.URL_CATALOGO_ABSIS3_PRO}/app/${componentType}/${component}",
+			"${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${componentType}/${component}",
 			null,
-			"${GlobalVars.CATALOGO_ABSIS3_ENV}",
+			"${GlobalVars.CATALOGO_ALM_ENV}",
 			200,
 			[
 				kpiAlmEvent: new KpiAlmEvent(
@@ -26,7 +26,7 @@ def call(String componentType, String component) {
 		def json = response.content
 		return json
 	} catch (Exception ex) {
-        printOpen("Error al consultar el catalogo de absis3: "+ex.getMessage(), EchoLevel.ERROR)
+        printOpen("Error al consultar el catalogo de alm: "+ex.getMessage(), EchoLevel.ERROR)
 		throw ex
 	}
 }
@@ -38,9 +38,9 @@ def call(PomXmlStructure pomXml, PipelineData pipeline, ICPDeployStructure deplo
 
 		def response = sendRequestToAbsis3MS(
             'GET',
-            "${GlobalVars.URL_CATALOGO_ABSIS3_PRO}/app/${componentType}/${component}",
+            "${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${componentType}/${component}",
             null,
-            "${GlobalVars.CATALOGO_ABSIS3_ENV}",
+            "${GlobalVars.CATALOGO_ALM_ENV}",
             200,
             [
                 kpiAlmEvent: new KpiAlmEvent(

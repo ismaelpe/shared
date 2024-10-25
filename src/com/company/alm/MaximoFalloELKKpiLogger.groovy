@@ -3,7 +3,7 @@ package com.project.alm;
 class MaximoFalloELKKpiLogger extends MaximoAbstractFallo {
 
     MaximoFalloELKKpiLogger(KpiData kpiData, String log) {
-        this.equipoResponsable = kpiData instanceof KpiAlmEvent ? MaximoEquipoResponsable.ARQUITECTURA_ABSIS3 : MaximoEquipoResponsable.ELK
+        this.equipoResponsable = kpiData instanceof KpiAlmEvent ? MaximoEquipoResponsable.ARQUITECTURA_ALM : MaximoEquipoResponsable.ELK
         this.resumen = "Fallan las peticiones contra KPI loggers de ELK"
         this.descripcion =
                 "<p>Se han detectado fallos al hacer peticiones a los KPI loggers de ELK, la hora aproximada es: ${new Date().toString()}.</p>" +

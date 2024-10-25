@@ -94,7 +94,7 @@ def validateThatSecretsBeingUsedBelongJustToThisApp(PomXmlStructure pomXmlStruct
 
     //Comprobar que el secreto que usa es solo de esa aplicación
 
-    if("true".equals(GlobalVars.ABSIS3_SERVICES_SKIP_VALIDATION_SECRETS_ALL) || isInSecretsExclusionList(pomXmlStructure.artifactName)) {
+    if("true".equals(GlobalVars.ALM_SERVICES_SKIP_VALIDATION_SECRETS_ALL) || isInSecretsExclusionList(pomXmlStructure.artifactName)) {
         printOpen("Skipping secrets validation for ${pomXmlStructure.artifactName}", EchoLevel.INFO)
     } else {
         printOpen("Validating secrets... artifactId: ${pomXmlStructure.artifactName} version: ${pomXmlStructure.artifactVersion}", EchoLevel.INFO)
@@ -172,6 +172,6 @@ def validateThatSecretsBeingUsedBelongJustToThisApp(PomXmlStructure pomXmlStruct
 
 def isInSecretsExclusionList(String component) {
 	printOpen("List of skipped components", EchoLevel.ALL)
-	def exclusionList = GlobalVars.ABSIS3_SERVICES_SKIP_VALIDATION_SECRETS_LIST.split(";")
+	def exclusionList = GlobalVars.ALM_SERVICES_SKIP_VALIDATION_SECRETS_LIST.split(";")
 	return Arrays.asList(exclusionList).contains(component)
 }

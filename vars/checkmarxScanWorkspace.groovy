@@ -23,8 +23,8 @@ def call(PomXmlStructure pomXml, PipelineData pipeline,boolean sendEmailResults,
 		KpiAlmEventOperation.CHECKMARX_SCAN)
 	
 	
-	String disableCheckmarx = "${env.ABSIS3_SERVICES_SKIP_CHECKMARX_ALL}".toString()
-	def whiteListApps = "${env.ABSIS3_SERVICES_SKIP_CHECKMARX_LIST}".split(";")
+	String disableCheckmarx = "${env.ALM_SERVICES_SKIP_CHECKMARX_ALL}".toString()
+	def whiteListApps = "${env.ALM_SERVICES_SKIP_CHECKMARX_LIST}".split(";")
 	long wholeCallDuration = 0
 
     printOpen("disableCheckmarx: ${disableCheckmarx}", EchoLevel.DEBUG)

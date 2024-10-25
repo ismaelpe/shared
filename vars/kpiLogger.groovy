@@ -56,7 +56,7 @@ def call(KpiData kpiData) {
     def response
 
     boolean isKpiAndSendingIsEnabled = GlobalVars.IS_KPI_ENABLED && !(kpiData instanceof KpiAlmEvent)
-    boolean isKpiAlmEventAndSendingIsEnabled = GlobalVars.ABSIS3_SERVICES_SEND_ALM_METRICS && kpiData instanceof KpiAlmEvent
+    boolean isKpiAlmEventAndSendingIsEnabled = GlobalVars.ALM_SERVICES_SEND_ALM_METRICS && kpiData instanceof KpiAlmEvent
 
     if (isKpiAndSendingIsEnabled || isKpiAlmEventAndSendingIsEnabled) {
 

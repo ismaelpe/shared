@@ -11,7 +11,7 @@ def call(PipelineData pipelineData, PomXmlStructure pomXml) {
     if (environment != "dev" && environment != "eden") {
         printOpen("ArchApiManagementLifecycle promote contract for '$artifactName':\nasset_version:\t$contractVersion\nenvironment:\t$environment\ntype:\t$type\nmicro_version:\t$microVersion", EchoLevel.INFO)
         
-        def muleParams = new JsonSlurperClassic().parseText(env.ABSIS3_MULE_PROPERTIES)
+        def muleParams = new JsonSlurperClassic().parseText(env.ALM_MULE_PROPERTIES)
         
         def securityArtifact = getSecurityArtifact(muleParams)
 
@@ -62,7 +62,7 @@ def call(PipelineData pipelineData, PomXmlStructure pomXml) {
 def getSecurityArtifact(muleParams) {
     printOpen("Downloading 'security artifact'...", EchoLevel.INFO)
 
-    def securityArtifactUrl = env.ABSIS3_MULE_SECURITY_ARTIFACT_URL
+    def securityArtifactUrl = env.ALM_MULE_SECURITY_ARTIFACT_URL
     
     if (securityArtifactUrl) {
         withCredentials([usernamePassword(credentialsId: 'icpcoucxba3msje01', passwordVariable: 'artifactPass', usernameVariable: 'artifactUser')]) {
@@ -106,7 +106,7 @@ def getSecurityArtifact(muleParams) {
             }
         }
     } else {
-        throw new Exception("Check jenkins environment, 'ABSIS3_MULE_SECURITY_ARTIFACT_URL' is not defined!")
+        throw new Exception("Check jenkins environment, 'ALM_MULE_SECURITY_ARTIFACT_URL' is not defined!")
     }
 }
 
@@ -115,7 +115,7 @@ def buildCurlCommand(method, url, user, pass, connectTimeOut, readTimeOut, filen
 }
 
 def shouldWeAbortThePipe() {
-	boolean abortThePipe = Utilities.getBooleanPropertyOrDefault(env.ABSIS3_MULE_ARCHAPIMANAGEMENTLIFECYCLE_IF_ERROR_THEN_PIPELINE_FAILS, true)
+	boolean abortThePipe = Utilities.getBooleanPropertyOrDefault(env.ALM_MULE_ARCHAPIMANAGEMENTLIFECYCLE_IF_ERROR_THEN_PIPELINE_FAILS, true)
     printOpen("Looking if we have to abort the pipe: ${abortThePipe}", EchoLevel.INFO)
 	return abortThePipe
 }

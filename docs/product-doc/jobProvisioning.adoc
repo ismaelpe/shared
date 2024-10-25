@@ -20,7 +20,7 @@ This pipeline is executed during the provisioning process. The main purpose is t
 
 It is not a declarative pipeline, then it doesn't have any stage.
 
-Basically, the behavior differs if the company is caixabank or bpi and the type of artifact (application or architecture).
+Basically, the behavior differs if the company is project or bpi and the type of artifact (application or architecture).
 
 * Company BPI, the job creates
 ** domain a folder with the domain name

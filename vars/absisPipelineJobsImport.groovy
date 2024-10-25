@@ -79,7 +79,7 @@ def getGitRepoStep() {
 
     String enviroment = System.getProperty('jenkins.environment')
 
-    gitRepoUrl = "https://git.svb.lacaixa.es/cbk/absis3/config/jenkins-${enviroment}.git"
+    gitRepoUrl = "https://git.svb.lacaixa.es/cbk/alm/config/jenkins-${enviroment}.git"
 
     printOpen("Pull from '$enviroment' and '$jobBranch' branch, gitUrl is $gitRepoUrl", EchoLevel.INFO)
 

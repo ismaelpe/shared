@@ -271,7 +271,7 @@ class BmxUtilities {
 
 
         for (SyntheticTestStructure item : syntheticTestList) {            
-            def url = "https://${item.appName}.tst.int.srv.caixabank.com/actuator/info"
+            def url = "https://${item.appName}.tst.int.srv.project.com/actuator/info"
 
             def response = null
 

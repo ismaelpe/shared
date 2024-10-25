@@ -29,8 +29,8 @@ def call(Map pipelineParameters) {
         }
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
-            CIPHER_PASSWORD = credentials('icp-absis3-cipher-password')
-            CIPHER_IV = credentials('icp-absis3-cipher-iv')
+            CIPHER_PASSWORD = credentials('icp-alm-cipher-password')
+            CIPHER_IV = credentials('icp-alm-cipher-iv')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
@@ -85,7 +85,7 @@ def gitPullRepoStep() {
     printOpen("Pull $enviroment config from $env.JENKINS_GIT_CONFIG_BRANCH", EchoLevel.INFO)
     
     // Load Instance Config
-    git = new GitRepositoryHandler(this, "https://git.svb.lacaixa.es/cbk/absis3/config/jenkins-${enviroment}.git", [gitProjectRelativePath: '.'])
+    git = new GitRepositoryHandler(this, "https://git.svb.lacaixa.es/cbk/alm/config/jenkins-${enviroment}.git", [gitProjectRelativePath: '.'])
         .initialize()
         .cloneFromGit()
         .checkout(env.JENKINS_GIT_CONFIG_BRANCH)

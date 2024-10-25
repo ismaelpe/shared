@@ -7,9 +7,9 @@ def call(PipelineData pipelineData, PomXmlStructure pomXml) {
     boolean environmentIsNotEden = pipelineData?.bmxStructure?.environment?.toUpperCase() != "EDEN"
     
     boolean isEnabled =
-        getBooleanPropertyOrDefault(env.ABSIS3_SERVICES_APIMANAGER_TECHNICALSERVICES_REGISTRATION_ENABLED, true)
+        getBooleanPropertyOrDefault(env.ALM_SERVICES_APIMANAGER_TECHNICALSERVICES_REGISTRATION_ENABLED, true)
 
-    def exclusionList = env.ABSIS3_SERVICES_APIMANAGER_TECHNICALSERVICES_REGISTRATION_SKIP_LIST.split(";")
+    def exclusionList = env.ALM_SERVICES_APIMANAGER_TECHNICALSERVICES_REGISTRATION_SKIP_LIST.split(";")
 
     return isEnabled &&
         !pipelineData?.isPushCI() &&

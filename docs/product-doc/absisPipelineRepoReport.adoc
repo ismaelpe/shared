@@ -1,5 +1,5 @@
 
-## absisPipelineRepoReport
+## almPipelineRepoReport
 
 This pipeline can make a report of the git repo branches not merged, pending to be eliminated or merged to the master.
 

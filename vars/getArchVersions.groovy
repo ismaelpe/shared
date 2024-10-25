@@ -21,8 +21,8 @@ def call(Map appsRoutes, String envICP, String namespace, String center) {
 			try {
 				def response = sendRequest("${microURL}/actuator/info","GET")
 				def json = readJSON text: response.content
-				if (json.build != null && json.build.absis3core != null) {
-					versions.put(it.value, json.build.absis3core.version)
+				if (json.build != null && json.build.almcore != null) {
+					versions.put(it.value, json.build.almcore.version)
 				} else {
 					versions.put(it.value, "NO_ARCH_VERSION")
 				}

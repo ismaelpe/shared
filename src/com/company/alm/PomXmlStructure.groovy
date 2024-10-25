@@ -74,7 +74,7 @@ class PomXmlStructure {
     //Architecture version will not be checked in hotfix branches
     public void validateArtifact(String environment) {
 
-        def skipMinimumVersionValidationList = GlobalVars.ABSIS3_SKIP_MINIMUM_VERSION_VALIDATION_LIST.split(";")
+        def skipMinimumVersionValidationList = GlobalVars.ALM_SKIP_MINIMUM_VERSION_VALIDATION_LIST.split(";")
 
         if(!skipMinimumVersionValidationList.contains(artifactName)){
 
@@ -89,7 +89,7 @@ class PomXmlStructure {
 
 
     public void validateArtifact() {
-     	def skipMinimumVersionValidationList = GlobalVars.ABSIS3_SKIP_MINIMUM_VERSION_VALIDATION_LIST.split(";")
+     	def skipMinimumVersionValidationList = GlobalVars.ALM_SKIP_MINIMUM_VERSION_VALIDATION_LIST.split(";")
         if(!skipMinimumVersionValidationList.contains(artifactName)){
        		 if (needsArchVersionUpgrade()) {
        		 	throw new Exception("Needs an upgrade of arch version!!! ${GlobalVars.MINIMUM_VERSION_ARCH}")
@@ -287,7 +287,7 @@ class PomXmlStructure {
                 artifactLib = artifactName
             }
 
-            if (GlobalVars.ABSIS3_SERVICES_SIMPLIFIED_ALM_WHITELIST.contains(artifactName)) {
+            if (GlobalVars.ALM_SERVICES_SIMPLIFIED_ALM_WHITELIST.contains(artifactName)) {
 
                 archVersion = GlobalVars.MINIMUM_VERSION_ARCH_PRO
 

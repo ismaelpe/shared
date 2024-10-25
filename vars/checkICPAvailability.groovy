@@ -40,7 +40,7 @@ def call(PomXmlStructure pomXml, PipelineData pipelineData, String availabilityZ
 	
 	if (env.CHECK_ICP!=null && env.CHECK_ICP == "true") {
 		//Procederemos a validar si la app esta en la lista verde
-		if (env.ABSIS3_SERVICES_SKIP_CHECK_ICP_LIST!=null && env.ABSIS3_SERVICES_SKIP_CHECK_ICP_LIST.indexOf(pomXml.getApp(GarAppType.valueOfType(pipeline.garArtifactType.name)))!=-1) {
+		if (env.ALM_SERVICES_SKIP_CHECK_ICP_LIST!=null && env.ALM_SERVICES_SKIP_CHECK_ICP_LIST.indexOf(pomXml.getApp(GarAppType.valueOfType(pipeline.garArtifactType.name)))!=-1) {
             printOpen("Excluded from validation", EchoLevel.INFO)
 		} else {
 			//Validate

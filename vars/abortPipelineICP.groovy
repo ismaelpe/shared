@@ -8,9 +8,9 @@ def call(PomXmlStructure pomXml, PipelineData pipeline, String resultDeployICP, 
 	
 	String artifactApp = pomXml.getApp(GarAppType.valueOfType(pipeline.garArtifactType.name))
 	if (resultDeployICP=="OK") {
-		sendEmail(" Resultado ejecucion app ${artifactApp} - ${pipeline.getPipelineBuildName()}  OK ", env.ABSIS3_SERVICES_EMAIL_ICP_DEPLOY_RESULT, "${artifactApp} rama ${pipeline.getPipelineBuildName()}", "OK en el paso ${deployICPPhases}")
+		sendEmail(" Resultado ejecucion app ${artifactApp} - ${pipeline.getPipelineBuildName()}  OK ", env.ALM_SERVICES_EMAIL_ICP_DEPLOY_RESULT, "${artifactApp} rama ${pipeline.getPipelineBuildName()}", "OK en el paso ${deployICPPhases}")
 	}else {
-		sendEmail(" Resultado ejecucion app ${artifactApp} - ${pipeline.getPipelineBuildName()}  KO - ${deployICPPhases}", env.ABSIS3_SERVICES_EMAIL_ICP_DEPLOY_RESULT, "${artifactApp} rama ${pipeline.getPipelineBuildName()}", "KO en el paso ${deployICPPhases}")
+		sendEmail(" Resultado ejecucion app ${artifactApp} - ${pipeline.getPipelineBuildName()}  KO - ${deployICPPhases}", env.ALM_SERVICES_EMAIL_ICP_DEPLOY_RESULT, "${artifactApp} rama ${pipeline.getPipelineBuildName()}", "KO en el paso ${deployICPPhases}")
 		abortPipelineICP(pomXml, pipeline," Resultado ejecucion app ${artifactApp} - ${pipeline.getPipelineBuildName()}  KO - ${deployICPPhases}")
 	}
 	if (e!=null) printOpen("Error en el deploy a ICP, de momento nos comemos el error hasta que esto sea estable ${e}", EchoLevel.ERROR)

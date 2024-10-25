@@ -8,17 +8,17 @@ def call(String method, String url, def body, String environment, int maxStatusC
 
     String environ = environment == 'eden' ? 'DEV' : environment
 
-    withCredentials([string(credentialsId: "ABSIS3_TOKEN_${environ.toUpperCase()}_V2 ", variable: 'tokenAbsis3')]) {
+    withCredentials([string(credentialsId: "ALM_TOKEN_${environ.toUpperCase()}_V2 ", variable: 'tokenAbsis3')]) {
 
         def customHeaders = parameters?.customHeaders ? parameters?.customHeaders : []
         customHeaders += [name: 'Authorization', value: "Bearer ${tokenAbsis3}"]
 
         parameters += [
-            retryLoopTimeout: GlobalVars.DEFAULT_ABSIS3_MS_REQUEST_RETRIES_TIMEOUT,
+            retryLoopTimeout: GlobalVars.DEFAULT_ALM_MS_REQUEST_RETRIES_TIMEOUT,
             customHeaders: customHeaders,
             consoleLogResponseBody: true,
             validResponseCodes: "100:"+maxStatusCodeAllowed,
-            timeout: GlobalVars.ABSIS3_MS_TIMEOUT
+            timeout: GlobalVars.ALM_MS_TIMEOUT
         ]
 		return sendRequestToService(method, url, null, body, parameters)
     }

@@ -14,9 +14,9 @@ def call(String namespace, String type, String environment, boolean isArchProjec
 	if ( type!=null && env.CATMSV_SIZE!=null && "true".equals(env.CATMSV_SIZE)) {
 		def response = sendRequestToAbsis3MS(
             'GET',
-            "${GlobalVars.URL_CATALOGO_ABSIS3_PRO}/config/micro-size/${namespace}/${type}/${environment}/${replicas}/${cpu}/${memory}",
+            "${GlobalVars.URL_CATALOGO_ALM_PRO}/config/micro-size/${namespace}/${type}/${environment}/${replicas}/${cpu}/${memory}",
             null,
-            "${GlobalVars.CATALOGO_ABSIS3_ENV}",
+            "${GlobalVars.CATALOGO_ALM_ENV}",
             [
                 kpiAlmEvent: new KpiAlmEvent(
                     null, null,

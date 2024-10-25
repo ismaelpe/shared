@@ -16,7 +16,7 @@ def call(Map pipelineParameters) {
     compile = params.compile.toString().toBoolean()
     execute = params.execute.toString().toBoolean()
 
-    morningCheckArtifactoryUrl = "https://artifacts.cloud.caixabank.com/artifactory/arq-openservices-maven-releases/com/caixabank/absis/arch/management/morning-check/1.0.0/morning-check-1.0.0.jar"
+    morningCheckArtifactoryUrl = "https://artifacts.cloud.project.com/artifactory/arq-openservices-maven-releases/com/project/absis/arch/management/morning-check/1.0.0/morning-check-1.0.0.jar"
 
     pipeline {		
         agent {	node (absisJenkinsAgent('standard')) }
@@ -35,7 +35,7 @@ def call(Map pipelineParameters) {
                     expression { compile }
                 } 
                 steps{                    
-                    configFileProvider([configFile(fileId: 'absis3-maven-settings', variable: 'MAVEN_SETTINGS')]) {
+                    configFileProvider([configFile(fileId: 'alm-maven-settings', variable: 'MAVEN_SETTINGS')]) {
                         sh ("mvn -Dhttp.proxyHost=$env.proxyHost -Dhttp.proxyPort=$env.proxyPort -Dhttps.proxyHost=$env.proxyHost -Dhttps.proxyPort=$env.proxyPort -s $MAVEN_SETTINGS clean deploy -Dmaven.test.skip=true")                     
                     }                
                 }

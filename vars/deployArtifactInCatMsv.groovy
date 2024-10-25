@@ -9,7 +9,7 @@ def call(def body, PipelineData pipelineData, PomXmlStructure pomXml, ICPStateUt
 
 	
 	def response = null
-	if (env.SEND_TO_ABSIS3_CATALOG!="" && env.SEND_TO_ABSIS3_CATALOG=="true") {
+	if (env.SEND_TO_ALM_CATALOG!="" && env.SEND_TO_ALM_CATALOG=="true") {
 		
 		
 		def bodyNew = null
@@ -75,9 +75,9 @@ def call(def body, PipelineData pipelineData, PomXmlStructure pomXml, ICPStateUt
 			
 			response = sendRequestToAbsis3MS(
                 'PUT',
-                "${GlobalVars.URL_CATALOGO_ABSIS3_PRO}/app/${bodyNew.type}/${bodyNew.aplicacion}/version/${bodyNew.major}/${bodyNew.minor}/${bodyNew.fix}/${bodyNew.typeVersion}/deploy",
+                "${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${bodyNew.type}/${bodyNew.aplicacion}/version/${bodyNew.major}/${bodyNew.minor}/${bodyNew.fix}/${bodyNew.typeVersion}/deploy",
                 bodyDeploy,
-                "${GlobalVars.CATALOGO_ABSIS3_ENV}",
+                "${GlobalVars.CATALOGO_ALM_ENV}",
                 [
                     kpiAlmEvent: new KpiAlmEvent(
                         pomXml, pipelineData,
@@ -96,7 +96,7 @@ def call(def body, PipelineData pipelineData, PomXmlStructure pomXml, ICPStateUt
 			
 		}catch(Exception ex) {
 			printOpen("Error sending sending data to Open's catalogue", EchoLevel.ERROR)
-			if (env.SEND_TO_ABSIS3_CATALOG_REQUIRED!=null && env.SEND_TO_ABSIS3_CATALOG_REQUIRED!="true") {
+			if (env.SEND_TO_ALM_CATALOG_REQUIRED!=null && env.SEND_TO_ALM_CATALOG_REQUIRED!="true") {
 				throw new Exception("Unexpected response from CATMSV, services catalog ")
 			}
 		}

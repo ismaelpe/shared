@@ -1,5 +1,5 @@
 
-## absisPipelineClose
+## almPipelineClose
 
 This pipeline can make a close release of a micro.
 

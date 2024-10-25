@@ -149,22 +149,22 @@ class GitUtils {
 
 
     static boolean isBpiRepo(String gitUrl) {
-        if (gitUrl != null && (gitUrl.indexOf('cbk/absis3/services/apps/bpi') != -1 || gitUrl.indexOf('cbk/absis3/services/definitions/cics') != -1)) return true
+        if (gitUrl != null && (gitUrl.indexOf('cbk/alm/services/apps/bpi') != -1 || gitUrl.indexOf('cbk/alm/services/definitions/cics') != -1)) return true
         else return false
     }
 
     static boolean isBpiArchRepo(String gitUrl) {
-        if (gitUrl != null && gitUrl.indexOf('cbk/absis3/services/arch/bpi') != -1) return true
+        if (gitUrl != null && gitUrl.indexOf('cbk/alm/services/arch/bpi') != -1) return true
         else return false
     }
 
     static boolean isCbkRepo(String gitUrl) {
-        if (gitUrl.indexOf('cbk/absis3/services/apps/cbk') != -1) return true
+        if (gitUrl.indexOf('cbk/alm/services/apps/cbk') != -1) return true
         else return false
     }
 
     static boolean isCbkArchRepo(String gitUrl) {
-        if (gitUrl.indexOf('cbk/absis3/services/arch/cbk') != -1) return true
+        if (gitUrl.indexOf('cbk/alm/services/arch/cbk') != -1) return true
         else return false
     }
 

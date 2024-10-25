@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document describes the `customPipelineCicsWsdlBuild`, which is a custom pipeline (thus not following the standard lifecycle defined by `absisPipelineBuild`)
+This document describes the `customPipelineCicsWsdlBuild`, which is a custom pipeline (thus not following the standard lifecycle defined by `almPipelineBuild`)
 meant to built transaction-oriented CICS clients. Those clients are built as Spring Boot starters.
 
 This pipeline is fired by the project `cics-wsdl` via a direct call on its `Jenkinsfile`.
@@ -24,10 +24,10 @@ and are based on the respective `{type}` archetype. Each archetype is used to bu
 
 ### Overview
 
-The maven archetype for each CICS transaction type is built by the pipeline `absisPipelineBuild` which uses the maven
+The maven archetype for each CICS transaction type is built by the pipeline `almPipelineBuild` which uses the maven
 goal `archetype:create-from-project`. Those projects follow the standard lifecycle described in the aforementioned pipeline.
 
-The project `absisPipelineBuild` uses to generate the archetype is a client implementation for each type of transaction on the form of an Spring Boot starter,
+The project `almPipelineBuild` uses to generate the archetype is a client implementation for each type of transaction on the form of an Spring Boot starter,
 plus a sample app. Those two artifacts are bundled together in a multi-module project. For example:
 
 * `cics-normal-starter`
@@ -65,7 +65,7 @@ Each of those projects has an `archetype.properties` file, which at the same tim
 This property is used to name packages, classes and WSDL references, among other things, and it will be different
 for each transaction.
 
-As mentioned, `absisPipelineBuild` is controlling the lifecycle of those archetype models, being SNAPSHOTs, Release Candidates
+As mentioned, `almPipelineBuild` is controlling the lifecycle of those archetype models, being SNAPSHOTs, Release Candidates
 or final releases, depending of the context they are built.
 Thus, the archetype versions deployed on Nexus will match those in the models.
 
@@ -84,13 +84,13 @@ When a commit is pushed to the `cics-wsdl` repository, the pipeline will follow 
 3. The mvn goal `archetype:generate` will be invoked to have the client generated as an Spring Boot starter. An example of a
 generated client may be `cics-normal-txH451-spring-boot-starter`.
 
-4. The artifact is published on the Absis Catalog and on Nexus, making it ready to use.
+4. The artifact is published on the Alm Catalog and on Nexus, making it ready to use.
 
 ### Artifact versioning
 
 #### `cics-{type}-starter` and `cics-{type}-spring-boot-starter-archetype`
 
-As mentioned above, those projects follow the lifecycle defined by the `absisPipelineBuild` pipeline so the corresponding archetypes will do so too.
+As mentioned above, those projects follow the lifecycle defined by the `almPipelineBuild` pipeline so the corresponding archetypes will do so too.
 When a Release Candidate or a Release is built using the jenkins job defined to do so, an archetype will be released using `-RCx`-suffixed or
 final versions respectively.
 

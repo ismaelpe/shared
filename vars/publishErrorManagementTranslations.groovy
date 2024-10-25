@@ -51,8 +51,8 @@ def call(PipelineData pipelineData, PomXmlStructure pomXml) {
 			printOpen("	file does not exist -> do nothing", EchoLevel.ALL)
 		}
 		
-		String disableNotification = "${env.ABSIS3_SERVICES_SKIP_NOTIFICATION_UNMAPPED_ERRORS_ALL}"
-		def whiteListApps = "${env.ABSIS3_SERVICES_SKIP_NOTIFICATION_UNMAPPED_ERRORS_LIST}".split(";")
+		String disableNotification = "${env.ALM_SERVICES_SKIP_NOTIFICATION_UNMAPPED_ERRORS_ALL}"
+		def whiteListApps = "${env.ALM_SERVICES_SKIP_NOTIFICATION_UNMAPPED_ERRORS_LIST}".split(";")
 		
 		printOpen("disableNotification: ${disableNotification}", EchoLevel.ALL)
 		printOpen("whiteListApps: ${whiteListApps}", EchoLevel.ALL)
