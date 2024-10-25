@@ -1,7 +1,7 @@
-import com.caixabank.absis3.*
+import com.project.alm.*
 import groovy.json.JsonSlurperClassic
 import java.util.ArrayList
-import com.caixabank.absis3.GitUser
+import com.project.alm.GitUser
 
 
 def getApprovers(def listAprovers) {

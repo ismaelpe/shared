@@ -1,8 +1,8 @@
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.PipelineData
-import com.caixabank.absis3.PomXmlStructure
-import com.caixabank.absis3.ClientInfo
-import com.caixabank.absis3.MavenVersionUtilities
+import com.project.alm.EchoLevel
+import com.project.alm.PipelineData
+import com.project.alm.PomXmlStructure
+import com.project.alm.ClientInfo
+import com.project.alm.MavenVersionUtilities
 
 def call(boolean initGpl, ClientInfo clientInfo, PipelineData pipelineData) {
 	if (initGpl && notificationToGplApplies()) {

@@ -1,8 +1,8 @@
-import com.caixabank.absis3.GlobalVars
-import com.caixabank.absis3.BranchType
-import com.caixabank.absis3.PomXmlStructure
-import com.caixabank.absis3.GlobalVars
-import com.caixabank.absis3.PipelineData
+import com.project.alm.GlobalVars
+import com.project.alm.BranchType
+import com.project.alm.PomXmlStructure
+import com.project.alm.GlobalVars
+import com.project.alm.PipelineData
 
 def call(String branchDestination) {
 

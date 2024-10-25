@@ -1,4 +1,4 @@
-import com.caixabank.absis3.*
+import com.project.alm.*
 
 def migrateProfileAndResources(Map currentImage, String environment, String k8sOrigin='icp', String k8sDestination='ocp', Map resources ){
 	if (k8sOrigin.equals('icp') && k8sDestination.equals('ocp')) {

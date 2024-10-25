@@ -1,8 +1,8 @@
-import com.caixabank.absis3.GitlabAPIResponse
-import com.caixabank.absis3.GlobalVars
-import com.caixabank.absis3.HttpRequestUtilities
-import com.caixabank.absis3.PipelineData
-import com.caixabank.absis3.PomXmlStructure
+import com.project.alm.GitlabAPIResponse
+import com.project.alm.GlobalVars
+import com.project.alm.HttpRequestUtilities
+import com.project.alm.PipelineData
+import com.project.alm.PomXmlStructure
 
 def call(Map parameters = [:]) {
     sendRequestToGitLabAPI(null, null, parameters)

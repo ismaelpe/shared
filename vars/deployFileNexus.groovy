@@ -1,4 +1,4 @@
-import com.caixabank.absis3.*
+import com.project.alm.*
 
 /**
  * Sube un fichero generando un pom.xml

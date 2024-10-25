@@ -1,7 +1,7 @@
-package com.caixabank.absis3
+package com.project.alm
 
-import com.caixabank.absis3.AbstractBuildpack
-import com.caixabank.absis3.GlobalVars
+import com.project.alm.AbstractBuildpack
+import com.project.alm.GlobalVars
 
 class Java11Buildpack extends AbstractBuildpack {
 

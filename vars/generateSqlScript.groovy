@@ -1,16 +1,16 @@
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.GlobalVars
-import com.caixabank.absis3.PomXmlStructure
-import com.caixabank.absis3.Utilities
-import com.caixabank.absis3.PipelineData
-import com.caixabank.absis3.WorkspaceUtils
-import com.caixabank.absis3.PipelineBehavior
-import com.caixabank.absis3.MavenUtils
+import com.project.alm.EchoLevel
+import com.project.alm.GlobalVars
+import com.project.alm.PomXmlStructure
+import com.project.alm.Utilities
+import com.project.alm.PipelineData
+import com.project.alm.WorkspaceUtils
+import com.project.alm.PipelineBehavior
+import com.project.alm.MavenUtils
 import java.util.ArrayList
 
-import com.caixabank.absis3.KpiAlmEventOperation
-import com.caixabank.absis3.KpiAlmEventStage
-import com.caixabank.absis3.KpiAlmEvent
+import com.project.alm.KpiAlmEventOperation
+import com.project.alm.KpiAlmEventStage
+import com.project.alm.KpiAlmEvent
 
 def getSchemaBBDD(String appGar) {
 	def exists = fileExists "${GlobalVars.SQL_CONFIG_DIRECTORY}${GlobalVars.SQL_BBDD_INFO}"

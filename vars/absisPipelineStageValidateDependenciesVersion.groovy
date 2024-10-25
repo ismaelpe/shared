@@ -1,7 +1,7 @@
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.PomXmlStructure
-import com.caixabank.absis3.PipelineData
-import com.caixabank.absis3.ArtifactSubType
+import com.project.alm.EchoLevel
+import com.project.alm.PomXmlStructure
+import com.project.alm.PipelineData
+import com.project.alm.ArtifactSubType
 
 
 def call(PomXmlStructure pomXmlStructure, PipelineData pipelineData, String stageId) {

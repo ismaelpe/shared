@@ -1,6 +1,6 @@
-import com.caixabank.absis3.*
-import com.caixabank.absis3.GlobalVars
-import com.caixabank.absis3.DistributionModePRO
+import com.project.alm.*
+import com.project.alm.GlobalVars
+import com.project.alm.DistributionModePRO
 
 
 import groovy.json.JsonSlurperClassic

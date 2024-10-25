@@ -1,10 +1,10 @@
 import static java.util.Map.entry
-import com.caixabank.absis3.GlobalVars
-import com.caixabank.absis3.GplRequestStatus
-import com.caixabank.absis3.GplUtilities
+import com.project.alm.GlobalVars
+import com.project.alm.GplRequestStatus
+import com.project.alm.GplUtilities
 import groovy.json.JsonSlurper
 import java.util.Date
-import com.caixabank.absis3.*
+import com.project.alm.*
 
 
 class Maps {

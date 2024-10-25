@@ -4,8 +4,8 @@
  * Se encuentra documentado aqui https://git.svb.lacaixa.es/absis2cloud/canal/blob/master/arquitectura/20-elementos-arquitectura/30-application-lifecycle-management-arq/continuous-integration/pipelines/documentacion-canal.md
  */
 
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.GlobalVars
+import com.project.alm.EchoLevel
+import com.project.alm.GlobalVars
 
 def call(domain) {
     def entorno_param = "${environmentParam}"

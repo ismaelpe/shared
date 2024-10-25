@@ -1,4 +1,4 @@
-import com.caixabank.absis3.*
+import com.project.alm.*
 
 class SurefireReportsHandler implements Serializable {
 
@@ -60,7 +60,7 @@ class SurefireReportsHandler implements Serializable {
 
         String destPath = componentPath + "/" + artifactVersion
         // PipelineData:344 forcing an extra space on currentBuild.displayName when BranchType.MASTER
-        destPath += "/" + buildDisplayName.trim() + "-" + com.caixabank.absis3.DatesAndTimes.getLocalTimeDateNowAsString()
+        destPath += "/" + buildDisplayName.trim() + "-" + com.project.alm.DatesAndTimes.getLocalTimeDateNowAsString()
 
         scriptContext.printOpen("SurefireReportsHandler.calculateBuildReportsPath(): Component path is ${componentPath} and destination path is ${destPath}", EchoLevel.INFO)
 

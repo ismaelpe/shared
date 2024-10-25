@@ -1,10 +1,10 @@
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.GlobalVars
-import com.caixabank.absis3.PomXmlStructure
-import com.caixabank.absis3.SonarData
-import com.caixabank.absis3.SonarRequestStatus
-import com.caixabank.absis3.SonarUtilities
-import com.caixabank.absis3.PipelineData
+import com.project.alm.EchoLevel
+import com.project.alm.GlobalVars
+import com.project.alm.PomXmlStructure
+import com.project.alm.SonarData
+import com.project.alm.SonarRequestStatus
+import com.project.alm.SonarUtilities
+import com.project.alm.PipelineData
 
 import groovy.json.*
 

@@ -1,9 +1,9 @@
-import com.caixabank.absis3.ArtifactType
-import com.caixabank.absis3.PipelineData
-import com.caixabank.absis3.PomVersionsValidator
-import com.caixabank.absis3.PomXmlStructure
-import com.caixabank.absis3.GarAppType
-import com.caixabank.absis3.*
+import com.project.alm.ArtifactType
+import com.project.alm.PipelineData
+import com.project.alm.PomVersionsValidator
+import com.project.alm.PomXmlStructure
+import com.project.alm.GarAppType
+import com.project.alm.*
 
 /**
  *

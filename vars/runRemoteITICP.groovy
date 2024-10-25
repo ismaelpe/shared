@@ -1,4 +1,4 @@
-import com.caixabank.absis3.*
+import com.project.alm.*
 
 /**
  * Copia los ficheros de configuración existentes en el path <pre>src/main/resources</pre> en su carpeta correspondiente del repositorio de configuración

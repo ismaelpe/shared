@@ -1,7 +1,7 @@
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.GlobalVars
-import com.caixabank.absis3.PipelineData
-import com.caixabank.absis3.Strings
+import com.project.alm.EchoLevel
+import com.project.alm.GlobalVars
+import com.project.alm.PipelineData
+import com.project.alm.Strings
 
 
 def call(def pomXmlOrIClientInfo, PipelineData pipelineData, String stageId) {

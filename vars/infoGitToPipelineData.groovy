@@ -1,8 +1,8 @@
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.GlobalVars
-import com.caixabank.absis3.PipelineBehavior
-import com.caixabank.absis3.PipelineData
-import com.caixabank.absis3.PipelineUtils
+import com.project.alm.EchoLevel
+import com.project.alm.GlobalVars
+import com.project.alm.PipelineBehavior
+import com.project.alm.PipelineData
+import com.project.alm.PipelineUtils
 
 PipelineData call(PipelineData pipelineData) {
     String commitLog

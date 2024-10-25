@@ -1,4 +1,4 @@
-import com.caixabank.absis3.*
+import com.project.alm.*
 
 def call(String path, String namespace, String enviroment, String period, String action) {
 	def command = "$path/undeployApps.sh $namespace $enviroment $period $action"

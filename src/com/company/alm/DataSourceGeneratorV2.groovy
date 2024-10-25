@@ -1,7 +1,7 @@
-package com.caixabank.absis3
+package com.project.alm
 
 
-import com.caixabank.absis3.*
+import com.project.alm.*
 import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.DumperOptions
 import static org.yaml.snakeyaml.DumperOptions.FlowStyle.BLOCK

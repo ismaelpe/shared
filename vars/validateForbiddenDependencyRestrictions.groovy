@@ -1,4 +1,4 @@
-import com.caixabank.absis3.*
+import com.project.alm.*
 
 def call(PomXmlStructure pomXml, PipelineData pipeline) {
 	if (pipeline.garArtifactType != GarAppType.BFF_SERVICE && pipeline.garArtifactType != GarAppType.DATA_SERVICE) {

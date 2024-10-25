@@ -1,4 +1,4 @@
-package com.caixabank.absis3
+package com.project.alm
 
 import com.cloudbees.hudson.plugins.folder.*
 import com.cloudbees.plugins.credentials.SystemCredentialsProvider

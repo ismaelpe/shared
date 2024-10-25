@@ -1,5 +1,5 @@
-import com.caixabank.absis3.BranchStructure
-import com.caixabank.absis3.EchoLevel
+import com.project.alm.BranchStructure
+import com.project.alm.EchoLevel
 
 BranchStructure call() {
     return buildBranchStructure("${env.gitlabBranch}", this)

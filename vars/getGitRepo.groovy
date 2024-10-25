@@ -1,8 +1,8 @@
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.GitUtils
-import com.caixabank.absis3.PomXmlStructure
-import com.caixabank.absis3.ArtifactType
-import com.caixabank.absis3.ArtifactSubType
+import com.project.alm.EchoLevel
+import com.project.alm.GitUtils
+import com.project.alm.PomXmlStructure
+import com.project.alm.ArtifactType
+import com.project.alm.ArtifactSubType
 
 def call(String gitRepoUrl, String originBranch, String repoParam, boolean prepareNewBranch, ArtifactType artifactType, ArtifactSubType artifactSubType, String tag, boolean fromTag, boolean clone = true, boolean isBBDD = false) {
     PomXmlStructure pomXmlStructure

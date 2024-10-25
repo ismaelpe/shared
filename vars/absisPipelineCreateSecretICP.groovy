@@ -1,7 +1,7 @@
 import groovy.transform.Field
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.SampleAppCleanMode
-import com.caixabank.absis3.GlobalVars
+import com.project.alm.EchoLevel
+import com.project.alm.SampleAppCleanMode
+import com.project.alm.GlobalVars
 
 @Field Map pipelineParams
 

@@ -1,5 +1,5 @@
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.GlobalVars
+import com.project.alm.EchoLevel
+import com.project.alm.GlobalVars
 
 
 /**

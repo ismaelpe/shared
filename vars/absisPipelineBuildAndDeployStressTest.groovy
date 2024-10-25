@@ -1,5 +1,5 @@
 import groovy.transform.Field
-import com.caixabank.absis3.*
+import com.project.alm.*
 
 //Pipeline unico que construye todos los tipos de artefactos
 //Recibe los siguientes parametros

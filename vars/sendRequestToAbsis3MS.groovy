@@ -1,4 +1,4 @@
-import com.caixabank.absis3.GlobalVars
+import com.project.alm.GlobalVars
 
 def call(String method, String url, def body, String environment, Map parameters = [:]) {
 	return sendRequestToAbsis3MS(method,url,body, environment, 404, parameters)

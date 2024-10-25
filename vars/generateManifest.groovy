@@ -1,11 +1,11 @@
-import com.caixabank.absis3.DeployStructure
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.GlobalVars
-import com.caixabank.absis3.GarAppType
-import com.caixabank.absis3.AbstractBuildpack
-import com.caixabank.absis3.BmxUtilities
-import com.caixabank.absis3.PipelineData
-import com.caixabank.absis3.PomXmlStructure
+import com.project.alm.DeployStructure
+import com.project.alm.EchoLevel
+import com.project.alm.GlobalVars
+import com.project.alm.GarAppType
+import com.project.alm.AbstractBuildpack
+import com.project.alm.BmxUtilities
+import com.project.alm.PipelineData
+import com.project.alm.PomXmlStructure
 
 
 String getManifestEdenOrDev(String pathToOriginalManifest, String suffix) {

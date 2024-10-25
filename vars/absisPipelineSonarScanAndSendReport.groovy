@@ -2,7 +2,7 @@ import groovy.json.JsonSlurper
 import org.yaml.snakeyaml.DumperOptions
 import org.yaml.snakeyaml.Yaml
 import groovy.transform.Field
-import com.caixabank.absis3.*
+import com.project.alm.*
 
 @Field Map pipelineParams
 @Field PipelineData pipelineData

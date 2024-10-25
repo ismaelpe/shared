@@ -1,5 +1,5 @@
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.ICPApiResponse
+import com.project.alm.EchoLevel
+import com.project.alm.ICPApiResponse
 
 def call(String app, String appICP, String buildId) {
 

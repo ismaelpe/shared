@@ -1,9 +1,9 @@
 import groovy.transform.Field
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.GlobalVars
-import com.caixabank.absis3.ICPAppResources
-import com.caixabank.absis3.StressComponent
-import com.caixabank.absis3.StressEnviromentConfiguration
+import com.project.alm.EchoLevel
+import com.project.alm.GlobalVars
+import com.project.alm.ICPAppResources
+import com.project.alm.StressComponent
+import com.project.alm.StressEnviromentConfiguration
 
 @Field Map pipelineParams
 

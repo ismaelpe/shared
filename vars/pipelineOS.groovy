@@ -1,5 +1,5 @@
-import com.caixabank.absis3.GlobalVars
-import com.caixabank.absis3.*
+import com.project.alm.GlobalVars
+import com.project.alm.*
 import hudson.scm.SCM
  
 def call(pipelineParams = [:], body) {

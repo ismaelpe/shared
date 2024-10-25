@@ -1,4 +1,4 @@
-import com.caixabank.absis3.GlobalVars
+import com.project.alm.GlobalVars
 
 def call(String jenkinsPath, String domain) {
     folder("${jenkinsPath}") {

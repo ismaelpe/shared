@@ -1,6 +1,6 @@
-package com.caixabank.absis3
+package com.project.alm
 
-import com.caixabank.absis3.Environment
+import com.project.alm.Environment
 
 class ReleaseBBDDResultPipelineData extends ResultPipelineData {
 

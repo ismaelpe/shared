@@ -1,18 +1,18 @@
-import com.caixabank.absis3.ArtifactSubType
-import com.caixabank.absis3.ArtifactType
-import com.caixabank.absis3.BranchType
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.GlobalVars
-import com.caixabank.absis3.ICPAppResources
-import com.caixabank.absis3.KpiAlmEvent
-import com.caixabank.absis3.KpiAlmEventOperation
-import com.caixabank.absis3.KpiAlmEventStage
-import com.caixabank.absis3.KpiLifeCycleStage
-import com.caixabank.absis3.KpiLifeCycleStatus
-import com.caixabank.absis3.PipelineData
-import com.caixabank.absis3.PipelineStructureType
-import com.caixabank.absis3.PomXmlStructure
-import com.caixabank.absis3.Strings
+import com.project.alm.ArtifactSubType
+import com.project.alm.ArtifactType
+import com.project.alm.BranchType
+import com.project.alm.EchoLevel
+import com.project.alm.GlobalVars
+import com.project.alm.ICPAppResources
+import com.project.alm.KpiAlmEvent
+import com.project.alm.KpiAlmEventOperation
+import com.project.alm.KpiAlmEventStage
+import com.project.alm.KpiLifeCycleStage
+import com.project.alm.KpiLifeCycleStatus
+import com.project.alm.PipelineData
+import com.project.alm.PipelineStructureType
+import com.project.alm.PomXmlStructure
+import com.project.alm.Strings
 
 def call(Map pipelineParams) {
 

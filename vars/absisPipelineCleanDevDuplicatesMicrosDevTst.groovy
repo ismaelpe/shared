@@ -1,10 +1,10 @@
 import groovy.transform.Field
-import com.caixabank.absis3.*
+import com.project.alm.*
 import groovy.json.JsonSlurperClassic
-import com.caixabank.absis3.GlobalVars
-import com.caixabank.absis3.KpiAlmEvent
-import com.caixabank.absis3.KpiAlmEventStage
-import com.caixabank.absis3.KpiAlmEventOperation
+import com.project.alm.GlobalVars
+import com.project.alm.KpiAlmEvent
+import com.project.alm.KpiAlmEventStage
+import com.project.alm.KpiAlmEventOperation
 
 @Field Map pipelineParams
 @Field String user

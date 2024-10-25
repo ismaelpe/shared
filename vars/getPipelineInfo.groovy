@@ -1,5 +1,5 @@
-import com.caixabank.absis3.PipelineJob
-import com.caixabank.absis3.GlobalVars
+import com.project.alm.PipelineJob
+import com.project.alm.GlobalVars
 
 //Pipeline unico que construye todos los tipos de artefactos
 //Recibe los siguientes parametros

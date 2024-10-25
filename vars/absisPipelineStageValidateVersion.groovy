@@ -1,12 +1,12 @@
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.GlobalVars
+import com.project.alm.EchoLevel
+import com.project.alm.GlobalVars
 
 
-import com.caixabank.absis3.BranchType
-import com.caixabank.absis3.PomXmlStructure
-import com.caixabank.absis3.PipelineData
-import com.caixabank.absis3.NexusUtils
-import com.caixabank.absis3.GarAppType
+import com.project.alm.BranchType
+import com.project.alm.PomXmlStructure
+import com.project.alm.PipelineData
+import com.project.alm.NexusUtils
+import com.project.alm.GarAppType
 
 def call(PomXmlStructure pomXmlStructure, PipelineData pipelineData, String stageId) {
     sendStageStartToGPL(pomXmlStructure, pipelineData, stageId)

@@ -1,6 +1,6 @@
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.GlobalVars
-import com.caixabank.absis3.ICPDeployStructure
+import com.project.alm.EchoLevel
+import com.project.alm.GlobalVars
+import com.project.alm.ICPDeployStructure
 
 
 def checkUrl(def microUrl) {

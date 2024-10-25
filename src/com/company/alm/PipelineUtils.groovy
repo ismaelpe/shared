@@ -1,4 +1,4 @@
-package com.caixabank.absis3
+package com.project.alm
 
 import org.jenkinsci.plugins.workflow.job.WorkflowRun
 

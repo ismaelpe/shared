@@ -1,7 +1,7 @@
 import groovy.transform.Field
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.GlobalVars
-import com.caixabank.absis3.ICPApiResponse
+import com.project.alm.EchoLevel
+import com.project.alm.GlobalVars
+import com.project.alm.ICPApiResponse
 
 @Field Map pipelineParams
 @Field String[] technologyVersions

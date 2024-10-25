@@ -1,14 +1,14 @@
-import com.caixabank.absis3.*
+import com.project.alm.*
 
-import com.caixabank.absis3.ICPk8sComponentInfoMult
-import com.caixabank.absis3.ICPk8sComponentServiceInfo
-import com.caixabank.absis3.PomXmlStructure
-import com.caixabank.absis3.PipelineData
-import com.caixabank.absis3.ICPDeployStructure
-import com.caixabank.absis3.ICPk8sInstancesApp
-import com.caixabank.absis3.BranchType
-import com.caixabank.absis3.GlobalVars
-import com.caixabank.absis3.TooManyRestartsException
+import com.project.alm.ICPk8sComponentInfoMult
+import com.project.alm.ICPk8sComponentServiceInfo
+import com.project.alm.PomXmlStructure
+import com.project.alm.PipelineData
+import com.project.alm.ICPDeployStructure
+import com.project.alm.ICPk8sInstancesApp
+import com.project.alm.BranchType
+import com.project.alm.GlobalVars
+import com.project.alm.TooManyRestartsException
 
 boolean call(PomXmlStructure pomXml, PipelineData pipeline, ICPDeployStructure deployStructure) {
 	return waitICPDeploymentReady(pomXml, pipeline, deployStructure, null, "ALL")

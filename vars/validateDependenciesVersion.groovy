@@ -1,10 +1,10 @@
-import com.caixabank.absis3.ArtifactType
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.PipelineData
-import com.caixabank.absis3.PomVersionsValidator
-import com.caixabank.absis3.PomXmlStructure
-import com.caixabank.absis3.GlobalVars
-import com.caixabank.absis3.Utilities
+import com.project.alm.ArtifactType
+import com.project.alm.EchoLevel
+import com.project.alm.PipelineData
+import com.project.alm.PomVersionsValidator
+import com.project.alm.PomXmlStructure
+import com.project.alm.GlobalVars
+import com.project.alm.Utilities
 import com.cloudbees.groovy.cps.NonCPS
 /**
  *

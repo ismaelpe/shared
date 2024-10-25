@@ -1,11 +1,11 @@
 import groovy.transform.Field
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.IClientInfo
-import com.caixabank.absis3.PipelineData
-import com.caixabank.absis3.PipelineStructureType
-import com.caixabank.absis3.SampleAppCleanMode
-import com.caixabank.absis3.GlobalVars
-import com.caixabank.absis3.Strings
+import com.project.alm.EchoLevel
+import com.project.alm.IClientInfo
+import com.project.alm.PipelineData
+import com.project.alm.PipelineStructureType
+import com.project.alm.SampleAppCleanMode
+import com.project.alm.GlobalVars
+import com.project.alm.Strings
 
 import java.util.Map
 

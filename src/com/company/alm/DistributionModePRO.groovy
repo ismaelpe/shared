@@ -1,4 +1,4 @@
-package com.caixabank.absis3
+package com.project.alm
 
 public enum DistributionModePRO {
     CANARY_ON_ALL_CENTERS,

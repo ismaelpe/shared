@@ -1,4 +1,4 @@
-import com.caixabank.absis3.*
+import com.project.alm.*
 import java.util.Date
 
 def call(String subject,String to, String body, String body1) {

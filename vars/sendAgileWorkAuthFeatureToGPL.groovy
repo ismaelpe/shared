@@ -1,5 +1,5 @@
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.PipelineData
+import com.project.alm.EchoLevel
+import com.project.alm.PipelineData
 import groovy.json.JsonSlurper
 
 def call(def pomXmlOrClientInfo, PipelineData pipelineData, String env, String appCode, String featureName, String userEmail) {

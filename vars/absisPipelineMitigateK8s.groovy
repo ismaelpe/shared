@@ -1,12 +1,12 @@
 import groovy.transform.Field
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.GlobalVars
-import com.caixabank.absis3.ICPAppResources
-import com.caixabank.absis3.ICPAppResourcesCatMsv
-import com.caixabank.absis3.PipelineData
-import com.caixabank.absis3.PipelineStructureType
-import com.caixabank.absis3.Strings
-import com.caixabank.absis3.ICPk8sComponentInfoMult
+import com.project.alm.EchoLevel
+import com.project.alm.GlobalVars
+import com.project.alm.ICPAppResources
+import com.project.alm.ICPAppResourcesCatMsv
+import com.project.alm.PipelineData
+import com.project.alm.PipelineStructureType
+import com.project.alm.Strings
+import com.project.alm.ICPk8sComponentInfoMult
 
 @Field Map pipelineParams
 

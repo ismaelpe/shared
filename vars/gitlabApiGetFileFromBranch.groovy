@@ -1,4 +1,4 @@
-import com.caixabank.absis3.*
+import com.project.alm.*
 import groovy.json.JsonSlurperClassic
 
 def call(PipelineData pipelineData, PomXmlStructure pomXml, def projectId, String relativeFilePath, String branch) {

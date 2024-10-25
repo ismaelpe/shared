@@ -1,7 +1,7 @@
-import com.caixabank.absis3.GlobalVars
-import com.caixabank.absis3.MavenGoalExecutionException
-import com.caixabank.absis3.MavenGoalExecutionFailureError
-import com.caixabank.absis3.MavenGoalExecutionFailureErrorConditionals
+import com.project.alm.GlobalVars
+import com.project.alm.MavenGoalExecutionException
+import com.project.alm.MavenGoalExecutionFailureError
+import com.project.alm.MavenGoalExecutionFailureErrorConditionals
 
 def call(String mvnCommand) {
 

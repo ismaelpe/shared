@@ -1,7 +1,7 @@
-import com.caixabank.absis3.*
+import com.project.alm.*
 import hudson.model.StringParameterValue
 import groovy.json.JsonSlurperClassic
-import com.caixabank.absis3.GarAppType
+import com.project.alm.GarAppType
 
 String getArtifactType(String groupId) {
 	if (groupId.indexOf('.dataservice')!=-1) return GarAppType.DATA_SERVICE.name

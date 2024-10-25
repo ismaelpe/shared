@@ -1,6 +1,6 @@
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.PomXmlStructure
-import com.caixabank.absis3.PipelineData
+import com.project.alm.EchoLevel
+import com.project.alm.PomXmlStructure
+import com.project.alm.PipelineData
 
 
 def call(PomXmlStructure artifactPom, PipelineData pipeline, String liquibaseCommand) {

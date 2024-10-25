@@ -1,14 +1,14 @@
-package com.caixabank.absis3
+package com.project.alm
 
-import com.caixabank.absis3.BranchStructure
-import com.caixabank.absis3.BranchType
-import com.caixabank.absis3.PipelineStructureType
-import com.caixabank.absis3.PipelineStructure
-import com.caixabank.absis3.CIPipelineStructure
-import com.caixabank.absis3.GlobalVars
-import com.caixabank.absis3.GarAppType
-import com.caixabank.absis3.ArtifactSubType
-import com.caixabank.absis3.TrazabilidadGPLType
+import com.project.alm.BranchStructure
+import com.project.alm.BranchType
+import com.project.alm.PipelineStructureType
+import com.project.alm.PipelineStructure
+import com.project.alm.CIPipelineStructure
+import com.project.alm.GlobalVars
+import com.project.alm.GarAppType
+import com.project.alm.ArtifactSubType
+import com.project.alm.TrazabilidadGPLType
 
 class CicsHISCreateReleaseResultPipelineData extends CicsHISProvisioningResultPipelineData {
 

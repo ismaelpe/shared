@@ -1,8 +1,8 @@
-import com.caixabank.absis3.*
-import com.caixabank.absis3.ICPk8sComponentDeploymentInfo
-import com.caixabank.absis3.BmxUtilities
-import com.caixabank.absis3.ICPk8sComponentInfo
-import com.caixabank.absis3.ICPk8sComponentServiceInfo
+import com.project.alm.*
+import com.project.alm.ICPk8sComponentDeploymentInfo
+import com.project.alm.BmxUtilities
+import com.project.alm.ICPk8sComponentInfo
+import com.project.alm.ICPk8sComponentServiceInfo
 
 /**
 [{"metadata":{"cluster":"icp01-pre","company":"cxb","appName":"pasdev","componentName":"democonnecta22","platform":"icp"},

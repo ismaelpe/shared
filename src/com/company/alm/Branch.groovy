@@ -1,6 +1,6 @@
-package com.caixabank.absis3
+package com.project.alm
 
-import com.caixabank.absis3.BranchType
+import com.project.alm.BranchType
 import java.util.List
 import java.util.ArrayList
 import java.text.SimpleDateFormat

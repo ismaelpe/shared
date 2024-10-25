@@ -1,8 +1,8 @@
-import com.caixabank.absis3.GlobalVars
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.BranchType
-import com.caixabank.absis3.PipelineData
-import com.caixabank.absis3.PipelineStructureType
+import com.project.alm.GlobalVars
+import com.project.alm.EchoLevel
+import com.project.alm.BranchType
+import com.project.alm.PipelineData
+import com.project.alm.PipelineStructureType
 
 PipelineData call(PipelineStructureType pipelineStructureType,  BranchType branchType = null) {
     printOpen("Init get info Git (" + pipelineStructureType + ")", EchoLevel.ALL)

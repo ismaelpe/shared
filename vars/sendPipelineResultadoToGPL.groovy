@@ -1,6 +1,6 @@
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.GlobalVars
-import com.caixabank.absis3.PipelineData
+import com.project.alm.EchoLevel
+import com.project.alm.GlobalVars
+import com.project.alm.PipelineData
 
 def call(boolean initGpl, def pomXmlOrIClientInfo, PipelineData pipelineData, boolean success, boolean notifyDeployment = true) {
 

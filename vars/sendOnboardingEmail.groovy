@@ -1,4 +1,4 @@
-import com.caixabank.absis3.*
+import com.project.alm.*
 import groovy.json.JsonSlurperClassic
 
 def call(String typeAppParam, String nameAppParam, String gitAppURLParam) {

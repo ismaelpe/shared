@@ -1,8 +1,8 @@
-import com.caixabank.absis3.ICPAppResourcesCatMsv
-import com.caixabank.absis3.GlobalVars
-import com.caixabank.absis3.KpiAlmEvent
-import com.caixabank.absis3.KpiAlmEventOperation
-import com.caixabank.absis3.KpiAlmEventStage
+import com.project.alm.ICPAppResourcesCatMsv
+import com.project.alm.GlobalVars
+import com.project.alm.KpiAlmEvent
+import com.project.alm.KpiAlmEventOperation
+import com.project.alm.KpiAlmEventStage
 
 ///config/micro-size/{namespace}/{type}/{env}/{replicas}/{cpu}/{memory}
 

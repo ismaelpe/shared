@@ -1,10 +1,10 @@
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.GarAppType
-import com.caixabank.absis3.ICPStateUtility
-import com.caixabank.absis3.PipelineData
-import com.caixabank.absis3.PomXmlStructure
-import com.caixabank.absis3.Strings
-import com.caixabank.absis3.GlobalVars
+import com.project.alm.EchoLevel
+import com.project.alm.GarAppType
+import com.project.alm.ICPStateUtility
+import com.project.alm.PipelineData
+import com.project.alm.PomXmlStructure
+import com.project.alm.Strings
+import com.project.alm.GlobalVars
 import hudson.Functions
 
 

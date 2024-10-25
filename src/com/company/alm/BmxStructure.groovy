@@ -1,7 +1,7 @@
-package com.caixabank.absis3
+package com.project.alm
 
-import com.caixabank.absis3.GlobalVars
-import com.caixabank.absis3.DeployStructure
+import com.project.alm.GlobalVars
+import com.project.alm.DeployStructure
 
 class BmxStructure {
 

@@ -1,6 +1,6 @@
-import com.caixabank.absis3.*
-import com.caixabank.absis3.GlobalVars
-import com.caixabank.absis3.GarAppType
+import com.project.alm.*
+import com.project.alm.GlobalVars
+import com.project.alm.GarAppType
 import groovy.json.JsonSlurperClassic
 import java.util.List
 import java.util.ArrayList

@@ -1,7 +1,7 @@
-package com.caixabank.absis3
+package com.project.alm
 
-import com.caixabank.absis3.AncientVersionInfo
-import com.caixabank.absis3.GlobalVars
+import com.project.alm.AncientVersionInfo
+import com.project.alm.GlobalVars
 import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.DumperOptions
 import java.util.List

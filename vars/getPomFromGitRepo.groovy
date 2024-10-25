@@ -1,5 +1,5 @@
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.PomXmlStructure
+import com.project.alm.EchoLevel
+import com.project.alm.PomXmlStructure
 
 /**
  * Script que te devuelve el pomStructure de un repo especifico de una rama especifica, clonandolo a una carpeta con el nombre del proyecto

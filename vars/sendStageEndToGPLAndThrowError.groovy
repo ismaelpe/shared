@@ -1,5 +1,5 @@
-import com.caixabank.absis3.PipelineData
-import com.caixabank.absis3.Strings
+import com.project.alm.PipelineData
+import com.project.alm.Strings
 
 def call(def pomXmlOrIClientInfo, PipelineData pipelineData, String stageId, Exception e) {
 	sendStageEndToGPL(pomXmlOrIClientInfo, pipelineData, stageId, Strings.toHtml(e.getMessage()), null, "error")

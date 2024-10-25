@@ -1,4 +1,4 @@
-import com.caixabank.absis3.PomXmlStructure
+import com.project.alm.PomXmlStructure
 
 def call(PomXmlStructure pomXml) {
 

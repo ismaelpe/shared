@@ -1,11 +1,11 @@
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.ICPApiResponse
-import com.caixabank.absis3.ArtifactSubType
-import com.caixabank.absis3.ICPUtils
-import com.caixabank.absis3.PipelineData
-import com.caixabank.absis3.PomXmlStructure
-import com.caixabank.absis3.ICPAppResources
-import com.caixabank.absis3.BranchType
+import com.project.alm.EchoLevel
+import com.project.alm.ICPApiResponse
+import com.project.alm.ArtifactSubType
+import com.project.alm.ICPUtils
+import com.project.alm.PipelineData
+import com.project.alm.PomXmlStructure
+import com.project.alm.ICPAppResources
+import com.project.alm.BranchType
 
 def generateResourceToTheEnvironment(def environment, def componentId, def appGar, ICPAppResources icpResources, String icpAppId) {
 	

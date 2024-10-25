@@ -1,14 +1,14 @@
 import groovy.transform.Field
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.GarAppType
-import com.caixabank.absis3.GitUtils
-import com.caixabank.absis3.KpiAlmEvent
-import com.caixabank.absis3.KpiAlmEventOperation
-import com.caixabank.absis3.KpiAlmEventStage
-import com.caixabank.absis3.KpiLifeCycleStage
-import com.caixabank.absis3.KpiLifeCycleStatus
-import com.caixabank.absis3.Utilities
-import com.caixabank.absis3.GlobalVars
+import com.project.alm.EchoLevel
+import com.project.alm.GarAppType
+import com.project.alm.GitUtils
+import com.project.alm.KpiAlmEvent
+import com.project.alm.KpiAlmEventOperation
+import com.project.alm.KpiAlmEventStage
+import com.project.alm.KpiLifeCycleStage
+import com.project.alm.KpiLifeCycleStatus
+import com.project.alm.Utilities
+import com.project.alm.GlobalVars
 import jenkins.model.*
 
 @Field Map pipelineParams

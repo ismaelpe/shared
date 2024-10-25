@@ -1,9 +1,9 @@
 import groovy.transform.Field
-import com.caixabank.absis3.SampleAppCleanMode
-import com.caixabank.absis3.GlobalVars
+import com.project.alm.SampleAppCleanMode
+import com.project.alm.GlobalVars
 import java.util.Date
 import java.util.ArrayList
-import com.caixabank.absis3.*
+import com.project.alm.*
 import groovy.json.JsonSlurperClassic
 
 @Field boolean successPipeline

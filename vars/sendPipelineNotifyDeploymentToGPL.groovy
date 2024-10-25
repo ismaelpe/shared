@@ -1,8 +1,8 @@
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.GlobalVars
-import com.caixabank.absis3.PipelineData
-import com.caixabank.absis3.TrazabilidadGPLType
-import com.caixabank.absis3.AuthorizationServiceToInformType
+import com.project.alm.EchoLevel
+import com.project.alm.GlobalVars
+import com.project.alm.PipelineData
+import com.project.alm.TrazabilidadGPLType
+import com.project.alm.AuthorizationServiceToInformType
 
 def call(boolean initGpl, def pomXmlOrIClientInfo, PipelineData pipelineData, boolean success) {
 

@@ -1,7 +1,7 @@
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.Java11Buildpack
-import com.caixabank.absis3.Java8Buildpack
-import com.caixabank.absis3.JavaVersionType
+import com.project.alm.EchoLevel
+import com.project.alm.Java11Buildpack
+import com.project.alm.Java8Buildpack
+import com.project.alm.JavaVersionType
 
 /**
  * Obtiene la version de Java desde la variable de entorno JAVA_VERSION_TYPE que esta definida en los agentes.

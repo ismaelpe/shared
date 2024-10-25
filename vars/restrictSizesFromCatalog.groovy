@@ -1,6 +1,6 @@
-import com.caixabank.absis3.ICPAppResources
-import com.caixabank.absis3.ICPAppResourcesCatMsv
-import com.caixabank.absis3.GlobalVars
+import com.project.alm.ICPAppResources
+import com.project.alm.ICPAppResourcesCatMsv
+import com.project.alm.GlobalVars
 
 ///config/micro-size/{namespace}/{type}/{env}/{replicas}/{cpu}/{memory}
 

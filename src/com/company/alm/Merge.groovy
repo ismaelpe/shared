@@ -1,7 +1,7 @@
-package com.caixabank.absis3
+package com.project.alm
 
-import com.caixabank.absis3.BranchType
-import com.caixabank.absis3.GlobalVars
+import com.project.alm.BranchType
+import com.project.alm.GlobalVars
 
 class Merge {
 

@@ -1,6 +1,6 @@
-import com.caixabank.absis3.BuildType
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.GlobalVars
+import com.project.alm.BuildType
+import com.project.alm.EchoLevel
+import com.project.alm.GlobalVars
 
 def call(String enviroment, String groupId, String artifactId, String version, String classifier) {
 

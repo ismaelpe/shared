@@ -1,8 +1,8 @@
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.PipelineData
-import com.caixabank.absis3.PomXmlStructure
-import com.caixabank.absis3.GlobalVars
-import com.caixabank.absis3.NexusUtils
+import com.project.alm.EchoLevel
+import com.project.alm.PipelineData
+import com.project.alm.PomXmlStructure
+import com.project.alm.GlobalVars
+import com.project.alm.NexusUtils
 
 def call(PomXmlStructure pomXml, PipelineData pipeline, boolean localContracts = true) {
 	//Validamos sino ha sido desplegado antes

@@ -1,4 +1,4 @@
-import com.caixabank.absis3.*
+import com.project.alm.*
 
 def call(PomXmlStructure pomXmlStructure, PipelineData pipelineData, String endpoint, String environment) {
   	String suffix=""

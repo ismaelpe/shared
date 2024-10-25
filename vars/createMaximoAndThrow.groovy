@@ -1,4 +1,4 @@
-import com.caixabank.absis3.*
+import com.project.alm.*
 import hudson.Functions
 
 def testMaximoButDoNotThrowException(PipelineData pipelineData, PomXmlStructure pomXml, String buildLog = null) {

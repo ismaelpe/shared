@@ -1,5 +1,5 @@
-import com.caixabank.absis3.*
-import com.caixabank.absis3.LiquibaseStatusType
+import com.project.alm.*
+import com.project.alm.LiquibaseStatusType
 
 
 def getMessageLiquibase(String url) {

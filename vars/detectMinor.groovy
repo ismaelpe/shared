@@ -1,4 +1,4 @@
-import com.caixabank.absis3.*
+import com.project.alm.*
 
 def call(DeployStructure deployStructure, PomXmlStructure artifactPom, BranchStructure branchStructure) {
     printOpen("Init detect minor", EchoLevel.ALL)

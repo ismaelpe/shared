@@ -1,9 +1,9 @@
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.FileUtils
-import com.caixabank.absis3.GitUtils
-import com.caixabank.absis3.GlobalVars
-import com.caixabank.absis3.PomXmlStructure
-import com.caixabank.absis3.Utilities
+import com.project.alm.EchoLevel
+import com.project.alm.FileUtils
+import com.project.alm.GitUtils
+import com.project.alm.GlobalVars
+import com.project.alm.PomXmlStructure
+import com.project.alm.Utilities
 
 /**
  * Copia los ficheros de configuración existentes en el path <pre>src/main/resources</pre> en su carpeta correspondiente del repositorio de configuración

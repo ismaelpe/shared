@@ -1,5 +1,5 @@
-import com.caixabank.absis3.PipelineData
-import com.caixabank.absis3.PomXmlStructure
+import com.project.alm.PipelineData
+import com.project.alm.PomXmlStructure
 
 def call(PipelineData pipelineData, PomXmlStructure pomXml, String fileRelativePath, String branch = "master") {
 

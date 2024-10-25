@@ -1,6 +1,6 @@
-package com.caixabank.absis3
+package com.project.alm
 
-import com.caixabank.absis3.GarAppType
+import com.project.alm.GarAppType
 
 
 class ICPAppResources{

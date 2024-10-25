@@ -1,9 +1,9 @@
-package com.caixabank.absis3
+package com.project.alm
 
 import java.util.regex.Matcher
 import java.util.regex.Pattern
-import com.caixabank.absis3.MavenVersionUtilities
-import com.caixabank.absis3.GlobalVars
+import com.project.alm.MavenVersionUtilities
+import com.project.alm.GlobalVars
 
 class MavenUtils {
 

@@ -1,8 +1,8 @@
-import com.caixabank.absis3.BranchType
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.GarAppType
-import com.caixabank.absis3.PipelineData
-import com.caixabank.absis3.PomXmlStructure
+import com.project.alm.BranchType
+import com.project.alm.EchoLevel
+import com.project.alm.GarAppType
+import com.project.alm.PipelineData
+import com.project.alm.PomXmlStructure
 
 def call(PomXmlStructure pomXml, PipelineData pipeline, String resultDeployICP, String deployICPPhases , Exception e) {
 	

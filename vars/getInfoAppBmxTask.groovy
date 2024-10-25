@@ -1,4 +1,4 @@
-import com.caixabank.absis3.*
+import com.project.alm.*
 
 def call(PomXmlStructure artifactPom, BranchStructure branchStructure, DeployStructure deployStructure, String endpoint) {
     String artifactRoute = BmxUtilities.calculateRoute(artifactPom, branchStructure)

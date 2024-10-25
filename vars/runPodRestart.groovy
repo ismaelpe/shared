@@ -1,5 +1,5 @@
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.ICPPodsStatus
+import com.project.alm.EchoLevel
+import com.project.alm.ICPPodsStatus
 
 def call(ICPPodsStatus pods, String namespace, String environment, String center, String color) {
 

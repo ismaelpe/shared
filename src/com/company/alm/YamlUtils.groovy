@@ -1,4 +1,4 @@
-package com.caixabank.absis3
+package com.project.alm
 import groovy.io.FileType
 import org.yaml.snakeyaml.DumperOptions
 import org.yaml.snakeyaml.Yaml

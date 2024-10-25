@@ -1,19 +1,19 @@
-package com.caixabank.absis3
+package com.project.alm
 
 
-import com.caixabank.absis3.BmxUtilities
-import com.caixabank.absis3.BmxStructure
-import com.caixabank.absis3.GlobalVars
-import com.caixabank.absis3.PomXmlStructure
-import com.caixabank.absis3.ICPWorkflowStates
-import com.caixabank.absis3.ICPAppResources
-import com.caixabank.absis3.PipelineData
-import com.caixabank.absis3.ICPDeployStructure
-import com.caixabank.absis3.BranchType
-import com.caixabank.absis3.BranchStructure
-import com.caixabank.absis3.ArtifactSubType
-import com.caixabank.absis3.MavenVersionUtilities
-import com.caixabank.absis3.Utilities
+import com.project.alm.BmxUtilities
+import com.project.alm.BmxStructure
+import com.project.alm.GlobalVars
+import com.project.alm.PomXmlStructure
+import com.project.alm.ICPWorkflowStates
+import com.project.alm.ICPAppResources
+import com.project.alm.PipelineData
+import com.project.alm.ICPDeployStructure
+import com.project.alm.BranchType
+import com.project.alm.BranchStructure
+import com.project.alm.ArtifactSubType
+import com.project.alm.MavenVersionUtilities
+import com.project.alm.Utilities
 import java.util.Random
 import org.apache.commons.lang.RandomStringUtils
 

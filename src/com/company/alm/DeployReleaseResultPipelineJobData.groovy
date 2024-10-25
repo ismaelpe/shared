@@ -1,5 +1,5 @@
-package com.caixabank.absis3
-import com.caixabank.absis3.Environment
+package com.project.alm
+import com.project.alm.Environment
 
 class DeployReleaseResultPipelineJobData extends ResultPipelineData {
     boolean isDevops=true

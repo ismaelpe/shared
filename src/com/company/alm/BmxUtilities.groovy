@@ -1,20 +1,20 @@
-package com.caixabank.absis3
+package com.project.alm
 
 
 import java.time.LocalDate
 import java.time.ZoneId
 
-import com.caixabank.absis3.Utilities
-import com.caixabank.absis3.BmxStructure
-import com.caixabank.absis3.EdenBmxStructure
-import com.caixabank.absis3.DevBmxStructure
-import com.caixabank.absis3.TstBmxStructure
-import com.caixabank.absis3.PreBmxStructure
-import com.caixabank.absis3.ProBmxStructure
-import com.caixabank.absis3.JavaVersionType
-import com.caixabank.absis3.GlobalVars
-import com.caixabank.absis3.Java11Buildpack
-import com.caixabank.absis3.Java8Buildpack
+import com.project.alm.Utilities
+import com.project.alm.BmxStructure
+import com.project.alm.EdenBmxStructure
+import com.project.alm.DevBmxStructure
+import com.project.alm.TstBmxStructure
+import com.project.alm.PreBmxStructure
+import com.project.alm.ProBmxStructure
+import com.project.alm.JavaVersionType
+import com.project.alm.GlobalVars
+import com.project.alm.Java11Buildpack
+import com.project.alm.Java8Buildpack
 import org.apache.commons.lang.RandomStringUtils
 
 class BmxUtilities {

@@ -1,8 +1,8 @@
-import com.caixabank.absis3.GlobalVars
-import com.caixabank.absis3.PomXmlStructure
-import com.caixabank.absis3.PipelineData
+import com.project.alm.GlobalVars
+import com.project.alm.PomXmlStructure
+import com.project.alm.PipelineData
 import java.util.Date
-import com.caixabank.absis3.ClientCicsHISInfo
+import com.project.alm.ClientCicsHISInfo
 
 def call(ClientCicsHISInfo clientCicsHISInfo, PipelineData pipelineData, String pipelineOrigId) {
 

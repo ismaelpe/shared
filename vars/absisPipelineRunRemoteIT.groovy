@@ -1,6 +1,6 @@
 import groovy.transform.Field
-import com.caixabank.absis3.*
-import com.caixabank.absis3.DistributionModePRO
+import com.project.alm.*
+import com.project.alm.DistributionModePRO
 
 @Field Map pipelineParams
 

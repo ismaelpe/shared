@@ -1,8 +1,8 @@
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.FileUtils
-import com.caixabank.absis3.IClientInfo
-import com.caixabank.absis3.PipelineData
-import com.caixabank.absis3.PomXmlStructure
+import com.project.alm.EchoLevel
+import com.project.alm.FileUtils
+import com.project.alm.IClientInfo
+import com.project.alm.PipelineData
+import com.project.alm.PomXmlStructure
 
 def call(def pomXmlOrIClientInfo = null, PipelineData pipelineData = null) {
     def attachLogs = env.ATTACH_LOGS_TO_PIPELINE_LOG && env.ATTACH_LOGS_TO_PIPELINE_LOG.toBoolean()

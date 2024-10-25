@@ -1,10 +1,10 @@
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.GlobalVars
-import com.caixabank.absis3.ICPApiResponse
-import com.caixabank.absis3.ICPAppResources
-import com.caixabank.absis3.KpiAlmEvent
-import com.caixabank.absis3.KpiAlmEventOperation
-import com.caixabank.absis3.KpiAlmEventStage
+import com.project.alm.EchoLevel
+import com.project.alm.GlobalVars
+import com.project.alm.ICPApiResponse
+import com.project.alm.ICPAppResources
+import com.project.alm.KpiAlmEvent
+import com.project.alm.KpiAlmEventOperation
+import com.project.alm.KpiAlmEventStage
 import groovy.json.JsonSlurperClassic
 
 

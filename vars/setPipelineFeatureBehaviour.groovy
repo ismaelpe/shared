@@ -1,7 +1,7 @@
-import com.caixabank.absis3.*
+import com.project.alm.*
 import groovy.json.JsonSlurperClassic
-import com.caixabank.absis3.GlobalVars
-import com.caixabank.absis3.PipelineBehavior
+import com.project.alm.GlobalVars
+import com.project.alm.PipelineBehavior
 
 
 def call(PipelineData pipelineData,PomXmlStructure pomXmlStructure) {

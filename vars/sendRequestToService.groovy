@@ -1,4 +1,4 @@
-import com.caixabank.absis3.*
+import com.project.alm.*
 
 private call(String method, String url, String param, def body, Map parameters = [:]) {
 

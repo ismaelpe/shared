@@ -1,4 +1,4 @@
-import com.caixabank.absis3.EchoLevel
+import com.project.alm.EchoLevel
 
 def call(String groupId, String artifactId, String version, String outputDirectory, boolean useBaseSnapshot = true) {
 

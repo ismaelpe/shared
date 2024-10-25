@@ -1,4 +1,4 @@
-import com.caixabank.absis3.*
+import com.project.alm.*
 
 def call(String method, String url, String param, def body, PipelineData pipelineData, PomXmlStructure pomXml) {
     try {

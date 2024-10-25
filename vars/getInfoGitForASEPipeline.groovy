@@ -1,6 +1,6 @@
-import com.caixabank.absis3.ASEPipelineData
-import com.caixabank.absis3.ASEVars
-import com.caixabank.absis3.EchoLevel
+import com.project.alm.ASEPipelineData
+import com.project.alm.ASEVars
+import com.project.alm.EchoLevel
 
 ASEPipelineData call(def contractGitCommit, def gitUrl, def user, def userEmail) {
     ASEPipelineData pipelineData = new ASEPipelineData(ASEVars.DEV_ENVIROMENT, "${env.BUILD_TAG}")

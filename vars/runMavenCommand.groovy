@@ -1,10 +1,10 @@
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.GlobalVars
-import com.caixabank.absis3.MavenGoalExecutionException
-import com.caixabank.absis3.MavenGoalExecutionFailureError
-import com.caixabank.absis3.MavenGoalExecutionFailureErrorDecoder
-import com.caixabank.absis3.MavenUtils
-import com.caixabank.absis3.Utilities
+import com.project.alm.EchoLevel
+import com.project.alm.GlobalVars
+import com.project.alm.MavenGoalExecutionException
+import com.project.alm.MavenGoalExecutionFailureError
+import com.project.alm.MavenGoalExecutionFailureErrorDecoder
+import com.project.alm.MavenUtils
+import com.project.alm.Utilities
 
 def call(String mvnCommand, Map parameters = [:]) {
 

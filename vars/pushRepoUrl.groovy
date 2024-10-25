@@ -1,6 +1,6 @@
-import com.caixabank.absis3.GlobalVars
-import com.caixabank.absis3.PomXmlStructure
-import com.caixabank.absis3.EchoLevel
+import com.project.alm.GlobalVars
+import com.project.alm.PomXmlStructure
+import com.project.alm.EchoLevel
 
 def call(PomXmlStructure pomXml, String branchDestination, boolean checkoutBranch, boolean avoidCI, String message, boolean allowEmpty = false) {
 

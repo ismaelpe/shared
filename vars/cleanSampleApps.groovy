@@ -1,7 +1,7 @@
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.GlobalVars
-import com.caixabank.absis3.BmxUtilities
-import com.caixabank.absis3.SampleAppCleanMode
+import com.project.alm.EchoLevel
+import com.project.alm.GlobalVars
+import com.project.alm.BmxUtilities
+import com.project.alm.SampleAppCleanMode
 
 def call(SampleAppCleanMode sampleAppCleanMode, int days) {
 

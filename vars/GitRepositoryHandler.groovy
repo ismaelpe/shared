@@ -1,4 +1,4 @@
-import com.caixabank.absis3.*
+import com.project.alm.*
 
 class GitRepositoryHandler implements Serializable {
 

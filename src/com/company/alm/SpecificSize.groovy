@@ -1,4 +1,4 @@
-package com.caixabank.absis3
+package com.project.alm
 
 class SpecificSize implements Serializable {
 	public String cpuSize;

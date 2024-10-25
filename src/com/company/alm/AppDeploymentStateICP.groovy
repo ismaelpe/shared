@@ -1,6 +1,6 @@
-package com.caixabank.absis3
+package com.project.alm
 import java.util.Map
-import com.caixabank.absis3.AppDeploymentState
+import com.project.alm.AppDeploymentState
 
 class AppDeploymentStateICP extends AppDeploymentState{
 

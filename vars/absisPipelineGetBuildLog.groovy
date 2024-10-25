@@ -1,9 +1,9 @@
 import groovy.transform.Field
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.ICPApiResponse
-import com.caixabank.absis3.SampleAppCleanMode
-import com.caixabank.absis3.GlobalVars
-import com.caixabank.absis3.Utilities
+import com.project.alm.EchoLevel
+import com.project.alm.ICPApiResponse
+import com.project.alm.SampleAppCleanMode
+import com.project.alm.GlobalVars
+import com.project.alm.Utilities
 
 import java.util.Map
 

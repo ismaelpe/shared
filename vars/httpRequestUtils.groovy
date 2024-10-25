@@ -1,7 +1,7 @@
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.HttpRequestException
-import com.caixabank.absis3.HttpResponseBody
-import com.caixabank.absis3.HttpRequestUtilities
+import com.project.alm.EchoLevel
+import com.project.alm.HttpRequestException
+import com.project.alm.HttpResponseBody
+import com.project.alm.HttpRequestUtilities
 
 def getUrl(url, verb, fileOut, headersList, accept) {
 	def headers = ''

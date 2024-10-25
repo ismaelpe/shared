@@ -1,4 +1,4 @@
-import com.caixabank.absis3.GlobalVars
+import com.project.alm.GlobalVars
 
 //FIXME deprecate this
 def call(String name, Boolean marked) {

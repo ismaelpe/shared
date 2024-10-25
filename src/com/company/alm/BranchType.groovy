@@ -1,4 +1,4 @@
-package com.caixabank.absis3
+package com.project.alm
 
 enum BranchType {
     FEATURE, RELEASE, MASTER, HOTFIX, CONFIGFIX, PROTOTYPE, UNKNOWN

@@ -1,4 +1,4 @@
-package com.caixabank.absis3
+package com.project.alm
 
 class CallActuatorEnvPipelineStructure extends PipelineStructure {
 

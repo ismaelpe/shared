@@ -1,6 +1,6 @@
-import com.caixabank.absis3.YamlUtils
+import com.project.alm.YamlUtils
 import com.cloudbees.groovy.cps.NonCPS
-import com.caixabank.absis3.EchoLevel
+import com.project.alm.EchoLevel
 /**
  * Check the config files uploaded for a compoment.
  * @param destFolder

@@ -1,9 +1,9 @@
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.GlobalVars
-import com.caixabank.absis3.PipelineData
-import com.caixabank.absis3.PomXmlStructure
-import com.caixabank.absis3.Utilities
-import com.caixabank.absis3.MavenVersionUtilities
+import com.project.alm.EchoLevel
+import com.project.alm.GlobalVars
+import com.project.alm.PipelineData
+import com.project.alm.PomXmlStructure
+import com.project.alm.Utilities
+import com.project.alm.MavenVersionUtilities
 
 
 def call(PomXmlStructure pomXml, PipelineData pipeline, boolean clientAbsis2) {

@@ -1,6 +1,6 @@
 import groovy.transform.Field
-import com.caixabank.absis3.*
-import com.caixabank.absis3.GarAppType
+import com.project.alm.*
+import com.project.alm.GarAppType
 
 @Field Map pipelineParams
 

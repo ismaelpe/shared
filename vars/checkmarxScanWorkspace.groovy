@@ -1,13 +1,13 @@
-import com.caixabank.absis3.GlobalVars
-import com.caixabank.absis3.BranchType
-import com.caixabank.absis3.PomXmlStructure
-import com.caixabank.absis3.PipelineData
-import com.caixabank.absis3.NexusUtils
-import com.caixabank.absis3.ArtifactSubType
-import com.caixabank.absis3.KpiAlmEvent
-import com.caixabank.absis3.KpiAlmEventStage
-import com.caixabank.absis3.KpiAlmEventOperation
-import com.caixabank.absis3.*
+import com.project.alm.GlobalVars
+import com.project.alm.BranchType
+import com.project.alm.PomXmlStructure
+import com.project.alm.PipelineData
+import com.project.alm.NexusUtils
+import com.project.alm.ArtifactSubType
+import com.project.alm.KpiAlmEvent
+import com.project.alm.KpiAlmEventStage
+import com.project.alm.KpiAlmEventOperation
+import com.project.alm.*
 
 def call(PomXmlStructure pomXml, PipelineData pipeline,boolean sendEmailResults) {
 	checkmarxScanWorkspace(pomXml,pipeline,sendEmailResults,null,GlobalVars.TST_ENVIRONMENT.toUpperCase())

@@ -1,11 +1,11 @@
-import com.caixabank.absis3.BmxUtilities
-import com.caixabank.absis3.BranchStructure
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.GlobalVars
-import com.caixabank.absis3.PomXmlStructure
-import com.caixabank.absis3.DeployStructure
-import com.caixabank.absis3.AncientVersionInfo
-import com.caixabank.absis3.Utilities
+import com.project.alm.BmxUtilities
+import com.project.alm.BranchStructure
+import com.project.alm.EchoLevel
+import com.project.alm.GlobalVars
+import com.project.alm.PomXmlStructure
+import com.project.alm.DeployStructure
+import com.project.alm.AncientVersionInfo
+import com.project.alm.Utilities
 
 def call(DeployStructure deployStructure, PomXmlStructure artifactPom, String environment) {
     AncientVersionInfo ancientVersionInfo = new AncientVersionInfo(false)

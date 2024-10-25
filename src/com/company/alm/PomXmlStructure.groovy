@@ -1,11 +1,11 @@
-package com.caixabank.absis3
+package com.project.alm
 
-import com.caixabank.absis3.ArtifactSubType
-import com.caixabank.absis3.ArtifactType
-import com.caixabank.absis3.GarAppType
-import com.caixabank.absis3.MavenVersionUtilities
-import com.caixabank.absis3.GlobalVars
-import com.caixabank.absis3.Utilities
+import com.project.alm.ArtifactSubType
+import com.project.alm.ArtifactType
+import com.project.alm.GarAppType
+import com.project.alm.MavenVersionUtilities
+import com.project.alm.GlobalVars
+import com.project.alm.Utilities
 
 class PomXmlStructure {
 

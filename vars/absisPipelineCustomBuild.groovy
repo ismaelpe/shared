@@ -1,7 +1,7 @@
 import groovy.transform.Field
-import com.caixabank.absis3.*
-import com.caixabank.absis3.ICPStateUtility
-import com.caixabank.absis3.ArtifactType
+import com.project.alm.*
+import com.project.alm.ICPStateUtility
+import com.project.alm.ArtifactType
 
 @Field Map pipelineParams
 

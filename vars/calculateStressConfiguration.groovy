@@ -1,4 +1,4 @@
-import com.caixabank.absis3.StressEnviromentConfiguration
+import com.project.alm.StressEnviromentConfiguration
 import com.cloudbees.groovy.cps.NonCPS
 
 @NonCPS

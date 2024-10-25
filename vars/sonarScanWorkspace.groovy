@@ -1,5 +1,5 @@
-import com.caixabank.absis3.*
-import com.caixabank.absis3.JavaVersionType
+import com.project.alm.*
+import com.project.alm.JavaVersionType
 
 def call(PomXmlStructure pomXml, PipelineData pipeline) {
 

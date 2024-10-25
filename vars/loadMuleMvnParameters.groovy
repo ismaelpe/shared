@@ -1,5 +1,5 @@
 import groovy.json.JsonSlurperClassic
-import com.caixabank.absis3.EchoLevel
+import com.project.alm.EchoLevel
 
 // Use pomXmlStructure ifneeded
 def call(pipelineData, pomXmlStructure = null) {

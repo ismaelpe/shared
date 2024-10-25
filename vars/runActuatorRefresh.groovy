@@ -1,14 +1,14 @@
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.GlobalVars
-import com.caixabank.absis3.HttpRequestUtilities
-import com.caixabank.absis3.KpiAlmEvent
-import com.caixabank.absis3.KpiAlmEventErrorCode
-import com.caixabank.absis3.KpiAlmEventOperation
-import com.caixabank.absis3.KpiAlmEventStage
-import com.caixabank.absis3.KpiAlmEventStatusType
-import com.caixabank.absis3.KpiAlmEventSubOperation
-import com.caixabank.absis3.PipelineData
-import com.caixabank.absis3.PomXmlStructure
+import com.project.alm.EchoLevel
+import com.project.alm.GlobalVars
+import com.project.alm.HttpRequestUtilities
+import com.project.alm.KpiAlmEvent
+import com.project.alm.KpiAlmEventErrorCode
+import com.project.alm.KpiAlmEventOperation
+import com.project.alm.KpiAlmEventStage
+import com.project.alm.KpiAlmEventStatusType
+import com.project.alm.KpiAlmEventSubOperation
+import com.project.alm.PipelineData
+import com.project.alm.PomXmlStructure
 
 /**
  * Ejecuta el refresh

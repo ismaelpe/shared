@@ -1,10 +1,10 @@
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.KpiAlmEvent
-import com.caixabank.absis3.KpiAlmEventOperation
-import com.caixabank.absis3.KpiAlmEventStage
-import com.caixabank.absis3.PipelineData
-import com.caixabank.absis3.PomXmlStructure
-import com.caixabank.absis3.GlobalVars
+import com.project.alm.EchoLevel
+import com.project.alm.KpiAlmEvent
+import com.project.alm.KpiAlmEventOperation
+import com.project.alm.KpiAlmEventStage
+import com.project.alm.PipelineData
+import com.project.alm.PomXmlStructure
+import com.project.alm.GlobalVars
 
 def call(PomXmlStructure pomXml, PipelineData pipeline) {
 	if (env.CAMPAIGN_CANARY_FEATURE_ENABLED == "true") {

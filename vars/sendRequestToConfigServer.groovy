@@ -1,8 +1,8 @@
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.GlobalVars
-import com.caixabank.absis3.GplRequestStatus
-import com.caixabank.absis3.GplUtilities
-import com.caixabank.absis3.HttpRequestUtilities
+import com.project.alm.EchoLevel
+import com.project.alm.GlobalVars
+import com.project.alm.GplRequestStatus
+import com.project.alm.GplUtilities
+import com.project.alm.HttpRequestUtilities
 import groovy.json.JsonSlurper
 import java.util.Date
 

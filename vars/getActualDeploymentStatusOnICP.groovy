@@ -1,13 +1,13 @@
-import com.caixabank.absis3.*
-import com.caixabank.absis3.ICPk8sComponentDeploymentInfo
-import com.caixabank.absis3.BmxUtilities
-import com.caixabank.absis3.ICPk8sComponentInfo
-import com.caixabank.absis3.ICPk8sComponentServiceInfo
-import com.caixabank.absis3.ICPDeployStructure
-import com.caixabank.absis3.ICPk8sActualStatusInfo
-import com.caixabank.absis3.BranchType
-import com.caixabank.absis3.ICPApiResponse
-import com.caixabank.absis3.GlobalVars
+import com.project.alm.*
+import com.project.alm.ICPk8sComponentDeploymentInfo
+import com.project.alm.BmxUtilities
+import com.project.alm.ICPk8sComponentInfo
+import com.project.alm.ICPk8sComponentServiceInfo
+import com.project.alm.ICPDeployStructure
+import com.project.alm.ICPk8sActualStatusInfo
+import com.project.alm.BranchType
+import com.project.alm.ICPApiResponse
+import com.project.alm.GlobalVars
 
 
 

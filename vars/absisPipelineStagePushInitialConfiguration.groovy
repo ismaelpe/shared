@@ -1,6 +1,6 @@
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.FileUtils
-import com.caixabank.absis3.GitUtils
+import com.project.alm.EchoLevel
+import com.project.alm.FileUtils
+import com.project.alm.GitUtils
 
 def call(String nameApp) {
 

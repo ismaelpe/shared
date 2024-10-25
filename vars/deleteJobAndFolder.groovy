@@ -6,7 +6,7 @@ import hudson.scm.*
 import hudson.tasks.*
 import com.cloudbees.hudson.plugins.folder.*
 import java.util.ArrayList
-import com.caixabank.absis3.*
+import com.project.alm.*
 
 
 def call(def typeApp, def nameApp) {

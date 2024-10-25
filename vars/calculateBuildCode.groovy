@@ -1,7 +1,7 @@
-import com.caixabank.absis3.BranchType
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.PomXmlStructure
-import com.caixabank.absis3.PipelineData
+import com.project.alm.BranchType
+import com.project.alm.EchoLevel
+import com.project.alm.PomXmlStructure
+import com.project.alm.PipelineData
 
 def call(PomXmlStructure pomXmlStructure, PipelineData pipelineData) {
 

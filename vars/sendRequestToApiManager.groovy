@@ -1,7 +1,7 @@
-import com.caixabank.absis3.ApiManagerTechnicalServicesRequest
-import com.caixabank.absis3.ApiManagerTechnicalServicesResponse
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.GlobalVars
+import com.project.alm.ApiManagerTechnicalServicesRequest
+import com.project.alm.ApiManagerTechnicalServicesResponse
+import com.project.alm.EchoLevel
+import com.project.alm.GlobalVars
 
 
 def call(ApiManagerTechnicalServicesRequest request) {

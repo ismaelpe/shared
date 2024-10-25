@@ -1,4 +1,4 @@
-import com.caixabank.absis3.*
+import com.project.alm.*
 
 abstract class AbstractQueueHandler implements Serializable {
 
@@ -42,7 +42,7 @@ abstract class AbstractQueueHandler implements Serializable {
     protected String send2Queue(String queuePath, String tarballPath, int priority, boolean moveFile) {
 
         String filename = tarballPath.substring(tarballPath.lastIndexOf("/") + 1)
-        String filenameOnQueue = "${priority}-${com.caixabank.absis3.DatesAndTimes.getLocalTimeDateNowAsString()}-${filename}"
+        String filenameOnQueue = "${priority}-${com.project.alm.DatesAndTimes.getLocalTimeDateNowAsString()}-${filename}"
         String tarballPathOnQueue = "${queuePath}/${filenameOnQueue}"
 
         String sanitizedQueuePath = queuePath.replace(' ', '\\ ')

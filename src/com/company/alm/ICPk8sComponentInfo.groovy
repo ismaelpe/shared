@@ -1,8 +1,8 @@
-package com.caixabank.absis3
+package com.project.alm
 
 import java.util.ArrayList
 
-import com.caixabank.absis3.ICPk8sInstancesApp
+import com.project.alm.ICPk8sInstancesApp
 
 
 class ICPk8sComponentInfo{

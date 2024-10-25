@@ -1,4 +1,4 @@
-import com.caixabank.absis3.EchoLevel
+import com.project.alm.EchoLevel
 import groovy.json.JsonOutput
 
 def call(translationsMap, params = null) {

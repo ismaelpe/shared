@@ -1,4 +1,4 @@
-import com.caixabank.absis3.*
+import com.project.alm.*
 
 def call(PomXmlStructure pomXml, PipelineData pipeline) {
     printOpen("Deploying Artifact from Workspace to Nexus!!!! ${pipeline.branchStructure.branchType}", EchoLevel.ALL)

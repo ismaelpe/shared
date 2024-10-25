@@ -1,8 +1,8 @@
 import groovy.transform.Field
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.ExportConfig
-import com.caixabank.absis3.GitUtils
-import com.caixabank.absis3.GlobalVars
+import com.project.alm.EchoLevel
+import com.project.alm.ExportConfig
+import com.project.alm.GitUtils
+import com.project.alm.GlobalVars
 import io.jenkins.plugins.casc.ConfigurationAsCode
 
 @Field Map pipelineParams

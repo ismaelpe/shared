@@ -1,4 +1,4 @@
-import com.caixabank.absis3.*
+import com.project.alm.*
 import groovy.json.JsonSlurperClassic
 
 def call(PomXmlStructure pomXml, PipelineData pipelineData, boolean mergedMR = false) {

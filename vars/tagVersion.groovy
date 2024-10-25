@@ -1,9 +1,9 @@
-import com.caixabank.absis3.BranchType
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.GitUtils
-import com.caixabank.absis3.GlobalVars
-import com.caixabank.absis3.PipelineData
-import com.caixabank.absis3.PomXmlStructure
+import com.project.alm.BranchType
+import com.project.alm.EchoLevel
+import com.project.alm.GitUtils
+import com.project.alm.GlobalVars
+import com.project.alm.PipelineData
+import com.project.alm.PomXmlStructure
 
 def call(PomXmlStructure pomXml, PipelineData pipeline, boolean createRelease, boolean commitCurrentStateBeforeTagging) {
     //withCredentials( [string(credentialsId: 'GITLAB_API_SECRET_TOKEN', variable: 'TOKEN')]){

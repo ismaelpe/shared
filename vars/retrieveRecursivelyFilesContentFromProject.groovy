@@ -1,7 +1,7 @@
-import com.caixabank.absis3.BmxStructure
-import com.caixabank.absis3.BmxUtilities
-import com.caixabank.absis3.DeployStructure
-import com.caixabank.absis3.MultipleDeploymentsState
+import com.project.alm.BmxStructure
+import com.project.alm.BmxUtilities
+import com.project.alm.DeployStructure
+import com.project.alm.MultipleDeploymentsState
 
 def call(String filename) {
 

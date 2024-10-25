@@ -1,7 +1,7 @@
-import com.caixabank.absis3.PomXmlStructure
-import com.caixabank.absis3.PipelineData
-import com.caixabank.absis3.GlobalVars
-import com.caixabank.absis3.DeployStructure
+import com.project.alm.PomXmlStructure
+import com.project.alm.PipelineData
+import com.project.alm.GlobalVars
+import com.project.alm.DeployStructure
 
 def call(PomXmlStructure pomXml, PipelineData pipeline, String endPoint) {
 

@@ -1,15 +1,15 @@
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.KpiAlmEvent
-import com.caixabank.absis3.KpiAlmEventOperation
-import com.caixabank.absis3.KpiAlmEventStage
-import com.caixabank.absis3.PomXmlStructure
-import com.caixabank.absis3.PipelineData
-import com.caixabank.absis3.GlobalVars
-import com.caixabank.absis3.BmxUtilities
-import com.caixabank.absis3.ICPStateUtility
-import com.caixabank.absis3.GarAppType
-import com.caixabank.absis3.ICPApiResponse
-import com.caixabank.absis3.ICPWorkflowStates
+import com.project.alm.EchoLevel
+import com.project.alm.KpiAlmEvent
+import com.project.alm.KpiAlmEventOperation
+import com.project.alm.KpiAlmEventStage
+import com.project.alm.PomXmlStructure
+import com.project.alm.PipelineData
+import com.project.alm.GlobalVars
+import com.project.alm.BmxUtilities
+import com.project.alm.ICPStateUtility
+import com.project.alm.GarAppType
+import com.project.alm.ICPApiResponse
+import com.project.alm.ICPWorkflowStates
 import hudson.Functions
 
 def call(PomXmlStructure pomXml, PipelineData pipeline, ICPStateUtility icpStateUtility) {

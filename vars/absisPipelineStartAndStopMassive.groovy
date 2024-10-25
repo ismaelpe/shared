@@ -1,10 +1,10 @@
-import com.caixabank.absis3.AppMassive
+import com.project.alm.AppMassive
 
 import groovy.transform.Field
-import com.caixabank.absis3.EchoLevel
-import com.caixabank.absis3.GlobalVars
-import com.caixabank.absis3.ICPAppResources
-import com.caixabank.absis3.PipelineData
+import com.project.alm.EchoLevel
+import com.project.alm.GlobalVars
+import com.project.alm.ICPAppResources
+import com.project.alm.PipelineData
 
 
 @Field Map pipelineParams
