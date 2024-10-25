@@ -1,8 +1,0 @@
-#Needed in compilation
-absis:
-  swagger-ui:
-    api-info:
-      title: ${project.artifactId}
-      version: ${project.version}
-      description: ${project.description}
- PEPITO
