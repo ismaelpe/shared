@@ -1,0 +1,95 @@
+# customPipelineCicsHISBuild
+
+## Overview
+
+This document describes the `customPipelineCicsHISBuild`, which is a custom pipeline (thus not following the standard lifecycle defined by `absisPipelineBuild`)
+meant to built transaction-oriented CICS clients. Those clients are built as Spring Boot starters.
+
+This pipeline is fired by the project `cics-his` via a direct call on its `Jenkinsfile`.
+The GitLab repository needs to have Jenkins CI integration enabled.
+
+There are three entities involved in this pipeline execution:
+
+* The `cics-his` project itself, which is a container for the DLLs describing the services the clients are to communicate to.
+There is a single DLL for each type and transaction.
+* Maven archetypes of the form `cics-{type}-spring-boot-starter-archetype`. Available types at the moment are:
+** normal
+** proxy
+** link
+* CICS clients in the form of Spring Boot starters. Those clients have the form `cics-{type}-{txNumber}-spring-boot-starter`
+and are based on the respective `{type}` archetype. Each archetype is used to build a ready-to-use client for each transaction to CICS, referenced by `{txNumber}`.
+
+
+## Lifecycle Management
+
+### Overview
+
+The maven archetype for each CICS transaction type is built by the pipeline `absisPipelineBuild` which uses the maven
+goal `archetype:create-from-project`. Those projects follow the standard lifecycle described in the aforementioned pipeline.
+
+The project `absisPipelineBuild` uses to generate the archetype is a client implementation for each type of transaction on the form of an Spring Boot starter,
+plus a sample app. Those two artifacts are bundled together in a multi-module project. For example:
+
+* `cics-normal-starter`
+* `cics-proxy-starter`
+* `cics-link-starter`
+
+Each of those projects has an `archetype.properties` file, which at the same time, defines the required property `txNumber`.
+This property is used to name packages, classes and WSDL references, among other things, and it will be different
+for each transaction.
+
+When deploying on Nexus, only the Spring Boot starter project is used. The sample app is ignored.
+
+Once those archetypes are on Nexus. DLLs can be added or modified on the `cics-his` project.
+When those modifications are pushed to a branch, `customPipelineCicsHISBuild` will be fired via the GitLab -- Jenkins
+integration and the `Jenkinsfile` present on `cics-his`.
+
+The pipeline will check which DLL has been added or modified, therefore knowing the type and transaction a client has
+to be generated for. The maven goal `archetype:generate` will then be used to generate a new client for that given type
+and transaction. Once created, this client will be deployed on Nexus.
+
+|===
+**⚠ Note:** A **single** DLL addition/modification is currently supported. If more than one are present, the pipeline generate an error. In addition, only is possible upload files that arr in the same directory as the proccesed DLL
+|===
+
+### Lifecycle details
+
+When a commit is pushed to the `cics-his` repository, the pipeline will follow those steps:
+
+1. Validate agileworkid
+
+2. Get last commited dll file
+
+3. Check files pushed
+	3.1  A **single** DLL addition/modification is currently supported. If more than one are present, the pipeline generate an error. In addition, only is possible upload files that arr in the same directory as the proccesed DLL
+	
+4. Get txNumber & cicsType
+
+5. Generate info starter
+
+6. Generate installation package
+	6.1 <transactionid>.dll
+    6.2 <transactionid>.<transactionid>Service.svc. Template config file <%@ServiceHost Service="<transactionid>.<transactionid>Service,<transactionid>" Factory="BancoBPI.HIS.ServiceModel.BPIHISServiceHostFactory, BancoBPI.HIS.ServiceModel" %>
+    
+7. Install package into HIS. By ftps upload file into HIS
+	7.1 By remote environment type (link, normal, proxy) , copy file <transactionid>.dll into directory ${his.machine.homedirectory}/bin
+	7.2 By remote environment type (link, normal, proxy), copy file <transactionid>.<transactionid>Service.svc into ${his.machine.homedirectory}/{pathCicsTypeSvcHis}, where pathCicsTypeSvcHis values can be RE/CICSLink or RE/CICSNormal or RE/CICSProxy
+
+8. Generate cics-his artifact and deploy into Nexus
+
+9. Remove previos directory
+
+10. Create starter from wsdl
+	10.1 Generate startar based on:
+		-  Maven archetypes of the form `cics-{type}-spring-boot-starter-archetype (type = normal OR proxy OR link)
+		-  WSDL Url from HIS generate once we have upload dll file to HIS. URL example : https://his02.srv.ri.dv.geos.loc/tiServices/RE/CICSProxy/tx5120.tx5120Service.svc?wsdl
+
+11. Install starter project into Nexus
+
+12. Publish artifact from starter to catalog
+
+|===
+**⚠ Note:** If no final version of `cics-his` is present on Nexus. The default `1.0.0-SNAPSHOT` will be used.
+If not present the build will fail.
+|===
+

@@ -1,0 +1,366 @@
+# Jenkins Shared Library
+
+This library contains the implementation of the Jenkins pipelines used in Absis3 projects.
+
+
+## absisPipelineBuild
+
+This pipeline runs with the CI, after every push to the repository. This pipeline has the following stages:
+
+. <<get-git-code>>
+. <<get-git-info>>
+. initAndValidate
+. <<update-version>>
+. <<validate-version>>
+. <<build>>
+. <<sonar-scan>>
+. <<sonar-quality-gate>>
+. <<copy-config-files>>
+. <<changelog-file>>
+. <<deploy-to-cloud>>
+. push-release-to-git
+. <<publish-client>>
+. generate-report
+. <<publish-artifact-catalog>>
+
+## absisPipelineCreateRC
+
+This pipeline runs manually when a new Release Candidate has to be created. It receives the following parameters:
+
+.createRC Parameters
+|===
+|Name|Description|Default value
+
+| originBranchParam
+| branch to create the release candidate from
+| master
+
+| pathToRepoParam
+| url to the git repository
+| N/A
+
+| repoParam
+| name of the repository
+| N/A
+
+| pipelineOrigId
+|
+|
+
+| artifactTypeParam
+| type of the artifact
+| SIMPLE_APP
+
+| artifactSubTypeParam
+| subtype of the artifact
+| MICRO_APP
+|===
+
+These are the stages of the pipeline:
+
+. get-git-repo
+. prepare-RC
+. next-Minor-Master
+. push-repo-url
+
+## absisPipelineCreateRelease
+
+This pipeline runs manually when a new Release has to be created. It receives the following parameters:
+
+.createRelease Parameters
+|===
+|Name|Description|Default value
+
+| originBranchParam
+| branch to create the release candidate from
+| master
+
+| pathToRepoParam
+| url to the git repository
+| N/A
+
+| repoParam
+| name of the repository
+| N/A
+
+| deployToTst
+| whether to deploy the release also to TST
+| true
+
+| artifactTypeParam
+| type of the artifact
+| SIMPLE_APP
+
+| artifactSubTypeParam
+| subtype of the artifact
+| MICRO_APP
+|===
+
+These are the stages of the pipeline:
+
+. get-git-repo
+. prepare-Release
+. <<validate-version>>
+. build
+. <<copy-config-files>>
+. deploy-to-cloud
+. deploy-to-cloud-tst
+. <<publish-client>>
+. push-Release-to-git
+. <<publish-artifact-catalog>>
+
+## Stages
+
+[#get-git-code]
+[[get-git-code]]
+### get-git-code
+
+#### Description
+#### Conditional execution
+
+This stage runs when git commit is not null.
+
+#### Steps
+#### Result
+
+[#get-git-info]
+### get-git-info
+
+#### Description
+
+This stage initialize the pipeline data, the branch structure and sets up the display name for the current build based on the branch name.
+
+#### Conditional execution
+
+This stage runs always.
+
+#### Steps
+
+. inits pipelineData
+. inits branchStructure
+. sets up currentBuild display name
+
+#### Result
+
+If none of the steps fails, the stage will end successfully.
+
+### initAndValidate
+
+#### Description
+
+Retrieves the data from the pom.xml file and validate the branch is valid.
+
+#### Conditional execution
+
+This stage runs always.
+
+#### Steps
+
+. inits pomXml structure
+. prints debug information
+. validates branch
+
+#### Result
+
+If none of the steps fails, the stage will end successfully.
+
+[#update-version]
+### update-version
+
+#### Description
+
+Updates the pom version to the next RC.
+
+#### Conditional execution
+
+This stage runs only for Release branches.
+
+#### Steps
+
+. Extracts old version
+. Increments version using the maven versions plugin
+
+#### Result
+
+If none of the steps fails, the stage will end successfully.
+
+[#validate-version]
+### validate-version
+
+#### Description
+
+Checks the compatibility with previous released versions based on the Swagger contract using https://revapi.org/modules/revapi-maven-plugin/index.html[maven Revapi plugin].
+
+#### Conditional execution
+This stage only runs for micro services or data services (`MICRO_APP`).
+
+#### Steps
+
+. *Generate contract pom*
++
+The Swagger contract is the single source of truth of a microservice. The compatibility against previous versions needs to be guaranteed before releasing a newer version. In this case, it is only needed to check this compatibility against the classes generated automatically from the Swagger contract, the other classes in the microservice are not considered.
++
+For this reason, it is required to generate a separated artifact that only contains these generated classes.
+The separated artifact will be used by other services that want to integrate with this service, so from now on it is called the client artifact. The client artifact is generated using a _fake_ pom so the **groupId** can be changed to avoid collisions with the microservice artifact iself.
+So the client artifact will have the same groupId as the microservice plus the keyword `.contract`.
++
+In this step, the _fake_ pom maven details are fulfilled based on the details of the microservice and both the pom and the Swagger contract are copied into a temporary folder.
+
+. *Install deploy client artifact*
++
+In this step, the client artifact is built locally without deploying it to nexus using the maven profile `checkVersion` and the maven goals `clean verify`. This will run the maven Revapi plugin which will search for an artifact with the same groupId and artifactId as the client artifact and the last previously released version to check if there are breaking changes.
++
+This is a diagram showing the process:
+image::assets/pipeline-validate-version.png[validate-version]
+
+#### Result
+
+If Revapi does not find any breaking change, the stage will end successfully.
+If Revapi does find breaking changes, the build will fail.
+
+[#build]
+### build
+
+#### Description
+
+Builds the artifact and it deploys it to nexus when branch is not a feature branch.
+
+#### Conditional execution
+
+This stage always runs.
+
+#### Steps
+
+* Scenario: deploy
++
+In case the artifact needs to be deployed, for master and release branches only and when not working with a Sample App, the artifact will be deployed in Nexus with maven with the goals `clean deploy`. Once is deployed successfully, the Nexus URL and the buildCode are extracted as they will be needed in a future stage to send this information to the catalog.
++
+If the artifact is a Sample App, this will be built with `clean package` goals but it will not be deployed in Nexus.
++
+If the branch is other than release or master, then the artifact is only installed in the local repository with `clean install` goals.
+* Scenario: no deploy
++
+If the artifact is not meant to be deployed, then the artifact is only installed in the local repository.
+
+#### Result
+
+If the build of the artifact does not fail, the stage will end successfully.
+
+[#copy-config-files]
+### copy-config-files
+
+#### Description
+
+Copies the config files provided in the `src/main/resource` of the microservice and pushes them to the Config Server Git repository.
+This process is synchronized because gitlab doesn't allow multi thread. So it verify through contract-server-micro if the repository is available and it will lock it to push the config files. When the process ends it will unlock the repository through contract-server-micro
+
+#### Conditional execution
+
+This stage runs for microservices that are going to be deployed in Bluemix in any environment except for Eden.
+
+#### Steps
+
+. Clones Config Server Git repository in `config-repo` temp directory accordingly to the environment where the pipeline is deploying.
+. Creates if not exists a directory with the spring application name inside `services/apps`.
+. Copies all files under `resources` recursively to the directory previously created, maintaining the same folder structure.
+. Removes all files not matching `application[^-standalone]*`.
+. Commit and push the changes to the Config Server Git repository.
+. Delete `config-repo` from local.
+
+### Result
+
+If none of the steps fails, the stage will end successfully.
+
+[#deploy-to-cloud]
+### deploy-to-cloud
+
+#### Description
+
+Deploys the artifact to the cloud.
+
+#### Conditional execution
+
+This stage only runs when deployment is required.
+
+#### Steps
+
+.
+
+[#changelog-file]
+[[changelog-file]]
+### changelog-file
+
+#### Description
+
+Generate a file CHANGELOG.md in the repository root once a merge request is launched
+
+#### Conditional execution
+
+Only with user push action, skip the execution when is absis3user 
+Only if changelog param is activated
+Only in feature branch
+Only when target branch is master
+Only in MERGE actions.
+
+#### Steps
+
+Parse the file if exists.
+Check the artifact version (without qualifier) and the user history, retrieving the merge request information
+Add the user history (if not exists) in the version that correspond.
+
+[#publish-client]
+### publish-client
+
+#### Description
+
+Publishes the client artifacts for absis3 and absis2 for the microservice.
+
+#### Conditional execution
+
+This stage only runs for micro services or data services (`MICRO_APP`).
+
+#### Steps
+
+. *Cleaning temporary directory*
++
+First step is cleaning the source folder in the temporary directory created in the <<validate-version>> stage.
+
+. *Generate contract pom for absis3 client*
++
+It fulfills the _fake_ pom with the maven details of the microservice and copies both the pom and the Swagger contract into the temporary folder. See <<validate-version, validate-version, step 1>> for more details.
+
+. *Install deploy client artifact for absis3*
++
+Deploys the client artifact for absis3 in nexus using the _fake_ pom recently copied into the temporary directory, using the maven profile `generateAbsisClient` and the goal `deploy`.
+
+. *Generate contract pom for absis2 client*
++
+It fulfills the _fake_ pom with the maven details of the microservice and copies both the pom and the Swagger contract to the temporary folder. In this case, not only the groupId changes: the artifactId concats the keyword `Absis2` to the current artifactId. See <<validate-version, validate-version, step 1>> for more details.
+
+. *Install deploy client artifact for absis3*
++
+Deploys the client artifact for absis2 in nexus using the _fake_ pom recently copied into the temporary directory, using the maven profile `generateAbsis2Client` and the goal `deploy`.
+
+#### Result
+
+If there are no failures during the deployment process, the stage will end successfully.
+
+[#publish-artifact-catalog]
+### publish-artifact-catalog
+
+#### Description
+
+Publishes the artifact details to the Absis catalog.
+
+#### Conditional execution
+
+This stage runs for every branch that is not a feature branch.
+
+#### Steps
+
+. Calculates all the data to send (list of dependencies, urls for further info, etc)
+. Builds and sends the request to catalog
+
+#### Result
+
+If there are no failures sending the request, the stage will end successfully.

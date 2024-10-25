@@ -1,0 +1,10 @@
+# Jenkins Jobs
+
+The *ALM* folder  contains these jobs.
+
+. job-create-RC
+. job-create-Release
+. job-deploy-to-PRO
+. job-provisioning
+. job-rollback-artifact
+

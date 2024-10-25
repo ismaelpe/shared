@@ -1,0 +1,58 @@
+
+## Lifecycle Micro
+
+### Overview
+
+The lifecycle for the micros (it does not matter if they are architecture or applications) has these steps:
+
+* SNAPSHOTS
+* RELEASE-CANDIDATE
+* RELEASE
+
+The last step of the lifecycle is the deploy on the production environment.
+
+### Lifecycle details
+
+It began with the feature branch, The developer codes the new feature and pushes to the  git branch. The integration continues can deploy (optionally) to the EDEN environment.
+
+When the developer is satisfied with the new feature can merge this branch to the master.
+
+If the Merge Request is approved and merged, the integration continuos process will build and deploy an SNAPSHOT Artifact to the DEV environment.
+
+The developer can develop more features or can promote the version (SNAPSHOT) to the RELASE_CANDIDATE stage. 
+
+With the Creare_Release_Candidate action the job:
+
+* Generates a release branch from the master. The version of the pom will be updated from (X.Y.Z-SNAPSHOT) to (X.Y.Z-RC0)
+* Updates the SNAPSHOT version from (X.Y.Z-SNAPSHOT) to (X.Y+1.0-SNAPSHOT).
+
+The developer can fix the ReleaseCandidate Version, on every push the integration continous will deploy the artifact on the TST environment and upgrade from RCX to the RCX+1.
+
+When all the bugs are solved the developer can promote the Release Candidate to a final Release. The job will upgrade from X.Y.Z-RCN to the X.Y.Z and deploy to the PRE environment and optionally to the TST environment.
+
+The next step with a RELEASE is deploy this artifact to the PRO production.
+
+If the artifact is a minor of an existing artifact the deploy-to-pro will deploy the micro with a beta route and begin the cannary process.
+If the artifact is a new major or a new artifact the deploy-to-pro will deploy the micro with a beta route and prepare the release for the closing process.
+
+The closing process will make the next steps:
+
+* Route the micro to the official routes.
+* If the artifact is a minor of an existing artifact (ancient), unmap the official routes from the ancient and stop this application (The ancient will remain for the rollback process).
+
+### Artifact Versioning
+
+The versioning behaviour of those artifacts are from SNAPSHOTS to RELEASE CANDIDATES and RELEASES. the sematic versioning is used.
+
+A minor artifact replaces the last minor of the same major. In the lifecycle of an application micro the process will include a verify stage with the api contract to ensure that the restrictions of the semantic versioning are respected. 
+
+If the revapi control fails it means that the new version of the contract needs a new major, because will affect current consumers.
+
+
+
+
+
+
+
+
+

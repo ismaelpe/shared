@@ -1,0 +1,91 @@
+
+## Lifecycle Management
+
+### Overview
+
+The maven archetype for each CICS transaction type is built by the pipeline `absisPipelineBuild` which uses the maven
+goal `archetype:create-from-project`. Those projects follow the standard lifecycle described in the aforementioned pipeline.
+
+The project `absisPipelineBuild` uses to generate the archetype is a client implementation for each type of transaction on the form of an Spring Boot starter,
+plus a sample app. Those two artifacts are bundled together in a multi-module project. For example:
+
+* `cics-normal-starter`
+* `cics-proxy-starter`
+* `cics-link-starter`
+
+When deploying on Nexus, only the Spring Boot starter project is used. The sample app is ignored.
+
+Once those archetypes are on Nexus. WSDLs can be added or modified on the `cics-wsdl` project.
+When those modifications are pushed to a branch, `customPipelineCicsWsdlBuild` will be fired via the GitLab -- Jenkins
+integration and the `Jenkinsfile` present on `cics-wsdl`.
+
+The pipeline will check which WSDL has been added or modified, therefore knowing the type and transaction a client has
+to be generated for. The maven goal `archetype:generate` will then be used to generate a new client for that given type
+and transaction. Once created, this client will be deployed on Nexus.
+
+|===
+**⚠ Note:** A **single** WSDL addition/modification is currently supported. If more than one are present, only the first present on the changelog will be processed.
+|===
+
+### Lifecycle details
+
+The lifecycle for both archetypes and starters has to begin with a `cics-wsdl` artifact already present on Nexus.
+This artifact can be an SNAPSHOT, but must contain a valid WSDL corresponding to the type and transaction
+that are used as model in the archetype model project. There is one project of each transaction type.
+
+Examples are:
+
+* `cics-normal-starter` contains the model for transaction H451, so `txH451.wsdl` has to be present in the
+Nexus-deployed `cics-wsdl` artifact.
+* `cics-proxy-starter` contains the model for transaction 5120, so `tx5120.wsdl` is needed.
+* `cics-link-starter` is yet to be built.
+
+Each of those projects has an `archetype.properties` file, which at the same time, defines the required property `txNumber`.
+This property is used to name packages, classes and WSDL references, among other things, and it will be different
+for each transaction.
+
+As mentioned, `absisPipelineBuild` is controlling the lifecycle of those archetype models, being SNAPSHOTs, Release Candidates
+or final releases, depending of the context they are built.
+Thus, the archetype versions deployed on Nexus will match those in the models.
+
+When a commit is pushed to the `cics-wsdl` repository, the pipeline will follow those steps:
+
+1. Build a new `cics-wsdl` with the updates and deploy it into Nexus.
+
+2. Then, it will look for the latest version of the corresponding archetype, depending of which type the new/modified WSDL was.
+* The following hierarchy will be followed:
+** Final releases (no suffix)
+** Release candidates
+** Milestone releases
+** SNAPSHOT releases
+** Deprecated releases
+
+3. The mvn goal `archetype:generate` will be invoked to have the client generated as an Spring Boot starter. An example of a
+generated client may be `cics-normal-txH451-spring-boot-starter`.
+
+4. The artifact is published on the Absis Catalog and on Nexus, making it ready to use.
+
+### Artifact versioning
+
+#### `cics-{type}-starter` and `cics-{type}-spring-boot-starter-archetype`
+
+As mentioned above, those projects follow the lifecycle defined by the `absisPipelineBuild` pipeline so the corresponding archetypes will do so too.
+When a Release Candidate or a Release is built using the jenkins job defined to do so, an archetype will be released using `-RCx`-suffixed or
+final versions respectively.
+
+#### `cics-wsdl`
+
+This artifact is only versioned when changes are pushed into the `master` branch. On those cases, the latest release present on Nexus will
+be retrieved and its minor version increased in one. This version would be then used to deploy the new artifact on Nexus.
+Only final releases are considered. SNAPSHOT, Release Candidates, Milestones and deprecated artifacts are ignored.
+
+#### `cics-{type}-spring-boot-starter`
+
+The versioning behaviour of those artifacts are the same as `cics-wsdl`. Automatic versioning for SNAPSHOTs or any kind of version
+different to final are **not** supported at the moment.
+
+|===
+**⚠ Note:** If no final version of `cics-wsdl` is present on Nexus. The default `1.0.0-SNAPSHOT` will be used.
+If not present the build will fail.
+|===
+

@@ -1,0 +1,88 @@
+
+## absisPipelineCreateRelease
+
+This pipeline runs manually when a new Release has to be created. 
+
+The origin branch of these job has to be a Release branch, the version will be uptaded to a final release, and deployed to the PRE environment an optionally to the TST environment.
+
+It receives the following parameters:
+
+.createRelease Parameters
+|===
+|Name|Description|Default value
+
+| originBranchParam
+| branch to create the release candidate from
+| master
+
+| pathToRepoParam
+| url to the git repository
+| N/A
+
+| repoParam
+| name of the repository
+| N/A
+
+| deployToTst
+| whether to deploy the release also to TST
+| true
+
+| artifactTypeParam
+| type of the artifact
+| SIMPLE_APP
+
+| artifactSubTypeParam
+| subtype of the artifact
+| MICRO_APP
+
+| isArchetype
+| if true the repo associated is an archetype
+| false
+
+| archetypeModel
+| contains a non-empty string, which corresponds to the folder where the project is
+| N/A
+
+
+| pipelineOrigId
+| the last pipeline executed 
+| N/A
+
+| commitId
+| the identifier of the commit that has triggered the pipelineOrig
+| N/A
+
+| userId
+| The identifier (U01XXXXX) of the IDEGPL user that invokes the pipeline
+| U0166666
+
+|===
+
+### Stages
+
+These are the stages of the pipeline:
+
+. <<stagesPipelines.adoc#get-git-repo,get-git-repo>>
+. <<stagesPipelines.adoc#prepare-RC,prepare-release>>
+. <<stagesPipelines.adoc#validate-dependencies-version,validate-dependencies-version>>
+. <<stagesPipelines.adoc#validate-version,validate-version>>
+. <<stagesPipelines.adoc#build,build>>
+. <<stagesPipelines.adoc#copy-config-files,copy-config-files>>
+. <<stagesPipelines.adoc#deploy-to-cloud,deploy-to-cloud>>
+. <<stagesPipelines.adoc#deploy-to-cloud-tst,deploy-to-cloud-tst>>
+. <<stagesPipelines.adoc#Generate-archetype-from-project,Generate-archetype-from-project>>
+. <<stagesPipelines.adoc#Deploy-archetype-into-Nexus,Deploy-archetype-into-Nexus>>
+. <<stagesPipelines.adoc#publish-client,publish-client>>
+. <<stagesPipelines.adoc#push-release-to-git,push-release-to-git>>
+. <<stagesPipelines.adoc#publish-artifact-catalog,publish-artifact-catalog>>
+
+### Next actions
+
+The next actions depend on the type of artifact (micro/library) and the type of versioning.
+
+* **Micro** 
+** Deploy to pro
+** Rollback Artifact
+* **Library** 
+** Close Release
+

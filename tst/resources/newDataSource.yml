@@ -1,0 +1,56 @@
+absis:
+  default-tenant: cbk
+  datasource:
+    enable: true
+    connections:
+      jose:
+        url: 'jdbc:h2:tcp://localhost/~/test;MODE=Oracle;INIT=CREATE SCHEMA IF NOT EXISTS DEMO_ARQRUN_BPI\;SET SCHEMA DEMO_ARQRUN_BPI'
+        username: sa
+        password: sa
+        driver-class-name: org.h2.Driver
+        hikari:
+          connectionTimeout: 1111
+        tenant: bpi
+      maria:
+        url: 'jdbc:h2:tcp://localhost/~/test;MODE=Oracle;INIT=CREATE SCHEMA IF NOT EXISTS DEMO_ARQRUN_CBK\;SET SCHEMA DEMO_ARQRUN_CBK'
+        username: sa
+        password: sa
+        driver-class-name: org.h2.Driver
+        hikari:
+          connectionTimeout: 2222
+        tenant: cbk
+    jpa:
+      database: H2
+      show-sql: true
+      generate-ddl: true
+      properties:
+        hibernate:
+          ddl-auto: create-drop
+          dialect: org.hibernate.dialect.H2Dialect
+  readonly-datasource:
+    enable: true
+    connections:
+      pepito:    #pepito-readonly
+        url: 'jdbc:h2:tcp://localhost/~/test;MODE=Oracle;INIT=CREATE SCHEMA IF NOT EXISTS DEMO_ARQRUN_BPI_RO\;SET SCHEMA DEMO_ARQRUN_BPI_RO'
+        username: sa
+        password: sa
+        driver-class-name: org.h2.Driver
+        hikari:
+          connectionTimeout: 5555
+        tenant: bpi
+      grillo:
+        url: 'jdbc:h2:tcp://localhost/~/test;MODE=Oracle;INIT=CREATE SCHEMA IF NOT EXISTS DEMO_ARQRUN_CBK_RO\;SET SCHEMA DEMO_ARQRUN_CBK_RO'
+        username: sa
+        password: sa
+        driver-class-name: org.h2.Driver
+        hikari:
+          connectionTimeout: 7777
+        tenant: cbk
+    jpa:
+      database: H2
+      show-sql: true
+      generate-ddl: true
+      properties:
+        hibernate:
+          ddl-auto: create-drop
+          dialect: org.hibernate.dialect.H2Dialect

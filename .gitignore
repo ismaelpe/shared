@@ -1,0 +1,45 @@
+# Created by .ignore support plugin (hsz.mobi)
+### Java template
+# Compiled class file
+*.class
+/resources/scripts@tmp
+testResultFile.yml
+target/
+docs/apidocs
+out/
+/.mvn
+/*/.mvn
+bin/
+resources/scripts/logs/
+# Eclipse project
+*.project
+*.classpath
+/.settings
+/*/.settings
+
+# Log file
+*.log
+
+# BlueJ files
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+*pom.xml.versionsBackup
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+.idea/
+*.iml
+!/.mvn/wrapper/maven-wrapper.jar
+.vscode/
+
+pipeline-syntax.gdsl

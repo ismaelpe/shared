@@ -1,0 +1,65 @@
+## customPipelineADSTransactionBuild
+
+Build que permite generar librerías de ADS asociadas al XML subido al siguiente repositorio:
+
+	https://git.svb.lacaixa.es/cbk/absis3/services/definitions/ads/ads-app-transactions
+
+Dicho job se apoya en las siguientes librerías para la generación
+
+	https://git.svb.lacaixa.es/cbk/absis3/services/arch/backend/ads/adstransaction-lib
+
+Los pasos son los siguientes:
+
+1) Obtiene los XMLs subidos via push en la siguiente ubicación: cifn/repository
+2) Para cada XML hace lo siguiente
+	- Calcula la siguiente versión release asociada a dicha transacción y versión, considerando que los GAVs de maven son los siguientes:
+
+		```	
+		<dependency>
+			<groupId>com.caixabank.absis.ads.transaction</groupId>
+			<artifactId>ads-ads0000a-lib</artifactId>
+			<version>${ads0000a.version}</version>
+		</dependency>
+		```
+		
+		Siendo la versión major la versión del XML y la versión minor un incremento por cada push que se ejecute.
+		Ejemplo:
+		
+		* XML con transacción con versión 0:	 
+		
+		```
+		<parent>
+			<groupId>com.caixabank.absis.ads.transaction</groupId>
+			<artifactId>ads-app-transactions-parent</artifactId>
+			<version>1.1.0-SNAPSHOT</version>
+		</parent>
+		
+		<artifactId>ads-ads0000a-lib</artifactId>
+		<version>0.18.0</version>
+		```
+		
+		* XML con transacción con versión 1:
+		
+		```
+		<parent>
+			<groupId>com.caixabank.absis.ads.transaction</groupId>
+			<artifactId>ads-app-transactions-parent</artifactId>
+			<version>1.1.0-SNAPSHOT</version>
+		</parent>
+		
+		<artifactId>ads-ads0000h-lib</artifactId>
+		<version>1.3.0</version>
+		```
+3) Para generar el modelo asociado a la transacción, primero convierte el XML en un fichero yaml, usando la libreria adstransaction-converter-lib.jar la cual se descarga previamente.
+   Para m�s información ver el modulo ads-app-transactions-provisioner/adsconnector-transaction-converter-lib
+   
+4) Usando el siguiente arquetipo e introduciendo vía script el anterior yaml, genera el proyecto final
+
+5) Sube al config server de tst,pre y pro el XML para ser accedido de manera estética y poder ser descargado.
+
+6) Compila y despliegua el proyecto, en fase de compilación, con el codegen genera el modelo de datos asociado a la transacción y que servirá de input y output al conector.
+
+Para más información se puede ver:
+	https://confluence.cloud.lacaixa.es/confluence/display/GrupoBackends/Conector+ADS 
+
+   

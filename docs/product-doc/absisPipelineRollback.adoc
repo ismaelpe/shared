@@ -1,0 +1,34 @@
+
+## absisPipelineRollback
+
+This pipeline can make a rollback of a micro, it depends if the artifact has an ancient (the previous version) or not.
+
+.Rollback artifact Parameters
+|===
+|Name|Description
+|pathToRepo| The url path to the git repo
+|originBranch| The origin branch
+|repo| The name of the report
+|artifactType| The type of artifact, it only could be SIMPLE or AGREGADOR, it depends on the kind of project
+|artifactSubType| The subtype of artifact, it depends on the kind of project
+|pipelineOrigId| The id of the previous pipeline, this parameter only affects to GPL
+|version| This contains the version of the artifact to be deployed in the PRO environment. It only can be RELASE 
+|environment| This contains the affected  environment, we can make a rollback of any artifact deployed in any environment
+|ignoreExistingAncient| if true the script doesn't control if the previous artifact is deployed in the selected environment
+|forceAllCenters| This contains a boolean that indicates if the script has to "force" the rollback. The false value means that if the rollback fails in the first center, it will abort the execution
+|artifact| This contains the id of the artifact
+|version| This contains the version of the artifact deployed in the environment selected. The script will make a rollback of the major version (For exemple versionParam 1.4.5, the script will delete the 1 version).
+|userId| The identifier (U01XXXXX) of the IDEGPL user that invokes the pipeline
+|===
+
+
+### Stages
+
+
+. <<stagesPipelines.adoc#init-pipeline,init-pipeline>>
+. <<stagesPipelines.adoc#undeploy-artifact,undeploy-artifact>>
+
+
+### Next actions
+
+** Create a fix for the version that has been just rollbacked

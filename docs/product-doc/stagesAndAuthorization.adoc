@@ -1,0 +1,40 @@
+# Stages and authorizations
+
+The type of authorizations depends on the organization of the micro.
+
+* CaixaBank uses Maximo
+* BPI uses Agile Works, validates the features associated to the version
+
+# Lifecycle
+
+## Stages
+
+#### BPI Project
+
+| Stage | Needs Authorization? | When Finished has to send feedback to the system | 
+|---|---|---|
+| Feature | No | No |
+| Push Feature to Master | Yes | No |
+| Generate Merge Request | Yes | Yes |
+| Generate Release | Yes | Yes |
+| Deploy to Beta | Yes | No |
+| Increment Cannary Percentatge | No | No | 
+| End Release | Yes | Yes |
+| Rollback | No | No |
+
+ * The authorizations of a micro or a library are the same
+
+#### Cbk Project
+
+| Stage | Needs Authorization? | When Finished has to send feedback to the system | 
+|---|---|---|
+| Feature | No | No |
+| Push Feature to Master | No | No |
+| Generate Merge Request | No | No |
+| Generate Release | Yes | No |
+| Deploy to Beta | Yes | No |
+| Increment Cannary Percentatge | No | No | 
+| End Release | No | No |
+| Rollback | No | No |
+
+* The authorizations of a micro or a library are the same

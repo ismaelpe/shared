@@ -1,0 +1,148 @@
+# jobs jenkins
+
+### job-provisioning
+
+This job supplies the jenkins job associated with a git repo. This job is only associated with the CI
+
+* *Type:* Freestyle job
+* *Trigger Type:* The only way is in the provisioning process. After the git is created, we can create the jenkins job
+* *Build Trigger:* N/A
+* *Script:* vars/jobProvisioning
+* *space affected:* N/A
+* *Parameters:*
+  ** nameAppParam The GAR appliction id
+  ** pathToRepoParam The url path to the git repo
+  ** domainParam This contains the app domain. It does not depend on the company either the typeApp, all the components has the domain in the path to the job.
+  ** typeAppParam This contains the gar app type, it can be ARQ.LIB, ARQ.MIA, ARQ.MAP, SRV.DS, SRV.MS, SRV.LIB
+  ** moduloParam Only applies if the empresaParam is bpi, otherside is ignored. The path of a bpi gar applications is /domain/modulo/nameAppParam
+  ** empresaParam This contains the company of the gar app type
+  
+### job-rollback-artifact
+
+This jobs executes a rollback in the selected environment. It will recover the previous (ancient) artifact and unmap the new route to the affected one.
+
+* *Type:* Declarative Pipeline
+* *Trigger Type:* The previous job is any of the job that can deploy to any environment
+* *Build Trigger:* N/A
+* *Script:* absisPipelineRollback
+* *space affected:* srv_pro (PRO), srv_pre (PRE), srv_tst (TST, EDEN)
+* *Parameters:*
+  ** pathToRepoParam The url path to the git repo
+  ** originBranchParam The origin branch
+  ** repoParam The name of the report
+  ** artifactTypeParam The type of artifact, it only could be SIMPLE or AGREGADOR, it depends on the kind of project
+  ** artifactSubTypeParam The subtype of artifact, it depends on the kind of project
+  ** pipelineOrigId The id of the previous pipeline, this parameter only affects to GPL
+  ** versionParam This contains the version of the artifact to be deployed in the PRO environment. It only can be RELASE 
+  ** environmentParam This contains the affected  environment, we can make a rollback of any artifact deployed in any environment
+  ** ignoreExistingAncientParam if true the script doesn't control if the previous artifact is deployed in the selected environment
+  ** forceAllCentersParam This contains a boolean that indicates if the script has to "force" the rollback. The false value means that if the rollback fails in the first center, it will abort the execution
+  ** artifactParam This contains the id of the artifact
+  ** versionParam This contains the version of the artifact deployed in the environment selected. The script will make a rollback of the major version (For exemple versionParam 1.4.5, the script will delete the 1 version).
+
+
+### job-deploy-to-PRO
+
+This jobs deploy the RELEASE artifact to the PRO environment, also it will copy the configurations files to the config-server GIT repo 
+
+* *Type:* Declarative Pipeline
+* *Trigger Type:* The previous job is the Create Release job
+* *Build Trigger:* N/A
+* *Script:* absisPipelineDeployToPro
+* *space affected:* srv_pro
+* *Parameters:*
+  ** pathToRepoParam The url path to the git repo
+  ** versionParam This contains the version of the artifact to be deployed in the PRO environment. It only can be RELASE 
+  ** repoParam The name of the report
+  ** artifactTypeParam The type of artifact, it only could be SIMPLE or AGREGADOR, it depends on the kind of project
+  ** artifactSubTypeParam The subtype of artifact, it depends on the kind of project
+  ** pipelineOrigId The id of the previous pipeline, this parameter only affects to GPL
+  ** originBranchParam The origin branch, the only value allowed is a release branch
+  ** commitIdParam contains the unique ID of the git commit in the code. This commit id is the commit associated with the last push to the release branch
+
+### job-create-Release
+
+This jobs creates the release from the origin branch, the final artifact is deployed in the PRE environment and optionally in the TST environment.
+
+* *Type:* Declarative Pipeline
+* *Trigger Type:* The previous job is the Continous Integration executed on event push to the release branch (RC)
+* *Build Trigger:* N/A
+* *Script:* absisPipelineCreateRelease
+* *space affected:* srv_pre and optionally to srv_tst
+* *Parameters:*
+  ** pathToRepoParam The url path to the git repo
+  ** originBranchParam The origin branch, the only value allowed is a release branch
+  ** repoParam The name of the report
+  ** deployToTstParam if true the job will deploy the artifact to the srv_tst
+  ** artifactTypeParam The type of artifact, it only could be SIMPLE or AGREGADOR, it depends on the kind of project
+  ** artifactSubTypeParam The subtype of artifact, it depends on the kind of project
+  ** pipelineOrigId The id of the previous pipeline, this parameter only affects to GPL
+  ** isArchetype if true the repo associated is an archetype
+  ** archetypeModel contains a non-empty string, which corresponds to the folder where the project is
+  ** commitIdParam contains the unique ID of the git commit in the code. This commit id is the commit associated with the last push to the release branch
+
+### job-create-RC
+
+This jobs creates the release branch from the master, the CI will compile and generate the code from this new branch.
+
+* *Type:* Declarative Pipeline
+* *Trigger Type:* The previous job is the Continous Integration executed on event push to the master branch (SNAPSHOT)
+* *Build Trigger:* N/A
+* *Script:* absisPipelineCreateRC
+* *space affected:* This pipeline doesn't deploy a micro, only prepares the branch
+* *Parameters:*
+  ** pathToRepoParam The url path to the git repo
+  ** originBranchParam The origin branch, the only value allowed is master
+  ** repoParam The name of the report
+  ** artifactTypeParam The type of artifact, it only could be SIMPLE or AGREGADOR, it depends on the kind of project
+  ** artifactSubTypeParam The subtype of artifact, it depends on the kind of project
+  ** pipelineOrigId The id of the previous pipeline, this parameter only affects to GPL
+  ** commitIdParam The previous commit id
+
+### job-close-Release
+
+This jobs executes a close release in the PRO environment. It will recover the previous (ancient) artifact unmap the routes and stop this instance.
+
+* *Type:* Declarative Pipeline
+* *Trigger Type:* The previous job is job-deploy-to-PRO
+* *Build Trigger:* N/A
+* *Script:* absisPipelineClose
+* *space affected:* srv_pro (PRO)
+* *Parameters:*
+  ** pathToRepoParam The url path to the git repo
+  ** originBranchParam The origin branch
+  ** repoParam The name of the report
+  ** artifactTypeParam The type of artifact, it only could be SIMPLE or AGREGADOR, it depends on the kind of project
+  ** artifactSubTypeParam The subtype of artifact, it depends on the kind of project
+  ** pipelineOrigId The id of the previous pipeline, this parameter only affects to GPL
+  ** versionParam This contains the version of the artifact that has been deployed in the PRO environment.  
+	** environmentParam This contains the PRO  environment, we can make a close of any artifact deployed in any environment
+	** isMicroParam This contains a boolean that indicates if the artifact is a micro or a library
+  ** existAncientParam This indicates if the new artifact is a minor or a major of a previous artifact
+  ** componentParam This containes the id of the component in GSA, not the micro
+  ** artifactParam This contains the id of the artifact
+  ** versionParam This contains the version of the artifact deployed in the environment selected. The script will make a rollback of the major version (For exemple versionParam 1.4.5, the script will delete the 1 version).
+  ** commitIdParam contains the unique ID of the git commit in the code. This commit id is the commit associated with the last push to the release branch
+
+### job-inc-cannary
+
+This jobs modifies the percentatge of request load to the micro.
+
+* *Type:* Declarative Pipeline
+* *Trigger Type:* The previous job is job-deploy-to-PRO
+* *Build Trigger:* N/A
+* *Script:* absisPipelineCannaryRelease
+* *space affected:* srv_pro (PRO)
+* *Parameters:*
+  ** pipelineOrigId The id of the previous pipeline, this parameter only affects to GPL
+  ** pathToRepoParam The url path to the git repo
+  ** originBranchParam The origin branch
+  ** repoParam The name of the report
+  ** versionParam This contains the version of the artifact that has been deployed in the PRO environment.    
+  ** artifactParam This contains the id of the artifact
+  ** commitIdParam contains the unique ID of the git commit in the code. This commit id is the commit associated with the last push to the release branch
+  ** artifactTypeParam The type of artifact, it only could be SIMPLE or AGREGADOR, it depends on the kind of project
+  ** artifactSubTypeParam The subtype of artifact, it depends on the kind of project
+  ** actualPercentatgeParam This indicates the actual percentatge of the request load, the job will increase this percentatge with a fixed value
+  ** componentParam This containes the id of the component in GSA, not the micro
+  

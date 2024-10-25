@@ -1,0 +1,36 @@
+
+## absisPipelineClose
+
+This pipeline can make a close release of a micro.
+
+.Close artifact Parameters
+|===
+|Name|Description
+|pathToRepo| The url path to the git repo
+|originBranch| The origin branch
+|repoParam| The name of the report
+|artifactTypeParam| The type of artifact, it only could be SIMPLE or AGREGADOR, it depends on the kind of project
+|artifactSubTypeParam| The subtype of artifact, it depends on the kind of project
+|pipelineOrigId| The id of the previous pipeline, this parameter only affects to GPL
+|environmentParam| This contains the affected  environment, this param exist only for debug test
+|artifactParam| This contains the id of the artifact
+|versionParam| This contains the version of the artifact deployed in the environment selected. 
+|commitIdParam| the identifier of the commit that has triggered the pipelineOrig. 
+|componentParam| the identifier of artifact can be or not equals than artifactParam
+|userId| The identifier (U01XXXXX) of the IDEGPL user that invokes the pipeline
+
+|===
+
+
+### Stages
+
+
+. <<stagesPipelines.adoc#init-pipeline,init-pipeline>>
+. <<stagesPipelines.adoc#close-release,close-release>>
+. <<stagesPipelines.adoc#copy-config-files,copy-config-files>>
+. <<stagesPipelines.adoc#refresh-micro,refresh-micro>>
+. <<stagesPipelines.adoc#create-MR,create-MR>>
+
+### Next actions
+
+** Create a fix for the version currently in production

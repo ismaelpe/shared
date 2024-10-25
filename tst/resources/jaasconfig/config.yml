@@ -1,0 +1,1368 @@
+master:
+  JCasC:
+    pluginVersion: 1.36
+    configScripts:
+      welcome-message: ''
+      updateConfig: ''
+      envVars: ''
+      users: ''
+      security-config: ''
+      shared-libs: ''
+      tools-config: ''
+      cloud-config: ''
+      jenkins: |
+        credentials:
+          system:
+            domainCredentials:
+            - credentials:
+              - fileSystemServiceAccountCredential:
+                  description: Service account that allows the kubernetes plugin creation
+                    of agent pods.
+                  id: jenkins
+                  scope: GLOBAL
+              - usernamePassword:
+                  description: usuario password http simple autentication configurada en el
+                    fichero bootstrap del config server
+                  id: CONFIGSERVER_CREDENTIALS
+                  password: '{AQAAABAAAAAQozwCkJ5NDhK15hOnspfcCvucSYZL93l2iiPXAD0vpE8=}'
+                  scope: GLOBAL
+                  username: absis3
+              - usernamePassword:
+                  description: BLUEMIX_CREDENTIALS
+                  id: BLUEMIX_CREDENTIALS
+                  password: '{AQAAABAAAAAQ+8xwuRucH6PR7gRYDPejfihMObLjn+AG7+u4qKZCmgI=}'
+                  scope: GLOBAL
+                  username: BLUMXPBLUEMX06
+              - usernamePassword:
+                  description: gplsluserCredentials
+                  id: gplsluserCredentials
+                  password: '{AQAAABAAAAAQal3GEpLq7djXX7OkQSpGfMdrOixEHOd01Fijf72OFRE=}'
+                  scope: GLOBAL
+                  username: gplsluser
+              - usernamePassword:
+                  description: usuario del FTP del HIS preproducción
+                  id: BPI_HIS_FTP_USER_PRE
+                  password: '{AQAAABAAAAAQVFeVCZOto9cD/0jINxo2Zz0QsbnY3B50/WLaHgB3b7o=}'
+                  scope: GLOBAL
+                  username: ssrvpreghis201602
+              - usernamePassword:
+                  description: Checkmarx credentials for absis3 srv
+                  id: absis3mscheckmarx
+                  password: '{AQAAABAAAAAQm41m4xp/+2hXO5qtrcY970bfB2ePGCh4EFJHz1eKBhc=}'
+                  scope: GLOBAL
+                  username: silk.absis3srv
+              - usernamePassword:
+                  description: Credencials bmx
+                  id: BLUEMIX_CREDENTIALS_SERVICES
+                  password: '{AQAAABAAAAAQdBfoxXQ53YPq3rvfraNE8x214TsWaAwQIsz2js5zbS4=}'
+                  scope: GLOBAL
+                  username: BLUMXPBLUEMX06
+              - usernamePassword:
+                  description: GITLAB_CREDENTIALS - ABSIS3 jenkins user - communicating jenkins
+                    & gitlab
+                  id: GITLAB_CREDENTIALS
+                  password: '{AQAAABAAAAAQZWmbT7N8Cx9RRVkmknXwP+MIJBv9HEz+y7GrU9kKVTA=}'
+                  scope: GLOBAL
+                  username: absis3jenkins
+              - usernamePassword:
+                  description: icp docker registry
+                  id: ICP_DOCKER_REGISTRY
+                  password: '{AQAAABAAAAAQ1RUI/+QBzeAs8h7ph3m82leyLcsE7IDQNQraq4PuWZo=}'
+                  scope: GLOBAL
+                  username: registry-dev
+              - usernamePassword:
+                  description: 'usuario del FTP del HIS producción '
+                  id: BPI_HIS_FTP_USER_PRO
+                  password: '{AQAAABAAAAAQuW8Llw6u4Z9IB6M+lFWLjL1c06BI9f5Cc2HJ24uPJuc=}'
+                  scope: GLOBAL
+                  username: ssrvprdghis201602
+              - usernamePassword:
+                  description: absis3jenkins gittst user
+                  id: alm-absis3jenkins-gittst
+                  password: '{AQAAABAAAAAg9H2j1VOUzQG0r5ITKZADDdiE5/e81/pVqMrNjq+GXx5bDEZnzFBMetrgXx63gFZk}'
+                  scope: GLOBAL
+                  username: absis3jenkins
+              - usernamePassword:
+                  description: 'ABSIS3 jenkins user - communicating jenkins & gitlab '
+                  id: absis3jenkins
+                  password: '{AQAAABAAAAAQW/z19YqNZvJ87+bnH6cjIjPbNs5XbGaRKImxO8to2Pk=}'
+                  scope: GLOBAL
+                  username: absis3jenkins
+              - string:
+                  description: Token para acceder a la API de moodle
+                  id: moodleToken
+                  scope: GLOBAL
+                  secret: '{AQAAABAAAAAwhtL5r8lUzcFq7XZt5ZNV9jQLHxENKfhGEVaKEAkaeRTizqfEMtBM1olgkeS8UzZxN6Jyqll5mjuGpva/IcmWTQ==}'
+              - string:
+                  id: GITLAB_API_TOKEN_TEXT
+                  scope: GLOBAL
+                  secret: '{AQAAABAAAAAgexEEAEFTjTlJBGEGhu4vMZp0F1Uoipu7Dix4R+VDVoZ2/TJ7n+EQi0sFWlzcIyb2}'
+              - string:
+                  description: GITLAB_API_SECRET_TOKEN (Usuari:SVC_ABSIS_CONTDELIVE-Token:absis-cont-deliv)
+                  id: GITLAB_API_SECRET_TOKEN
+                  scope: GLOBAL
+                  secret: '{AQAAABAAAAAgDoWFoYSItSyeYFdkUy/WK2Q1QlFrm2RSZsBzlsrMZso8DyDQsu2CPxth+3xG/Lu6}'
+              - string:
+                  description: sonartoken
+                  id: sonartoken
+                  scope: GLOBAL
+                  secret: '{AQAAABAAAAAwmjHQjpwnhvE4LKvgz8YW7dOgLYW0UkF7lN4fMfhaCRBVbQLA7sUHUws/WnbtVcwxr/nCY/rurB71Ml8JLOrQkQ==}'
+              - string:
+                  description: token del usuario absis3user
+                  id: gplsluser-token
+                  scope: GLOBAL
+                  secret: '{AQAAABAAAAAwd8ZlHE/RgCb/Gmm7KqkprVGhxCJQrMwVey6RJSWqFWORYD/xFbzmaBykRmZsqN7gIsAGFLRVEefJqy8J5B7GnQ==}'
+              - string:
+                  description: Token de DEV  para invocar a micros de Absis3
+                  id: ABSIS3_TOKEN_DEV
+                  scope: GLOBAL
+                  secret: '{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}'
+              - string:
+                  description: Token de TST  para invocar a micros de Absis3
+                  id: ABSIS3_TOKEN_TST
+                  scope: GLOBAL
+                  secret: '{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}'
+              - string:
+                  description: Credencial per connectar amb IDEJMA (token del usuari absis3user)
+                  id: IDEJMA_API_TOKEN
+                  scope: GLOBAL
+                  secret: '{AQAAABAAAAAwPlHjQYpUw1S85lhXVNIAf8NzCAO48HzqcZ7XuQJsfVpx5vsysFy/11334OmKJjVn1dm0+lUXiQdxvzmlG1YStQ==}'
+              - string:
+                  description: Nexus Token
+                  id: NEXUS_TOKEN
+                  scope: GLOBAL
+                  secret: '{AQAAABAAAAAw0UTmZNayO63DB1+/Rk6wvn0E8A1AFX+3ARz2FTX2naEx6I4/l1WbQaGDL6RwtPR/VtGlWEyKxAWl509fpVqtVw==}'
+              - string:
+                  description: Token de PRE  para invocar a micros de Absis3
+                  id: ABSIS3_TOKEN_PRE
+                  scope: GLOBAL
+                  secret: '{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}'
+              - string:
+                  description: Token de PRO para acceder a micros de Absis3
+                  id: ABSIS3_TOKEN_PRO
+                  scope: GLOBAL
+                  secret: '{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}'
+              - string:
+                  description: Password del certificado privado de ICP en PRE
+                  id: ICP_CERT_PASSWD_PRE
+                  scope: GLOBAL
+                  secret: '{AQAAABAAAAAQndKuyiL8B8+4LkZxh7BdvI9WVvSKIE1XcX8y72r2VdA=}'
+              - usernamePassword:
+                  description: Token Generado Automáticamente
+                  id: IDECUA-JENKINS-USER-TOKEN
+                  password: '{AQAAABAAAAAwCT/m8ldTRg13eYUQ/RlnDppo7F/KlbfVihiJolkv0pjsXVyp29cVIf9lIil4eO3sc1DGb++Z3YFufSUIAoK9NA==}'
+                  scope: GLOBAL
+                  username: absis3user
+              - string:
+                  description: WebhookSonar
+                  id: sonarwebhook
+                  scope: GLOBAL
+                  secret: '{AQAAABAAAAAQnCDIJ6OBj7SmS+kprM0SIHrA/7mEh7TYNfQ8A1K3jCQ=}'
+              - usernamePassword:
+                  description: Token for user Jenkins
+                  id: TOKEN_JENKINS_ALM
+                  password: '{AQAAABAAAAAwSf8RcuMkee6CHHTcMKWkF5lywZcz+XXICD20m9dGWaJLHsOOD3kzkd1Vs+fcLbpuEs10ZQGpC1lFTkbQgZzgBQ==}'
+                  scope: GLOBAL
+                  username: jenkins
+              - file:
+                  description: Certificado privado de ICP en PRO
+                  fileName: absis3-2023_pkcs8.pem
+                  id: icp-absis3-pro-cert
+                  scope: GLOBAL
+                  secretBytes: '{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}'
+              - string:
+                  description: Password del certificado privado de ICP en PRO
+                  id: icp-absis3-pro-cert-passwd
+                  scope: GLOBAL
+                  secret: '{AQAAABAAAAAQoxLNaDzre455pVxo9fV1qFe7GbOirefA2nsZHNSJcQM=}'
+        jenkins:
+          agentProtocols:
+          - JNLP4-connect
+          - Ping
+          authorizationStrategy:
+            projectMatrix:
+              permissions:
+              - Agent/Build:absis3user
+              - Agent/Build:admin
+              - Agent/Build:jenkins
+              - Agent/Configure:admin
+              - Agent/Connect:admin
+              - Agent/Create:admin
+              - Agent/Delete:admin
+              - Agent/Disconnect:admin
+              - Artifactory/Promote:admin
+              - Artifactory/Release:admin
+              - Credentials/Create:admin
+              - Credentials/Delete:admin
+              - Credentials/ManageDomains:admin
+              - Credentials/Update:admin
+              - Credentials/View:admin
+              - Job/Build:absis3user
+              - Job/Build:admin
+              - Job/Build:jenkins
+              - Job/Cancel:admin
+              - Job/Configure:admin
+              - Job/Create:admin
+              - Job/Delete:admin
+              - Job/Discover:admin
+              - Job/Move:admin
+              - Job/Read:absis3user
+              - Job/Read:admin
+              - Job/Read:anonymous
+              - Job/Read:jenkins
+              - Job/Workspace:admin
+              - Lockable Resources/Reserve:admin
+              - Lockable Resources/Unlock:admin
+              - Lockable Resources/View:admin
+              - Overall/Administer:admin
+              - Overall/Read:admin
+              - Overall/Read:anonymous
+              - Overall/Read:health-check
+              - Run/Delete:admin
+              - Run/Replay:admin
+              - Run/Update:admin
+              - SCM/Tag:admin
+              - View/Configure:admin
+              - View/Create:admin
+              - View/Delete:admin
+              - View/Read:absis3user
+              - View/Read:admin
+              - View/Read:anonymous
+          clouds:
+          - kubernetes:
+              containerCap: 15
+              containerCapStr: '15'
+              jenkinsTunnel: jaas-agent.cxb-a3msje-pro:50000
+              jenkinsUrl: http://jaas.cxb-a3msje-pro:8080
+              name: kubernetes
+              namespace: cxb-a3msje-pro
+              serverUrl: https://kubernetes.default
+              templates:
+              - containers:
+                - args: ^${computer.jnlpmac} ^${computer.name}
+                  envVars:
+                  - containerEnvVar:
+                      key: JENKINS_URL
+                      value: http://jaas.cxb-a3msje-pro.svc.cluster.local:8080
+                  image: docker-registry.cloud.caixabank.com/catalog/docker-jenkins-slave-jnlp:2.0.2
+                  livenessProbe:
+                    failureThreshold: 0
+                    initialDelaySeconds: 0
+                    periodSeconds: 0
+                    successThreshold: 0
+                    timeoutSeconds: 0
+                  name: jnlp
+                  privileged: true
+                  resourceLimitCpu: 500m
+                  resourceLimitMemory: 512Mi
+                  resourceRequestCpu: 250m
+                  resourceRequestMemory: 128Mi
+                  runAsGroup: '0'
+                  runAsUser: '0'
+                  workingDir: /home/jenkins
+                envVars:
+                - podEnvVar:
+                    key: DOCKER_HOST
+                    value: tcp://localhost:2375
+                - podEnvVar:
+                    key: JAVA_OPTS
+                    value: -Dfile.encoding=UTF-8 -Dsun.jnu.encoding=UTF-8 -XX:MaxRAM=512m
+                      -Xmx416m -Xms416m
+                id: b64c1ca8-bc0f-48cf-9cb2-b5393ba9cc13
+                label: 'a3msje-a3msje-pro-jenkins-slave '
+                name: agent
+                nodeUsageMode: NORMAL
+                serviceAccount: default
+                volumes:
+                - emptyDirVolume:
+                    memory: false
+                    mountPath: /var/lib/containers
+                - persistentVolumeClaim:
+                    claimName: pvjen-cxb-a3msje-a3msje-pro
+                    mountPath: /home/jenkins/.m2
+                    readOnly: false
+                yaml: |-
+                  apiVersion: v1
+                  kind: Pod
+                  metadata:
+                    labels:
+                      logging.elk.stack: platform
+                  spec:
+                    volumes:
+                    - name: dind-storage
+                      emptyDir:
+                        medium: "Memory"
+                    - name: jenkins-home
+                      emptyDir:
+                        medium: "Memory"
+                    containers:
+                    - name: dind
+                      image: docker-registry.cloud.caixabank.com/dockerhub/docker:19.03.9-dind
+                      resources:
+                        requests:
+                          cpu: "500m"
+                          memory: "512Mi"
+                        limits:
+                          cpu: "3000m"
+                          memory: "4500Mi"
+                      ports:
+                      - containerPort: 2375
+                      env:
+                      - name: DOCKER_TLS_CERTDIR
+                        value: ''
+                      - name: HTTP_PROXY
+                        value: 'proxyserv.svb.lacaixa.es:8080'
+                      - name: HTTPS_PROXY
+                        value: 'proxyserv.svb.lacaixa.es:8080'
+                      securityContext:
+                        privileged: true
+                      volumeMounts:
+                      - name: dind-storage
+                        mountPath: /var/lib/docker
+                      - name: jenkins-home
+                        mountPath: /var/jenkins_home
+                      - name: volume-1
+                        mountPath: /home/jenkins/.m2
+                yamlMergeStrategy: override
+                yamls:
+                - |-
+                  apiVersion: v1
+                  kind: Pod
+                  metadata:
+                    labels:
+                      logging.elk.stack: platform
+                  spec:
+                    volumes:
+                    - name: dind-storage
+                      emptyDir:
+                        medium: "Memory"
+                    - name: jenkins-home
+                      emptyDir:
+                        medium: "Memory"
+                    containers:
+                    - name: dind
+                      image: docker-registry.cloud.caixabank.com/dockerhub/docker:19.03.9-dind
+                      resources:
+                        requests:
+                          cpu: "500m"
+                          memory: "512Mi"
+                        limits:
+                          cpu: "3000m"
+                          memory: "4500Mi"
+                      ports:
+                      - containerPort: 2375
+                      env:
+                      - name: DOCKER_TLS_CERTDIR
+                        value: ''
+                      - name: HTTP_PROXY
+                        value: 'proxyserv.svb.lacaixa.es:8080'
+                      - name: HTTPS_PROXY
+                        value: 'proxyserv.svb.lacaixa.es:8080'
+                      securityContext:
+                        privileged: true
+                      volumeMounts:
+                      - name: dind-storage
+                        mountPath: /var/lib/docker
+                      - name: jenkins-home
+                        mountPath: /var/jenkins_home
+                      - name: volume-1
+                        mountPath: /home/jenkins/.m2
+          crumbIssuer:
+            standard:
+              excludeClientIPFromCrumb: true
+          disableRememberMe: false
+          globalNodeProperties:
+          - envVars:
+              env:
+              - key: LITMID_URL
+                value:  https://eideswast.svb.lacaixa.es/apw61/litmid/api/literales/json            
+              - key: ABSIS3_APPS_SERVICES_ALLOWED_SYNTHETIC_TESTS
+                value: demoarqcbk-micro-3;arqrun-micro-2;arqdb2-micro-1;demoarqbff-bff-1;
+              - key: ABSIS3_ARCH_SERVICES_ALLOWED_SYNTHETIC_TESTS
+                value: errormanagement-micro-server-1;api-gateway-1;service-manager-micro-server-1;seconnector-micro-1;adsconnector-micro-server-1
+              - key: ABSIS3_DATA_SERVICES_ALLOWED_ANY_CLIENT
+                value: arqpru-micro;lifein-micro;LIFEIN-micro
+              - key: ABSIS3_SERVICES_APIMANAGER_TECHNICALSERVICES_REGISTRATION_ENABLED
+                value: 'true'
+              - key: ABSIS3_SERVICES_APIMANAGER_TECHNICALSERVICES_REGISTRATION_IF_ERROR_THEN_PIPELINE_FAILS
+                value: 'false'
+              - key: ABSIS3_SERVICES_APIMANAGER_TECHNICALSERVICES_REGISTRATION_SKIP_LIST
+                value: none
+              - key: ABSIS3_SERVICES_ARCHIVE_WORKSPACE
+                value: demoarqbff-bff;sampleA3Integration-micro;wivaifastdata-micro
+              - key: ABSIS3_SERVICES_DEPENDENCY_WHITELIST_BFF
+                value: '{}'
+              - key: ABSIS3_SERVICES_DEPENDENCY_WHITELIST_DATASERVICE
+                value: '{"com\\.caixabank\\.absis\\.apps\\.dataservice\\.demo:arqrun-micro":["com\\.caixabank\\.absis\\.arch\\.backend\\.ads:adsconnector-common-lib","com\\.caixabank\\.absis\\.arch\\.backend\\.ads:adsconnector-lib-starter","com\\.caixabank\\.absis\\.ads\\.transaction:ads-ads0000a-lib","com\\.caixabank\\.absis\\.ads\\.transaction:ads-ads0000b-lib"],"com\\.caixabank\\.absis\\.apps\\.dataservice\\.cbk\\.FinancialControl:arqueo-micro":["com\\.caixabank\\.absis\\.arch\\.backend\\.ads:adsconnector-common-lib","com\\.caixabank\\.absis\\.arch\\.backend\\.ads:adsconnector-lib-starter","com\\.caixabank\\.absis\\.ads\\.transaction:ads-ain00004-lib"],"com\\.caixabank\\.absis\\.apps\\.dataservice\\.cbk\\.tech:POLRIS-micro":["com\\.caixabank\\.absis\\.arch\\.backend\\.ads:adsconnector-common-lib","com\\.caixabank\\.absis\\.arch\\.backend\\.ads:adsconnector-lib-starter","com\\.caixabank\\.absis\\.ads\\.transaction:ads-gns00851-lib","com\\.caixabank\\.absis\\.ads\\.transaction:ads-gns00852-lib","com\\.caixabank\\.absis\\.ads\\.transaction:ads-gns00853-lib","com\\.caixabank\\.absis\\.ads\\.transaction:ads-gns00854-lib"],"com\\.caixabank\\.absis\\.apps\\.dataservice\\.cbk\\.markets:FTPSRV-micro":["com\\.caixabank\\.absis\\.arch\\.backend\\.ads:adsconnector-common-lib","com\\.caixabank\\.absis\\.arch\\.backend\\.ads:adsconnector-lib-starter","com\\.caixabank\\.absis\\.ads\\.transaction:ads-tti00001-lib","com\\.caixabank\\.absis\\.ads\\.transaction:ads-tti00003-lib","com\\.caixabank\\.absis\\.ads\\.transaction:ads-tti00004-lib","com\\.caixabank\\.absis\\.ads\\.transaction:ads-tti00005-lib"]}'
+              - key: ABSIS3_SERVICES_EMAIL_DISTRIBUTION_LIST
+                value: malvarez@silk.es, absis3.microservices.support@caixabank.com, leonardo.torres@mimacom.com,oriol.porta.regue@everis.com,
+                  jesus.platas@mimacom.com
+              - key: ABSIS3_SERVICES_EMAIL_HEALTH_REFRESH_RESULT
+                value: leonardo.torres@mimacom.com
+              - key: ABSIS3_SERVICES_EMAIL_ICP_DEPLOY_RESULT
+                value: malvarez@silk.es
+              - key: ABSIS3_SERVICES_EMAIL_SYNTHETIC_TEST_DISTRIBUTION_LIST
+                value: malvarez@silk.es, absis3.microservices.support@caixabank.com, leonardo.torres@mimacom.com,oriol.porta.regue@everis.com,jesus.platas@mimacom.com,  manuel.garcia.de.vinuesa.gomez@everis.com;ismael.palacios.estudillo@everis.com
+              - key: ABSIS3_SERVICES_EXECUTE_IT_PRO
+                value: demoarqalm-micro;demoarqalm2-micro;demoarqalm3-micro
+              - key: ABSIS3_SERVICES_IT_TEST_JARS_GENERATION_WHITELIST
+                value: almlogcollector-micro
+              - key: ABSIS3_SERVICES_MANTAIN_EDEN_MICRO
+                value: SAMPLEA3INTEGRATION114992720210707E
+              - key: ABSIS3_SERVICES_MARKETPLACE_MAKEVISIBLE_IF_ERROR_THEN_PIPELINE_FAILS
+                value: 'false'
+              - key: ABSIS3_SERVICES_MARKETPLACE_PUBLISH_IF_ERROR_THEN_PIPELINE_FAILS
+                value: 'false'
+              - key: ABSIS3_SERVICES_MAXIMO_INCIDENTS_REGISTRATION_ENABLED
+                value: 'true'
+              - key: ABSIS3_SERVICES_SEND_ALM_METRICS
+                value: 'true'
+              - key: ABSIS3_SERVICES_SIMPLIFIED_ALM_WHITELIST
+                value: almlogcollector-micro
+              - key: ABSIS3_SERVICES_SKIP_CHECK_HEALTH_REFRESH
+                value: monitoring-micro;config-server;monitoring-micro;api-gateway;sample-app;seconnector-micro;absisinitializr-micro;operator-manager-micro;ATASRV-micro;atasrv-micro;arqrun-micro;SGABCK-micro
+              - key: ABSIS3_SERVICES_SKIP_CHECKMARX_ALL
+                value: 'true'
+              - key: ABSIS3_SERVICES_SKIP_CHECKMARX_LIST
+                value: SINAPSIS-micro;config-server;tauxconnector-micro;adpbdd-micro;apigateway-micro;absis3core-lib;arqrun-micro;MyBoxLife-micro;demoarqalmlib-lib
+              - key: ABSIS3_SERVICES_SKIP_NOTIFICATION_UNMAPPED_ERRORS_ALL
+                value: 'true'
+              - key: ABSIS3_SERVICES_SKIP_NOTIFICATION_UNMAPPED_ERRORS_LIST
+                value: errormanagement-plugin
+              - key: ABSIS3_SERVICES_SKIP_SONAR_QUALITY_GATE
+                value: TrazabilidadOperaciones-micro;trazabilidadoperaciones-micro;approvals-plugin;AUTFAC-micro;absis3core-lib;cgsoperation-lib;absisclo-lib;config-server;demoarqcbk-micro;ACCPR1-micro;sca-micro-server;demoPipelineMicr-micro;demoarqcbk-micro;bpi-security-micro-server;cics-micro-server;demoarqbpi-micro;CGNOFI-micro;SINAPSIS-micro;bpicustomers-micro;operator-manager-micro-server;arqrun-micro;demoConnectA2-micro;monitoring-micro-server;demoarqbpi-micro;bpicustomers-micro;api-gateway;adsconnector-micro-server;contractserver-micro-server;CGNOFI-micro;demoarqcbk-micro;arqrun-micro;deccompensation-micro-server;dec-micro-server;CGNOFI-micro;vmccnf-micro;je-micro-server;demoConnectA2-micro;demoarqbpi-micro;errormanagement-micro-server;compensation-micro-server;service-manager-micro-server;absisinitializr-micro;compensation-micro;bpi-security-micro;sca-micro;cics-micro;operator-manager-micro;monitoring-micro;adsconnector-micro;contractserver-micro;deccompensation-micro;je-micro;errormanagement-micro;compensation-micro;service-manager-micro;dec-plugin;demoarqalm-micro;dec-micro;apponboarding-micro;adsconnector-lib;ADSMIC-micro;arqpru-micro;bpisgddocuments-micro;tauxconnector-micro;demoarqbff-bff;seconnector-micro;digitization-micro;digitization-lib;seconnector-lib;arqdop-micro;bpiaccessmanager-plugin;errormanagement-plugin;standardreusablefunctions-lib;hostchannelconv-plugin;approvals-micro;arqdb2-micro;dataprotect-plugin;almlogcollector-micro;monitoring-plugin;absis2flow-lib;demosimca-micro;cgsconnector-lib;arqjdb-micro
+              - key: ABSIS3_SERVICES_SKIP_SONAR_QUALITY_GATE_ALL
+                value: 'false'
+              - key: ABSIS3_SERVICES_SKIP_TENANT_GENERATION
+                value: 'false'
+              - key: ABSIS3_SERVICES_SKIP_TENANT_GENERATION_LIST
+                value: arqrun
+              - key: ABSIS3_SERVICES_SKIP_VALIDATION_AUTH_ALL
+                value: 'false'
+              - key: ABSIS3_SERVICES_SKIP_VALIDATION_AUTH_LIST
+                value: demoarqalmlib-lib;demoarqalmconf-conf;arqrun-micro;config-server;almlogcollector-micro
+              - key: ABSIS3_SERVICES_SKIP_VALIDATION_CLOSE_RELEASE_ALL
+                value: 'false'
+              - key: ABSIS3_SERVICES_SKIP_VALIDATION_CLOSE_RELEASE_LIST
+                value: demoarqalm-micro;demoarqalm2-micro;demoarqalm3-micro;demoarqcbk-micro;demoarqbff-bff;arqrun-micro;scaapi-micro
+              - key: ABSIS3_SERVICES_SKIP_VALIDATION_CONTRACT_ALL
+                value: 'false'
+              - key: ABSIS3_SERVICES_SKIP_VALIDATION_CONTRACT_LIST
+                value: demoarqcbk-micro;arqrun-micro;MonitorPoliticasRiesgo-micro
+              - key: ABSIS3_SERVICES_SKIP_VALIDATION_DEPENDENCIES_ALL
+                value: 'false'
+              - key: ABSIS3_SERVICES_SKIP_VALIDATION_DEPENDENCIES_LIST
+                value: demoarqalm-micro;demoarqalm2-micro;demoarqalm3-micro;demoarqalmlib-lib;demoarqcbk-micro
+              - key: ABSIS3_SERVICES_SKIP_VALIDATION_SECRETS_ALL
+                value: 'false'
+              - key: ABSIS3_SERVICES_SKIP_VALIDATION_SECRETS_LIST
+                value: demoarqalm-micro;almlogcollector-micro;errormanagement-micro;CGNOFI-micro;arqjdb-micro
+              - key: ABSIS3_SKIP_MINIMUM_VERSION_VALIDATION_LIST
+                value: tauxconnector-micro;sonarjavarules-lib;MyBoxLife-micro;almlogcollector-micro;seconnector-micro;arqrun-micro
+              - key: ABSIS3_SRV_MINIMUM_VERSION_ARCH_DEV
+                value: 1.18.3
+              - key: ABSIS3_SRV_MINIMUM_VERSION_ARCH_PRE
+                value: 1.17.2
+              - key: ABSIS3_SRV_MINIMUM_VERSION_ARCH_PRO
+                value: 1.16.2
+              - key: ABSIS3_SRV_MINIMUM_VERSION_ARCH_TST
+                value: 1.18.3
+              - key: CAMPAIGN_CANARY_FEATURE_ENABLED
+                value: 'false'
+              - key: CATMSV_SIZE
+                value: 'true'
+              - key: CHANNEL_DISABLE_ACCEPT_RELEASE
+                value: 'false'
+              - key: CHANNEL_DISABLE_BUILD
+                value: 'false'
+              - key: CHANNEL_DISABLE_CHECKMARX
+                value: 'false'
+              - key: CHANNEL_DISABLE_DEPLOY_ICP
+                value: 'false'
+              - key: CHANNEL_DISABLE_LIGHTHOUSE
+                value: 'false'
+              - key: CHANNEL_DISABLE_LITMID
+                value: 'false'
+              - key: CHANNEL_DISABLE_NEXUS
+                value: 'false'
+              - key: CHANNEL_DISABLE_PUBLISH
+                value: 'false'
+              - key: CHANNEL_DISABLE_SEND_CA3SPA
+                value: 'false'
+              - key: CHANNEL_DISABLE_SEND_GSA
+                value: 'false'
+              - key: CHANNEL_DISABLE_SONAR
+                value: 'false'
+              - key: CHANNEL_DISABLE_START_RELEASE
+                value: 'false'
+              - key: CHANNEL_DISABLE_TEST
+                value: 'false'
+              - key: CHANNEL_DISABLE_VISUAL_DIFFING
+                value: 'false'
+              - key: CHECK_ICP
+                value: 'true'
+              - key: CLOUD_PREFERS_ICP
+                value: DEV,TST,PRE,PRO
+              - key: DEMO_DOMAIN_ARQ
+                value: demo,demosArquitectura,demos,demoArquitectura
+              - key: DEPLOY_MODE_SPECIAL
+                value: demoarqalm-micro;demoarqalm2-micro;demoarqalm3-micro;monitoring-micro;api-gateway;config-server;contractserver-micro;demoarqalm-micro;absisinitializr-micro;almlogcollector-micro
+              - key: DOCKER_AGENT_MVN_LOCAL_REPO
+                value: -i -v /home/jenkins/.m2:/root/.m2 -v /root/.m2/repository/com/caixabank
+              - key: DOCKER_MVN_IMAGE
+                value: containers/prdalm/jaasbuildermaven38:1.0.0
+              - key: DOCKER_REGISTRY_URL
+                value: https://docker-registry.cloud.caixabank.com
+              - key: GIT_AUTHOR_EMAIL
+                value: jenkins.pipeline.CI@lacaixa.es
+              - key: GIT_AUTHOR_NAME
+                value: jenkins.pipeline.CI
+              - key: GIT_COMMITTER_EMAIL
+                value: jenkins.pipeline.CI@lacaixa.es
+              - key: GIT_COMMITTER_NAME
+                value: jenkins.pipeline.CI
+              - key: GITLAB_HOST_HTTPS
+                value: https://git.svb.lacaixa.es
+              - key: ICP_ABORT_DEPLOY_PIPELINE
+                value: ALL_MASTER,ALL_FEATURE,ALL_RELEASE
+              - key: ICP_ACTIVE_APP
+                value: PASDEV
+              - key: ICP_ALL_APPS_MINIMUM
+                value: 'false'
+              - key: ICP_APP_HAS_INGRESS
+                value: apigateway,configserver,contractserver,absisinitializr,servicemarketplace,catmsv
+              - key: ICP_APP_HAS_INGRESS_PREVIOS
+                value: apigateway,configserver,contractserver,absisinitializr,servicemarketplace,tauxconnector,catmsv
+              - key: ICP_APP_ID
+                value: '1721'
+              - key: ICP_BMX_IT_DISABLED
+                value: PRE,DEV,TST,EDEN
+              - key: ICP_CHART_ID
+                value: '2481'
+              - key: ICP_CPU_SIZE_L
+                value: portalescontenidosmenus,ptlbck
+              - key: ICP_CPU_SIZE_S
+                value: contractserver,absisinitializr,cics,tauxconnector,bpisecurity,deccompensation,compensation,bpisecurity,bpi-security,errormanagement,tauxconnector,adsconnector,je
+              - key: ICP_CPU_SIZE_XL
+                value: dec,monitoring,pcxcan,pcxalf,wivaisales,wivaiproducts,wivaicustomer,seconnector,configserver,arqueo
+              - key: ICP_CPU_SIZE_XXL
+                value: apigateway
+              - key: ICP_CPU_SIZE_XXXL
+                value: servicemanager
+              - key: ICP_CUSTOM_LIVENESSPROBE_APPLICATIONS
+                value: demoarqalm-micro;demoarqalm2-micro;demoarqalm3-micro;config-server
+              - key: ICP_CUSTOM_LIVENESSPROBE_CHART_ID
+                value: '2481'
+              - key: ICP_DEPLOY_TO_BMX_ENV
+                value: NOTUSED
+              - key: ICP_DEPLOY_TO_ICP_ENV
+                value: EDEN,DEV,TST,PRE,PRO
+              - key: ICP_INGRESS_CONNECT_TIMEOUT
+                value: '15'
+              - key: ICP_INGRESS_MAX_SIZE
+                value: '30'
+              - key: ICP_INGRESS_READ_TIMEOUT
+                value: '100'
+              - key: ICP_INGRESS_SEND_TIMEOUT
+                value: '100'
+              - key: ICP_MEM_SIZE_L
+                value: dec,monitoring,sgabck,portalescontenidosmenus,ptlbck,seconnector
+              - key: ICP_MEM_SIZE_S
+                value: absisinitializr,tauxconnector,cics,errormanagement,adsconnector,je,bpi-security,bpisecurity
+              - key: ICP_MEM_SIZE_XL
+                value: pcxcan,pcxalf,wivaisales,wivaiproducts,wivaicustomer,seconnector,configserver,arqueo
+              - key: ICP_MEM_SIZE_XXXL
+                value: servicemanager,apigateway
+              - key: ICP_PARALLEL_APP_DEPLOY
+                value: demoConnectA2,apigateway,servicemanager,dec,monitoring,hostchannelconv,configserver,arqrun,demoarqcbk,ALL_FEATURE,ALL_MASTER,ALL_RELEASE
+              - key: ICP_PROBE_FAILURE_LIVENESS
+                value: '14'
+              - key: ICP_PROBE_FAILURE_LIVENESS_GENERAL
+                value: '10'
+              - key: ICP_PROBE_FAILURE_READINESS
+                value: '14'
+              - key: ICP_PROBE_FAILURE_READINESS_GENERAL
+                value: '10'
+              - key: ICP_PROBE_PERIOD_LIVENESS
+                value: '60'
+              - key: ICP_PROBE_PERIOD_LIVENESS_GENERAL
+                value: '30'
+              - key: ICP_PROBE_PERIOD_READINESS
+                value: '60'
+              - key: ICP_PROBE_PERIOD_READINESS_GENERAL
+                value: '30'
+              - key: ICP_PROBE_SLOW
+                value: configserver,contractserver,SGABCK,arqdb2,ADPBDD,SINAPSIS,arqdop,arqjdb,demoarqcbk,PCXCAN-micro,ca3spa-micro,arqrun,arqdb2,WIVAIFASTDATA,AAMERT,SupraALFUnificacion-micro,FRATAR,chgpoc,NOTIFY,customerRelationshipManagement,pocsca,POLRIS,muroconmigestor,cardauthorisationPOC,cusBeh
+              - key: ICP_PROBE_TIMEOUT_LIVENESS
+                value: '50'
+              - key: ICP_PROBE_TIMEOUT_LIVENESS_GENERAL
+                value: '5'
+              - key: ICP_PROBE_TIMEOUT_READINESS
+                value: '50'
+              - key: ICP_PROBE_TIMEOUT_READINESS_GENERAL
+                value: '5'
+              - key: ICP_REGISTRY_URL
+                value: docker-registry.cloud.caixabank.com/containers
+              - key: ICP_REPLICA_SIZE_L
+                value: apigateway,vmccnf,pcxcan,pcxalf,wivaisales,wivaiproducts,wivaicustomer,seconnector
+              - key: ICP_REPLICA_SIZE_S
+                value: sinapsis11,arqdop1,decmanagement1,ca3spa,arqdb2,samplea3integration,apponboarding,operatormanager,contractserver,absisinitializr,tauxconnector,errormanagement,cics,adsconnector,je,bpi-security,bpisecurity,demoarqalm,demoarqcbk,arqrun2,arqsql,arqpru,democonnecta2,demoarqbpi,bpicustomers,arqdb2,arqsql1,monitoring1,demoarqbff,demoarqbff1,ca3spa2,ca3spa,demoConnect22,demoConnect2,democonnecta22,demoarqalm,demoarqalm2,demoarqalm3,arqdb2,arqdb21,arqdop,arqdop1,catmsv
+              - key: ICP_REPLICA_SIZE_XL
+                value: servicemanager
+              - key: ICP_VERSION
+                value: '1396'
+              - key: IDEJMA_URL
+                value: https://idejma.pro.absiscloud.lacaixa.es/public
+              - key: IS_KPI_ENABLED
+                value: 'true'
+              - key: JAVA_TOOL_OPTIONS
+                value: -XX:+UseStringDeduplication -XX:+UseCompressedClassPointers -XX:TieredStopAtLevel=1
+                  -XX:MaxRAM=4500m
+              - key: JENKINS_SHOW_ENNVARS
+                value: 'false'
+              - key: MAVEN_ADITIONAL_PARAMS
+                value: ' '
+              - key: MAVEN_OPTS
+                value: -XX:+UseStringDeduplication -XX:+UseCompressedClassPointers -XX:-TieredCompilation
+                  -XX:TieredStopAtLevel=1 -Xms400m -Xmx400m
+              - key: MAX_MAJORS_DEV
+                value: '4'
+              - key: MAX_MAJORS_PRE
+                value: '3'
+              - key: MAX_MAJORS_PRO
+                value: '3'
+              - key: MAX_MAJORS_TST
+                value: '3'
+              - key: PROVISIONER_VERSION
+                value: 1.5.0
+              - key: SEND_TO_ABSIS3_CATALOG
+                value: 'true'
+              - key: SKIP_BUILD_CI
+                value: 'true'
+              - key: SKIP_ERRMGR_ALL_RC
+                value: 'false'
+              - key: SKIP_ERRMGR_ALL_RELEASE
+                value: 'false'
+              - key: SKIP_ERRMGR_ALL_SNAPSHOT
+                value: 'false'
+              - key: SKIP_ERRMGR_GET_RC
+                value: 'false'
+              - key: SKIP_ERRMGR_GET_RELEASE
+                value: 'false'
+              - key: SKIP_ERRMGR_GET_SNAPSHOT
+                value: 'false'
+              - key: SKIP_ERRMGR_PUT_RC
+                value: 'true'
+              - key: SKIP_ERRMGR_PUT_RELEASE
+                value: 'false'
+              - key: SKIP_ERRMGR_PUT_SNAPSHOT
+                value: 'false'
+              - key: SKIP_ERROR_TRANSLATIONS
+                value: 'false'
+          markupFormatter: plainText
+          mode: EXCLUSIVE
+          myViewsTabBar: standard
+          noUsageStatistics: true
+          numExecutors: 5
+          primaryView:
+            all:
+              name: All
+          projectNamingStrategy: standard
+          proxy:
+            name: proxyserv.svb.lacaixa.es
+            port: 8080
+          quietPeriod: 5
+          remotingSecurity:
+            enabled: true
+          scmCheckoutRetryCount: 0
+          securityRealm:
+            local:
+              allowsSignup: false
+              enableCaptcha: false
+              users:
+              - id: absis3user
+                name: absis3user
+                properties:
+                - favoriting:
+                    autofavoriteEnabled: true
+                - preferredProvider:
+                    providerId: default
+                - timezone:
+                    timeZoneName: Europe/Madrid
+              - id: admin
+                name: admin
+                properties:
+                - favoriting:
+                    autofavoriteEnabled: true
+                - preferredProvider:
+                    providerId: default
+                - timezone:
+                    timeZoneName: Europe/Madrid
+              - id: dev-user
+                name: dev-user
+                properties:
+                - favoriting:
+                    autofavoriteEnabled: true
+                - preferredProvider:
+                    providerId: default
+                - timezone:
+                    timeZoneName: Europe/Madrid
+              - id: health-check
+                name: health-check
+                properties:
+                - favoriting:
+                    autofavoriteEnabled: true
+                - preferredProvider:
+                    providerId: default
+                - timezone:
+                    timeZoneName: Europe/Madrid
+              - description: |-
+                  null
+                  API-TOKEN-18:1179b7ae944e5e54e3f8aab4beb6df855e
+                id: jenkins
+                name: jenkins
+                properties:
+                - favoriting:
+                    autofavoriteEnabled: true
+                - preferredProvider:
+                    providerId: default
+                - timezone
+              - id: seguridad-informatica
+                name: Seguridad Informatica
+                properties:
+                - favoriting:
+                    autofavoriteEnabled: true
+                - preferredProvider:
+                    providerId: default
+                - timezone
+          slaveAgentPort: 50000
+          systemMessage: Bienvenido a Jenkins as a Service (JaaS) ICP de Producción
+          updateCenter:
+            sites:
+            - id: default
+              url: http://mirror.xmission.com/jenkins/updates/update-center.json
+        security:
+          apiToken:
+            creationOfLegacyTokenEnabled: false
+            tokenGenerationOnCreationEnabled: false
+            usageStatisticsEnabled: true
+          globalJobDslSecurityConfiguration:
+            useScriptSecurity: true
+          sSHD:
+            port: -1
+          scriptApproval:
+            approvedSignatures:
+            - field hudson.model.Job nextBuildNumber"
+            - field hudson.plugins.git.util.BuildData buildsByBranchName
+            - field hudson.plugins.git.util.BuildData lastBuild
+            - field hudson.slaves.EnvironmentVariablesNodeProperty$Entry key
+            - field hudson.slaves.EnvironmentVariablesNodeProperty$Entry value
+            - field java.lang.String value
+            - field jenkins.security.ApiTokenProperty$TokenInfoAndStats name
+            - field jenkins.security.ApiTokenProperty$TokenInfoAndStats uuid
+            - field jenkins.security.apitoken.ApiTokenStore$TokenUuidAndPlainValue plainValue
+            - field jenkins.security.apitoken.TokenUuidAndPlainValue plainValue
+            - method com.cloudbees.plugins.credentials.CredentialsStore addCredentials com.cloudbees.plugins.credentials.domains.Domain
+              com.cloudbees.plugins.credentials.Credentials
+            - method com.cloudbees.plugins.credentials.CredentialsStore getCredentials com.cloudbees.plugins.credentials.domains.Domain
+            - method com.cloudbees.plugins.credentials.CredentialsStore removeCredentials
+              com.cloudbees.plugins.credentials.domains.Domain com.cloudbees.plugins.credentials.Credentials
+            - method com.cloudbees.plugins.credentials.SystemCredentialsProvider getConfigFile
+            - method com.cloudbees.plugins.credentials.SystemCredentialsProvider getCredentials
+            - method com.cloudbees.plugins.credentials.SystemCredentialsProvider getStore
+            - method com.cloudbees.plugins.credentials.common.IdCredentials getId
+            - method groovy.json.JsonSlurper parse java.io.File
+            - method groovy.json.JsonSlurperClassic parseText java.lang.String
+            - method groovy.json.StringEscapeUtils escapeJava java.lang.String
+            - method groovy.lang.GroovyObject getProperty java.lang.String
+            - method groovy.lang.GroovyObject invokeMethod java.lang.String java.lang.Object
+            - method groovy.lang.GroovyObject setProperty java.lang.String java.lang.Object
+            - method groovy.time.BaseDuration getMinutes
+            - method groovy.time.BaseDuration getSeconds
+            - method groovy.time.BaseDuration toMilliseconds
+            - method groovy.util.Node append groovy.util.Node
+            - method groovy.util.Node get java.lang.String
+            - method groovy.util.Node name
+            - method groovy.util.Node setValue java.lang.Object
+            - method groovy.util.XmlNodePrinter print groovy.util.Node
+            - method groovy.util.XmlNodePrinter setPreserveWhitespace boolean
+            - method groovy.util.XmlParser parse java.lang.String
+            - method groovy.util.XmlParser parseText java.lang.String
+            - method groovy.util.XmlSlurper parse java.io.File
+            - method groovy.util.XmlSlurper parse java.lang.String
+            - method groovy.util.XmlSlurper parseText java.lang.String
+            - method groovy.util.slurpersupport.GPathResult children
+            - method groovy.util.slurpersupport.GPathResult depthFirst
+            - method groovy.util.slurpersupport.GPathResult find groovy.lang.Closure
+            - method groovy.util.slurpersupport.GPathResult findAll groovy.lang.Closure
+            - method groovy.util.slurpersupport.GPathResult isEmpty
+            - method groovy.util.slurpersupport.GPathResult name
+            - method groovy.util.slurpersupport.GPathResult parent
+            - method groovy.util.slurpersupport.GPathResult plus java.lang.Object
+            - method groovy.util.slurpersupport.GPathResult size
+            - method groovy.util.slurpersupport.GPathResult text
+            - method hudson.DescriptorExtensionList find java.lang.Class
+            - method hudson.FilePath child java.lang.String
+            - method hudson.FilePath createTempDir java.lang.String java.lang.String
+            - method hudson.FilePath deleteRecursive
+            - method hudson.FilePath getRemote
+            - method hudson.FilePath mkdirs
+            - method hudson.PluginManager getPlugins
+            - method hudson.PluginWrapper getShortName
+            - method hudson.PluginWrapper getVersion
+            - method hudson.XmlFile getFile
+            - method hudson.model.AbstractCIBase getQueue
+            - method hudson.model.AbstractItem getConfigFile
+            - method hudson.model.Actionable getActions
+            - method hudson.model.Actionable getActions java.lang.Class
+            - method hudson.model.Computer getExecutors
+            - method hudson.model.Computer isOffline
+            - method hudson.model.Descriptor getConfigFile
+            - method hudson.model.Executor isBusy
+            - method hudson.model.Hudson getSlaves
+            - method hudson.model.Item getFullName
+            - method hudson.model.Item getName
+            - method hudson.model.ItemGroup getAllItems
+            - method hudson.model.ItemGroup getAllItems java.lang.Class
+            - method hudson.model.ItemGroup getItems
+            - method hudson.model.Job _getRuns
+            - method hudson.model.Job getBuilds
+            - method hudson.model.Queue getItems
+            - method hudson.model.Run delete
+            - method hudson.model.Run getNumber
+            - method hudson.model.Run isBuilding
+            - method hudson.model.Saveable save
+            - method hudson.model.Slave getComputer
+            - method hudson.model.User getDescription
+            - method hudson.model.User getProperty java.lang.Class
+            - method hudson.model.User setDescription java.lang.String
+            - method hudson.plugins.git.BranchSpec getName
+            - method hudson.plugins.git.GitObject getName
+            - method hudson.plugins.git.GitSCM getBranches
+            - method hudson.plugins.git.GitSCM getUserRemoteConfigs
+            - method hudson.plugins.git.Revision getBranches
+            - method hudson.plugins.git.UserRemoteConfig getCredentialsId
+            - method hudson.plugins.git.UserRemoteConfig getUrl
+            - method hudson.plugins.git.util.BuildData getLastBuiltRevision
+            - method hudson.slaves.EnvironmentVariablesNodeProperty getEnv
+            - method hudson.util.PersistedList getAll java.lang.Class
+            - method hudson.util.Secret getPlainText
+            - method io.jenkins.plugins.casc.ConfigurationAsCode configure java.lang.String[]
+            - method io.jenkins.plugins.casc.ConfigurationAsCode export java.io.OutputStream
+            - method java.io.ByteArrayOutputStream writeTo java.io.OutputStream
+            - method java.io.File createNewFile
+            - method java.io.File delete
+            - method java.io.File exists
+            - method java.io.File getAbsolutePath
+            - method java.io.File getName
+            - method java.io.File list
+            - method java.io.File mkdirs
+            - method java.io.PrintStream println java.lang.String
+            - method java.lang.AbstractStringBuilder append int
+            - method java.lang.Appendable append java.lang.CharSequence
+            - method java.lang.AutoCloseable close
+            - method java.lang.CharSequence subSequence int int
+            - method java.lang.Class getCanonicalName
+            - method java.lang.Class getClassLoader
+            - method java.lang.Class getDeclaredFields
+            - method java.lang.Class isArray
+            - method java.lang.Class isInstance java.lang.Object
+            - method java.lang.ClassLoader getResourceAsStream java.lang.String
+            - method java.lang.Process exitValue
+            - method java.lang.String concat java.lang.String
+            - method java.lang.String getBytes
+            - method java.lang.String indexOf java.lang.String int
+            - method java.lang.Thread sleep long
+            - method java.lang.Throwable getCause
+            - method java.lang.Throwable getStackTrace
+            - method java.lang.Throwable printStackTrace
+            - method java.lang.Throwable printStackTrace java.io.PrintWriter
+            - method java.net.URL openConnection
+            - method java.nio.Buffer array
+            - method java.nio.charset.Charset encode java.lang.String
+            - method java.text.DateFormat parse java.lang.String
+            - method java.time.chrono.ChronoLocalDateTime format java.time.format.DateTimeFormatter
+            - method java.util.Collection clear
+            - method java.util.Collection stream
+            - method java.util.Date before java.util.Date
+            - method java.util.Date getTime
+            - method java.util.List add int java.lang.Object
+            - method java.util.logging.LogManager getLogger java.lang.String
+            - method java.util.logging.Logger info java.lang.String
+            - method java.util.regex.MatchResult group
+            - method java.util.regex.MatchResult groupCount
+            - method java.util.regex.Matcher find
+            - method jenkins.model.Jenkins doReload
+            - method jenkins.model.Jenkins getExtensionList java.lang.Class
+            - method jenkins.model.Jenkins getExtensionList java.lang.String
+            - method jenkins.model.Jenkins getGlobalNodeProperties
+            - method jenkins.model.Jenkins getItemByFullName java.lang.String
+            - method jenkins.model.Jenkins getJobNames
+            - method jenkins.model.Jenkins getPluginManager
+            - method jenkins.security.ApiTokenProperty getApiToken
+            - method jenkins.security.ApiTokenProperty getApiTokenInsecure
+            - method jenkins.security.ApiTokenProperty getTokenList
+            - method jenkins.security.ApiTokenProperty getTokenStore
+            - method jenkins.security.apitoken.ApiTokenStore generateNewToken java.lang.String
+            - method jenkins.security.apitoken.ApiTokenStore revokeToken java.lang.String
+            - method org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval getApprovedSignatures
+            - method org.jenkinsci.plugins.workflow.job.WorkflowRun doTerm
+            - method org.jenkinsci.plugins.workflow.steps.FlowInterruptedException getCauses
+            - method org.jenkinsci.plugins.workflow.support.actions.EnvironmentAction getEnvironment
+            - method org.yaml.snakeyaml.DumperOptions setDefaultFlowStyle org.yaml.snakeyaml.DumperOptions$FlowStyle
+            - method org.yaml.snakeyaml.Yaml dump java.lang.Object java.io.Writer
+            - method org.yaml.snakeyaml.Yaml dumpAsMap java.lang.Object
+            - method org.yaml.snakeyaml.Yaml load java.lang.String
+            - new com.caixabank.absis3.BranchType java.lang.String int java.util.LinkedHashMap
+            - new com.caixabank.absis3.BuildInTest
+            - new com.caixabank.absis3.DistributionModePRO java.lang.String int java.util.LinkedHashMap
+            - new com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl com.cloudbees.plugins.credentials.CredentialsScope
+              java.lang.String java.lang.String java.lang.String java.lang.String
+            - new groovy.json.JsonSlurperClassic
+            - new groovy.json.StringEscapeUtils
+            - new groovy.util.XmlNodePrinter java.io.PrintWriter
+            - new groovy.util.XmlParser
+            - new groovy.util.XmlSlurper
+            - new hudson.model.StringParameterValue java.lang.String java.lang.String
+            - new java.io.ByteArrayInputStream byte[]
+            - new java.io.ByteArrayOutputStream
+            - new java.io.File java.lang.String
+            - new java.io.FileWriter java.lang.String
+            - new java.io.PrintWriter java.io.Writer
+            - new java.io.PrintWriter java.lang.String
+            - new java.lang.Error java.lang.String
+            - new java.lang.Exception
+            - new java.lang.Exception java.lang.String
+            - new java.lang.Exception java.lang.String java.lang.Throwable
+            - new java.lang.IllegalArgumentException java.lang.String
+            - new java.lang.Integer java.lang.String
+            - new java.lang.RuntimeException
+            - new java.lang.RuntimeException java.lang.String
+            - new java.lang.RuntimeException java.lang.String java.lang.Throwable
+            - new java.lang.String
+            - new java.lang.String byte[] java.lang.String
+            - new java.lang.String java.lang.String
+            - new java.lang.String java.lang.StringBuilder
+            - new java.lang.StringBuffer
+            - new java.lang.StringBuilder
+            - new java.lang.Thread
+            - new java.math.BigDecimal int
+            - new java.util.ArrayList
+            - new java.util.HashMap
+            - new java.util.HashMap java.util.Map
+            - new java.util.LinkedHashMap
+            - new java.util.concurrent.locks.ReentrantLock
+            - new org.yaml.snakeyaml.DumperOptions
+            - new org.yaml.snakeyaml.Yaml
+            - new org.yaml.snakeyaml.Yaml org.yaml.snakeyaml.DumperOptions
+            - staticField com.caixabank.absis3.ArtifactSubType APP_LIB
+            - staticField com.caixabank.absis3.ArtifactSubType ARCH_LIB
+            - staticField com.caixabank.absis3.ArtifactSubType MICRO_APP
+            - staticField com.caixabank.absis3.ArtifactSubType MICRO_ARCH
+            - staticField com.caixabank.absis3.ArtifactSubType PLUGIN
+            - staticField com.caixabank.absis3.ArtifactSubType PLUGIN_STARTER
+            - staticField com.caixabank.absis3.ArtifactSubType PLUGIN_STARTER_SAMPLE_APP
+            - staticField com.caixabank.absis3.ArtifactSubType SAMPLE_APP
+            - staticField com.caixabank.absis3.ArtifactSubType STARTER
+            - staticField com.canal.GlobalVars dirDownloadArtifact
+            - staticField com.canal.GlobalVars dirDownloadArtifact__PRE
+            - staticField com.cloudbees.plugins.credentials.CredentialsScope GLOBAL
+            - staticField groovy.io.FileType FILES
+            - staticField java.io.File separator
+            - staticField java.lang.System out
+            - staticField java.util.regex.Pattern CASE_INSENSITIVE
+            - staticField java.util.regex.Pattern MULTILINE
+            - staticField org.yaml.snakeyaml.DumperOptions$FlowStyle AUTO
+            - staticField org.yaml.snakeyaml.DumperOptions$FlowStyle BLOCK
+            - staticMethod com.caixabank.absis3.ArtifactSubType $INIT java.lang.Object[]
+            - staticMethod com.caixabank.absis3.ArtifactType $INIT java.lang.Object[]
+            - staticMethod com.caixabank.absis3.BranchType $INIT java.lang.Object[]
+            - staticMethod com.caixabank.absis3.DistributionModePRO $INIT java.lang.Object[]
+            - staticMethod com.caixabank.absis3.GarAppType $INIT java.lang.Object[]
+            - staticMethod com.caixabank.absis3.GlobalVars getINTERNAL_BUILDPACK
+            - staticMethod com.caixabank.absis3.GlobalVars getProxyCaixaHost
+            - staticMethod com.caixabank.absis3.GlobalVars getProxyCaixaPort
+            - staticMethod com.caixabank.absis3.GlobalVars getTMP_FILE_GENERATED_DATASOURCE
+            - staticMethod com.caixabank.absis3.ICPVarPipelineCopyType $INIT java.lang.Object[]
+            - staticMethod com.caixabank.absis3.ICPWorkflowStates $INIT java.lang.Object[]
+            - staticMethod com.caixabank.absis3.MavenGoalExecutionFailureErrorType $INIT java.lang.Object[]
+            - staticMethod com.caixabank.absis3.PipelineBehavior $INIT java.lang.Object[]
+            - staticMethod com.caixabank.absis3.PipelineStructureType $INIT java.lang.Object[]
+            - staticMethod com.canal.GlobalVars getDirDownloadArtifact
+            - staticMethod com.cloudbees.plugins.credentials.SystemCredentialsProvider getInstance
+            - staticMethod com.cloudbees.plugins.credentials.domains.Domain global
+            - staticMethod groovy.json.JsonOutput toJson java.lang.Object
+            - staticMethod groovy.time.TimeCategory minus java.util.Date java.util.Date
+            - staticMethod groovy.util.Eval me java.lang.String
+            - staticMethod groovy.xml.XmlUtil serialize java.lang.String
+            - staticMethod hudson.Functions printThrowable java.lang.Throwable
+            - staticMethod hudson.model.Hudson getInstance
+            - staticMethod hudson.model.User get java.lang.String
+            - staticMethod hudson.model.User get java.lang.String boolean
+            - staticMethod hudson.slaves.WorkspaceList tempDir hudson.FilePath
+            - staticMethod hudson.util.IOUtils copy java.io.InputStream java.io.File
+            - staticMethod io.jenkins.plugins.casc.ConfigurationAsCode get
+            - staticMethod java.lang.Float parseFloat java.lang.String
+            - staticMethod java.lang.Integer compare int int
+            - staticMethod java.lang.String valueOf boolean
+            - staticMethod java.lang.System getenv
+            - staticMethod java.lang.Thread currentThread
+            - staticMethod java.net.URLEncoder encode java.lang.String
+            - staticMethod java.nio.charset.Charset forName java.lang.String
+            - staticMethod java.nio.file.Paths get java.lang.String java.lang.String[]
+            - staticMethod java.security.MessageDigest getInstance java.lang.String
+            - staticMethod java.time.LocalDateTime now
+            - staticMethod java.time.format.DateTimeFormatter ofPattern java.lang.String
+            - staticMethod java.util.EnumSet of java.lang.Enum java.lang.Enum java.lang.Enum
+            - staticMethod java.util.logging.LogManager getLogManager
+            - staticMethod java.util.regex.Pattern compile java.lang.String int
+            - staticMethod javax.net.ssl.SSLContext getInstance java.lang.String
+            - staticMethod jenkins.model.GlobalConfiguration all
+            - staticMethod jenkins.model.Jenkins getInstance
+            - staticMethod org.apache.commons.lang.RandomStringUtils random int char[]
+            - staticMethod org.codehaus.groovy.runtime.DateGroovyMethods clearTime java.util.Date
+            - staticMethod org.codehaus.groovy.runtime.DateGroovyMethods minus java.util.Date
+              int
+            - staticMethod org.codehaus.groovy.runtime.DateGroovyMethods plus java.util.Date
+              int
+            - staticMethod org.codehaus.groovy.runtime.DateGroovyMethods previous java.util.Date
+            - staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods contains java.lang.Object[]
+              java.lang.Object
+            - staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods execute java.lang.String
+            - staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods find java.lang.Object
+              groovy.lang.Closure
+            - staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods findAll java.lang.Object
+            - staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods findAll java.lang.Object
+              groovy.lang.Closure
+            - staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods getAt java.lang.Object
+              java.lang.String
+            - staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods getAt java.util.Collection
+              java.lang.String
+            - staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods getCount java.util.regex.Matcher
+            - staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods getMetaClass java.lang.Class
+            - staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods getProperties
+              java.lang.Object
+            - staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods getText java.io.File
+            - staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods getText java.net.URL
+            - staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods hasProperty java.lang.Object
+              java.lang.String
+            - staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods invokeMethod java.lang.Object
+              java.lang.String java.lang.Object
+            - staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods isDouble java.lang.String
+            - staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods isInteger java.lang.String
+            - staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods min java.util.Collection
+            - staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods minus java.lang.String
+              java.lang.Object
+            - staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods newInputStream
+              java.io.File
+            - staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods newPrintWriter
+              java.io.File
+            - staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods println groovy.lang.Closure
+              java.lang.Object
+            - staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods println java.lang.Object
+              java.lang.Object
+            - staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods putAt java.lang.Object
+              java.lang.String java.lang.Object
+            - staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods readLines java.lang.String
+            - staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods round java.lang.Double
+              int
+            - staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods size java.util.regex.Matcher
+            - staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods times java.lang.Number
+              groovy.lang.Closure
+            - staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods toFloat java.lang.String
+            - staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods toInteger java.lang.Number
+            - staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods withOutputStream
+              java.io.File groovy.lang.Closure
+            - staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods withReader java.io.File
+              groovy.lang.Closure
+            - staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods write java.io.File
+              java.lang.String
+            - staticMethod org.codehaus.groovy.runtime.DefaultGroovyStaticMethods start java.lang.Thread
+              groovy.lang.Closure
+            - staticMethod org.codehaus.groovy.runtime.EncodingGroovyMethods decodeBase64
+              java.lang.String
+            - staticMethod org.codehaus.groovy.runtime.EncodingGroovyMethods encodeBase64
+              byte[]
+            - staticMethod org.codehaus.groovy.runtime.ProcessGroovyMethods consumeProcessOutput
+              java.lang.Process java.lang.Appendable java.lang.Appendable
+            - staticMethod org.codehaus.groovy.runtime.ProcessGroovyMethods getText java.lang.Process
+            - staticMethod org.codehaus.groovy.runtime.ProcessGroovyMethods waitForOrKill
+              java.lang.Process long
+            - staticMethod org.codehaus.groovy.runtime.ScriptBytecodeAdapter unaryPlus java.lang.Object
+            - staticMethod org.codehaus.groovy.transform.ImmutableASTTransformation checkPropNames
+              java.lang.Object java.util.Map
+            - staticMethod org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval get"
+        unclassified:
+          artifactoryBuilder:
+            artifactoryServers:
+            - artifactoryUrl: https://artifacts.cloud.caixabank.com/artifactory
+              bypassProxy: false
+              connectionRetry: 3
+              deployerCredentialsConfig:
+                overridingCredentials: false
+                password: '{AQAAABAAAAAQk3dZrzh50gnHylHMXcmAi5iu1XnsRiMbmFXVKZtqjBg=}'
+                username: '****'
+              deploymentThreads: 3
+              serverId: artifactory-caixabank
+              timeout: 300
+            jfrogPipelinesServer:
+              bypassProxy: false
+              connectionRetries: 3
+              credentialsConfig:
+                ignoreCredentialPluginDisabled: true
+                overridingCredentials: false
+                password: '{AQAAABAAAAAQzNgCbATPHP56kV0nFkHWffRRhwOVni8LUmVG3tk79fE=}'
+                username: '****'
+              timeout: 300
+            useCredentialsPlugin: false
+          buildDiscarders:
+            configuredBuildDiscarders:
+            - jobBuildDiscarder
+          buildStepOperation:
+            enabled: false
+          cxScanBuilder:
+            enableCertificateValidation: false
+            filterPattern: |-
+              !**/_cvs/**/*, !**/.svn/**/*, !**/.hg/**/*, !**/.git/**/*, !**/.bzr/**/*,
+                      !**/.gitgnore/**/*, !**/.gradle/**/*, !**/.checkstyle/**/*, !**/.classpath/**/*, !**/bin/**/*,
+                      !**/obj/**/*, !**/backup/**/*, !**/.idea/**/*, !**/*.DS_Store, !**/*.ipr, !**/*.iws,
+                      !**/*.bak, !**/*.tmp, !**/*.aac, !**/*.aif, !**/*.iff, !**/*.m3u, !**/*.mid, !**/*.mp3,
+                      !**/*.mpa, !**/*.ra, !**/*.wav, !**/*.wma, !**/*.3g2, !**/*.3gp, !**/*.asf, !**/*.asx,
+                      !**/*.avi, !**/*.flv, !**/*.mov, !**/*.mp4, !**/*.mpg, !**/*.rm, !**/*.swf, !**/*.vob,
+                      !**/*.wmv, !**/*.bmp, !**/*.gif, !**/*.jpg, !**/*.png, !**/*.psd, !**/*.tif, !**/*.swf,
+                      !**/*.jar, !**/*.zip, !**/*.rar, !**/*.exe, !**/*.dll, !**/*.pdb, !**/*.7z, !**/*.gz,
+                      !**/*.tar.gz, !**/*.tar, !**/*.gz, !**/*.ahtm, !**/*.ahtml, !**/*.fhtml, !**/*.hdm,
+                      !**/*.hdml, !**/*.hsql, !**/*.ht, !**/*.hta, !**/*.htc, !**/*.htd, !**/*.war, !**/*.ear,
+                      !**/*.htmls, !**/*.ihtml, !**/*.mht, !**/*.mhtm, !**/*.mhtml, !**/*.ssi, !**/*.stm,
+                      !**/*.bin,!**/*.lock,!**/*.svg,!**/*.obj,
+                      !**/*.stml, !**/*.ttml, !**/*.txn, !**/*.xhtm, !**/*.xhtml, !**/*.class, !**/*.iml, !Checkmarx/Reports/*.*,
+                      !OSADependencies.json, !**/node_modules/**/*
+            forcingVulnerabilityThresholdEnabled: false
+            hideResults: false
+            jobGlobalStatusOnError: FAILURE
+            jobGlobalStatusOnThresholdViolation: FAILURE
+            lockVulnerabilitySettings: true
+            password: '{AQAAABAAAAAQaJl3YmPBBdeXr/zpr44yAiDAsLPFJ1DugZ5//6PWv3g=}'
+            prohibitProjectCreation: false
+            scanTimeOutEnabled: false
+            scanTimeoutDuration: 1
+          defaultFolderConfiguration:
+            healthMetrics:
+            - worstChildHealthMetric:
+                recursive: true
+          email-ext:
+            adminRequiredForTemplateTesting: false
+            allowUnregisteredEnabled: true
+            charset: UTF-8
+            debugMode: true
+            defaultBody: |
+              $PROJECT_NAME - Build # $BUILD_NUMBER - $BUILD_STATUS:
+
+              Check console output at $BUILD_URL to view the results.
+            defaultContentType: text/html
+            defaultSubject: '$PROJECT_NAME - Build # $BUILD_NUMBER - $BUILD_STATUS!'
+            defaultTriggerIds:
+            - hudson.plugins.emailext.plugins.trigger.FailureTrigger
+            mailAccount:
+              address: Continuos integration System <absis3@jenkins.lacaixa.com>
+              smtpHost: megaout.megamail.lacaixa.es
+              smtpPassword: '{AQAAABAAAAAQxwcR8iP2l9Le5YD+Si79lrQXxXQQUjjScWZCIkyUP6M=}'
+            maxAttachmentSize: -1
+            maxAttachmentSizeMb: -1
+            precedenceBulk: true
+            smtpPassword: '{AQAAABAAAAAQxwcR8iP2l9Le5YD+Si79lrQXxXQQUjjScWZCIkyUP6M=}'
+            watchingEnabled: false
+          fingerprints:
+            fingerprintCleanupDisabled: false
+            storage: file
+          gitHubConfiguration:
+            apiRateLimitChecker: ThrottleForNormalize
+          gitHubPluginConfig:
+            hookUrl: https://jenkins-a3msje-a3msje.pro.ap.intranet.cloud.lacaixa.es/github-webhook/
+          gitLabConnectionConfig:
+            connections:
+            - apiTokenId: GITLAB_API_TOKEN_TEXT
+              clientBuilderId: autodetect
+              connectionTimeout: 100
+              ignoreCertificateErrors: false
+              name: gitlab
+              readTimeout: 10
+              url: https://git.svb.lacaixa.es
+          gitSCM:
+            addGitTagAction: false
+            allowSecondFetch: false
+            createAccountBasedOnEmail: false
+            disableGitToolChooser: false
+            globalConfigEmail: jenkins.pipeline.CI@lacaixa.es
+            globalConfigName: jenkins.pipeline.CI
+            hideCredentials: false
+            showEntireCommitSummaryInChanges: false
+            useExistingAccountWithSameEmail: false
+          globalConfigFiles:
+            configs:
+            - xml:
+                comment: Fichero para poder generar los clientes y el revapi a partir del
+                  contrato
+                content: "<project xmlns=\"http://maven.apache.org/POM/4.0.0\" \n  xmlns:xsi=\"\
+                  http://www.w3.org/2001/XMLSchema-instance\" \n    xsi:schemaLocation=\"\
+                  http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd\"\
+                  >\n  <modelVersion>4.0.0</modelVersion>\n  <artifactId>#ARTIFACT#</artifactId>\n\
+                  \  <packaging>jar</packaging>\n  <name>contract-parent</name>\n  <version>#VERSION#</version>\n\
+                  \  <parent>\n    <groupId>com.caixabank.absis.apps</groupId>\n    <artifactId>contract-parent</artifactId>\n\
+                  \    <version>1.0.0</version>\n    <relativePath>./parentPom.xml</relativePath>\n\
+                  \  </parent>\n</project>\n"
+                id: absis3-apps-client-generator
+                name: absis3-apps-client-generator
+            - globalMavenSettings:
+                comment: Global settings
+                content: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<settings\n\txsi:schemaLocation=\"\
+                  http://maven.apache.org/SETTINGS/1.1.0 http://maven.apache.org/xsd/settings-1.1.0.xsd\"\
+                  \n\txmlns=\"http://maven.apache.org/SETTINGS/1.1.0\"\n\txmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\
+                  >\n      \n    <proxies>\n\t\t<proxy>\n\t\t\t<id>proxy-servidores</id>\n\
+                  \t\t\t<active>true</active>\n\t\t\t<protocol>http</protocol>\n\t\t\t<host>proxyserv.svb.lacaixa.es</host>\n\
+                  \t\t\t<port>8080</port>\n\t\t\t<nonProxyHosts>localhost</nonProxyHosts>\n\
+                  \t\t</proxy>\n\t</proxies>\n\n\t<servers>\n\t\t<server>\n\t\t\t<id>maven-snapshots</id>\n\
+                  \t\t\t<username>dummyuser</username>\n\t\t\t<password>dummypassword</password>\n\
+                  \t\t</server>\n\t\t<server>\n\t\t\t<id>maven-releases</id>\n\t\t\t<username>dummyuser</username>\n\
+                  \t\t\t<password>dummypassword</password>\n\t\t</server>\n\t</servers>\n\
+                  \      \n\t<mirrors>\n\t\t<mirror>\n\t\t\t<id>maven-public</id>\n\t\t\t\
+                  <name>Other Mirror Repository</name>\n\t\t\t<url>https://artifacts.cloud.caixabank.com/artifactory/arq-openservices-maven-public</url>\n\
+                  \t\t\t<mirrorOf>external:*</mirrorOf>\n\t\t</mirror>\n\t</mirrors>\n\n\t\
+                  <profiles>\n\t\t<profile>\n\t\t\t<repositories>\n\t\t\t\t<repository>\n\t\
+                  \t\t\t\t<id>maven-public</id>\n\t\t\t\t\t<name>arq-openservices-maven-public</name>\n\
+                  \t\t\t\t\t<url>https://artifacts.cloud.caixabank.com/artifactory/arq-openservices-maven-public</url>\n\
+                  \t\t\t\t</repository>\n\t\t\t</repositories>\n\t\t\t<pluginRepositories>\n\
+                  \t\t\t\t<pluginRepository>\n\t\t\t\t\t<id>maven-public</id>\n\t\t\t\t\t\
+                  <name>arq-openservices-maven-public</name>\n\t\t\t\t\t<url>https://artifacts.cloud.caixabank.com/artifactory/arq-openservices-maven-public</url>\n\
+                  \t\t\t\t</pluginRepository>\n\t\t\t</pluginRepositories>\n\t\t\t<id>artifactory</id>\n\
+                  \t\t</profile>\n\t</profiles>\n\n\t<activeProfiles>\n\t\t<activeProfile>artifactory</activeProfile>\n\
+                  \t</activeProfiles>\n</settings>"
+                id: absis3-maven-settings-with-singulares
+                isReplaceAll: true
+                name: absis3-maven-settings-with-singulares
+                providerId: org.jenkinsci.plugins.configfiles.maven.GlobalMavenSettingsConfig
+                serverCredentialMappings:
+                - credentialsId: icpcoucxba3msje01
+                  serverId: maven-snapshots
+                - credentialsId: icpcoucxba3msje01
+                  serverId: maven-releases
+          globalLibraries:
+            libraries:
+            - defaultVersion: develop
+              name: absis3-shared-lib
+              retriever:
+                modernSCM:
+                  scm:
+                    git:
+                      credentialsId: absis3jenkins
+                      id: 59a1e615-0fb3-4e03-8a84-ec60f540376d
+                      remote: https://git.svb.lacaixa.es/cbk/absis3/channel/arch/tools/jenkins-shared-library
+            - defaultVersion: master
+              name: core-utils-shared-library
+              retriever:
+                modernSCM:
+                  scm:
+                    git:
+                      credentialsId: absis3jenkins
+                      id: 694462cb-b451-4f42-acf0-2f064e818906
+                      remote: https://git.svb.lacaixa.es/cbk/arquitectura/eines/jenkins-shared-libraries/core-utils-shared-library.git
+            - defaultVersion: develop
+              name: absis3-shared-lib-beta
+              retriever:
+                modernSCM:
+                  scm:
+                    git:
+                      credentialsId: absis3jenkins
+                      id: 253a828b-83c6-4246-b72a-4190fa0c05c1
+                      remote: https://git.svb.lacaixa.es/cbk/absis3/channel/arch/tools/jenkins-shared-library
+            - defaultVersion: master
+              name: absis3-services
+              retriever:
+                modernSCM:
+                  scm:
+                    git:
+                      credentialsId: absis3jenkins
+                      id: 9d16e8fd-8f7b-41fe-a0cb-7cf4f211cdb2
+                      remote: https://git.svb.lacaixa.es/cbk/absis3/services/arch/jenkins-libraries/jenkinsSharedLibrary.git
+          ivyBuildTrigger:
+            extendedVersionMatching: false
+          junitTestResultStorage:
+            storage: file
+          location:
+            adminAddress: Continuos integration System <absis3@jenkins.lacaixa.com>
+            url: https://jenkins-a3msje-a3msje.pro.ap.intranet.cloud.lacaixa.es/
+          mailer:
+            charset: UTF-8
+            smtpHost: megaout.megamail.lacaixa.es
+            useSsl: false
+            useTls: false
+          mattermostNotifier:
+            buildServerUrl: https://jenkins-a3msje-a3msje.pre.ap.intranet.cloud.lacaixa.es/
+            endpoint: '{AQAAABAAAAAQIdUDF1c2qxNHRKd1RtIiz41d+OGRQeX68CBEJHUbCzM=}'
+            proxyPassword: '{AQAAABAAAAAQhoJxzwQrZynRPq7RHesb+ty6BEZ1Ufs5nApMzMciz5U=}'
+            proxyPort: 0
+            useCustomProxy: false
+          mavenModuleSet:
+            localRepository: default
+          metricsAccessKey:
+            accessKeys:
+            - canHealthCheck: true
+              canMetrics: true
+              canPing: true
+              canThreadDump: false
+              key: '{AQAAABAAAABQHxHqkiVItJhL2fsn+qEPwcG7DSmbjBLp+/DrHGtAxxrV0hdXNReVIAI1inrKBFu9zajfBEzMuU11aBwMpNlgVzrlGt8u8Ql7tVZvSWupREdPV0cNtd8aTjryhHESHrBl}'
+              origins: '*'
+          pollSCM:
+            pollingThreadCount: 10
+          prometheusConfiguration:
+            appendParamLabel: true
+            appendStatusLabel: true
+            collectDiskUsage: true
+            collectingMetricsPeriodInSeconds: 120
+            countAbortedBuilds: true
+            countFailedBuilds: true
+            countNotBuiltBuilds: true
+            countSuccessfulBuilds: true
+            countUnstableBuilds: true
+            defaultNamespace: default
+            fetchTestResults: true
+            jobAttributeName: jenkins_job
+            path: prometheus
+            processingDisabledBuilds: false
+            useAuthenticatedEndpoint: false
+          sonarGlobalConfiguration:
+            buildWrapperEnabled: true
+            installations:
+            - credentialsId: sonartoken
+              name: sonarqube
+              serverUrl: https://sonar-a3mson-sonars.pro.ap.intranet.cloud.lacaixa.es
+              triggers:
+                skipScmCause: true
+                skipUpstreamCause: true
+              webhookSecretId: sonarwebhook
+          timestamper:
+            allPipelines: false
+            elapsedTimeFormat: '''<b>''HH:mm:ss.S''</b> '''
+            systemTimeFormat: '''<b>''HH:mm:ss''</b> '''
+        tool:
+          git:
+            installations:
+            - home: git
+              name: Default
+          mavenGlobalConfig:
+            globalSettingsProvider: standard
+            settingsProvider: standard
+          pipelineMaven:
+            triggerDownstreamUponResultAborted: false
+            triggerDownstreamUponResultFailure: false
+            triggerDownstreamUponResultNotBuilt: false
+            triggerDownstreamUponResultSuccess: true
+            triggerDownstreamUponResultUnstable: false
+          sonarRunnerInstallation:
+            installations:
+            - name: SonarScanner
+              properties:
+              - installSource:
+                  installers:
+                  - sonarRunnerInstaller:
+                      id: 4.6.0.2311

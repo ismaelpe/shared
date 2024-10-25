@@ -1,0 +1,42 @@
+
+## absisPipelineReloadDataSources
+
+This pipeline runs manually invoked by TTSS team (ItNow).
+
+The main purpose of this job is reconfigure all the datasources of an concrete aplication.
+
+It may needs an IOP.
+
+It receives the following parameters:
+
+.reloadDataSources Parameters
+|===
+|Name|Description|Default value
+
+| environment
+| the Bmx environment 
+| TST or PRE or PRO
+
+| artifactParam
+| the dataservice application
+| NONE
+
+|===
+
+
+### Stages
+
+This pipeline has one stage:
+
+. <<stagesPipelines.adoc#reload-micros,reload-micros>>
+
+### Scheduled Configurations
+
+* Deletes TST, only affects the sample apps deployed 45 days ago
+* Deletes PRE, only affects the sample apps deployed 2 days ago
+* Deletes DEV, affects to all feature artifacts deployed on the EDEN environment
+
+
+### Next actions
+
+This job doesn't allow any next action

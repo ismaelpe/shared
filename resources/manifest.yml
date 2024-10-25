@@ -1,0 +1,6 @@
+---
+applications:
+- memory: #MEMORY#
+  env:
+    SPRING_PROFILES_ACTIVE: #SPRING_PROFILES#
+    JAVA_OPTS: #JAVA_OPTS#

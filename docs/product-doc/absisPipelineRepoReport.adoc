@@ -1,0 +1,22 @@
+
+## absisPipelineRepoReport
+
+This pipeline can make a report of the git repo branches not merged, pending to be eliminated or merged to the master.
+
+.Report Repo branches artifact Parameters
+|===
+|Name|Description
+|===
+
+| gitRepo
+| the repo which we need to eliminate the branches
+| 
+
+### Stages
+
+
+. <<stagesPipelines.adoc#getBranchesRepo,getBranchesRepo>>
+
+### Next actions
+
+This pipeline does not have any action.

@@ -1,0 +1,47 @@
+
+## job-provisoning
+
+This pipeline is executed during the provisioning process. The main purpose is to create the jenkins jobs (continous integration for the git repo). It is a free style job not a declarative pipeline.
+
+
+
+.Job Provisioning Parameters
+|===
+|Name|Description
+|nameApp|the name of the report
+|pathToRepo| The url path to the git repo
+|domain| This contains the app domain. It does not depend on the company either the typeApp, all the components has the domain in the path to the job.
+|typeApp| This contains the gar app type, it can be ARQ.LIB, ARQ.MIA, ARQ.MAP, SRV.DS, SRV.MS, SRV.LIB
+|modulo| Only applies if the empresaParam is bpi, otherside is ignored. The path of a bpi gar applications is /domain/modulo/nameAppParam
+|empresa| This contains the company of the gar app type
+|===
+
+### Stages
+
+It is not a declarative pipeline, then it doesn't have any stage.
+
+Basically, the behavior differs if the company is caixabank or bpi and the type of artifact (application or architecture).
+
+* Company BPI, the job creates
+** domain a folder with the domain name
+** module a folder with the module/app
+** job the name of the repo (declarative pipeline)
+* Company CBK, the job creates
+** domain a folder with the domain name
+** job the name of the repo (declarative pipeline)
+
+Depending the type of artifact
+
+* Application
+** SRV.LIB The job created 
+*** /apps/common/<domain>/<module>/<nameApp> (BPI)
+*** /apps/common/<domain>/<nameApp> (CBK)
+** SRV.MS The job created
+*** /apps/service/<domain>/<module>/<nameApp> (BPI)
+*** /apps/service/<domain>/<nameApp> (CBK)
+** SRV.DS
+*** /apps/data-service/<domain>/<module>/<nameApp> (BPI)
+*** /apps/data-service/<domain>/<nameApp> (CBK)
+
+* Architecture
+*** /arch/<domain>/<nameApp> (BPI/CBK)

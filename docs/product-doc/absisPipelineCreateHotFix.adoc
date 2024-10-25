@@ -1,0 +1,61 @@
+
+## absisPipelineCreateHotFix
+
+This pipeline runs manually when the user wants to generate a fix of a version. 
+
+The job will create a new hotfix branch with the code of the new HotFix. The job sets the Version to the RC0 of the next artifact version.
+
+NOTE: For example if the tag selected is 1.6.0 the next RC will be 1.6.1-RC0 
+
+It receives the following parameters:
+
+.createFix Parameters
+|===
+|Name|Description|Default value
+
+| originBranchParam
+| branch to create the hotfix from
+| master
+
+| pathToRepoParam
+| url to the git repository
+| N/A
+
+| repoParam
+| name of the repository
+| N/A
+
+| versionParam
+| the tag of the version that needs to be fixed
+| N/A
+
+| pipelineOrigId
+| the last pipeline executed 
+| N/A
+
+| artifactTypeParam
+| type of the artifact
+| SIMPLE_APP
+
+| artifactSubTypeParam
+| subtype of the artifact
+| MICRO_APP
+
+| commitIdParam
+| the identifier of the previous commit
+| N/A
+
+| userId
+| The identifier (U01XXXXX) of the IDEGPL user that invokes the pipeline
+| U0166666
+|===
+
+### Stages
+
+These are the stages of the pipeline:
+
+. <<stagesPipelines.adoc#prepare-fix,prepare-fix>>
+
+### Next actions
+
+This job doesn't allow any next action. It will generate the branch and the continuos integration will compile and deploy the artifact to nexus and bluemix.

@@ -1,0 +1,39 @@
+
+## absisPipelineCannaryRelease 
+
+This pipeline increases the percentatge of the micro request load. Used with the cannary deployment.
+
+.Close artifact Parameters
+|===
+|Name|Description
+|pipelineOrigId| The id of the previous pipeline, this parameter only affects to GPL
+|pathToRepo| The url path to the git repo
+|originBranch| The origin branch
+|repoParam| The name of the report
+|artifactParam| This contains the id of the artifact
+|versionParam| This contains the version of the artifact deployed in the environment selected. 
+|commitIdParam| The identifier of the commit that has triggered the pipelineOrig. 
+|componentParam| The id of the artifact not the micro
+|artifactTypeParam| The type of artifact, it only could be SIMPLE or AGREGADOR, it depends on the kind of project
+|artifactSubTypeParam| The subtype of artifact, it depends on the kind of project
+|actualPercentatgeParam| The actual percentatge of the request load, the pipeline will increase this value with a fixed percentatge
+|userId| The identifier (U01XXXXX) of the IDEGPL user that invokes the pipeline
+
+|===
+
+
+### Stages
+
+
+. <<stagesPipelines.adoc#init-data,init-data>>
+. <<stagesPipelines.adoc#modify-percentatge,modify-percentatge>>
+. <<stagesPipelines.adoc#refresh-app,refresh-app>>
+
+### Next actions
+
+The next actions depend if the percentatge is 100% or minor.
+
+
+** Increase the load percentatge (only if the percentage is minor than 100%)
+** Rollback Artifact
+** End of the release (the developer can end the release whenever he wants)

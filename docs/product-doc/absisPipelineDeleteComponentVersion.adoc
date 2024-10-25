@@ -1,0 +1,39 @@
+
+## absisPipelineDeleteComponentVersion
+
+This pipeline runs manually when a user wants to delete a major version of a component
+
+This jobs, start deleting the component major version from DEV environment and allow user to keep deleting it from anothers environments throght the next job actions
+
+It receives the following parameters:
+
+.deleteComponentVersion Parameters
+|===
+|Name|Description
+|pathToRepoParam| The url path to the git repo
+|repoParam| The name of the repo
+|artifactTypeParam| The type of artifact, it only could be SIMPLE or AGREGADOR, it depends on the kind of project
+|artifactSubTypeParam| The subtype of artifact, it depends on the kind of project
+|pipelineOrigId| The id of the previous pipeline, this parameter only affects to GPL
+|versionParam| This contains the version of the artifact to be deleted in the selected environment.
+|environmentParam| This contains the affected  environment, we can make a rollback of any artifact deleted in any environment
+|forceAllCentersParam| This contains a boolean that indicates if the script has to "force" the rollback. The false value means that if the rollback fails in the first center, it will abort the execution
+|artifactParam| This contains the id of the artifact
+|userId| The identifier (U01XXXXX) of the IDEGPL user that invokes the pipeline
+|===
+
+### Stages
+
+These are the stages of the pipeline:
+
+. <<stagesPipelines.adoc#init-pipeline,init-pipeline>>
+. <<stagesPipelines.adoc#validate-component-and-dependecies,validate-component-and-dependecies>>
+. <<stagesPipelines.adoc#delete-component-from-environment,delete-component-from-environment>>
+
+### Next actions
+
+The next actions depend on the type of environment and the component type (micro/library).
+
+* **Micro**
+** Delete in {ENVIRONMENT}
+** Rollback of Deletion

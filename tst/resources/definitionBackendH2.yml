@@ -1,0 +1,6 @@
+datasource:
+  enable: true
+  connections:
+    arqprudb:
+      jdbcDriver: org.h2.Driver
+      tenant: ALL

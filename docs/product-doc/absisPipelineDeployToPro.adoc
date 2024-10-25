@@ -1,0 +1,45 @@
+
+## absisPipelineDeploytoPro
+
+This pipeline deploys a micro (architecture o application) to the production environment with the Beta routes, only affects micros not libraries.
+
+It detects if the artifact is the same major or a new major, the previous version is renamed to ancient-XXXX, and the pipeline unmaps the beta route from the ancient.
+
+The new artifact is deployed only with the beta version.
+
+The next step is the cannary process (increasing the percentatge  of requests to the new artifact).
+
+.Deploy to PRO Parameters
+|===
+|Name|Description
+|pathToRepoParam|The url path of the report
+|versionParam|The specific version of the artifact to deploy, the pipeline retrieves the artifact from the maven-releases. This indicates the tag on the release branch
+|repoParam|The name of the report
+|artifactType|The main type of the artifact
+|subArtifactType|Subtype artifact
+|pipelineOrigId| The id of the previous pipeline, this parameter only affects to GPL
+|originBranch|The id of the release branch
+|gitlabActionType|The action that triggers the continous Integration (PUSH/MERGE), only works with simplePipeline
+|commitId|The id of the commmit Id that has triggered the previous pipelin
+|userId| The identifier (U01XXXXX) of the IDEGPL user that invokes the pipeline
+|===
+
+
+### Stages
+
+. <<stagesPipelines.adoc#get-git-code,get-git-repo>>
+. <<stagesPipelines.adoc#get-nexus-artifact,get-nexus-artifact>>
+. <<stagesPipelines.adoc#copy-config-files,copy-config-files>>
+. <<stagesPipelines.adoc#deploy-to-cloud,deploy-to-cloud>>
+. <<stagesPipelines.adoc#verify-endpoints,verify-endpoints>>
+
+### Next actions
+
+The next actions depend if the micro is a major or a minor.
+
+* **New minor** The artifact is a new minor, this means that the new micro will replace the older one
+** Increase the load percentatge
+** Rollback Artifact
+* **New major**
+** End of the release
+** Rollback Artifact

@@ -1,0 +1,43 @@
+
+## absisPipelineProvisioning
+
+This pipeline is executed during the provisioning process. The main purpose is to create the jenkins jobs (continous integration for the git repo). 
+Also, this pipeline adds some flags to the git repo.
+
+For example, adds approvers to the set of the merge request approvals.
+
+
+.Pipeline Provisioning Parameters
+|===
+|Name|Description
+|nameApp|the name of the report
+|pathToRepo| The url path to the git repo
+|domain| This contains the app domain. It does not depend on the company either the typeApp, all the components has the domain in the path to the job.
+|typeApp| This contains the gar app type, it can be ARQ.LIB, ARQ.MIA, ARQ.MAP, SRV.DS, SRV.MS, SRV.LIB
+|modulo| Only applies if the empresaParam is bpi, otherside is ignored. The path of a bpi gar applications is /domain/modulo/nameAppParam
+|empresa| This contains the company of the gar app type
+|===
+
+### Stages
+
+Stages of the pipeline:
+
+. <<stagesPipelines.adoc#download-repo,download-repo>>
+. <<stagesPipelines.adoc#create-default-branch,create-default-branch>>
+. <<stagesPipelines.adoc#create-Job,create-Job>>
+. <<stagesPipelines.adoc#reconfiguring-git-project,reconfiguring-git-project>>
+
+
+### GitLab Repo modifications
+
+. It will create a README file, if it isn't created. We don't want an emty repo
+. *jobs_enabled* The repo will see the jenkins jobs executed associated to the repo commits.
+. *only_allow_merge_if_pipeline_succeeds* Only if the job associated to the commits branch is succesful it will enable the merge button
+. *only_allow_merge_if_all_discussions_are_resolved* Only if the discurssions are solved it will enable the merge button
+. *default_branch* The default branch will be the master
+. *builds_access_level* Is the same thah jobs_enabled
+. *remove_sorce_branch_after_merge* Every Merge Request will have the remove the origin branch marked as default
+
+### Next actions
+
+This pipeline does not have any action.

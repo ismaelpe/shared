@@ -1,0 +1,67 @@
+def mifun(param1)
+{
+ 	"url": $param1.url,
+ 	"username": $param1.user,
+ 	"password" :$param1.password,
+ 	"driver-class-name": $param1.jdbcDriver,
+ 	"tenant": $param1.tenant,
+ 	"optional": $param1.optional,
+ 	"hikari":
+ 	{"minimumIdle": $param1.initialConnections,
+ 	 "maximumPoolSize": $param1.maxConnections,
+ 	 "idleTimeout": $param1.idleTimeout,
+ 	 "initializationFailTimeout": $param1.initializationFailTimeout,
+     "connectionTimeout": $param1.maxWait,
+ 	 "validationTimeout": $param1.frequencyTestIdle,
+ 	 "maxLifetime":  $param1.inactiveConnectionTimeout,
+ 	 "connectionTestQuery": $param1.validationQuery,
+ 	 "prepStmtCacheSize": $param1.statementCacheSize,
+ 	 "autoCommit": $param1.autocommit,
+ 	 "driverClassName": $param1.jdbcDriver,
+ 	 "poolName":  $param1.poolName,
+ 	 "connectionInitSql":  $param1.connectionInitSql,
+ 	 "schema": $param1.schema
+ 	 }
+ }
+ 		
+def mifunconnection(param1)
+{
+ 	"connections": {for ($param1.connections) 
+      	     .key : mifun(.value)
+     	}, 	
+ 	     "jpa": {for ($param1.jpa) 
+      	     .key : .value
+     	}     	
+ }
+
+
+{
+  "absis" : {
+    "default-tenant" : .default-tenant,
+    "datasource" : {
+      "enable" : .datasource.enable,
+      "connections" : {for (.datasource.connections) 
+      	      .key : mifun(.value)
+     	},
+		 "jpa" : {for (.datasource.jpa) 
+      	     .key : .value
+     	}     	
+        
+      },
+    "readonly-datasource" : {
+      "enable" : .readonly-datasource.enable,
+      "connections" : {for (.readonly-datasource.connections) 
+      	     .key : mifun(.value)
+     	},
+		 "jpa" : {for (.readonly-datasource.jpa) 
+      	     .key : .value
+     	}     	        
+      },    
+    "readonly-datasource-list" : {
+      "enable" : .readonly-datasource-list.enable,
+      "datasources": {for (.readonly-datasource-list.datasources)
+               .key : mifunconnection(.value)
+      }
+    }  
+  }  
+}

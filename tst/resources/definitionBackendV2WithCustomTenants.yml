@@ -1,0 +1,60 @@
+datasource:
+  enable: true
+  customTenants: true
+  connections:
+    uk-as400:
+      tenant: uk
+      autocommit: true
+      initialConnections: 2
+      jdbcDriver: com.ibm.as400.access.AS400JDBCDriver
+      maxConnections: 15
+      maxIdleConnections: 15
+      minIdle: 0
+      validationQuery: SELECT CURRENT TIME FROM SYSIBM.SYSDUMMY1
+      connectionProperties:
+        currentSchema: ABSISJDBC
+      idleTimeout: 30000
+      inactiveConnectionTimeout: 30000
+    cre-as400:
+      tenant: cre
+      autocommit: true
+      initialConnections: 2
+      jdbcDriver: com.ibm.as400.access.AS400JDBCDriver
+      maxConnections: 15
+      maxIdleConnections: 15
+      minIdle: 0
+      validationQuery: SELECT CURRENT TIME FROM SYSIBM.SYSDUMMY1
+      connectionProperties:
+        currentSchema: ABSISJDBC
+      idleTimeout: 30000
+      inactiveConnectionTimeout: 30000
+readonly-datasource:
+  enable: true
+  customTenants: true
+  connections:
+    ma-as400:
+      tenant: ma
+      autocommit: true
+      initialConnections: 2
+      jdbcDriver: com.ibm.as400.access.AS400JDBCDriver
+      maxConnections: 15
+      maxIdleConnections: 15
+      minIdle: 0
+      validationQuery: SELECT CURRENT TIME FROM SYSIBM.SYSDUMMY1
+      connectionProperties:
+        currentSchema: ABSISJDBC
+      idleTimeout: 30000
+      inactiveConnectionTimeout: 30000
+    pl-as400:
+      tenant: pl
+      autocommit: true
+      initialConnections: 2
+      jdbcDriver: com.ibm.as400.access.AS400JDBCDriver
+      maxConnections: 15
+      maxIdleConnections: 15
+      minIdle: 0
+      validationQuery: SELECT CURRENT TIME FROM SYSIBM.SYSDUMMY1
+      connectionProperties:
+        currentSchema: ABSISJDBC
+      idleTimeout: 30000
+      inactiveConnectionTimeout: 30000

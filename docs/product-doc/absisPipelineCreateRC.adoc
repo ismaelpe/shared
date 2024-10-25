@@ -1,0 +1,62 @@
+
+## absisPipelineCreateRC
+
+This pipeline runs manually when a new Release Candidate has to be created. 
+
+The job will create a new release branch with the code of the new Release Candidate. The job sets the Version to the RC0 of the artifact, and increase the master to the next minor.
+
+NOTE: For example if the master has the 1.6.0-SNASHOT the next RC will be 1.6.0-RC0 and the master will increase to the 1.7.0-SNAPSHOT
+
+It receives the following parameters:
+
+.createRC Parameters
+|===
+|Name|Description|Default value
+
+| originBranchParam
+| branch to create the release candidate from
+| master
+
+| pathToRepoParam
+| url to the git repository
+| N/A
+
+| repoParam
+| name of the repository
+| N/A
+
+| pipelineOrigId
+| the last pipeline executed 
+| N/A
+
+| artifactTypeParam
+| type of the artifact
+| SIMPLE_APP
+
+| artifactSubTypeParam
+| subtype of the artifact
+| MICRO_APP
+
+| commitIdParam
+| the identifier of the previous commit
+| N/A
+
+| userId
+| The identifier (U01XXXXX) of the IDEGPL user that invokes the pipeline
+| U0166666
+|===
+
+### Stages
+
+These are the stages of the pipeline:
+
+. <<stagesPipelines.adoc#get-git-repo,get-git-repo>>
+. <<stagesPipelines.adoc#prepare-RC,prepare-RC>> *
+. <<stagesPipelines.adoc#next-Minor-Master,next-Minor-Master>>
+. <<stagesPipelines.adoc#push-repo-url,push-repo-url>>
+
+`*` As part of this stage, the script `validateDependenciesVersion.groovy` runs as well.
+
+### Next actions
+
+This job doesn't allow any next action.

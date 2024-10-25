@@ -1,0 +1,20 @@
+datasource:
+  enable: true
+  connections:
+    jose:
+      user: OCGNOFI1
+      password: PasswordEncriptado
+      jdbcDriver: oracle.jdbc.OracleDriver
+      url: jdbc:oracle:thin:@(DESCRIPTION_LIST=(LOAD_BALANCE=OFF)(FAILOVER=ON)(DESCRIPTION=(CONNECT_TIMEOUT=10)(TRANSPORT_CONNECT_TIMEOUT=3)(RETRY_COUNT=3)(LOAD_BALANCE=on)(FAILOVER=on)(ADDRESS=(PROTOCOL=tcp)(HOST=bkoradbt09-vip.lacaixa.es)(PORT=1528))(ADDRESS=(PROTOCOL=tcp)(HOST=bkoradbt11-vip.lacaixa.es)(PORT=1528))(CONNECT_DATA=(SERVICE_NAME=CGNOFI1T)(FAILOVER_MODE=(TYPE=select)(METHOD=basic))))(DESCRIPTION=(CONNECT_TIMEOUT=10)(TRANSPORT_CONNECT_TIMEOUT=3)(RETRY_COUNT=3)(ADDRESS=(PROTOCOL=TCP)(HOST=conordbt04.lacaixa.es)(PORT=1554))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=CGNOFI1T))))
+      tenant: '01'
+readonly-datasource:
+  enable: true
+  connections:
+    pepito:
+      initialConnections:  2
+      url:  jdbc:oracle
+      jdbcDriver: oracle.jdbc.OracleDriver
+      user: qwdq
+      password: asd
+      tenant: '0P'
+      maxConnections: 6

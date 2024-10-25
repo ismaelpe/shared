@@ -1,0 +1,14 @@
+
+## Useful information
+
+This chapter contains useful information about the tools related to the alm.
+
+### Glossary
+
+* IDECUA This tool contains the catalogue of Absis3 (and others) aplications. It contains too the owner and the developer of the applications. [link] (https://idecua.pro.absiscloud.lacaixa.es). The absis3 pipelines doesn't make request to the GAR's endpoints.
+* IDEGSA This tool IS the absis3 catalogue that contains all the information about the Absis3 components, like versions, and some kind of info about every version, like endpoints, the cloud environments in which it is installed. [link] (https://idegsa.pro.absiscloud.lacaixa.es) . The absis3 pipeline in the **publish-artifact-catalog** stage sends the component info to the IDEGSA. 
+  * The swagger contract of the endpoints [IDEGSA swagger](https://eideswast.svb.lacaixa.es/apw61/idegsa/generated/swagger-ui/swagger.json). 
+
+* IDEGPL This tool is the tool that mantains all the absis3 pipelines. Absis3 makes http request to the REST endpoints [link] (https://idegpl.pro.absiscloud.lacaixa.es).
+   * The swagger contract of the endpoints [link] (https://idegpl.pro.absiscloud.lacaixa.es/swagger-ui/swagger.json)
+* IDEJMA This tool is not used in the absis3 environment, it allows to add some useful information to the jenkins environment variables. The git is configured with the integration to the IDEJMA [link] (https://idegar.pro.absiscloud.lacaixa.es)

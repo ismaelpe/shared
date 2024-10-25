@@ -1,0 +1,160 @@
+---
+apiVersion: "v1"
+kind: "Pod"
+metadata:
+  annotations: {}
+  labels:
+    logging.elk.stack: "platform"
+    jenkins: "slave"
+    jenkins/label: "agent-s"
+spec:
+  containers:
+  - command:
+    - "/sbin/tini"
+    - "--"
+    - "jenkins-slave"
+    env:
+    - name: "JENKINS_URL"
+      value: "http://jaas.cxb-<%=application%>-<%=environment%>:8080"
+    - name: "JENKINS_TUNNEL"
+      value: "jaas-agent.cxb-<%=application%>-<%=environment%>:50000"
+    - name: "JENKINS_AGENT_WORKDIR"
+      value: "/home/jenkins"
+    - name: "JAVA_VERSION_TYPE"
+      value: "Java11"
+    - name: "JAVA_OPTS"
+      value: "-server -XX:+AlwaysPreTouch -XX:+UseG1GC -XX:+UseStringDeduplication\
+        \ -XX:+UseCompressedClassPointers -XX:TieredStopAtLevel=1 -Dfile.encoding=UTF-8\
+        \ -Dsun.jnu.encoding=UTF-8 -Xmx416m -Xms416m"
+    - name: "JAVA_TOOL_OPTIONS"
+      value: "-XX:+AlwaysPreTouch -XX:+UseG1GC -XX:+UseStringDeduplication -XX:+UseCompressedClassPointers\
+        \ -XX:TieredStopAtLevel=1 -Dfile.encoding=UTF-8 -Dsun.jnu.encoding=UTF-8"
+# ###########################################################################################################
+# DESCOMMENT WHEN SECRETS ON OCP/IKS ARE DEFINED AND RESOLVED
+# ###########################################################################################################
+#   - name: "jnkmsv_token"
+#     valueFrom:
+#       secretKeyRef:
+#         key: "token"
+#         name: "jnkmsv-secret"
+#         optional: false
+#   - name: "jnkmsv_user"
+#     valueFrom:
+#       secretKeyRef:
+#         key: "user"
+#         name: "jnkmsv-secret"
+#         optional: false
+#   - name: "token_pre"
+#     valueFrom:
+#       secretKeyRef:
+#         key: "token_pre"
+#         name: "absis3-secret"
+#         optional: false
+#   - name: "sonartoken"
+#     valueFrom:
+#       secretKeyRef:
+#         key: "token"
+#         name: "sonar-secret"
+#         optional: false
+#   - name: "alm_log_collector_secret_token"
+#     valueFrom:
+#       secretKeyRef:
+#         key: "token"
+#         name: "alm-log-collector"
+#         optional: false
+#   - name: "token_pro"
+#     valueFrom:
+#       secretKeyRef:
+#         key: "token_pro"
+#         name: "absis3-secret"
+#         optional: false
+#   - name: "token_tst"
+#     valueFrom:
+#       secretKeyRef:
+#         key: "token_tst"
+#         name: "absis3-secret"
+#         optional: false
+#   - name: "token_dev"
+#     valueFrom:
+#       secretKeyRef:
+#         key: "token_dev"
+#         name: "absis3-secret"
+#         optional: false
+#   - name: "icp_pass_cert"
+#     valueFrom:
+#       secretKeyRef:
+#         key: "file"
+#         name: "icp-cert"
+#         optional: false
+#   - name: "icp_pass_secret"
+#     valueFrom:
+#       secretKeyRef:
+#         key: "token"
+#         name: "icp-secret"
+#         optional: false
+#   - name: "gitlab_user"
+#     valueFrom:
+#       secretKeyRef:
+#         key: "user"
+#         name: "gitlab-secret"
+#         optional: false
+#   - name: "gitlab_token"
+#     valueFrom:
+#       secretKeyRef:
+#         key: "token"
+#         name: "gitlab-secret"
+#         optional: false
+#   - name: "gitlab_api_token"
+#     valueFrom:
+#       secretKeyRef:
+#         key: "api_token"
+#         name: "gitlab-secret"
+#         optional: false
+#   - name: "configserver_user"
+#     valueFrom:
+#       secretKeyRef:
+#         key: "user"
+#         name: "configserver-secret"
+#         optional: false
+#   - name: "configserver_token"
+#     valueFrom:
+#       secretKeyRef:
+#         key: "token"
+#         name: "configserver-secret"
+#         optional: false
+# ###########################################################################################################
+    image: "docker-registry.cloud.caixabank.com/catalog/paas/absis3-jenkins-agent:1.0.3"
+    imagePullPolicy: "Always"
+    name: "jnlp"
+    resources:
+      limits:
+        memory: "800Mi"
+        cpu: "200m"
+      requests:
+        memory: "500Mi"
+        cpu: "100m"
+    securityContext:
+      privileged: false
+      runAsGroup: 0
+      runAsUser: 0
+    tty: false
+    volumeMounts:
+    - mountPath: "/home/jenkins/master"
+      name: "volume-0"
+      readOnly: false
+    - mountPath: "/home/jenkins"
+      name: "workspace-volume"
+      readOnly: false
+    workingDir: "/home/jenkins"
+  hostNetwork: false
+  nodeSelector:
+    kubernetes.io/os: "linux"
+  restartPolicy: "Never"
+  volumes:
+  - name: "volume-0"
+    persistentVolumeClaim:
+      claimName: "<%=application == "a3msje" && environment == "pre" ? "pvjenpre" : "pvjen"%>-cxb-<%=application%>-<%=component%>-<%=environment%>"
+      readOnly: false
+  - emptyDir:
+      medium: ""
+    name: "workspace-volume"

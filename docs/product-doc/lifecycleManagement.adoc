@@ -1,0 +1,3 @@
+. <<cicsArtifactLifecycle.adoc#,Cics Artifact Lifecycle>>
+. <<microArtifactLifecycle.adoc#,Micro LifeCycle>>
+. <<nonMicroArtifactLifecycle.adoc#,Non Micro Lifecycle>>

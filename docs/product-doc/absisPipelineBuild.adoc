@@ -1,0 +1,86 @@
+## absisPipelineBuild
+
+This pipeline runs with the CI, after every push (or merge request) to the repository. 
+
+Every git project has configured the integration with the jenkins. One git project one jenkins job. 
+
+Every job works whith a docker machine started with this parameters : "-v /apps/idejen/data:/root/.m2 -v /root/.m2/repository/com/caixabank"
+
+- Every job that run this pipeline use a shared folder '/apps/idejen/data' in order to cache the local repository to avoid download the jars from Nexus all the time.
+- In order to avoid conflicts every job use ther own copy of /root/.m2/repository/com/caixabank
+
+All the parameters are supplied by the jenkins integration CI, these are the most importants.
+
+.Continuos Integration Pipeline Parameters
+|===
+|Name|Description
+|GIT_COMMIT|The id of the git event
+|GIT_URL|The url of the git project
+|gitlabActionType|The action that triggers the continous Integration (PUSH/MERGE), only works with simplePipeline
+|===
+
+Other environment variables.
+
+.Environment Variables
+|===
+|Name|Description
+|BUILD_TAG|We use this value to identify the pipeline (GPL needs an unique ID)
+|WORKSPACE|The local directory used by the jenkins job
+|===
+
+It must be noticed that for some of the following stages, an stage start/update/end event is sent to GPL. This notification is not sent when the event sent by the GitLab webhook is `MERGE`.
+This makes sense because once the merge is completed, GitLab will send a `PUSH` webhook event which will be processed on the processed as normal.
+
+If the artifacts arch version is lower than the recomended arch version it will fail with an error.
+
+### Stages
+
+This pipeline has the following stages:
+
+. <<stagesPipelines.adoc#get-git-code,get-git-code>>
+. <<stagesPipelines.adoc#get-git-info,get-git-info>>
+. <<stagesPipelines.adoc#initAndValidate,initAndValidate>>
+. <<stagesPipelines.adoc#validate-dependencies-version,validate-dependencies-version>>
+. <<stagesPipelines.adoc#update-version,update-version>>
+. <<stagesPipelines.adoc#validate-version,validate-version>>
+. <<stagesPipelines.adoc#build,build>>
+. <<stagesPipelines.adoc#sonar-scan,sonar-scan>>
+. <<stagesPipelines.adoc#sonar-quality-gate,sonar-quality-gate>>
+. <<stagesPipelines.adoc#copy-config-files,copy-config-files>>
+. <<stagesPipelines.adoc#deploy-to-cloud,deploy-to-cloud>>
+. <<stagesPipelines.adoc#changelog-file,changelog-file>>
+. <<stagesPipelines.adoc#push-release-to-git,push-release-to-git>>
+. <<stagesPipelines.adoc#deploy-nexus,deploy-nexus>>
+. <<stagesPipelines.adoc#publish-client,publish-client>>
+. <<stagesPipelines.adoc#Generate-archetype-from-project,Generate-archetype-from-project>>
+. <<stagesPipelines.adoc#Deploy-archetype-into-Nexus,Deploy-archetype-into-Nexus>>
+. <<stagesPipelines.adoc#generate-report,generate-report>>
+. <<stagesPipelines.adoc#publish-artifact-catalog,publish-artifact-catalog>>
+. <<stagesPipelines.adoc#apimanager-technicalservices-registration,apimanager-technicalservices-registration>>
+
+### Next actions
+
+The next actions depend on the origin branch associated with the git lab event.
+
+If the origin branch is:
+
+* **Master** Only a merge can push the code to the master branch
+** If the project is a micro the next actions are:
+*** Rollback Artifact
+*** Create Release Candidate
+** Others
+*** Create Release Canidate
+  
+* **Feature** 
+** Nothing, the developer only can merge the code to the master branch (via Merge Request)
+
+* **Release**
+** If the project is a micro the next actions are:
+*** Rollback Artifact
+*** Create Release and upgrade the TST environment
+*** Create Release and don't upgrade the TST environment
+** Others 
+*** Create Release and upgrade the TST environment
+
+
+
