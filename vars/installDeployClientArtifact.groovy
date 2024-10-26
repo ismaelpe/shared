@@ -10,7 +10,7 @@ import com.project.alm.WorkspaceUtils
 import com.project.alm.MavenUtils
 import com.project.alm.GlobalVars
 
-def call(PomXmlStructure pomXml, PipelineData pipeline, boolean isValidatingVersion, boolean isAbsis2) {
+def call(PomXmlStructure pomXml, PipelineData pipeline, boolean isValidatingVersion, boolean isAlm2) {
 
 
     String pathToRevapiPom = pipeline.revapiStructure.revapiPomPath
@@ -25,7 +25,7 @@ def call(PomXmlStructure pomXml, PipelineData pipeline, boolean isValidatingVers
     String goal = "verify"
 
     if (!isValidatingVersion && pipeline.deployFlag && (pipeline.branchStructure.branchType == BranchType.MASTER || pipeline.branchStructure.branchType == BranchType.RELEASE || pipeline.branchStructure.branchType == BranchType.HOTFIX)) {
-        profile = isAbsis2 ? "generateAbsis2Client" : "generateAbsisClient"
+        profile = isAlm2 ? "generateAlm2Client" : "generateAlmClient"
         goal = "deploy"
     }
 

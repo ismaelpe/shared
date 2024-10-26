@@ -48,9 +48,9 @@ def call(Map pipelineParameters) {
     nexus = new NexusUtils(this)
 
     //Variables fijas
-    archetypeGroupId = 'com.project.absis.arch.backend.tandem'
+    archetypeGroupId = 'com.project.alm.arch.backend.tandem'
     archetypeArtifactId = 'tandemtransaction-archetype'
-    groupId = "com.project.absis.tandem.transaction"
+    groupId = "com.project.alm.tandem.transaction"
 
     //Variables del proyecto de provisionamiento (parent-pom, archetype y libreria de transformacion)
     converterlib = 'tandemtransaction-converter-lib'
@@ -65,7 +65,7 @@ def call(Map pipelineParameters) {
     initCallStartMillis = new Date().getTime()
 
     pipeline {
-        agent { node(absisJenkinsAgent(pipelineParams)) }
+        agent { node(almJenkinsAgent(pipelineParams)) }
         options {
             gitLabConnection('gitlab')
             buildDiscarder(logRotator(numToKeepStr: '10'))
@@ -75,8 +75,8 @@ def call(Map pipelineParameters) {
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
             JNKMSV = credentials('JNKMSV-USER-TOKEN')
-            ICP_CERT = credentials('icp-alm-pro-cert')
-            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
+            Cloud_CERT = credentials('cloud-alm-pro-cert')
+            Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"

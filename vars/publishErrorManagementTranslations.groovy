@@ -243,7 +243,7 @@ def sendRequestToErrorManagment(def param,String method,String domain,String env
 				
 				printOpen("Send to errormanagement using 'file' option: $file", EchoLevel.INFO)
 				
-				response = sendRequestToAbsis3MS(method, url, file, enviroment,[
+				response = sendRequestToAlm3MS(method, url, file, enviroment,[
 					isJsonInputData: false,
 					kpiAlmEvent: new KpiAlmEvent(
 						null, null,
@@ -253,7 +253,7 @@ def sendRequestToErrorManagment(def param,String method,String domain,String env
 				responseJson = response.content
 			} else if (param.json) {
 				printOpen("Send to errormanagement using 'json' option:", EchoLevel.INFO)
-				response = sendRequestToAbsis3MS(method, url, param.json, enviroment,[
+				response = sendRequestToAlm3MS(method, url, param.json, enviroment,[
 					isJsonInputData: false,
 					kpiAlmEvent: new KpiAlmEvent(
 						null, null,

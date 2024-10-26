@@ -10,43 +10,43 @@ def call(PomXmlStructure pomXml, PipelineData pipeline) {
 	
 	String artifactApp=pomXml.getApp(GarAppType.valueOfType(pipeline.garArtifactType.name) )
 	
-	printOpen("Evaluating the app ${artifactApp} versus ${env.ICP_PARALLEL_APP_DEPLOY} the  branch is ${pipeline.branchStructure.branchType} # ", EchoLevel.ALL)
+	printOpen("Evaluating the app ${artifactApp} versus ${env.Cloud_PARALLEL_APP_DEPLOY} the  branch is ${pipeline.branchStructure.branchType} # ", EchoLevel.ALL)
 
 	
-	if (env.ICP_PARALLEL_APP_DEPLOY!=null && pipeline.deployFlag == true) {
-		if (env.ICP_DEPLOY_TO_ICP_ENV!=null ) {
-			if (pipeline.bmxStructure!=null && pipeline.bmxStructure.environment!=null && env.ICP_DEPLOY_TO_ICP_ENV.contains(pipeline.bmxStructure.environment.toUpperCase())) {
+	if (env.Cloud_PARALLEL_APP_DEPLOY!=null && pipeline.deployFlag == true) {
+		if (env.Cloud_DEPLOY_TO_Cloud_ENV!=null ) {
+			if (pipeline.bmxStructure!=null && pipeline.bmxStructure.environment!=null && env.Cloud_DEPLOY_TO_Cloud_ENV.contains(pipeline.bmxStructure.environment.toUpperCase())) {
 				printOpen("Return true", EchoLevel.ALL)
-				pipeline.deployOnIcp=true
+				pipeline.deployOnCloud=true
 				return true
 			}
 		}else {
-			printOpen("Non informed ${ICP_DEPLOY_TO_ICP_ENV}", EchoLevel.ALL)
-			pipeline.deployOnIcp=false
+			printOpen("Non informed ${Cloud_DEPLOY_TO_Cloud_ENV}", EchoLevel.ALL)
+			pipeline.deployOnCloud=false
 			return false
 		}
 	
 
 				
-		if (pipeline.branchStructure.branchType == BranchType.FEATURE && env.ICP_PARALLEL_APP_DEPLOY.contains('ALL_FEATURE')) {
-			pipeline.deployOnIcp=true
-		}else if (pipeline.branchStructure.branchType == BranchType.MASTER && env.ICP_PARALLEL_APP_DEPLOY.contains('ALL_MASTER')) {
-			pipeline.deployOnIcp=true
-		}else if ((pipeline.branchStructure.branchType == BranchType.HOTFIX || pipeline.branchStructure.branchType == BranchType.RELEASE) && env.ICP_PARALLEL_APP_DEPLOY.contains('ALL_RELEASE')) {
-			pipeline.deployOnIcp=true
+		if (pipeline.branchStructure.branchType == BranchType.FEATURE && env.Cloud_PARALLEL_APP_DEPLOY.contains('ALL_FEATURE')) {
+			pipeline.deployOnCloud=true
+		}else if (pipeline.branchStructure.branchType == BranchType.MASTER && env.Cloud_PARALLEL_APP_DEPLOY.contains('ALL_MASTER')) {
+			pipeline.deployOnCloud=true
+		}else if ((pipeline.branchStructure.branchType == BranchType.HOTFIX || pipeline.branchStructure.branchType == BranchType.RELEASE) && env.Cloud_PARALLEL_APP_DEPLOY.contains('ALL_RELEASE')) {
+			pipeline.deployOnCloud=true
 		}else {
 
 			if (artifactApp!=null)
-				pipeline.deployOnIcp=env.ICP_PARALLEL_APP_DEPLOY.contains(artifactApp)
-			else pipeline.deployOnIcp=false
+				pipeline.deployOnCloud=env.Cloud_PARALLEL_APP_DEPLOY.contains(artifactApp)
+			else pipeline.deployOnCloud=false
 			
 		}
 		
 		
-	}else pipeline.deployOnIcp=false
+	}else pipeline.deployOnCloud=false
 	
-	printOpen("The micro needs to deploy on icp  ${pipeline.deployOnIcp}", EchoLevel.ALL)
+	printOpen("The micro needs to deploy on cloud  ${pipeline.deployOnCloud}", EchoLevel.ALL)
 	
-	return pipeline.deployOnIcp
+	return pipeline.deployOnCloud
 
 }

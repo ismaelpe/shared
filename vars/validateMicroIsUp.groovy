@@ -1,20 +1,20 @@
 import com.project.alm.GlobalVars
-import com.project.alm.ICPApiResponse
+import com.project.alm.CloudApiResponse
 import com.project.alm.PipelineData
 import com.project.alm.PomXmlStructure
-import com.project.alm.ICPDeployStructure
+import com.project.alm.CloudDeployStructure
 import com.project.alm.DeployStructure
 import groovy.json.JsonSlurperClassic
 import com.project.alm.GarAppType
-import com.project.alm.ICPStateUtility
+import com.project.alm.CloudStateUtility
 import com.project.alm.ArtifactType
-import com.project.alm.ICPWorkflowStates
-import com.project.alm.ICPAppResources
+import com.project.alm.CloudWorkflowStates
+import com.project.alm.CloudAppResources
 
-import com.project.alm.ICPk8sComponentInfo
-import com.project.alm.ICPk8sComponentInfoMult
+import com.project.alm.Cloudk8sComponentInfo
+import com.project.alm.Cloudk8sComponentInfoMult
 
-import com.project.alm.ICPk8sActualStatusInfo
+import com.project.alm.Cloudk8sActualStatusInfo
 import com.project.alm.BmxUtilities
 import com.project.alm.BranchType
 import com.project.alm.ArtifactSubType

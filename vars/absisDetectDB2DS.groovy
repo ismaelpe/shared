@@ -12,7 +12,7 @@ def updateDb2Flag(String DS) {
 
     printOpen("Getting fomr catmsv ${DS}", EchoLevel.DEBUG)
 	
-	def response = sendRequestToAbsis3MS(
+	def response = sendRequestToAlm3MS(
 		'GET',
 		"${GlobalVars.URL_CATALOGO_ALM_PRO}/app/SRV.DS/${DS}",
 		null,
@@ -32,7 +32,7 @@ def updateDb2Flag(String DS) {
 		if (!DSObject.isDB2) {
             printOpen("Updating the DS ${DS}", EchoLevel.DEBUG)
 			DSObject.isDB2=true
-			def response1 = sendRequestToAbsis3MS(
+			def response1 = sendRequestToAlm3MS(
 				'PUT',
 				"${GlobalVars.URL_CATALOGO_ALM_PRO}/app",
 				DSObject,
@@ -65,7 +65,7 @@ def call(Map pipelineParameters) {
 	successPipeline = true
     
     pipeline {		
-		agent {	node (absisJenkinsAgent(pipelineParams)) }
+		agent {	node (almJenkinsAgent(pipelineParams)) }
         options {
             buildDiscarder(logRotator(numToKeepStr: '10'))
 			timestamps()
@@ -75,8 +75,8 @@ def call(Map pipelineParameters) {
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
 			JNKMSV = credentials('JNKMSV-USER-TOKEN')
-            ICP_CERT = credentials('icp-alm-pro-cert')
-            ICP_PASS = credentials('icp-alm-pro-cert-passwd')            
+            Cloud_CERT = credentials('cloud-alm-pro-cert')
+            Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')            
             http_proxy = "${GlobalVars.proxyCaixa}"
 			https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"

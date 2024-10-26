@@ -5,7 +5,7 @@ import java.util.List
 import java.util.ArrayList
 
 
-def call(def body, PipelineData pipelineData, PomXmlStructure pomXml, ICPStateUtility icpStateUtilitity, String environment) {
+def call(def body, PipelineData pipelineData, PomXmlStructure pomXml, CloudStateUtility cloudStateUtilitity, String environment) {
 
 	
 	def response = null
@@ -15,7 +15,7 @@ def call(def body, PipelineData pipelineData, PomXmlStructure pomXml, ICPStateUt
 		def bodyNew = null
 		String environmetNew = environment
 		if (pipelineData!=null && pipelineData.deployStructure!=null) {
-			environmetNew = pipelineData.deployStructure.envICP
+			environmetNew = pipelineData.deployStructure.envCloud
 		}
 
 		if (body==null) {
@@ -49,15 +49,15 @@ def call(def body, PipelineData pipelineData, PomXmlStructure pomXml, ICPStateUt
 		try {
 			printOpen("Sending deployment info to Open's catalogue", EchoLevel.INFO)
 			def deployParams=null
-			if (pipelineData.deployStructure!=null && icpStateUtilitity!=null) {
+			if (pipelineData.deployStructure!=null && cloudStateUtilitity!=null) {
 				
 				
 				deployParams = [
-					replicas: icpStateUtilitity.icpResources.getNumInstances(environmetNew),
-					memoryLimits: icpStateUtilitity.icpResources.getLimitsMemory(environmetNew)-'Mi',
-					memoryRequests: icpStateUtilitity.icpResources.getRequestsMemory(environmetNew)-'Mi',
-					cpuLimits: icpStateUtilitity.icpResources.getLimitsCPU(environmetNew)-'m',
-					cpuRequests: icpStateUtilitity.icpResources.getRequestsCPU(environmetNew)-'m'
+					replicas: cloudStateUtilitity.cloudResources.getNumInstances(environmetNew),
+					memoryLimits: cloudStateUtilitity.cloudResources.getLimitsMemory(environmetNew)-'Mi',
+					memoryRequests: cloudStateUtilitity.cloudResources.getRequestsMemory(environmetNew)-'Mi',
+					cpuLimits: cloudStateUtilitity.cloudResources.getLimitsCPU(environmetNew)-'m',
+					cpuRequests: cloudStateUtilitity.cloudResources.getRequestsCPU(environmetNew)-'m'
 				]
 			}
 			
@@ -73,7 +73,7 @@ def call(def body, PipelineData pipelineData, PomXmlStructure pomXml, ICPStateUt
 				installationType: 'I'
 			]
 			
-			response = sendRequestToAbsis3MS(
+			response = sendRequestToAlm3MS(
                 'PUT',
                 "${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${bodyNew.type}/${bodyNew.aplicacion}/version/${bodyNew.major}/${bodyNew.minor}/${bodyNew.fix}/${bodyNew.typeVersion}/deploy",
                 bodyDeploy,
@@ -107,8 +107,8 @@ def call(def body, PipelineData pipelineData, PomXmlStructure pomXml, ICPStateUt
 	
 }
 
-def call(def body, PipelineData pipelineData, PomXmlStructure pomXml, ICPStateUtility icpStateUtilitity) {
-	deployArtifactInCatMsv(body, pipelineData, pomXml, icpStateUtilitity, null)
+def call(def body, PipelineData pipelineData, PomXmlStructure pomXml, CloudStateUtility cloudStateUtilitity) {
+	deployArtifactInCatMsv(body, pipelineData, pomXml, cloudStateUtilitity, null)
 }
 
 def sendRequestToCatalog(def body) {

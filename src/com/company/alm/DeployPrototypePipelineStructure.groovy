@@ -2,7 +2,7 @@ package com.project.alm
 
 /**
  * Contains the structure of the executing pipeline
- * @author absis
+ * @author alm
  */
 
 class DeployPrototypePipelineStructure extends PipelineStructure {
@@ -36,7 +36,7 @@ class DeployPrototypePipelineStructure extends PipelineStructure {
                 ],
 				[id       : pipelineId + "200",
 				 estado   : "inactive",
-				 nombre   : "200-check-ICP-availiability",
+				 nombre   : "200-check-Cloud-availiability",
 				 resultado: "",
 				 orden    : 0
 				],

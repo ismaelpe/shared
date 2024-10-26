@@ -35,7 +35,7 @@ class RollbackPipelineStructure extends PipelineStructure {
 				],
 				[id       : pipelineId + "110",
 				 estado   : "inactive",
-				 nombre   : "110-check-icp-availability",
+				 nombre   : "110-check-cloud-availability",
 				 resultado: "",
 				 orden    : 0
 				],
@@ -53,7 +53,7 @@ class RollbackPipelineStructure extends PipelineStructure {
                 ],                
 				[id       : pipelineId + "210",
                  estado   : "inactive",
-                 nombre   : "210-undeploy-artifact-icp",
+                 nombre   : "210-undeploy-artifact-cloud",
                  resultado: "",
                  orden    : 0
                 ],

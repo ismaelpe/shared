@@ -1,7 +1,7 @@
 package com.project.alm
 
 
-public enum ICPVarPipelineCopyType {
+public enum CloudVarPipelineCopyType {
 
     EX_MODE_ALL("ALL"),
     EX_MODE_DEPLOY_IT("DEPLOY_IT"),
@@ -15,7 +15,7 @@ public enum ICPVarPipelineCopyType {
 
     private String name;
 
-    private ICPVarPipelineCopyType(String s) {
+    private CloudVarPipelineCopyType(String s) {
         name = s;
     }
 
@@ -23,7 +23,7 @@ public enum ICPVarPipelineCopyType {
         return name.equals(other);
     }
 
-    static ICPVarPipelineCopyType valueOfVarPipelineCopyType(String other) {
+    static CloudVarPipelineCopyType valueOfVarPipelineCopyType(String other) {
         values().find { it.name == other }
     }
 

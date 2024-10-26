@@ -35,7 +35,7 @@ def call(Map pipelineParameters) {
     def loggerLevel = env.loggerLevel ? ((String)env.loggerLevel).toUpperCase() : 'ALL'
     
     pipeline {		
-		agent {	node (absisJenkinsAgent(pipelineParams)) }
+		agent {	node (almJenkinsAgent(pipelineParams)) }
 		libraries {
 			lib("alm-services@$params.BRANCH_NAME")
 		}
@@ -46,8 +46,8 @@ def call(Map pipelineParameters) {
         }
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
-            ICP_CERT = credentials('icp-alm-pro-cert')
-            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
+            Cloud_CERT = credentials('cloud-alm-pro-cert')
+            Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
@@ -93,7 +93,7 @@ def call(Map pipelineParameters) {
                                           "type"            : "maven-project",
                                           "language"        : "java",
                                           "bootVersion"     : GlobalVars.INITITALIZR_DEFAULT_BOOT_VERSION, // TODO Fijado, pero, quizás debiera tenerse dinamico, leyendo el valor default de la app de initializer, parseando el HTML del GET principal
-                                          "absisCompany"    : "CBK",
+                                          "almCompany"    : "CBK",
                                           "packaging"       : "jar",
                                           "javaVersion"     : "1.8",
                                           "autocomplete"    : "",
@@ -106,11 +106,11 @@ def call(Map pipelineParameters) {
 							CONFIG_paramsMap.name = Utilities.getNameOfProjectFromProjectPath(CONFIG_project)
 							CONFIG_paramsMap.description = "Modulo+Configuracion"
 							CONFIG_paramsMap.artifactId = Utilities.getNameOfProjectFromProjectPath(CONFIG_project)
-							CONFIG_paramsMap.absisApp = "SRV_CFG"
-							CONFIG_paramsMap.groupId = "com.project.absis.apps.service.cbk.demo"
-							CONFIG_paramsMap.groupIdNoCompany = "com.project.absis.apps.service.demo"
+							CONFIG_paramsMap.almApp = "SRV_CFG"
+							CONFIG_paramsMap.groupId = "com.project.alm.apps.service.cbk.demo"
+							CONFIG_paramsMap.groupIdNoCompany = "com.project.alm.apps.service.demo"
 							CONFIG_paramsMap.simpleProject = "true"
-							CONFIG_paramsMap.packageName = "com.project.absis.apps.service.cbk.demo"
+							CONFIG_paramsMap.packageName = "com.project.alm.apps.service.cbk.demo"
 						}
 
                         if (MICRO_SERVICE_project) {
@@ -119,11 +119,11 @@ def call(Map pipelineParameters) {
                             MICRO_SERVICE_paramsMap.name = Utilities.getNameOfProjectFromProjectPath(MICRO_SERVICE_project)
                             MICRO_SERVICE_paramsMap.description = "Micro+Service+aplicativo"
                             MICRO_SERVICE_paramsMap.artifactId = Utilities.getNameOfProjectFromProjectPath(MICRO_SERVICE_project)
-                            MICRO_SERVICE_paramsMap.absisApp = "MICRO_SERVICE"
-                            MICRO_SERVICE_paramsMap.groupId = "com.project.absis.apps.service.cbk.demo"
-                            MICRO_SERVICE_paramsMap.groupIdNoCompany = "com.project.absis.apps.service.demo"
+                            MICRO_SERVICE_paramsMap.almApp = "MICRO_SERVICE"
+                            MICRO_SERVICE_paramsMap.groupId = "com.project.alm.apps.service.cbk.demo"
+                            MICRO_SERVICE_paramsMap.groupIdNoCompany = "com.project.alm.apps.service.demo"
                             MICRO_SERVICE_paramsMap.simpleProject = "true"
-                            MICRO_SERVICE_paramsMap.packageName = "com.project.absis.apps.service.cbk.demo"
+                            MICRO_SERVICE_paramsMap.packageName = "com.project.alm.apps.service.cbk.demo"
                         }
 
                         if (DATA_SERVICE_project) {
@@ -133,11 +133,11 @@ def call(Map pipelineParameters) {
                             DATA_SERVICE_paramsMap.description = "Data+Service+aplicativo"
                             DATA_SERVICE_paramsMap.artifactId = Utilities.getNameOfProjectFromProjectPath(DATA_SERVICE_project)
                             //We have to provide a non-company groupId to match the same we have in master. versions:set uses master groupId when testing
-                            DATA_SERVICE_paramsMap.groupId = "com.project.absis.apps.dataservice.demo"
-                            DATA_SERVICE_paramsMap.groupIdNoCompany = "com.project.absis.apps.dataservice.demo"
-                            DATA_SERVICE_paramsMap.absisApp = "DATA_SERVICE"
+                            DATA_SERVICE_paramsMap.groupId = "com.project.alm.apps.dataservice.demo"
+                            DATA_SERVICE_paramsMap.groupIdNoCompany = "com.project.alm.apps.dataservice.demo"
+                            DATA_SERVICE_paramsMap.almApp = "DATA_SERVICE"
                             DATA_SERVICE_paramsMap.simpleProject = "true"
-                            DATA_SERVICE_paramsMap.packageName = "com.project.absis.apps.dataservice.demo"
+                            DATA_SERVICE_paramsMap.packageName = "com.project.alm.apps.dataservice.demo"
                         }
 
                         if (LIBRARY_project) {
@@ -146,11 +146,11 @@ def call(Map pipelineParameters) {
                             LIBRARY_paramsMap.name = Utilities.getNameOfProjectFromProjectPath(LIBRARY_project)
                             LIBRARY_paramsMap.description = "Librer%C3%ADa+com%C3%BAn+de+aplicaciones"
                             LIBRARY_paramsMap.artifactId = Utilities.getNameOfProjectFromProjectPath(LIBRARY_project)
-                            LIBRARY_paramsMap.groupId = "com.project.absis.apps.cbk.demo"
-                            LIBRARY_paramsMap.groupIdNoCompany = "com.project.absis.apps.demo"
-                            LIBRARY_paramsMap.absisApp = "APP_COMMON_LIB"
+                            LIBRARY_paramsMap.groupId = "com.project.alm.apps.cbk.demo"
+                            LIBRARY_paramsMap.groupIdNoCompany = "com.project.alm.apps.demo"
+                            LIBRARY_paramsMap.almApp = "APP_COMMON_LIB"
                             LIBRARY_paramsMap.simpleProject = "true"
-                            LIBRARY_paramsMap.packageName = "com.project.absis.apps.common.demo"
+                            LIBRARY_paramsMap.packageName = "com.project.alm.apps.common.demo"
                         }
 
                         if (ARCH_MICRO_project) {
@@ -159,37 +159,37 @@ def call(Map pipelineParameters) {
                             ARCH_MICRO_paramsMap.name = Utilities.getNameOfProjectFromProjectPath(ARCH_MICRO_project)
                             ARCH_MICRO_paramsMap.description = "Proyecto+agregador+de+un+microservicio+de+arquitectura"
                             ARCH_MICRO_paramsMap.artifactId = Utilities.getNameOfProjectFromProjectPath(ARCH_MICRO_project)
-                            ARCH_MICRO_paramsMap.groupId = "com.project.absis.arch.cbk.demo"
-                            ARCH_MICRO_paramsMap.groupIdNoCompany = "com.project.absis.arch.demo"
+                            ARCH_MICRO_paramsMap.groupId = "com.project.alm.arch.cbk.demo"
+                            ARCH_MICRO_paramsMap.groupIdNoCompany = "com.project.alm.arch.demo"
                             ARCH_MICRO_paramsMap.aggregator = "MICRO_ARCH"
                             ARCH_MICRO_paramsMap.simpleProject = "false"
-                            ARCH_MICRO_paramsMap.packageName = "com.project.absis.arch.cbk.demo"
+                            ARCH_MICRO_paramsMap.packageName = "com.project.alm.arch.cbk.demo"
                         }
 
                         if (ARCH_PLUGIN_project) {
                             ARCH_PLUGIN_paramsMap = paramsMap.clone()
                             ARCH_PLUGIN_paramsMap.baseDir = Utilities.getNameOfProjectFromProjectPath(ARCH_PLUGIN_project)
                             ARCH_PLUGIN_paramsMap.name = Utilities.getNameOfProjectFromProjectPath(ARCH_PLUGIN_project)
-                            ARCH_PLUGIN_paramsMap.description = "Proyecto+agregador+de+un+plugin+absis"
+                            ARCH_PLUGIN_paramsMap.description = "Proyecto+agregador+de+un+plugin+alm"
                             ARCH_PLUGIN_paramsMap.artifactId = Utilities.getNameOfProjectFromProjectPath(ARCH_PLUGIN_project)
-                            ARCH_PLUGIN_paramsMap.groupId = "com.project.absis.arch.cbk.demo"
-                            ARCH_PLUGIN_paramsMap.groupIdNoCompany = "com.project.absis.arch.demo"
+                            ARCH_PLUGIN_paramsMap.groupId = "com.project.alm.arch.cbk.demo"
+                            ARCH_PLUGIN_paramsMap.groupIdNoCompany = "com.project.alm.arch.demo"
                             ARCH_PLUGIN_paramsMap.aggregator = "PLUGIN"
                             ARCH_PLUGIN_paramsMap.simpleProject = "false"
-                            ARCH_PLUGIN_paramsMap.packageName = "com.project.absis.arch.cbk.demo"
+                            ARCH_PLUGIN_paramsMap.packageName = "com.project.alm.arch.cbk.demo"
                         }
 
                         if (ARCH_LIBRARY_project) {
                             ARCH_LIBRARY_paramsMap = paramsMap.clone()
                             ARCH_LIBRARY_paramsMap.baseDir = Utilities.getNameOfProjectFromProjectPath(ARCH_LIBRARY_project)
                             ARCH_LIBRARY_paramsMap.name = Utilities.getNameOfProjectFromProjectPath(ARCH_LIBRARY_project)
-                            ARCH_LIBRARY_paramsMap.description = "Proyecto+agregador+de+un+starter+absis"
+                            ARCH_LIBRARY_paramsMap.description = "Proyecto+agregador+de+un+starter+alm"
                             ARCH_LIBRARY_paramsMap.artifactId = Utilities.getNameOfProjectFromProjectPath(ARCH_LIBRARY_project)
-                            ARCH_LIBRARY_paramsMap.groupId = "com.project.absis.arch.cbk.demo"
-                            ARCH_LIBRARY_paramsMap.groupIdNoCompany = "com.project.absis.arch.demo"
+                            ARCH_LIBRARY_paramsMap.groupId = "com.project.alm.arch.cbk.demo"
+                            ARCH_LIBRARY_paramsMap.groupIdNoCompany = "com.project.alm.arch.demo"
                             ARCH_LIBRARY_paramsMap.aggregator = "STARTER"
                             ARCH_LIBRARY_paramsMap.simpleProject = "false"
-                            ARCH_LIBRARY_paramsMap.packageName = "com.project.absis.arch.cbk.demo"
+                            ARCH_LIBRARY_paramsMap.packageName = "com.project.alm.arch.cbk.demo"
                         }
 
                         env.getEnvironment().each { key, value ->

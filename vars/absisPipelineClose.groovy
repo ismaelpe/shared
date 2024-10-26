@@ -105,7 +105,7 @@ def call(Map pipelineParameters) {
      * */
     
     pipeline {      
-		agent {	node (absisJenkinsAgent(agentParam)) }
+		agent {	node (almJenkinsAgent(agentParam)) }
         options {
             buildDiscarder(logRotator(numToKeepStr: '30'))
 			timestamps()
@@ -114,8 +114,8 @@ def call(Map pipelineParameters) {
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
 			JNKMSV = credentials('JNKMSV-USER-TOKEN')
-            ICP_CERT = credentials('icp-alm-pro-cert')
-            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
+            Cloud_CERT = credentials('cloud-alm-pro-cert')
+            Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
@@ -128,12 +128,12 @@ def call(Map pipelineParameters) {
                     initPipelineStep()
                 }
             }			
-			stage('check-ICP-availiability'){
+			stage('check-Cloud-availiability'){
 				when {
 					expression { isMicro }
 				}
 				steps {
-                    checkICPAvailabilityStep()
+                    checkCloudAvailabilityStep()
 				}
 			}
 			stage('close-release-bycenter') {
@@ -249,13 +249,13 @@ def initPipelineStep() {
 }
 
 /**
- * Stage checkICPAvailabilityStep
+ * Stage checkCloudAvailabilityStep
  */
-def checkICPAvailabilityStep() {
+def checkCloudAvailabilityStep() {
     printOpen("The artifact ${pomXmlStructure.artifactName} from group ${pomXmlStructure.groupId} is deploying the micro ${pomXmlStructure.artifactMicro}", EchoLevel.DEBUG)
     sendStageStartToGPL(pomXmlStructure, pipelineData, "110")
     try {
-        checkICPAvailability(pomXmlStructure,pipelineData,"PRO","DEPLOY")
+        checkCloudAvailability(pomXmlStructure,pipelineData,"PRO","DEPLOY")
         sendStageEndToGPL(pomXmlStructure, pipelineData, "110")
     } catch (Exception e) {
         sendStageEndToGPL(pomXmlStructure, pipelineData, "110", Strings.toHtml(e.getMessage()), null, "error")
@@ -284,7 +284,7 @@ def closeReleaseStep() {
     printOpen("---------------------------", EchoLevel.INFO)
     sendStageStartToGPL(pomXmlStructure, pipelineData, "200")
     pipelineData.deployFlag == true
-    initICPDeploy(pomXmlStructure, pipelineData)	
+    initCloudDeploy(pomXmlStructure, pipelineData)	
     def cannaryType=getCannaryType(pomXmlStructure,pipelineData)
     
     if (cannaryType==GlobalVars.CANARY_TYPE_CAMPAIGN) {
@@ -297,8 +297,8 @@ def closeReleaseStep() {
         }
     }					
     
-    if (pipelineData.deployOnIcp) {
-        closeBlueGreenICP(pomXmlStructure, pipelineData, existAncient)
+    if (pipelineData.deployOnCloud) {
+        closeBlueGreenCloud(pomXmlStructure, pipelineData, existAncient)
         //Si es una rama del tipo configfix no se tiene que hacer nada.
         if (originBranch!=null && !originBranch.contains('configfix')) {
             deployArtifactInCatMsv(null, pipelineData, pomXmlStructure, null , "PRO")
@@ -316,7 +316,7 @@ def closeReleaseStep() {
  * Stage cloneToOcpProStep
  */
 def cloneToOcpProStep() {
-    absisPipelineStageCloneToOcp(pomXmlStructure, pipelineData,user,'false')
+    almPipelineStageCloneToOcp(pomXmlStructure, pipelineData,user,'false')
 }
 
 /**
@@ -338,9 +338,9 @@ def refreshMicroStep() {
     sendStageStartToGPL(pomXmlStructure, pipelineData, "400")
 
     pipelineData.deployFlag == true
-    initICPDeploy(pomXmlStructure, pipelineData)
+    initCloudDeploy(pomXmlStructure, pipelineData)
 
-    if (pipelineData.deployOnIcp) refreshConfigurationViaRefreshBus(pomXmlStructure, pipelineData)
+    if (pipelineData.deployOnCloud) refreshConfigurationViaRefreshBus(pomXmlStructure, pipelineData)
         
     sendStageEndToGPL(pomXmlStructure, pipelineData, "400")
 }

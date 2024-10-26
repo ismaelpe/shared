@@ -1,7 +1,7 @@
 package com.project.alm
 
 class StressComponent implements Serializable {
-	public String icpName;
+	public String cloudName;
 	public String garName;
 	public String garType;
 	public String version;
@@ -12,10 +12,10 @@ class StressComponent implements Serializable {
 	}
 	
 	StressComponent(def contentInJson){
-		icpName = contentInJson.icpName
+		cloudName = contentInJson.cloudName
 		garName = contentInJson.garName
 		garType = contentInJson.garType
-		version = icpName-garName
+		version = cloudName-garName
 		if(contentInJson.specificSize) {
 			specificSize = new SpecificSize(contentInJson.specificSize)
 		}

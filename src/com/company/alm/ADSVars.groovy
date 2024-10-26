@@ -14,7 +14,7 @@ class ADSVars {
     static String APP_TYPE = 'SIMPLE'
     static String APP_SUBTYPE = 'APP_LIB'
 
-    static String LIB_GROUPID = "com.project.absis.ads.transaction"
+    static String LIB_GROUPID = "com.project.alm.ads.transaction"
 
 
 }

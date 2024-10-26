@@ -7,7 +7,7 @@ class MavenGoalExecutionFailureErrorConditionals {
 
     public static defaultErrorIsNotRetryableFunction = { exception ->
 
-        if (MavenGoalExecutionFailureErrorConditionals.isAnICPSSLEventualErrorOnITTest(exception)) {
+        if (MavenGoalExecutionFailureErrorConditionals.isAnCloudSSLEventualErrorOnITTest(exception)) {
 
             return false
 
@@ -35,7 +35,7 @@ class MavenGoalExecutionFailureErrorConditionals {
 
         def errorCodes = [
             isAContractServerSSLEventualErrorOnOpenApiGeneration(exception),
-            isAnICPSSLEventualErrorOnITTest(exception),
+            isAnCloudSSLEventualErrorOnITTest(exception),
             isANexusDownloadFailureDueToPrematureEndOfContentLength(exception),
             isANexusDownloadFailureDueToANonPresentPluginDependencyThatWasPreviouslyOnNexus(exception),
             isASonarScanFailureDueToAPluginDownloadIssue(exception),
@@ -79,7 +79,7 @@ class MavenGoalExecutionFailureErrorConditionals {
     }
 
     @NonCPS
-    static String isAnICPSSLEventualErrorOnITTest(Exception exception) {
+    static String isAnCloudSSLEventualErrorOnITTest(Exception exception) {
 
         if (! exception instanceof MavenGoalExecutionException) {
             return false

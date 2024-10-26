@@ -3,7 +3,7 @@ import com.project.alm.ArtifactType
 import com.project.alm.BranchType
 import com.project.alm.EchoLevel
 import com.project.alm.GlobalVars
-import com.project.alm.ICPAppResources
+import com.project.alm.CloudAppResources
 import com.project.alm.KpiAlmEvent
 import com.project.alm.KpiAlmEventOperation
 import com.project.alm.KpiAlmEventStage
@@ -25,7 +25,7 @@ def call(Map pipelineParams) {
     boolean successPipeline = false
     boolean initGpl = false
 
-    String icpEnv = GlobalVars.PRE_ENVIRONMENT
+    String cloudEnv = GlobalVars.PRE_ENVIRONMENT
 	
 	def originBranch = "${originBranchParam}"
 	def pathToRepo = "${pathToRepoParam}"
@@ -43,7 +43,7 @@ def call(Map pipelineParams) {
     Map valuesDeployed = null
 
     pipeline {
-        agent { node (absisJenkinsAgent(pipelineParams)) }
+        agent { node (almJenkinsAgent(pipelineParams)) }
         options {
             buildDiscarder(logRotator(numToKeepStr: '10'))
         }
@@ -51,8 +51,8 @@ def call(Map pipelineParams) {
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
             JNKMSV = credentials('JNKMSV-USER-TOKEN')
-            ICP_CERT = credentials('icp-alm-pro-cert')
-            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
+            Cloud_CERT = credentials('cloud-alm-pro-cert')
+            Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
@@ -75,7 +75,7 @@ def call(Map pipelineParams) {
 
 						pipelineData.buildCode = pomXmlStructure.getArtifactVersionQualifier()
 
-						currentBuild.displayName = "${pomXmlStructure.artifactName+pomXmlStructure.getMajorVersion()} of ${icpEnv.toUpperCase()} and namespace ${pomXmlStructure.getICPAppName()}"
+						currentBuild.displayName = "${pomXmlStructure.artifactName+pomXmlStructure.getMajorVersion()} of ${cloudEnv.toUpperCase()} and namespace ${pomXmlStructure.getCloudAppName()}"
 						kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.PIPELINE_STARTED, KpiLifeCycleStatus.OK)
 						almEvent = new KpiAlmEvent(
 							pomXmlStructure, pipelineData,
@@ -89,7 +89,7 @@ def call(Map pipelineParams) {
 						debugInfo(pipelineParams, pomXmlStructure, pipelineData)
 
 						//INIT AND DEPLOY
-						initICPDeploy(pomXmlStructure, pipelineData)
+						initCloudDeploy(pomXmlStructure, pipelineData)
 
 						sendStageEndToGPL(pomXmlStructure, pipelineData, "100")
 
@@ -102,10 +102,10 @@ def call(Map pipelineParams) {
 						sendStageStartToGPL(pomXmlStructure, pipelineData, "200")
 						try {
 							printOpen("Preparing wiremock server...", EchoLevel.INFO)
-							deployWiremockServerToKubernetes(pomXmlStructure, pipelineData, icpEnv)
-							sendStageEndToGPL(pomXmlStructure, pipelineData, "200", null, icpEnv)
+							deployWiremockServerToKubernetes(pomXmlStructure, pipelineData, cloudEnv)
+							sendStageEndToGPL(pomXmlStructure, pipelineData, "200", null, cloudEnv)
 						} catch (Exception e) {
-							sendStageEndToGPL(pomXmlStructure, pipelineData, "200", null, icpEnv, "error")
+							sendStageEndToGPL(pomXmlStructure, pipelineData, "200", null, cloudEnv, "error")
 							throw e
 						}
 					}
@@ -116,10 +116,10 @@ def call(Map pipelineParams) {
 					script {
 						sendStageStartToGPL(pomXmlStructure, pipelineData, "300")
 						try {
-							deployStressMicroToKubernetes(pomXmlStructure, pipelineData, requestedCPU, requestedMemory, icpEnv)
-							sendStageEndToGPL(pomXmlStructure, pipelineData, "300", null, icpEnv)
+							deployStressMicroToKubernetes(pomXmlStructure, pipelineData, requestedCPU, requestedMemory, cloudEnv)
+							sendStageEndToGPL(pomXmlStructure, pipelineData, "300", null, cloudEnv)
 						} catch (Exception e) {
-							sendStageEndToGPL(pomXmlStructure, pipelineData, "300", null, icpEnv, "error")
+							sendStageEndToGPL(pomXmlStructure, pipelineData, "300", null, cloudEnv, "error")
 							throw e
 						}
 					}

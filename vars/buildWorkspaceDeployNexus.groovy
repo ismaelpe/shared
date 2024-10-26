@@ -19,7 +19,7 @@ def call(PomXmlStructure pomXml, PipelineData pipeline) {
     boolean notWhitelisted = ! env.ALM_SERVICES_IT_TEST_JARS_GENERATION_WHITELIST.contains(pomXml.artifactName)
 
     if (testJarsApplyAsPerMicroType && notWhitelisted) {
-        mvnParameters = " ${mvnParameters} -P generate-absis-it-test-jars "
+        mvnParameters = " ${mvnParameters} -P generate-alm-it-test-jars "
         printOpen("Deploying with tests jars", EchoLevel.ALL)
     } else {
         printOpen("Deploying without tests jars", EchoLevel.ALL)

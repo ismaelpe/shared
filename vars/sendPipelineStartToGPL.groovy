@@ -107,7 +107,7 @@ def call(PipelineData pipelineData, String garAppType, String garAppName, String
 
     if (notificationToGplApplies()) {
 
-        def response = sendRequestToAbsis3MS(
+        def response = sendRequestToAlm3MS(
             'GET',
             "${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${garAppType}/${garAppName}",
             null,
@@ -126,7 +126,7 @@ def call(PipelineData pipelineData, String garAppType, String garAppName, String
             def componente = json.name
 
 
-            response = sendRequestToAbsis3MS(
+            response = sendRequestToAlm3MS(
                 'GET',
                 "${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${garAppType}/${garAppName}/version/${major}/environment/${environment}",
                 null,

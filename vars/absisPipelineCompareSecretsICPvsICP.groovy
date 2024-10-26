@@ -6,8 +6,8 @@ import com.project.alm.GlobalVars
 @Field Map pipelineParams
 
 @Field boolean successPipeline
-@Field String icpOriginEnv
-@Field String icpDestinyEnv
+@Field String cloudOriginEnv
+@Field String cloudDestinyEnv
 
 /* ************************************************************************************************************************************** *\
  * Pipeline Definition                                                                                                                    *
@@ -19,19 +19,19 @@ def call(Map pipelineParameters) {
     // redefinirlas, se hace por legibilidad del codigo
 
     successPipeline = true
-	icpOriginEnv = params.environmentIcpOriginParam
-	icpDestinyEnv = params.environmentIcpDestinyParam
+	cloudOriginEnv = params.environmentCloudOriginParam
+	cloudDestinyEnv = params.environmentCloudDestinyParam
     
     pipeline {		
-		agent {	node (absisJenkinsAgent(pipelineParams)) }
+		agent {	node (almJenkinsAgent(pipelineParams)) }
         options {
             buildDiscarder(logRotator(numToKeepStr: '10'))
             timestamps()
         }
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
-            ICP_CERT = credentials('icp-alm-pro-cert')
-            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
+            Cloud_CERT = credentials('cloud-alm-pro-cert')
+            Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
@@ -66,12 +66,12 @@ def call(Map pipelineParameters) {
  * Stage 'getSecretsStep'
  */
 def getSecretsStep() {
-    currentBuild.displayName = "Compare${env.BUILD_ID}_${icpOriginEnv}vs${icpDestinyEnv}"
+    currentBuild.displayName = "Compare${env.BUILD_ID}_${cloudOriginEnv}vs${cloudDestinyEnv}"
     
     printOpen("Get all the secrets ", EchoLevel.INFO)
-    printOpen("Compare: ${icpOriginEnv} vs ${icpDestinyEnv}", EchoLevel.INFO)
+    printOpen("Compare: ${cloudOriginEnv} vs ${cloudDestinyEnv}", EchoLevel.INFO)
     
-    compareSecretsICPToICP(icpOriginEnv,icpDestinyEnv)
+    compareSecretsCloudToCloud(cloudOriginEnv,cloudDestinyEnv)
 }
 
 /**

@@ -1,6 +1,6 @@
 import groovy.transform.Field
 import com.project.alm.EchoLevel
-import com.project.alm.ICPApiResponse
+import com.project.alm.CloudApiResponse
 import com.project.alm.SampleAppCleanMode
 import com.project.alm.GlobalVars
 import com.project.alm.Utilities
@@ -35,7 +35,7 @@ def call(Map pipelineParameters) {
 	valuesDeployed = null
     
     pipeline {		
-		agent {	node (absisJenkinsAgent(pipelineParams)) }
+		agent {	node (almJenkinsAgent(pipelineParams)) }
 		options {
             buildDiscarder(logRotator(numToKeepStr: '10'))
             timestamps()
@@ -44,8 +44,8 @@ def call(Map pipelineParameters) {
 		//Environment sobre el qual se ejecuta este tipo de job
 		environment {
 			GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
-            ICP_CERT = credentials('icp-alm-pro-cert')
-            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
+            Cloud_CERT = credentials('cloud-alm-pro-cert')
+            Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
 			https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
@@ -82,7 +82,7 @@ def call(Map pipelineParameters) {
 def getAppLogStep() {
     try {
         currentBuild.displayName = "Get ${app} build log. Build Number ${buildId}"
-        ICPApiResponse response = getBuildLog(app, namespace, buildId)
+        CloudApiResponse response = getBuildLog(app, namespace, buildId)
 
         if (response.statusCode>=200 && response.statusCode<300) {
 

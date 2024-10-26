@@ -12,7 +12,7 @@ def call(PomXmlStructure pomXml, PipelineData pipeline) {
 			String componentType = pipeline.garArtifactType.name
 			String component = pomXml.getApp(pipeline.garArtifactType)
 
-			def response = sendRequestToAbsis3MS(
+			def response = sendRequestToAlm3MS(
                 'GET',
                 "${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${componentType}/${component}",
                 null,

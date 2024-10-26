@@ -248,9 +248,9 @@ private Map getConnectionsFromReadOnlyList(Map readOnlyDatasourceList) {
 
 private validateAllTenantsFromGARHaveBeenUsed(Map tenantsFromGAR, Map datasourceApp) {
 
-	Map datasource = datasourceApp?.absis?.containsKey("datasource") ? datasourceApp.absis.datasource : [:]
-	Map readOnlyDatasource = datasourceApp?.absis?.containsKey("readonly-datasource") ? datasourceApp.absis['readonly-datasource'] : [:]
-	Map readOnlyDatasourceList = datasourceApp?.absis?.containsKey("readonly-datasource-list") ? datasourceApp.absis['readonly-datasource-list'] : [:]
+	Map datasource = datasourceApp?.alm?.containsKey("datasource") ? datasourceApp.alm.datasource : [:]
+	Map readOnlyDatasource = datasourceApp?.alm?.containsKey("readonly-datasource") ? datasourceApp.alm['readonly-datasource'] : [:]
+	Map readOnlyDatasourceList = datasourceApp?.alm?.containsKey("readonly-datasource-list") ? datasourceApp.alm['readonly-datasource-list'] : [:]
 	
 	Set expectedTenantsInConfiguration = []
 

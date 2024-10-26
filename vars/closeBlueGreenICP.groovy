@@ -7,9 +7,9 @@ import com.project.alm.DeployStructure
 import com.project.alm.AncientVersionInfo
 import com.project.alm.Utilities
 import com.project.alm.PipelineData
-import com.project.alm.ICPDeployStructure
-import com.project.alm.ICPAppResources
-import com.project.alm.ICPUtils
+import com.project.alm.CloudDeployStructure
+import com.project.alm.CloudAppResources
+import com.project.alm.CloudUtils
 import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.DumperOptions
 import java.util.Map
@@ -18,17 +18,17 @@ import java.util.HashMap
 import static org.yaml.snakeyaml.DumperOptions.FlowStyle.BLOCK
 
 def settingNewColourToTheService(def colour, def services, def idService) {
-	Map absisAppEnvQualifier=services["envQualifier"]
+	Map almAppEnvQualifier=services["envQualifier"]
 	
-	Map service=absisAppEnvQualifier[idService]
+	Map service=almAppEnvQualifier[idService]
 	service["targetColour"]=colour
 }
 
 def addStableToTheService(def colour, def services, def idService, def idStableService) {
-	Map absisAppEnvQualifier=services["envQualifier"]
+	Map almAppEnvQualifier=services["envQualifier"]
 	
 	Map service=new HashMap()
-	absisAppEnvQualifier.put(idService,service)
+	almAppEnvQualifier.put(idService,service)
 	
 	service.put("targetColour",colour)
 	service.put("id",idStableService)
@@ -38,25 +38,25 @@ def addStableToTheService(def colour, def services, def idService, def idStableS
 
 def call(PomXmlStructure artifactPom, PipelineData pipeline, boolean existAncient) {
 
-    printOpen("close Blue Green ICP", EchoLevel.ALL)
+    printOpen("close Blue Green Cloud", EchoLevel.ALL)
 	
 	String environment= pipeline.bmxStructure.environment.toUpperCase()
-	ICPDeployStructure deployStructure=new ICPDeployStructure('cxb-ab3cor','cxb-ab3app',environment)
+	CloudDeployStructure deployStructure=new CloudDeployStructure('cxb-ab3cor','cxb-ab3app',environment)
 
 	printOpen("The component to undeploy is ${pipeline.componentId}", EchoLevel.ALL)
 	
-	pipeline.componentId=generateArtifactInICP(artifactPom,pipeline,ICPUtils.generateICPResources(deployStructure.memory,environment.toUpperCase(),artifactPom.isArchProject()))
+	pipeline.componentId=generateArtifactInCloud(artifactPom,pipeline,CloudUtils.generateCloudResources(deployStructure.memory,environment.toUpperCase(),artifactPom.isArchProject()))
 	
 	
-	String icpDistCenter="ALL"
+	String cloudDistCenter="ALL"
 	
-	Map lastDeployedValuesYaml=generateValuesYamlLastICPDeployment(artifactPom,pipeline,deployStructure.envICP,icpDistCenter)
+	Map lastDeployedValuesYaml=generateValuesYamlLastCloudDeployment(artifactPom,pipeline,deployStructure.envCloud,cloudDistCenter)
 	printOpen("lastDeployedValuesYaml ${lastDeployedValuesYaml}", EchoLevel.ALL)
 	if (lastDeployedValuesYaml!=null) {
-		Map absis=lastDeployedValuesYaml["absis"]
-		printOpen("The apps ${absis} ", EchoLevel.ALL)
-		Map absisApp=absis["apps"]
-		Map absisAppEnvQualifier=absisApp["envQualifier"]
+		Map alm=lastDeployedValuesYaml["alm"]
+		printOpen("The apps ${alm} ", EchoLevel.ALL)
+		Map almApp=alm["apps"]
+		Map almAppEnvQualifier=almApp["envQualifier"]
 		//Este map es el que contiene la info del micro desplegado
 		Map stable=null
 		Map old=null
@@ -67,12 +67,12 @@ def call(PomXmlStructure artifactPom, PipelineData pipeline, boolean existAncien
 		def values=null
 		def response=null
 		
-		stable=absisAppEnvQualifier["stable"]
-		newApp=absisAppEnvQualifier["new"]
+		stable=almAppEnvQualifier["stable"]
+		newApp=almAppEnvQualifier["new"]
 		
-		if (absisAppEnvQualifier["stable"]!=null && newApp!=null) {	
+		if (almAppEnvQualifier["stable"]!=null && newApp!=null) {	
 
-			def preServices=absis['services']
+			def preServices=alm['services']
 			printOpen("The preServices ara ${preServices}", EchoLevel.ALL)
 			def services=preServices['envQualifier']
 			printOpen("The services ara ${services}", EchoLevel.ALL)
@@ -81,45 +81,45 @@ def call(PomXmlStructure artifactPom, PipelineData pipeline, boolean existAncien
 			values=new Yaml().dumpAsMap(lastDeployedValuesYaml)
 			
 			body = [
-				az: "${icpDistCenter}",
+				az: "${cloudDistCenter}",
 				environment: "${environment}",
 				values: "${values}"
 			]
 			printOpen("The body with the new  ${body}", EchoLevel.ALL)
-			response=sendRequestToICPApi("v1/application/PCLD/${artifactPom.getICPAppName()}/component/${pipeline.componentId}/deploy",body,"POST","${artifactPom.getICPAppName()}","v1/application/PCLD/${artifactPom.getICPAppName()}/component/${pipeline.componentId}/deploy",true,true, pipeline, artifactPom)
+			response=sendRequestToCloudApi("v1/application/PCLD/${artifactPom.getCloudAppName()}/component/${pipeline.componentId}/deploy",body,"POST","${artifactPom.getCloudAppName()}","v1/application/PCLD/${artifactPom.getCloudAppName()}/component/${pipeline.componentId}/deploy",true,true, pipeline, artifactPom)
 			if (response.statusCode>300) throw new Exception("Deploy failed ${artifactPom.applicationName}")
 			
 			//2 Quitar la ruta estable al old
-			settingNewColourToTheService(newApp["colour"],absis['services'],'stable')
+			settingNewColourToTheService(newApp["colour"],alm['services'],'stable')
 			values=new Yaml().dumpAsMap(lastDeployedValuesYaml)
 			body = [
-				az: "${icpDistCenter}",
+				az: "${cloudDistCenter}",
 				environment: "${environment}",
 				values: "${values}"
 			]
 			printOpen("The body with the new  ${body}", EchoLevel.ALL)
-			response=sendRequestToICPApi("v1/application/PCLD/${artifactPom.getICPAppName()}/component/${pipeline.componentId}/deploy",body,"POST","${artifactPom.getICPAppName()}","v1/application/PCLD/${artifactPom.getICPAppName()}/component/${pipeline.componentId}/deploy",true,true, pipeline, artifactPom)
+			response=sendRequestToCloudApi("v1/application/PCLD/${artifactPom.getCloudAppName()}/component/${pipeline.componentId}/deploy",body,"POST","${artifactPom.getCloudAppName()}","v1/application/PCLD/${artifactPom.getCloudAppName()}/component/${pipeline.componentId}/deploy",true,true, pipeline, artifactPom)
 			if (response.statusCode>300) throw new Exception("Deploy failed ${artifactPom.applicationName}")
 			
 			//3 Poner 0 instancias... llamar al new -> stable
 			//						  llamar al stable-> old con 0 instancias
-			absisAppEnvQualifier.remove("new")
+			almAppEnvQualifier.remove("new")
 			
-			absisAppEnvQualifier.put("stable",newApp)
+			almAppEnvQualifier.put("stable",newApp)
 			stable.put("replicas",0)
-			absisAppEnvQualifier.put("old",stable)
+			almAppEnvQualifier.put("old",stable)
 			
 
 			
 			values=new Yaml().dumpAsMap(lastDeployedValuesYaml)
 			body = [
-				az: "${icpDistCenter}",
+				az: "${cloudDistCenter}",
 				environment: "${environment}",
 				values: "${values}"
 			]
 			
 			printOpen("The body with the new  ${body}", EchoLevel.ALL)
-			response=sendRequestToICPApi("v1/application/PCLD/${artifactPom.getICPAppName()}/component/${pipeline.componentId}/deploy",body,"POST","${artifactPom.getICPAppName()}","v1/application/PCLD/${artifactPom.getICPAppName()}/component/${pipeline.componentId}/deploy",true,true, pipeline, artifactPom)
+			response=sendRequestToCloudApi("v1/application/PCLD/${artifactPom.getCloudAppName()}/component/${pipeline.componentId}/deploy",body,"POST","${artifactPom.getCloudAppName()}","v1/application/PCLD/${artifactPom.getCloudAppName()}/component/${pipeline.componentId}/deploy",true,true, pipeline, artifactPom)
 			if (response.statusCode>300) throw new Exception("Deploy failed ${artifactPom.applicationName}")
 			
 			//Tenemos estable 
@@ -127,20 +127,20 @@ def call(PomXmlStructure artifactPom, PipelineData pipeline, boolean existAncien
 			//Solo tenemos una version que pasara de new a stable
 			String definitiveRoute=BmxUtilities.calculateArtifactId(artifactPom,pipeline.branchStructure).toLowerCase()
 			
-			addStableToTheService(newApp["colour"], absis['services'], 'stable',definitiveRoute) //deberia ser el routing definito)
+			addStableToTheService(newApp["colour"], alm['services'], 'stable',definitiveRoute) //deberia ser el routing definito)
 			
 				
 				
 			values=new Yaml().dumpAsMap(lastDeployedValuesYaml)
 			
 			body = [
-				az: "${icpDistCenter}",
+				az: "${cloudDistCenter}",
 				environment: "${environment}",
 				values: "${values}"
 			]
 			
 			printOpen("The body with the new  ${body}", EchoLevel.ALL)
-			response=sendRequestToICPApi("v1/application/PCLD/${artifactPom.getICPAppName()}/component/${pipeline.componentId}/deploy",body,"POST","${artifactPom.getICPAppName()}","v1/application/PCLD/${artifactPom.getICPAppName()}/component/${pipeline.componentId}/deploy",true,true, pipeline, artifactPom)
+			response=sendRequestToCloudApi("v1/application/PCLD/${artifactPom.getCloudAppName()}/component/${pipeline.componentId}/deploy",body,"POST","${artifactPom.getCloudAppName()}","v1/application/PCLD/${artifactPom.getCloudAppName()}/component/${pipeline.componentId}/deploy",true,true, pipeline, artifactPom)
 			if (response.statusCode>300) throw new Exception("Deploy failed ${artifactPom.applicationName}")
 		
 			
@@ -150,7 +150,7 @@ def call(PomXmlStructure artifactPom, PipelineData pipeline, boolean existAncien
 			printOpen("Setteamos la ruta estable contra la el micro estable ${stable}", EchoLevel.ALL)
 			
 			
-			def preServices=absis['services']
+			def preServices=alm['services']
 			printOpen("The preServices ara ${preServices}", EchoLevel.ALL)
 			def services=preServices['envQualifier']
 			
@@ -161,12 +161,12 @@ def call(PomXmlStructure artifactPom, PipelineData pipeline, boolean existAncien
 				values=new Yaml().dumpAsMap(lastDeployedValuesYaml)
 				
 				body = [
-					az: "${icpDistCenter}",
+					az: "${cloudDistCenter}",
 					environment: "${environment}",
 					values: "${values}"
 				]
 				printOpen("El body es de ${body}", EchoLevel.ALL)
-				response=sendRequestToICPApi("v1/application/PCLD/${artifactPom.getICPAppName()}/component/${pipeline.componentId}/deploy",body,"POST","${artifactPom.getICPAppName()}","v1/application/PCLD/${artifactPom.getICPAppName()}/component/${pipeline.componentId}/deploy",true,true, pipeline, artifactPom)
+				response=sendRequestToCloudApi("v1/application/PCLD/${artifactPom.getCloudAppName()}/component/${pipeline.componentId}/deploy",body,"POST","${artifactPom.getCloudAppName()}","v1/application/PCLD/${artifactPom.getCloudAppName()}/component/${pipeline.componentId}/deploy",true,true, pipeline, artifactPom)
 				if (response.statusCode>300) throw new Exception("Deploy failed ${artifactPom.applicationName}")
 			
 			}

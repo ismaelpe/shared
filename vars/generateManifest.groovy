@@ -105,7 +105,7 @@ def call(PomXmlStructure artifactPom, DeployStructure deploy, PipelineData pipel
 			} else if (x.contains('services:')) {
                 printOpen("services found", EchoLevel.DEBUG)
 				servicesFound = true
-			} else if (servicesFound && !x.contains('configserver') && !x.contains('absis-kafka-cloudbus')) {
+			} else if (servicesFound && !x.contains('configserver') && !x.contains('alm-kafka-cloudbus')) {
                 printOpen("The service is ${x}", EchoLevel.DEBUG)
 				if ((GarAppType.valueOfType(garAppType) == GarAppType.DATA_SERVICE && x.indexOf('database') == -1) ||
 						GarAppType.valueOfType(garAppType) != GarAppType.DATA_SERVICE)
@@ -139,7 +139,7 @@ def call(PomXmlStructure artifactPom, DeployStructure deploy, PipelineData pipel
 			vcapsServiceIds.each {
 				def cups = it
 				
-			   //if alternativePath=true the deploy is to ICP and we dont share secrets with the TST environment
+			   //if alternativePath=true the deploy is to Cloud and we dont share secrets with the TST environment
 			  if (!alternativePath && (deploy.environment.equals('eden') || deploy.environment.equals('dev'))) {
 				//Exists the cup dev on the environment
 				def status = sh(

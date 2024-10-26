@@ -106,8 +106,8 @@ class PomXmlStructure {
     }
 	
 	
-	public boolean lowerThanMinICPArchVersion() {
-		return Utilities.isLowerThan(MavenVersionUtilities.getArtifactVersionWithoutQualifier(archVersion), GlobalVars.MINIMUM_VERSION_ARCH_ICP)
+	public boolean lowerThanMinCloudArchVersion() {
+		return Utilities.isLowerThan(MavenVersionUtilities.getArtifactVersionWithoutQualifier(archVersion), GlobalVars.MINIMUM_VERSION_ARCH_Cloud)
 	}
 
     public String getArtifactMajorVersion() {
@@ -451,19 +451,19 @@ class PomXmlStructure {
 	
 	}
 	
-    public String getICPAppName() {
-		if (isArchProject()) return GlobalVars.ICP_APP_ARCH
-		else return GlobalVars.ICP_APP_APPS
+    public String getCloudAppName() {
+		if (isArchProject()) return GlobalVars.Cloud_APP_ARCH
+		else return GlobalVars.Cloud_APP_APPS
     }
 
 
-    public String getICPAppId() {
-		if (isArchProject()) return GlobalVars.ICP_APP_ID_ARCH
-		else return GlobalVars.ICP_APP_ID_APPS
+    public String getCloudAppId() {
+		if (isArchProject()) return GlobalVars.Cloud_APP_ID_ARCH
+		else return GlobalVars.Cloud_APP_ID_APPS
     }
 	
 	public boolean isApplicationWithNewHealthGroups() {
-		boolean isApplicationAtCustomLivenessProbeApplicationsList = GlobalVars.ICP_CUSTOM_LIVENESSPROBE_APPLICATIONS.contains(artifactName)
+		boolean isApplicationAtCustomLivenessProbeApplicationsList = GlobalVars.Cloud_CUSTOM_LIVENESSPROBE_APPLICATIONS.contains(artifactName)
 		boolean isApplicationArchVersionLowerThan1_15 = Utilities.isLowerThan(MavenVersionUtilities.getArtifactVersionWithoutQualifier(archVersion), "1.15.0")
 		return isApplicationAtCustomLivenessProbeApplicationsList && !isApplicationArchVersionLowerThan1_15;
 	}

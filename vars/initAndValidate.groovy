@@ -66,7 +66,7 @@ def call(PomXmlStructure pomXmlStructure,PipelineData pipelineData,Map pipelineP
             new GitUtils(this).checkNoFilesWithChangesPendingToBeMerged()
 
             //INIT AND DEPLOY
-            initICPDeploy(pomXmlStructure, pipelineData)
+            initCloudDeploy(pomXmlStructure, pipelineData)
         } catch (Exception e) {
             printOpen("${e.getMessage()}", EchoLevel.ERROR)
             sendStageEndToGPL(pomXmlStructure, pipelineData, "100", null, null, "error")

@@ -25,25 +25,25 @@ class Maps {
 	
 	public static  microServiceSimple = [
 		"simpleProject"     : "true",
-		"absisApp": "MICRO_SERVICE",
+		"almApp": "MICRO_SERVICE",
 		"packaging": "jar",
 		"description":"Micro_Service_aplicativo",
-		"groupId": "com.project.absis.apps.service"
+		"groupId": "com.project.alm.apps.service"
 		
 	]
 	
 	public static dataServiceSimple = [
 		"simpleProject": "true",
-		"absisApp": "DATA_SERVICE",
-		"groupId": "com.project.absis.apps.dataservice",
+		"almApp": "DATA_SERVICE",
+		"groupId": "com.project.alm.apps.dataservice",
 		"description": "Dataservice_aplicativo",
 		"packaging": "jar"
 	]
 	
 	public static bffServiceSimple = [
 		"simpleProject": "true",
-		"absisApp": "BFF_SERVICE",
-		"groupId": "com.project.absis.apps.bff",
+		"almApp": "BFF_SERVICE",
+		"groupId": "com.project.alm.apps.bff",
 		"description": "Backend_for_FrontEnd",
 		"packaging": "jar"
 	]
@@ -51,8 +51,8 @@ class Maps {
 	
 	public static appCommonLibSimple = [
 		"simpleProject": "true",
-		"absisApp": "APP_COMMON_LIB",
-		"groupId": "com.project.absis.apps.lib",
+		"almApp": "APP_COMMON_LIB",
+		"groupId": "com.project.alm.apps.lib",
 		"description": "Librería_común_de_aplicaciones",
 		"packaging": "jar"
 	]
@@ -61,7 +61,7 @@ class Maps {
 	public static appCommonLibAgregador = [
 		"simpleProject": "false",
 		"aggregator": "APP_LIB",
-		"groupId": "com.project.absis.apps.lib",
+		"groupId": "com.project.alm.apps.lib",
 		"description": "Librería_común_de_aplicaciones_con_sample_app",
 		"packaging": "jar"
 	]
@@ -71,7 +71,7 @@ class Maps {
 		"aggregator": "MICRO_ARCH",
 		"packaging": "jar",
 		"description":"Micro_Service_arquitectura",
-		"groupId": "com.project.absis.arch"
+		"groupId": "com.project.alm.arch"
 		
 	]
 	
@@ -80,13 +80,13 @@ class Maps {
 		"aggregator": "PLUGIN",
 		"packaging": "jar",
 		"description":"Plugin_arquitectura",
-		"groupId": "com.project.absis.arch"
+		"groupId": "com.project.alm.arch"
 	]
 	
 	public static archConfig = [
 		"simpleProject": "true",
-		"absisApp": "ARCH_CFG",
-		"groupId": "com.project.absis.arch.config.lib",
+		"almApp": "ARCH_CFG",
+		"groupId": "com.project.alm.arch.config.lib",
 		"description": "Librería_de_configuracion_de_aplicaciones",
 		"packaging": "jar"
 	]
@@ -94,8 +94,8 @@ class Maps {
 	
 	public static srvConfig = [
 		"simpleProject": "true",
-		"absisApp": "SRV_CFG",
-		"groupId": "com.project.absis.apps.config.lib",
+		"almApp": "SRV_CFG",
+		"groupId": "com.project.alm.apps.config.lib",
 		"description": "Librería_de_configuracion_de_aplicaciones",
 		"packaging": "jar"
 	]
@@ -103,8 +103,8 @@ class Maps {
 	
 	public static archCommonLib = [
 		"simpleProject": "true",
-		"absisApp": "ARCH_API_LIB",
-		"groupId": "com.project.absis.arch",
+		"almApp": "ARCH_API_LIB",
+		"groupId": "com.project.alm.arch",
 		"description": "Librería_común_de_arquitectura",
 		"packaging": "jar"
 	]
@@ -112,7 +112,7 @@ class Maps {
 	public static archStarterLib = [
 		"simpleProject": "false",
 		"aggregator": "ARCH_LIB",
-		"groupId": "com.project.absis.arch",
+		"groupId": "com.project.alm.arch",
 		"description": "Librería_starter_de_arquitectura",
 		"packaging": "jar"
 	]
@@ -166,7 +166,7 @@ def prepareParams(String empresa,String nameApp,String typeApp,String domain) {
 	
 						
 	params.putAll(Maps.commonParams)
-	params.put("absisCompany",empresa)
+	params.put("almCompany",empresa)
 	params.put("baseDir",nameApp)
 	params.put("groupId", (params.get("groupId") + "." +empresa + "."+domainNormalized).toLowerCase())
 	params.put("groupIdNoCompany",params.get("groupId"))
@@ -203,7 +203,7 @@ def call(String empresa,String nameApp,String typeApp,String domain,String zipFi
         waitUntil(initialRecurrencePeriod: 15000) {
             try {
                 fecha = new Date()
-                printOpen("Absis3 Initilizr iteration at date ${fecha}", EchoLevel.DEBUG)
+                printOpen("Alm3 Initilizr iteration at date ${fecha}", EchoLevel.DEBUG)
 					
 					String url = GlobalVars.URL_ZIP_INITIALIZR_PRO + params
 
@@ -228,7 +228,7 @@ def call(String empresa,String nameApp,String typeApp,String domain,String zipFi
 	if (response.status == 200 ) {
 		//return the nameApp, if everything was fine 
         return paramsForApp
-    } else throw new Exception("Unexpected response when sending request to Absis3 Initilizr! response (${response?.status})")
+    } else throw new Exception("Unexpected response when sending request to Alm3 Initilizr! response (${response?.status})")
 
 }
 

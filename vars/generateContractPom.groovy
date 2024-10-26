@@ -6,14 +6,14 @@ import com.project.alm.Utilities
 import com.project.alm.MavenVersionUtilities
 
 
-def call(PomXmlStructure pomXml, PipelineData pipeline, boolean clientAbsis2) {
+def call(PomXmlStructure pomXml, PipelineData pipeline, boolean clientAlm2) {
 	
 	printOpen("Generating Revapi POM for artifactId: ${pomXml.artifactName} version: ${pomXml.artifactVersion}", EchoLevel.INFO)
 
 	//1. Generamos el cliente con revapi + plugin
 	//2. La generacion se publica en Artifactory.
-	//3. Cliente Absis3
-	//4. Cliente Absis2
+	//3. Cliente Alm3
+	//4. Cliente Alm2
 
 	String groupContract = "${pomXml.groupId}.contract"
 
@@ -30,8 +30,8 @@ def call(PomXmlStructure pomXml, PipelineData pipeline, boolean clientAbsis2) {
 	String artifactName = pomXml.artifactName
 	String archVersion = pomXml.archVersion
 
-	if (clientAbsis2) {
-		artifactName = "${artifactName}Absis2"
+	if (clientAlm2) {
+		artifactName = "${artifactName}Alm2"
 		if (!Utilities.isLowerThan(MavenVersionUtilities.getArtifactVersionWithoutQualifier(pomXml.archVersion), GlobalVars.MAX_VERSION_ARCH_NEXUS)) {
 			archVersion = GlobalVars.MAX_VERSION_ARCH_NEXUS
 			pipeline.revapiStructure.remoteSwaggerContractPath = getRemoteSwaggerContractFile(pipeline)

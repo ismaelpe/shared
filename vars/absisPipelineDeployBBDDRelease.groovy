@@ -25,9 +25,9 @@ import com.project.alm.KpiAlmEventOperation
 @Field String envParam
 @Field String user
 
-@Field String deployICPPhases
-@Field String resultDeployICP
-@Field ICPStateUtility icpStateUtilitity
+@Field String deployCloudPhases
+@Field String resultDeployCloud
+@Field CloudStateUtility cloudStateUtilitity
 
 @Field PomXmlStructure pomXmlStructure
 @Field PipelineData pipelineData
@@ -67,9 +67,9 @@ def call(Map pipelineParameters) {
 	envParam = params.envParam
     user = params.userId
 
-    deployICPPhases = "01-pre-deploy"
-    resultDeployICP = "OK"
-    icpStateUtilitity = null
+    deployCloudPhases = "01-pre-deploy"
+    resultDeployCloud = "OK"
+    cloudStateUtilitity = null
 
     initGpl = false
     successPipeline = false
@@ -85,7 +85,7 @@ def call(Map pipelineParameters) {
      * 3. Push GIT + etiqueta
      */    
     pipeline {		
-		agent {	node (absisJenkinsAgent(pipelineParams)) }
+		agent {	node (almJenkinsAgent(pipelineParams)) }
         options {
             buildDiscarder(logRotator(numToKeepStr: '30'))
 			timestamps()
@@ -94,8 +94,8 @@ def call(Map pipelineParameters) {
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
 			JNKMSV = credentials('JNKMSV-USER-TOKEN')
-            ICP_CERT = credentials('icp-alm-pro-cert')
-            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
+            Cloud_CERT = credentials('cloud-alm-pro-cert')
+            Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
@@ -108,12 +108,12 @@ def call(Map pipelineParameters) {
                     getGitRepoStep()
                 }
             }
-			stage('check-ICP-availiability'){
+			stage('check-Cloud-availiability'){
 				when {
-					expression { pipelineData.deployFlag && pipelineData.deployOnIcp }
+					expression { pipelineData.deployFlag && pipelineData.deployOnCloud }
 				}
 				steps {
-                    checkICPAvailiabilityStep()
+                    checkCloudAvailiabilityStep()
 				}
 			}
             stage('prepare-Release') {
@@ -216,19 +216,19 @@ def getGitRepoStep() {
     debugInfo(pipelineParams, pomXmlStructure, pipelineData)
 
     //INIT AND DEPLOY
-    initICPDeploy(pomXmlStructure, pipelineData)
+    initCloudDeploy(pomXmlStructure, pipelineData)
 
     sendStageEndToGPL(pomXmlStructure, pipelineData, "100")
 }
 
 /**
- * Stage 'checkICPAvailiabilityStep'
+ * Stage 'checkCloudAvailiabilityStep'
  */
-def checkICPAvailiabilityStep() {
+def checkCloudAvailiabilityStep() {
     printOpen("The artifact ${pomXmlStructure.artifactName}  from group ${pomXmlStructure.groupId} the micro to deploy is ${pomXmlStructure.artifactMicro}", EchoLevel.INFO)
     sendStageStartToGPL(pomXmlStructure, pipelineData, "110")
     try {
-        checkICPAvailability(pomXmlStructure,pipelineData,envParam,"BOTH")
+        checkCloudAvailability(pomXmlStructure,pipelineData,envParam,"BOTH")
         sendStageEndToGPL(pomXmlStructure, pipelineData, "110")
     } catch (Exception e) {
         sendStageEndToGPL(pomXmlStructure, pipelineData, "110", Strings.toHtml(e.getMessage()), null, "error")

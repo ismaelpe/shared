@@ -35,14 +35,14 @@ class BmxUtilities {
         return newRoute.toLowerCase()
     }
 
-    static String calculatePathToMicro(PomXmlStructure pomXml, BranchStructure branchStructure,ICPStateUtility icpStateUtility) {
+    static String calculatePathToMicro(PomXmlStructure pomXml, BranchStructure branchStructure,CloudStateUtility cloudStateUtility) {
 
         String pathToMicro=""
 		
 		if (branchStructure.branchType == BranchType.FEATURE) {
 			//si es feature
-			pathToMicro=icpStateUtility.pathFeature
-		}else if (icpStateUtility.sampleAppFlag) {
+			pathToMicro=cloudStateUtility.pathFeature
+		}else if (cloudStateUtility.sampleAppFlag) {
 			//si es sample app
 			pathToMicro= calculateArtifactId(pomXml,branchStructure,true).toLowerCase()
 		}else {
@@ -158,10 +158,10 @@ class BmxUtilities {
 			SyntheticTestStructure syntheticTestStructure = new SyntheticTestStructure()
 			syntheticTestStructure.appName = item
 			if (isArchMicro) {
-				syntheticTestStructure.urlIcp = "https://k8sgateway.${enviromentParam.toLowerCase()}.icp-${dataCenterParam}.absis.cloud.lacaixa.es/arch-service/${syntheticTestStructure.appName}"
+				syntheticTestStructure.urlIcp = "https://k8sgateway.${enviromentParam.toLowerCase()}.cloud-${dataCenterParam}.alm.cloud.lacaixa.es/arch-service/${syntheticTestStructure.appName}"
                 syntheticTestStructure.isArchMicro = true
 			}else {
-				syntheticTestStructure.urlIcp = "https://k8sgateway.${enviromentParam.toLowerCase()}.icp-${dataCenterParam}.absis.cloud.lacaixa.es/${syntheticTestStructure.appName}"
+				syntheticTestStructure.urlIcp = "https://k8sgateway.${enviromentParam.toLowerCase()}.cloud-${dataCenterParam}.alm.cloud.lacaixa.es/${syntheticTestStructure.appName}"
                 syntheticTestStructure.isArchMicro = false
 			}
 			syntheticTestStructure.resultOK = true

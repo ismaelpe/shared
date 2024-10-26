@@ -3,16 +3,16 @@ package com.project.alm
 import com.project.alm.DataSourceGenerator
 
 
-class ICPApiResponse{
+class CloudApiResponse{
 
 	int statusCode
 	def body
 	
-	ICPApiResponse(int httpStatusCode, def responseBody){
+	CloudApiResponse(int httpStatusCode, def responseBody){
 		statusCode=httpStatusCode
 		body=responseBody
 	}
-	ICPApiResponse(){
+	CloudApiResponse(){
 		statusCode=500		
 	}
 	@NonCPS

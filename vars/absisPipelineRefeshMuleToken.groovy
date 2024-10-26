@@ -5,7 +5,7 @@ import com.project.alm.GlobalVars
 \* ************************************************************************************************************************************** */
 def call() {
     pipeline {		
-        agent {	node (absisJenkinsAgent('standard')) }
+        agent {	node (almJenkinsAgent('standard')) }
         options {
             buildDiscarder(logRotator(numToKeepStr: '7'))
             timestamps()

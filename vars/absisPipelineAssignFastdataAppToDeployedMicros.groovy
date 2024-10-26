@@ -31,7 +31,7 @@ def call(Map pipelineParameters) {
 	catalogEnvironment = params.catalogEnvironment
     
     pipeline {		
-		agent {	node (absisJenkinsAgent(pipelineParams)) }
+		agent {	node (almJenkinsAgent(pipelineParams)) }
         options {
 			buildDiscarder(logRotator(numToKeepStr: '0'))
 			timestamps()
@@ -40,8 +40,8 @@ def call(Map pipelineParameters) {
         //Environment sobre el qual se ejecuta este tipo de job
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
-            ICP_CERT = credentials('icp-alm-pro-cert')
-            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
+            Cloud_CERT = credentials('cloud-alm-pro-cert')
+            Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
@@ -263,7 +263,7 @@ String getAppFromCatalog(String appName) {
 
 def getListAllAppsFromCatalog() {
 	def env = catalogEnvironment.toUpperCase()
-	def response = sendRequestToAbsis3MS(
+	def response = sendRequestToAlm3MS(
 		'GET',
 		"${catalogUrl}/app/${env}",
 		null,
@@ -376,7 +376,7 @@ String extractFastdatadAppForProducer(String fileContent) {
 
 def updateFastdataAppInCatalog(String appType, String appName, String fastdataApp) {
 	def body = [id: fastdataApp]
-	def response = sendRequestToAbsis3MS(
+	def response = sendRequestToAlm3MS(
 		'PUT',
 		"${catalogUrl}/app/${appType}/${appName}/fastdata",
 		body,

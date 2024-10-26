@@ -21,8 +21,8 @@ import com.project.alm.GarAppType
 @Field boolean successPipeline
 @Field String componentId
 @Field String componentName
-@Field String appICPId
-@Field String appICP
+@Field String appCloudId
+@Field String appCloud
 @Field boolean initGpl
 
 //Pipeline para realizar la baja de una version de un servicio desplegado en
@@ -61,7 +61,7 @@ def call(Map pipelineParameters) {
      * */
     
     pipeline {		
-		agent {	node (absisJenkinsAgent(pipelineParams)) }
+		agent {	node (almJenkinsAgent(pipelineParams)) }
         options {
             buildDiscarder(logRotator(numToKeepStr: '10'))
 			timestamps()
@@ -70,8 +70,8 @@ def call(Map pipelineParameters) {
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
 			JNKMSV = credentials('JNKMSV-USER-TOKEN')
-            ICP_CERT = credentials('icp-alm-pro-cert')
-            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
+            Cloud_CERT = credentials('cloud-alm-pro-cert')
+            Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
@@ -97,12 +97,12 @@ def call(Map pipelineParameters) {
                     deleteComponentFromEnvironmentStep()
                 }
             }
-			stage('undeploy-artifact-from-icp') {
+			stage('undeploy-artifact-from-cloud') {
 				when {
 					expression { componentId != null }
 				}
 				steps {
-                    undeployArtifactFromIcpStep()
+                    undeployArtifactFromCloudStep()
 				}
 			}
             stage('delete-config-files') {
@@ -155,8 +155,8 @@ def initPipelineStep() {
     pomXmlStructure = new PomXmlStructure(ArtifactType.valueOfType(artifactType), ArtifactSubType.valueOfSubType(artifactSubType), artifact, version, artifact)
     componentName = MavenUtils.sanitizeArtifactName(pomXmlStructure.artifactName, pipelineData.garArtifactType).toUpperCase() + pomXmlStructure.getArtifactMajorVersion()
     
-    appICPId=pomXmlStructure.getICPAppId()
-    appICP=pomXmlStructure.getICPAppName()
+    appCloudId=pomXmlStructure.getCloudAppId()
+    appCloud=pomXmlStructure.getCloudAppName()
     
     debugInfo(pipelineParams, pomXmlStructure, pipelineData)
     
@@ -176,9 +176,9 @@ def validateComponentAndDependeciesStep() {
     sendStageStartToGPL(pomXmlStructure, pipelineData, "200")
     printOpen("Procedemos a buscar el componente ${componentName}", EchoLevel.INFO)
 	//aps/api/publisher/v2/api/application/PCLD/AB3APP/component/
-    //ICPApiResponse response=sendRequestToICPApi("v1/application/${appICPId}/component",null,"GET","${appICP}","",false,false, pipelineData, pomXmlStructure)
+    //CloudApiResponse response=sendRequestToCloudApi("v1/application/${appCloudId}/component",null,"GET","${appCloud}","",false,false, pipelineData, pomXmlStructure)
 	try {
-		ICPApiResponse response=sendRequestToICPApi("v2/api/application/PCLD/${appICP}/component/${componentName}",null,"GET","${appICP}","",false,false, pipelineData, pomXmlStructure)
+		CloudApiResponse response=sendRequestToCloudApi("v2/api/application/PCLD/${appCloud}/component/${componentName}",null,"GET","${appCloud}","",false,false, pipelineData, pomXmlStructure)
 	    if (response.statusCode>=200 && response.statusCode<300) {
 			//No nos interesa el id del componente
 			componentId=1		
@@ -195,14 +195,14 @@ def validateComponentAndDependeciesStep() {
 def deleteComponentFromEnvironmentStep() {
     sendStageStartToGPL(pomXmlStructure, pipelineData, "300")
     //Only delete when enviroment is PRO
-    deleteAppICP(componentName, componentId, appICPId, appICP, enviroment.toUpperCase(), 'ALL', enviroment == GlobalVars.PRO_ENVIRONMENT )
+    deleteAppCloud(componentName, componentId, appCloudId, appCloud, enviroment.toUpperCase(), 'ALL', enviroment == GlobalVars.PRO_ENVIRONMENT )
     sendStageEndToGPL(pomXmlStructure, pipelineData, "300", null, pipelineData.bmxStructure.environment)
 }
 
 /** 
- * Step undeployArtifactFromIcpStep
+ * Step undeployArtifactFromCloudStep
  */
-def undeployArtifactFromIcpStep() {
+def undeployArtifactFromCloudStep() {
     sendStageStartToGPL(pomXmlStructure, pipelineData, "305")
     undeployArtifactInCatMsv(pipelineData,pomXmlStructure,enviroment,false)
     sendStageEndToGPL(pomXmlStructure, pipelineData, "305")

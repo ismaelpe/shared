@@ -1,13 +1,13 @@
 package com.project.alm
 
 import java.util.ArrayList
-import com.project.alm.ICPk8sInstancesApp
+import com.project.alm.Cloudk8sInstancesApp
 
 
 import java.lang.Integer
 
 
-class ICPk8sComponentPodInfo{
+class Cloudk8sComponentPodInfo{
 
 
 		
@@ -18,7 +18,7 @@ class ICPk8sComponentPodInfo{
 
 	
 	
-	ICPk8sComponentPodInfo() {
+	Cloudk8sComponentPodInfo() {
 	}
 
 	String toString() {

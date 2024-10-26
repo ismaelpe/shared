@@ -18,7 +18,7 @@ def call(Map pipelineParameters) {
     successPipeline = true
     
     pipeline {		
-		agent {	node (absisJenkinsAgent(pipelineParams)) }
+		agent {	node (almJenkinsAgent(pipelineParams)) }
         options {
             buildDiscarder(logRotator(numToKeepStr: '10'))
 			timestamps()
@@ -27,17 +27,17 @@ def call(Map pipelineParameters) {
         //Environment sobre el qual se ejecuta este tipo de job
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
-            ICP_CERT = credentials('icp-alm-pro-cert')
-            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
+            Cloud_CERT = credentials('cloud-alm-pro-cert')
+            Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
             proxyPort = "${GlobalVars.proxyCaixaPort}"
         }
         stages {
-            stage("clean-icp") {
+            stage("clean-cloud") {
                 steps {
-                   cleanIcpStep()
+                   cleanCloudStep()
                 }
             }
         }
@@ -60,21 +60,21 @@ def call(Map pipelineParameters) {
 \* ************************************************************************************************************************************** */
 
 /**
- * Stage 'cleanIcpStep'
+ * Stage 'cleanCloudStep'
  */
-def cleanIcpStep() {
+def cleanCloudStep() {
     Date today = new Date().clearTime()
     Date priorDate = today - Integer.parseInt(params.cleanEdenDays)
     
-    currentBuild.displayName = "Cleaning ICP EDEN ${params.cleanEden} apps before ${priorDate}" 
+    currentBuild.displayName = "Cleaning Cloud EDEN ${params.cleanEden} apps before ${priorDate}" 
 
-    printOpen("Cleaning ICP with parameters ", EchoLevel.INFO)
+    printOpen("Cleaning Cloud with parameters ", EchoLevel.INFO)
     printOpen("Clean Eden: ${params.cleanEden}", EchoLevel.INFO)
     printOpen("Clean Eden days before: ${params.cleanEdenDays}", EchoLevel.INFO)
     printOpen("Clean Sample app mode: ${params.sampleAppCleanMode}", EchoLevel.INFO)
 
     SampleAppCleanMode sampleAppCleanMode = params.sampleAppCleanMode
-    cleanICP(params.cleanEden, Integer.valueOf(params.cleanEdenDays), sampleAppCleanMode, params.cleanEdenDays)
+    cleanCloud(params.cleanEden, Integer.valueOf(params.cleanEdenDays), sampleAppCleanMode, params.cleanEdenDays)
 }
 
 /**

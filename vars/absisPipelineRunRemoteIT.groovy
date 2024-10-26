@@ -14,7 +14,7 @@ import com.project.alm.DistributionModePRO
 @Field String  versionOrBranch
 @Field String  artifactSubType
 @Field String  artifactType
-@Field String  icpEnv
+@Field String  cloudEnv
 @Field String  center
 @Field String  endpoint
 @Field PomXmlStructure pomXmlStructure
@@ -38,7 +38,7 @@ def call(Map pipelineParameters) {
     versionOrBranch = params.versionOrBranchParam
     artifactSubType = params.artifactSubTypeParam
     artifactType = params.artifactTypeParam
-    icpEnv = params.environmentParam
+    cloudEnv = params.environmentParam
     center = params.centerParam
     endpoint = params.endpoint
 
@@ -49,7 +49,7 @@ def call(Map pipelineParameters) {
      * 3.5. Preparar Canario
      */
     pipeline {
-        agent {    node(absisJenkinsAgent(pipelineParams)) }
+        agent {    node(almJenkinsAgent(pipelineParams)) }
         options {
             buildDiscarder(logRotator(numToKeepStr: '30'))
             timestamps()
@@ -57,8 +57,8 @@ def call(Map pipelineParameters) {
         }
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
-            ICP_CERT = credentials('icp-alm-pro-cert')
-            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
+            Cloud_CERT = credentials('cloud-alm-pro-cert')
+            Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
@@ -94,9 +94,9 @@ def call(Map pipelineParameters) {
  */
 def getGitRepoStep() {
     initGlobalVars(pipelineParams)
-    if (ICPVarPipelineCopyType.valueOfVarPipelineCopyType(originType) == ICPVarPipelineCopyType.ORIGIN_TAG) {
+    if (CloudVarPipelineCopyType.valueOfVarPipelineCopyType(originType) == CloudVarPipelineCopyType.ORIGIN_TAG) {
         pomXmlStructure = getGitRepo(pathToRepo, '', repoName, false, ArtifactType.valueOfType(artifactType), ArtifactSubType.valueOfSubType(artifactSubType), versionOrBranch, true)
-    }else if (ICPVarPipelineCopyType.valueOfVarPipelineCopyType(originType) == ICPVarPipelineCopyType.ORIGIN_BRANCH) {
+    }else if (CloudVarPipelineCopyType.valueOfVarPipelineCopyType(originType) == CloudVarPipelineCopyType.ORIGIN_BRANCH) {
         pomXmlStructure = getGitRepo(pathToRepo, versionOrBranch, repoName, false, ArtifactType.valueOfType(artifactType), ArtifactSubType.valueOfSubType(artifactSubType), '', false)
     }else {
         pomXmlStructure = getGitRepo(pathToRepo, 'master', repoName, false, ArtifactType.valueOfType(artifactType), ArtifactSubType.valueOfSubType(artifactSubType), '', false)
@@ -111,27 +111,27 @@ def runRemoteItStep() {
     String url
     if ('APIGW-EXTERNO' == endpoint) {
         if (pomXmlStructure.isArchProject()) {
-            url = "https://api.${icpEnv.toLowerCase()}.internal.project.com/tech/alm-alm/arch-service/${pomXmlStructure.getBmxAppId()}"
+            url = "https://api.${cloudEnv.toLowerCase()}.internal.project.com/tech/alm-alm/arch-service/${pomXmlStructure.getBmxAppId()}"
         }else {
-            url = "https://api.${icpEnv.toLowerCase()}.internal.project.com/tech/alm-alm/${pomXmlStructure.getBmxAppId()}"
+            url = "https://api.${cloudEnv.toLowerCase()}.internal.project.com/tech/alm-alm/${pomXmlStructure.getBmxAppId()}"
         }
     }else {
         if (pomXmlStructure.isArchProject()) {
-            url = "https://k8sgateway.${icpEnv.toLowerCase()}.icp-${center}.absis.cloud.lacaixa.es/arch-service/${pomXmlStructure.getBmxAppId()}"
+            url = "https://k8sgateway.${cloudEnv.toLowerCase()}.cloud-${center}.alm.cloud.lacaixa.es/arch-service/${pomXmlStructure.getBmxAppId()}"
         }else {
-            url = "https://k8sgateway.${icpEnv.toLowerCase()}.icp-${center}.absis.cloud.lacaixa.es/${pomXmlStructure.getBmxAppId()}"
+            url = "https://k8sgateway.${cloudEnv.toLowerCase()}.cloud-${center}.alm.cloud.lacaixa.es/${pomXmlStructure.getBmxAppId()}"
         }
     }
     printOpen("Ejecutamos los tests de integracion contra el micro, cuya url es ${url}", EchoLevel.ALL)
     def additionalParameters = ''
 
-    if ('pro'.equals(icpEnv.toLowerCase())) {
-        withCredentials([string(credentialsId: "ALM_TOKEN_${icpEnv.toUpperCase()}_V2", variable: 'tokenAbsis3')]) {
+    if ('pro'.equals(cloudEnv.toLowerCase())) {
+        withCredentials([string(credentialsId: "ALM_TOKEN_${cloudEnv.toUpperCase()}_V2", variable: 'tokenAlm3')]) {
             additionalParameters += '-P it-pro '
             additionalParameters += '-Dskip-it=true '
-            additionalParameters += "-Dauthorization-token=${tokenAbsis3} "
+            additionalParameters += "-Dauthorization-token=${tokenAlm3} "
 
-            def cmd = "mvn <Default_Maven_Settings> -Dhttps.proxyHost=${env.proxyHost} -Dhttps.proxyPort=${env.proxyPort} -Dhttp.proxyHost=${env.proxyHost} -Dhttp.proxyPort=${env.proxyPort} verify -Dmicro-url=${url} -Dskip-ut=true ${additionalParameters} -Denvironment=${icpEnv}"
+            def cmd = "mvn <Default_Maven_Settings> -Dhttps.proxyHost=${env.proxyHost} -Dhttps.proxyPort=${env.proxyPort} -Dhttp.proxyHost=${env.proxyHost} -Dhttp.proxyPort=${env.proxyPort} verify -Dmicro-url=${url} -Dskip-ut=true ${additionalParameters} -Denvironment=${cloudEnv}"
             boolean weHaveToGenerateOpenApiClasses =
                 WorkspaceUtils.isThereASwaggerContract(this, pomXmlStructure) &&
                     ! WorkspaceUtils.areSwaggerContractClassesGenerated(this, pomXmlStructure)
@@ -139,10 +139,10 @@ def runRemoteItStep() {
             performRunRemoteITWithRetries(cmd)
         }
     }else {
-        withCredentials([string(credentialsId: "ALM_TOKEN_${icpEnv.toUpperCase()}_V2", variable: 'tokenAbsis3')]) {
-            additionalParameters += "-Dauthorization-token=${tokenAbsis3} "
+        withCredentials([string(credentialsId: "ALM_TOKEN_${cloudEnv.toUpperCase()}_V2", variable: 'tokenAlm3')]) {
+            additionalParameters += "-Dauthorization-token=${tokenAlm3} "
 
-            def cmd = "mvn <Default_Maven_Settings> -Dhttps.proxyHost=${env.proxyHost} -Dhttps.proxyPort=${env.proxyPort} -Dhttp.proxyHost=${env.proxyHost} -Dhttp.proxyPort=${env.proxyPort} verify -Dmicro-url=${url} -Dskip-ut=true ${additionalParameters} -Denvironment=${icpEnv} -Dskip-it=false"
+            def cmd = "mvn <Default_Maven_Settings> -Dhttps.proxyHost=${env.proxyHost} -Dhttps.proxyPort=${env.proxyPort} -Dhttp.proxyHost=${env.proxyHost} -Dhttp.proxyPort=${env.proxyPort} verify -Dmicro-url=${url} -Dskip-ut=true ${additionalParameters} -Denvironment=${cloudEnv} -Dskip-it=false"
             boolean weHaveToGenerateOpenApiClasses =
                 WorkspaceUtils.isThereASwaggerContract(this, pomXmlStructure) &&
                     ! WorkspaceUtils.areSwaggerContractClassesGenerated(this, pomXmlStructure)

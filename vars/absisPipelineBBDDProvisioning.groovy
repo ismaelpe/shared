@@ -21,7 +21,7 @@ def call(Map pipelineParameters) {
 
 
     pipeline {
-        agent {	node (absisJenkinsAgent(pipelineParams)) }
+        agent {	node (almJenkinsAgent(pipelineParams)) }
 
         stages {
             stage('Get DB Info') {

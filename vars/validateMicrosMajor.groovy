@@ -10,7 +10,7 @@ def validateEnvironment(String appType, String application, String environment, 
 	String environmetNew = environment
 	def status="true"
 
-    response = sendRequestToAbsis3MS(
+    response = sendRequestToAlm3MS(
         'GET',
         "${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${appType}/${application}/version/environment/${environment}",
         null,
@@ -130,7 +130,7 @@ def call(PipelineData pipelineData, PomXmlStructure pomXml) {
 			}
 		}
 	}else {
-		printOpen("Absis3 catalog is disconnected", EchoLevel.INFO)
+		printOpen("Alm3 catalog is disconnected", EchoLevel.INFO)
 
 	}	
 	
@@ -138,8 +138,8 @@ def call(PipelineData pipelineData, PomXmlStructure pomXml) {
 	
 }
 
-def call(def body, PipelineData pipelineData, PomXmlStructure pomXml, ICPStateUtility icpStateUtilitity) {
-	deployArtifactInCatMsv(body, pipelineData, pomXml, icpStateUtilitity, null)
+def call(def body, PipelineData pipelineData, PomXmlStructure pomXml, CloudStateUtility cloudStateUtilitity) {
+	deployArtifactInCatMsv(body, pipelineData, pomXml, cloudStateUtilitity, null)
 }
 
 def sendRequestToCatalog(def body) {

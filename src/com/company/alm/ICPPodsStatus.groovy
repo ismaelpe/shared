@@ -2,12 +2,12 @@ package com.project.alm
 
 import com.cloudbees.groovy.cps.NonCPS
 
-class ICPPodsStatus {
+class CloudPodsStatus {
 
     def podsStatus = [:]
     def environment
 
-    ICPPodsStatus(def podsRawMetadata, def componentNamesToMatch, def environment){
+    CloudPodsStatus(def podsRawMetadata, def componentNamesToMatch, def environment){
 
         this.podsStatus = buildFromMultipleCentersMetadata(podsRawMetadata, componentNamesToMatch)
         this.environment = environment
@@ -21,9 +21,9 @@ class ICPPodsStatus {
 
         for(centerMetadata in podsRawMetadata) {
 
-            def center = centerMetadata?.metadata?.cluster?.startsWith("icp01") ?
+            def center = centerMetadata?.metadata?.cluster?.startsWith("cloud01") ?
                 'AZ1' :
-                centerMetadata?.metadata?.cluster?.startsWith("icp02") ? 'AZ2' : 'UNKNOWN'
+                centerMetadata?.metadata?.cluster?.startsWith("cloud02") ? 'AZ2' : 'UNKNOWN'
 
             if (center == 'UNKNOWN') continue
 

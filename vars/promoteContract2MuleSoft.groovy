@@ -65,7 +65,7 @@ def getSecurityArtifact(muleParams) {
     def securityArtifactUrl = env.ALM_MULE_SECURITY_ARTIFACT_URL
     
     if (securityArtifactUrl) {
-        withCredentials([usernamePassword(credentialsId: 'icpcoucxba3msje01', passwordVariable: 'artifactPass', usernameVariable: 'artifactUser')]) {
+        withCredentials([usernamePassword(credentialsId: 'cloudcoucxba3msje01', passwordVariable: 'artifactPass', usernameVariable: 'artifactUser')]) {
             def securityArtifactZipDir = "securityArtifact"
             def securityArtifactZipFileName = "securityArtifact.zip"
             securityArtifactUrl = securityArtifactUrl.replaceAll("\\{ENV\\}", muleParams.muleSecurityVersion.toUpperCase())

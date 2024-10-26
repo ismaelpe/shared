@@ -4,9 +4,9 @@ import com.project.alm.PipelineData
 import com.project.alm.GlobalVars
 import com.project.alm.DeployStructure
 import com.project.alm.BmxUtilities
-import com.project.alm.ICPDeployStructure
+import com.project.alm.CloudDeployStructure
 
-import com.project.alm.ICPApiResponse
+import com.project.alm.CloudApiResponse
 
 import java.util.Map
 
@@ -16,12 +16,12 @@ def call(Map infoApps) {
 		
 		if (it.value!=null) {
 			Map infoApp = it.value
-			if (infoApp != null && infoApp.absis != null && infoApp.absis.services != null && infoApp.absis.services.envQualifier != null) {
+			if (infoApp != null && infoApp.alm != null && infoApp.alm.services != null && infoApp.alm.services.envQualifier != null) {
 				printOpen("The info from ${it.key} is:", EchoLevel.ALL)
-				Map absisServicesEnvQualifier=infoApp.absis.services.envQualifier
-				Map newService=absisServicesEnvQualifier["new"]
-				Map stableService=absisServicesEnvQualifier["stable"]
-				Map newNonDevService=absisServicesEnvQualifier["newNonDev"]
+				Map almServicesEnvQualifier=infoApp.alm.services.envQualifier
+				Map newService=almServicesEnvQualifier["new"]
+				Map stableService=almServicesEnvQualifier["stable"]
+				Map newNonDevService=almServicesEnvQualifier["newNonDev"]
 				
 				Map routes = new HashMap<String, Map>()
 				

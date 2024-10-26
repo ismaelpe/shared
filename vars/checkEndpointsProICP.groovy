@@ -2,23 +2,23 @@ import com.project.alm.*
 import java.util.Map
 
 def thereIsAncient(lastDeployedValuesYamlC1) {
-	Map absisApp=lastDeployedValuesYamlC1["apps"]
-	Map absisAppEnvQualifier=absisApp["envQualifier"]
+	Map almApp=lastDeployedValuesYamlC1["apps"]
+	Map almAppEnvQualifier=almApp["envQualifier"]
 	
 	//Esto no es del todo correcto.
 	//si es primera version esto devuelve que tienen ancient i no es cierto
 	//Casos:
 	//1-Solo Stable sin New 
 	//2-Stable y New	
-	if (absisAppEnvQualifier["stable"]!=null && absisAppEnvQualifier["new"]!=null) return true
+	if (almAppEnvQualifier["stable"]!=null && almAppEnvQualifier["new"]!=null) return true
 	else return false
 }
 
-def thereIsAtLeastOneAncient(PomXmlStructure pomXmlStructure, PipelineData pipelineData, String envICP) {
-	Map lastDeployedValuesYamlC1=generateValuesYamlLastICPDeployment(pomXmlStructure,pipelineData,envICP,"AZ1")
-	Map lastDeployedValuesYamlC2=generateValuesYamlLastICPDeployment(pomXmlStructure,pipelineData,envICP,"AZ2")
+def thereIsAtLeastOneAncient(PomXmlStructure pomXmlStructure, PipelineData pipelineData, String envCloud) {
+	Map lastDeployedValuesYamlC1=generateValuesYamlLastCloudDeployment(pomXmlStructure,pipelineData,envCloud,"AZ1")
+	Map lastDeployedValuesYamlC2=generateValuesYamlLastCloudDeployment(pomXmlStructure,pipelineData,envCloud,"AZ2")
 
-	return thereIsAncient(lastDeployedValuesYamlC1["absis"]) || thereIsAncient(lastDeployedValuesYamlC2["absis"])
+	return thereIsAncient(lastDeployedValuesYamlC1["alm"]) || thereIsAncient(lastDeployedValuesYamlC2["alm"])
 }
 
 def call(PomXmlStructure pomXmlStructure, PipelineData pipelineData, DistributionModePRO distributionMode = DistributionModePRO.CANARY_ON_ALL_CENTERS, boolean checkOnlyMainUrl = false) {
@@ -28,7 +28,7 @@ def call(PomXmlStructure pomXmlStructure, PipelineData pipelineData, Distributio
     String output = "ENDPOINT TEST RESULT\n--------------------\n\n"
 	
 	String environment= pipelineData.bmxStructure.environment.toUpperCase()
-	ICPDeployStructure deployStructure=new ICPDeployStructure('cxb-ab3cor','cxb-ab3app',environment)
+	CloudDeployStructure deployStructure=new CloudDeployStructure('cxb-ab3cor','cxb-ab3app',environment)
 	BranchStructure branchStructure = pipelineData.branchStructure
 	
 	BmxStructure bmxStructure = pipelineData.bmxStructure
@@ -41,16 +41,16 @@ def call(PomXmlStructure pomXmlStructure, PipelineData pipelineData, Distributio
 		suffix="/arch-service"
 	}
 	
-	if (checkOnlyMainUrl || thereIsAtLeastOneAncient(pomXmlStructure,pipelineData,deployStructure.envICP)) {
+	if (checkOnlyMainUrl || thereIsAtLeastOneAncient(pomXmlStructure,pipelineData,deployStructure.envCloud)) {
 
         //uris.add("https://k8sgateway.${deployStructureCd1.url_ext}${suffix}/${artifactRoute}/actuator/info")
         uris.add("https://k8sgateway.${deployStructureCd1.url_int}${suffix}/${artifactRoute}/actuator/info")
 
         if (DistributionModePRO.CANARY_ON_ALL_CENTERS == distributionMode || DistributionModePRO.SINGLE_CENTER_ROLLOUT_CENTER_1 == distributionMode) {
-            uris.add("https://k8sgateway.pro.icp-1.absis.cloud.lacaixa.es${suffix}/${artifactRoute}/actuator/info")
+            uris.add("https://k8sgateway.pro.cloud-1.alm.cloud.lacaixa.es${suffix}/${artifactRoute}/actuator/info")
         }
         if (DistributionModePRO.CANARY_ON_ALL_CENTERS == distributionMode || DistributionModePRO.SINGLE_CENTER_ROLLOUT_CENTER_2 == distributionMode) {
-            uris.add("https://k8sgateway.pro.icp-2.absis.cloud.lacaixa.es${suffix}/${artifactRoute}/actuator/info")
+            uris.add("https://k8sgateway.pro.cloud-2.alm.cloud.lacaixa.es${suffix}/${artifactRoute}/actuator/info")
         }
 
     }
@@ -64,10 +64,10 @@ def call(PomXmlStructure pomXmlStructure, PipelineData pipelineData, Distributio
 	
 	
 	    if (DistributionModePRO.CANARY_ON_ALL_CENTERS == distributionMode || DistributionModePRO.SINGLE_CENTER_ROLLOUT_CENTER_1 == distributionMode) {
-			uris.add("https://k8sgateway.pro.icp-1.absis.cloud.lacaixa.es${suffix}/${GlobalVars.BETA_COMPONENT_SUFFIX.replace("<componentName>", artifactRoute)}/actuator/info")        
+			uris.add("https://k8sgateway.pro.cloud-1.alm.cloud.lacaixa.es${suffix}/${GlobalVars.BETA_COMPONENT_SUFFIX.replace("<componentName>", artifactRoute)}/actuator/info")        
 	    }
 	    if (DistributionModePRO.CANARY_ON_ALL_CENTERS == distributionMode || DistributionModePRO.SINGLE_CENTER_ROLLOUT_CENTER_2 == distributionMode) {
-			uris.add("https://k8sgateway.pro.icp-2.absis.cloud.lacaixa.es${suffix}/${GlobalVars.BETA_COMPONENT_SUFFIX.replace("<componentName>", artifactRoute)}/actuator/info")        
+			uris.add("https://k8sgateway.pro.cloud-2.alm.cloud.lacaixa.es${suffix}/${GlobalVars.BETA_COMPONENT_SUFFIX.replace("<componentName>", artifactRoute)}/actuator/info")        
 	    }
 	}
 

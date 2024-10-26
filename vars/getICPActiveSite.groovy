@@ -1,6 +1,6 @@
 import com.project.alm.EchoLevel
 import com.project.alm.GlobalVars
-import com.project.alm.ICPDeployStructure
+import com.project.alm.CloudDeployStructure
 
 
 def checkUrl(def microUrl) {
@@ -24,7 +24,7 @@ def checkUrl(def microUrl) {
 
 def call(String environment) {
 	
-	ICPDeployStructure deployStructure=new ICPDeployStructure('cxb-ab3cor','cxb-ab3app',environment)
+	CloudDeployStructure deployStructure=new CloudDeployStructure('cxb-ab3cor','cxb-ab3app',environment)
 	
 	String microUrl= deployStructure.getUrlActuatorPrefixTesting() + deployStructure.getUrlSuffixTesting()+"/"+GlobalVars.ENDPOINT_INFO
 	

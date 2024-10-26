@@ -12,16 +12,16 @@ import com.project.alm.BranchType
 import com.project.alm.GarAppType
 import com.project.alm.GlobalVars
 import com.project.alm.PipelineStructureType
-import com.project.alm.ICPStateUtility
-import com.project.alm.ICPDeployStructure
-import com.project.alm.ICPWorkflowStates
-import com.project.alm.ICPVarPipelineCopyType
+import com.project.alm.CloudStateUtility
+import com.project.alm.CloudDeployStructure
+import com.project.alm.CloudWorkflowStates
+import com.project.alm.CloudVarPipelineCopyType
 import com.project.alm.DevBmxStructure
 import com.project.alm.TstBmxStructure
 import com.project.alm.PreBmxStructure
 import com.project.alm.ProBmxStructure
 import com.project.alm.RunRemoteITBmxStructure
-import com.project.alm.ICPApiResponse
+import com.project.alm.CloudApiResponse
 
 @Field Map pipelineParams
 
@@ -30,7 +30,7 @@ import com.project.alm.ICPApiResponse
 
 @Field String pathToRepo
 @Field String repoName
-@Field String icpApplicationId
+@Field String cloudApplicationId
 @Field String majorVersion
 @Field String artifactSubType
 @Field String artifactType
@@ -42,7 +42,7 @@ import com.project.alm.ICPApiResponse
 @Field String electionOriginArtifact
 @Field String executionMode
 
-@Field String imageIcp
+@Field String imageCloud
 
 
 //Pipeline unico que construye todos los tipos de artefactos
@@ -56,7 +56,7 @@ def call(Map pipelineParameters) {
 
     pathToRepo = ""
     repoName = ""
-    icpApplicationId = ""
+    cloudApplicationId = ""
     majorVersion = ""
     artifactSubType = "MICRO_ARCH"
     artifactType = "SIMPLE"
@@ -68,10 +68,10 @@ def call(Map pipelineParameters) {
     electionOriginArtifact = params.electionOriginArtifactParam
     executionMode = params.executionModeParam
 
-	imageIcp=""
+	imageCloud=""
     
     pipeline {		
-		agent {	node (absisJenkinsAgent(pipelineParams)) }
+		agent {	node (almJenkinsAgent(pipelineParams)) }
 	    options{ 
             buildDiscarder(logRotator(numToKeepStr: '10'))
             timestamps()
@@ -79,8 +79,8 @@ def call(Map pipelineParameters) {
         }
 	    environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
-            ICP_CERT = credentials('icp-alm-pro-cert')
-            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
+            Cloud_CERT = credentials('cloud-alm-pro-cert')
+            Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
@@ -97,14 +97,14 @@ def call(Map pipelineParameters) {
 					buildStep()
 				}
 			}			
-			stage('build-icp-image'){
+			stage('build-cloud-image'){
 				steps{
-					buildIcpImageStep()
+					buildCloudImageStep()
 				}
 			}			
-			stage('deploy-icp-image'){
+			stage('deploy-cloud-image'){
 				steps{
-					deployIcpImage()
+					deployCloudImage()
 				}
 			}
 		}
@@ -128,21 +128,21 @@ def initStep() {
 
 	pathToRepo = "https://git.svb.lacaixa.es/cbk/alm/services/arch/tool/${microservice}.git"
 	repoName = microservice - "micro"
-	icpApplicationId = "27587"
+	cloudApplicationId = "27587"
 	if (microservice == "k8sapigateway-micro") {
-		icpApplicationId="3921"
+		cloudApplicationId="3921"
 	}
 	if (microservice == "jnkmsv-micro") {
-		icpApplicationId="42533"
+		cloudApplicationId="42533"
 	}
 	if (microservice == "redirecttodev-micro") {
-		icpApplicationId="55714"
+		cloudApplicationId="55714"
 	}
-	printOpen("microservice ${microservice} ${icpApplicationId}", EchoLevel.INFO)
+	printOpen("microservice ${microservice} ${cloudApplicationId}", EchoLevel.INFO)
 	majorVersion = MavenVersionUtilities.getMajor(versionTag)
 	printOpen( "El tag de la version es de #${versionTag}# ${versionTag.length()}", EchoLevel.INFO)
 		
-	if (ICPVarPipelineCopyType.valueOfVarPipelineCopyType(electionOriginArtifact)==ICPVarPipelineCopyType.ORIGIN_TAG) {
+	if (CloudVarPipelineCopyType.valueOfVarPipelineCopyType(electionOriginArtifact)==CloudVarPipelineCopyType.ORIGIN_TAG) {
 		printOpen("Con version ${versionTag} ", EchoLevel.ALL)
 		pomXmlStructure = getGitRepo(pathToRepo, originBranch, repoName, false, ArtifactType.valueOfType(artifactType), ArtifactSubType.valueOfSubType(artifactSubType), versionTag, true)
 	}else {
@@ -159,7 +159,7 @@ def initStep() {
 	printOpen("subDomain ${pipelineData.subDomain}", EchoLevel.ALL)
 	
 	pipelineData.deployFlag = true
-	pipelineData.deployOnIcp=true
+	pipelineData.deployOnCloud=true
 		
 	debugInfo(pipelineParams, pomXmlStructure, pipelineData)
 	
@@ -184,7 +184,7 @@ def initStep() {
 						environmentDest == GlobalVars.PRO_ENVIRONMENT) pipelineData.branchStructure.branchType = BranchType.RELEASE
 	}
 	
-	if (ICPVarPipelineCopyType.valueOfVarPipelineCopyType(electionOriginArtifact)==ICPVarPipelineCopyType.ORIGIN_TAG){
+	if (CloudVarPipelineCopyType.valueOfVarPipelineCopyType(electionOriginArtifact)==CloudVarPipelineCopyType.ORIGIN_TAG){
 		//Viene de un tag vamos a modificar el valor de la version
 		pomXmlStructure.artifactVersion=versionTag
 	}
@@ -197,9 +197,9 @@ def initStep() {
  * Stage 'buildStep'
  */
 def buildStep() {
-	if ((ICPVarPipelineCopyType.valueOfVarPipelineCopyType(executionMode)==ICPVarPipelineCopyType.EX_MODE_DEPLOY ||
-		ICPVarPipelineCopyType.valueOfVarPipelineCopyType(executionMode)==ICPVarPipelineCopyType.EX_MODE_ALL) &&
-		ICPVarPipelineCopyType.valueOfVarPipelineCopyType(electionOriginArtifact)!=ICPVarPipelineCopyType.ORIGIN_TAG) {
+	if ((CloudVarPipelineCopyType.valueOfVarPipelineCopyType(executionMode)==CloudVarPipelineCopyType.EX_MODE_DEPLOY ||
+		CloudVarPipelineCopyType.valueOfVarPipelineCopyType(executionMode)==CloudVarPipelineCopyType.EX_MODE_ALL) &&
+		CloudVarPipelineCopyType.valueOfVarPipelineCopyType(electionOriginArtifact)!=CloudVarPipelineCopyType.ORIGIN_TAG) {
 		printOpen('deployMicroNexus', EchoLevel.INFO)
 		buildWorkspace(pomXmlStructure, pipelineData)
 		deployMicrosNexus(pomXmlStructure, pipelineData)
@@ -207,36 +207,36 @@ def buildStep() {
 }
 
 /**
- * Stage 'buildIcpImageStep'
+ * Stage 'buildCloudImageStep'
  */
-def buildIcpImageStep() {
+def buildCloudImageStep() {
 	//Build 
 	def body = [
-			extraArgs: "GROUP_ID=com.project.absis.arch.tool,VERSION_ARTIFACT=${pomXmlStructure.artifactVersion},ARTIFACT_ID=${microservice}",
+			extraArgs: "GROUP_ID=com.project.alm.arch.tool,VERSION_ARTIFACT=${pomXmlStructure.artifactVersion},ARTIFACT_ID=${microservice}",
 			version: "${pomXmlStructure.artifactVersion}"
 	]	
-	ICPApiResponse response=null
+	CloudApiResponse response=null
 	if (microservice == "redirecttodev-micro") {
-		response=sendRequestToICPApi("v1/type/PCLD/application/AB3APP/component/${icpApplicationId}/build",body,"POST","AB3APP","v1/type/PCLD/application/AB3APP/component/${icpApplicationId}/build",true,false, pipelineData, pomXmlStructure)
+		response=sendRequestToCloudApi("v1/type/PCLD/application/AB3APP/component/${cloudApplicationId}/build",body,"POST","AB3APP","v1/type/PCLD/application/AB3APP/component/${cloudApplicationId}/build",true,false, pipelineData, pomXmlStructure)
 	}else {
-		response=sendRequestToICPApi("v1/type/PCLD/application/AB3COR/component/${icpApplicationId}/build",body,"POST","AB3COR","v1/type/PCLD/application/AB3COR/component/${icpApplicationId}/build",true,false, pipelineData, pomXmlStructure)
+		response=sendRequestToCloudApi("v1/type/PCLD/application/AB3COR/component/${cloudApplicationId}/build",body,"POST","AB3COR","v1/type/PCLD/application/AB3COR/component/${cloudApplicationId}/build",true,false, pipelineData, pomXmlStructure)
 	}
 	
 	if (response.statusCode<200 || response.statusCode>300) {
 		throw new Exception("Error status code ${response.statusCode}")
 	}else {
-		imageIcp=response.body.imageRepo1
+		imageCloud=response.body.imageRepo1
 	}
-	printOpen("La imagen es de ${imageIcp}",EchoLevel.INFO)
+	printOpen("La imagen es de ${imageCloud}",EchoLevel.INFO)
 }
 
 /**
- * Stage 'deployIcpImage'
+ * Stage 'deployCloudImage'
  */
-def deployIcpImage() {
+def deployCloudImage() {
 	//Build
 	printOpen("Se limpia el pipeline", EchoLevel.ALL)
-	pipelineData.componentId = icpApplicationId
+	pipelineData.componentId = cloudApplicationId
 
 	def variableKubernetes="almlogcollector${majorVersion}"
 	def variableKubernetesInstance="almlogcollector-micro-${majorVersion}"
@@ -265,29 +265,29 @@ def deployIcpImage() {
 	def bodyDeploy=[
 		az: "ALL",
 		environment: "${environmentDest.toUpperCase()}",
-		values: "local:\n  app:\n    ingress:\n      connectTimeout: 10\n      readTimeout: 240\n      sendTimeout: 240\n      defineTimeout: true\n      defineBodySize: true\n      maxBodySize: 30m\n      enabled: true\n      deploymentArea: absis\n      absis:\n        enabled: true\n      mtls:\n        enabled: true\n        needsSystemRoute: true\n        needsSpecialVerifyDepth: false\n    envVars:\n      - name: ALM_ICP_ENVIRONMENT\n        value: ${environmentDest.toLowerCase()}\n      - name: ALM_APP_ID\n        value: ${variableKubernetesInstance}\n      - name: ALM_ENVIRONMENT\n        value: ${environmentDest.toUpperCase()}\n      - name: ALM_APP_SUBDOMAIN\n        value: NO_SUBDOMAIN\n      - name: ALM_APP_COMPANY\n        value: CBK\n      - name: JAVA_OPTS\n        value: '-Dspring.cloud.config.failFast=false'\n      - name: nonProxyHosts\n        value: '*.cxb-pasdev-tst|*.cxb-ab3app-${environmentDest.toLowerCase()}|*.cxb-ab3cor-${environmentDest.toLowerCase()}'\n      - name: http.additionalNonProxyHosts\n        value: 'cxb-pasdev-${environmentDest.toLowerCase()},cxb-ab3app-dev,cxb-ab3cor-${environmentDest.toLowerCase()}'\n      - name: NO_PROXY\n        value: cxb-ab3cor-${environmentDest.toLowerCase()}\n      - name: CF_INSTANCE_INDEX\n        value: 1\n      - name: SPRING_PROFILES_ACTIVE\n        value: cloud,${environmentDest.toLowerCase()},icp\n${secrets}absis:\n  app:\n    loggingElkStack: alm0\n    replicas: 1\n    instance:  ${variableKubernetesInstance}\n    name: ${variableKubernetesInstance}\n  resources:\n    requests:\n      memory: 500Mi\n      cpu: 500m\n    limits:\n       memory: 786Mi\n       cpu: 1000m\n  apps:\n    envQualifier:\n      stable:\n        id:  ${variableKubernetes}\n        colour: G\n        image: ${imageIcp}:${pomXmlStructure.artifactVersion}\n        version: ${pomXmlStructure.artifactVersion}\n        stable: false\n        new: false\n        replicas: 1\n        requests_memory: 100Mi\n        requests_cpu: 25m\n        limits_memory: 600Mi\n        limits_cpu: 700m\n  services:\n    envQualifier:\n      stable:\n        id: ${variableKubernetesInstance}\n        targetColour: G\n"
+		values: "local:\n  app:\n    ingress:\n      connectTimeout: 10\n      readTimeout: 240\n      sendTimeout: 240\n      defineTimeout: true\n      defineBodySize: true\n      maxBodySize: 30m\n      enabled: true\n      deploymentArea: alm\n      alm:\n        enabled: true\n      mtls:\n        enabled: true\n        needsSystemRoute: true\n        needsSpecialVerifyDepth: false\n    envVars:\n      - name: ALM_Cloud_ENVIRONMENT\n        value: ${environmentDest.toLowerCase()}\n      - name: ALM_APP_ID\n        value: ${variableKubernetesInstance}\n      - name: ALM_ENVIRONMENT\n        value: ${environmentDest.toUpperCase()}\n      - name: ALM_APP_SUBDOMAIN\n        value: NO_SUBDOMAIN\n      - name: ALM_APP_COMPANY\n        value: CBK\n      - name: JAVA_OPTS\n        value: '-Dspring.cloud.config.failFast=false'\n      - name: nonProxyHosts\n        value: '*.cxb-pasdev-tst|*.cxb-ab3app-${environmentDest.toLowerCase()}|*.cxb-ab3cor-${environmentDest.toLowerCase()}'\n      - name: http.additionalNonProxyHosts\n        value: 'cxb-pasdev-${environmentDest.toLowerCase()},cxb-ab3app-dev,cxb-ab3cor-${environmentDest.toLowerCase()}'\n      - name: NO_PROXY\n        value: cxb-ab3cor-${environmentDest.toLowerCase()}\n      - name: CF_INSTANCE_INDEX\n        value: 1\n      - name: SPRING_PROFILES_ACTIVE\n        value: cloud,${environmentDest.toLowerCase()},cloud\n${secrets}alm:\n  app:\n    loggingElkStack: alm0\n    replicas: 1\n    instance:  ${variableKubernetesInstance}\n    name: ${variableKubernetesInstance}\n  resources:\n    requests:\n      memory: 500Mi\n      cpu: 500m\n    limits:\n       memory: 786Mi\n       cpu: 1000m\n  apps:\n    envQualifier:\n      stable:\n        id:  ${variableKubernetes}\n        colour: G\n        image: ${imageCloud}:${pomXmlStructure.artifactVersion}\n        version: ${pomXmlStructure.artifactVersion}\n        stable: false\n        new: false\n        replicas: 1\n        requests_memory: 100Mi\n        requests_cpu: 25m\n        limits_memory: 600Mi\n        limits_cpu: 700m\n  services:\n    envQualifier:\n      stable:\n        id: ${variableKubernetesInstance}\n        targetColour: G\n"
 	]
 	
 	printOpen("Deploy value ${bodyDeploy}", EchoLevel.ALL)
 	
-	ICPApiResponse response=null
+	CloudApiResponse response=null
 	
 	if (microservice == "redirecttodev-micro") {
-		response=sendRequestToICPApi("v1/application/PCLD/AB3APP/component/${icpApplicationId}/deploy",bodyDeploy,"POST","AB3APP","v1/application/PCLD/AB3APP/component/${icpApplicationId}/deploy",true,true, pipelineData, pomXmlStructure)
+		response=sendRequestToCloudApi("v1/application/PCLD/AB3APP/component/${cloudApplicationId}/deploy",bodyDeploy,"POST","AB3APP","v1/application/PCLD/AB3APP/component/${cloudApplicationId}/deploy",true,true, pipelineData, pomXmlStructure)
 	}else {
-		response=sendRequestToICPApi("v1/application/PCLD/AB3COR/component/${icpApplicationId}/deploy",bodyDeploy,"POST","AB3COR","v1/application/PCLD/AB3COR/component/${icpApplicationId}/deploy",true,true, pipelineData, pomXmlStructure)
+		response=sendRequestToCloudApi("v1/application/PCLD/AB3COR/component/${cloudApplicationId}/deploy",bodyDeploy,"POST","AB3COR","v1/application/PCLD/AB3COR/component/${cloudApplicationId}/deploy",true,true, pipelineData, pomXmlStructure)
 	}	
 	
-	ICPDeployStructure deployStructure=new ICPDeployStructure('cxb-ab3cor','cxb-ab3app',environmentDest)
+	CloudDeployStructure deployStructure=new CloudDeployStructure('cxb-ab3cor','cxb-ab3app',environmentDest)
 	if (microservice == "redirecttodev-micro") {
 		//Vamos a settear la AB3SPP
 		pomXmlStructure.artifactSubType=ArtifactSubType.MICRO_APP
 	}
-	boolean isReady=waitICPDeploymentReady(pomXmlStructure,pipelineData,deployStructure,"G")
+	boolean isReady=waitCloudDeploymentReady(pomXmlStructure,pipelineData,deployStructure,"G")
 	//Wait
 	String microUrl = microservice == "almlogcollector-micro" ?
-		"https://k8sgateway.${environmentDest.toLowerCase()}.icp-1.absis.cloud.lacaixa.es/arch-service/${variableKubernetesInstance}" :
-		"https://k8sgateway.${environmentDest.toLowerCase()}.icp-1.absis.cloud.lacaixa.es"
+		"https://k8sgateway.${environmentDest.toLowerCase()}.cloud-1.alm.cloud.lacaixa.es/arch-service/${variableKubernetesInstance}" :
+		"https://k8sgateway.${environmentDest.toLowerCase()}.cloud-1.alm.cloud.lacaixa.es"
 	
 	if (isReady) 
 		validateMicroIsUp(microUrl)

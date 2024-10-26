@@ -21,7 +21,7 @@ def call(PipelineData pipelineData, PomXmlStructure pomXml, String environment, 
 		def bodyNew = null
 		String environmetNew = environment
 		if (pipelineData!=null && pipelineData.deployStructure!=null) {
-			environmetNew = pipelineData.deployStructure.envICP
+			environmetNew = pipelineData.deployStructure.envCloud
 		}
 				
 		try {
@@ -34,7 +34,7 @@ def call(PipelineData pipelineData, PomXmlStructure pomXml, String environment, 
 			}
 			
 			
-			response = sendRequestToAbsis3MS(
+			response = sendRequestToAlm3MS(
                 'DELETE',
                 "${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${pipelineData.getGarArtifactType().getGarName()}/${pomXml.getApp(pipelineData.garArtifactType)}/version/${pomXml.artifactMajorVersion}/environment/${environmetNew.toUpperCase()}?isRollback=${isRollback}",
                 null,
@@ -70,6 +70,6 @@ def call(PipelineData pipelineData, PomXmlStructure pomXml, String environment, 
 	
 }
 
-def call(def body, PipelineData pipelineData, PomXmlStructure pomXml, ICPStateUtility icpStateUtilitity) {
-	deployArtifactInCatMsv(body, pipelineData, pomXml, icpStateUtilitity, null)
+def call(def body, PipelineData pipelineData, PomXmlStructure pomXml, CloudStateUtility cloudStateUtilitity) {
+	deployArtifactInCatMsv(body, pipelineData, pomXml, cloudStateUtilitity, null)
 }

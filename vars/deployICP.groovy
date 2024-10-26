@@ -2,27 +2,27 @@ import com.project.alm.*
 import hudson.Functions
 
 def call( PomXmlStructure pomXml, PipelineData pipeline) {
-	deployICP(pomXml,pipeline,null,null)
+	deployCloud(pomXml,pipeline,null,null)
 }
 
-def buildArtifactOnIcp(PipelineData pipeline, PomXmlStructure pomXml, String requestURL, def body, String method, String aplicacionGAR, String pollingRequestUrl )  {
-	ICPApiResponse responseIcp=null
+def buildArtifactOnCloud(PipelineData pipeline, PomXmlStructure pomXml, String requestURL, def body, String method, String aplicacionGAR, String pollingRequestUrl )  {
+	CloudApiResponse responseCloud=null
 	try {
 
         try {
 
-			responseIcp = sendRequestToICPApi(requestURL,body,method,aplicacionGAR,pollingRequestUrl,true,false, pipeline, pomXml)
+			responseCloud = sendRequestToCloudApi(requestURL,body,method,aplicacionGAR,pollingRequestUrl,true,false, pipeline, pomXml)
 
 		} catch(java.io.NotSerializableException e) {
 
-			responseIcp = sendRequestToICPApi(requestURL,body,method,aplicacionGAR,pollingRequestUrl,true,false, pipeline, pomXml)
+			responseCloud = sendRequestToCloudApi(requestURL,body,method,aplicacionGAR,pollingRequestUrl,true,false, pipeline, pomXml)
 
 		}
 		
-		if (responseIcp.statusCode==500) {
+		if (responseCloud.statusCode==500) {
 
-            printOpen("Puntual error (status code: ${responseIcp.statusCode}). We are going to try it again...", EchoLevel.ERROR)
-			responseIcp = sendRequestToICPApi(requestURL,body,method,aplicacionGAR,pollingRequestUrl,true,false, pipeline, pomXml)
+            printOpen("Puntual error (status code: ${responseCloud.statusCode}). We are going to try it again...", EchoLevel.ERROR)
+			responseCloud = sendRequestToCloudApi(requestURL,body,method,aplicacionGAR,pollingRequestUrl,true,false, pipeline, pomXml)
 
 		}
 
@@ -32,31 +32,31 @@ def buildArtifactOnIcp(PipelineData pipeline, PomXmlStructure pomXml, String req
 
 	}
 	
-	return responseIcp
+	return responseCloud
 }
 
-def initProbeValues(ICPDeployStructure deployStructure, String artifactId) {	
+def initProbeValues(CloudDeployStructure deployStructure, String artifactId) {	
   	//Validaremos las necesidades a nivel de probe
-	if (env.ICP_PROBE_SLOW!=null && env.ICP_PROBE_SLOW.contains(artifactId)) {
+	if (env.Cloud_PROBE_SLOW!=null && env.Cloud_PROBE_SLOW.contains(artifactId)) {
 		deployStructure.probeEspecial="SLOW"
-		deployStructure.periodReadiness=env.ICP_PROBE_PERIOD_READINESS
-		deployStructure.periodLiveness=env.ICP_PROBE_PERIOD_LIVENESS
-		deployStructure.timeoutLiveness=env.ICP_PROBE_TIMEOUT_LIVENESS
-		deployStructure.timeoutReadiness=env.ICP_PROBE_TIMEOUT_READINESS
-		deployStructure.failureThresholdReadiness=env.ICP_PROBE_FAILURE_READINESS
-		deployStructure.failureThresholdLiveness=env.ICP_PROBE_FAILURE_LIVENESS
-		deployStructure.initialDelaySecondsLiveness=env.ICP_PROBE_INITIAL_LIVENESS
-		deployStructure.initialDelaySecondsReadiness=env.ICP_PROBE_INITIAL_READINESS
+		deployStructure.periodReadiness=env.Cloud_PROBE_PERIOD_READINESS
+		deployStructure.periodLiveness=env.Cloud_PROBE_PERIOD_LIVENESS
+		deployStructure.timeoutLiveness=env.Cloud_PROBE_TIMEOUT_LIVENESS
+		deployStructure.timeoutReadiness=env.Cloud_PROBE_TIMEOUT_READINESS
+		deployStructure.failureThresholdReadiness=env.Cloud_PROBE_FAILURE_READINESS
+		deployStructure.failureThresholdLiveness=env.Cloud_PROBE_FAILURE_LIVENESS
+		deployStructure.initialDelaySecondsLiveness=env.Cloud_PROBE_INITIAL_LIVENESS
+		deployStructure.initialDelaySecondsReadiness=env.Cloud_PROBE_INITIAL_READINESS
     }else {
 		deployStructure.probeEspecial="NORMAL"
-		deployStructure.periodReadiness=env.ICP_PROBE_PERIOD_READINESS_GENERAL
-		deployStructure.periodLiveness=env.ICP_PROBE_PERIOD_LIVENESS_GENERAL
-		deployStructure.timeoutLiveness=env.ICP_PROBE_TIMEOUT_LIVENESS_GENERAL
-		deployStructure.timeoutReadiness=env.ICP_PROBE_TIMEOUT_READINESS_GENERAL
-		deployStructure.failureThresholdReadiness=env.ICP_PROBE_FAILURE_READINESS_GENERAL
-		deployStructure.failureThresholdLiveness=env.ICP_PROBE_FAILURE_LIVENESS_GENERAL
-		deployStructure.initialDelaySecondsLiveness=env.ICP_PROBE_INITIAL_LIVENESS_GENERAL
-		deployStructure.initialDelaySecondsReadiness=env.ICP_PROBE_INITIAL_READINESS_GENERAL
+		deployStructure.periodReadiness=env.Cloud_PROBE_PERIOD_READINESS_GENERAL
+		deployStructure.periodLiveness=env.Cloud_PROBE_PERIOD_LIVENESS_GENERAL
+		deployStructure.timeoutLiveness=env.Cloud_PROBE_TIMEOUT_LIVENESS_GENERAL
+		deployStructure.timeoutReadiness=env.Cloud_PROBE_TIMEOUT_READINESS_GENERAL
+		deployStructure.failureThresholdReadiness=env.Cloud_PROBE_FAILURE_READINESS_GENERAL
+		deployStructure.failureThresholdLiveness=env.Cloud_PROBE_FAILURE_LIVENESS_GENERAL
+		deployStructure.initialDelaySecondsLiveness=env.Cloud_PROBE_INITIAL_LIVENESS_GENERAL
+		deployStructure.initialDelaySecondsReadiness=env.Cloud_PROBE_INITIAL_READINESS_GENERAL
 		
 	}
 }
@@ -77,7 +77,7 @@ def call( PomXmlStructure pomXml, PipelineData pipeline, String buildIdMain, Str
         new KpiAlmEvent(
             pomXml, pipeline,
             KpiAlmEventStage.UNDEFINED,
-            KpiAlmEventOperation.ICP_DEPLOY)
+            KpiAlmEventOperation.Cloud_DEPLOY)
 	if (pomXml.artifactMicro!="" || pomXml.artifactSampleApp!="") {
 	    printOpen("Preparing deployment data...",EchoLevel.INFO)
 		printOpen("Pom structure: ${pomXml.toString()}",EchoLevel.DEBUG)
@@ -86,10 +86,10 @@ def call( PomXmlStructure pomXml, PipelineData pipeline, String buildIdMain, Str
             printOpen("The component Id of the new componnet  The artifact is ${pomXml.artifactMicro} is Arch ${pomXml.isArchProject()} ${pomXml.artifactType}  ${pomXml.artifactSubType}", EchoLevel.INFO)
 			String environment=pipeline.bmxStructure.environment
 			
-			ICPDeployStructure deployStructure=new ICPDeployStructure('cxb-ab3cor','cxb-ab3app',environment)
+			CloudDeployStructure deployStructure=new CloudDeployStructure('cxb-ab3cor','cxb-ab3app',environment)
 			pipeline.deployStructure = deployStructure
             boolean isApplicationWithNewHealthGroups = pomXml.isApplicationWithNewHealthGroups()
-            printOpen("ICP_CUSTOM_LIVENESSPROBE_APPLICATIONS: ${GlobalVars.ICP_CUSTOM_LIVENESSPROBE_APPLICATIONS}\n" +
+            printOpen("Cloud_CUSTOM_LIVENESSPROBE_APPLICATIONS: ${GlobalVars.Cloud_CUSTOM_LIVENESSPROBE_APPLICATIONS}\n" +
                 "ArtifactName: ${pomXml.artifactName}\n" +
                 "ArchVersion: ${pomXml.archVersion}\n" +
                 "isApplicationWithNewHealthGroups: ${isApplicationWithNewHealthGroups}", EchoLevel.DEBUG)
@@ -98,18 +98,18 @@ def call( PomXmlStructure pomXml, PipelineData pipeline, String buildIdMain, Str
                     deployStructure.calculateSpringCloudActiveProfiles(isApplicationWithNewHealthGroups) :
                     deployStructure.calculateSpringCloudActiveProfiles(pipeline.garArtifactType.name, pipeline.company, isApplicationWithNewHealthGroups)
 
-            printOpen("The url is ${deployStructure.url_int} ${deployStructure.url_ext} the environment ${deployStructure.env} environment ICP ${deployStructure.envICP}", EchoLevel.DEBUG)
+            printOpen("The url is ${deployStructure.url_int} ${deployStructure.url_ext} the environment ${deployStructure.env} environment Cloud ${deployStructure.envCloud}", EchoLevel.DEBUG)
 		
 			//Vemos si hay que hacer distribución por centro
-			String icpDistCenter="ALL"
+			String cloudDistCenter="ALL"
 			boolean isDeployByCenter = false
 			deployStructure.idCenter=1
 			if (pipeline.distributionModePRO == DistributionModePRO.SINGLE_CENTER_ROLLOUT_CENTER_1) {
-				icpDistCenter="AZ1"
+				cloudDistCenter="AZ1"
 				isDeployByCenter = true
 				deployStructure.idCenter=1
 			} else if (pipeline.distributionModePRO == DistributionModePRO.SINGLE_CENTER_ROLLOUT_CENTER_2) {
-				icpDistCenter="AZ2"
+				cloudDistCenter="AZ2"
 				isDeployByCenter = true
 				deployStructure.idCenter=2
 			}
@@ -118,18 +118,18 @@ def call( PomXmlStructure pomXml, PipelineData pipeline, String buildIdMain, Str
 			
 			//Begin generateManifest
 			//Esto puede provocar concurrencia en la generacion del fichero
-			checkICPAvailability(pomXml,pipeline,deployStructure.envICP,"DEPLOY")
+			checkCloudAvailability(pomXml,pipeline,deployStructure.envCloud,"DEPLOY")
 			if (buildIdMain==null) {
-				checkICPAvailability(pomXml,pipeline,deployStructure.envICP,"BUILD")
+				checkCloudAvailability(pomXml,pipeline,deployStructure.envCloud,"BUILD")
 			} 
 			
 			String newManifest = ''//Por ejemplo le pasamos centro 1
-			//FIXME: Porque usamos un deployStructure de BMX en ICP?
+			//FIXME: Porque usamos un deployStructure de BMX en Cloud?
             newManifest = generateManifest(pomXml, pipeline.bmxStructure.getDeployStructure(GlobalVars.BMX_CD1),pipeline,true)
 			
 			
-			boolean hasIngress = "PRO" == environment.toUpperCase() ? env.ICP_APP_HAS_INGRESS!=null : env.ICP_APP_HAS_INGRESS_PREVIOS!=null
-			String ingressList = "PRO" == environment.toUpperCase() ? env.ICP_APP_HAS_INGRESS : env.ICP_APP_HAS_INGRESS_PREVIOS
+			boolean hasIngress = "PRO" == environment.toUpperCase() ? env.Cloud_APP_HAS_INGRESS!=null : env.Cloud_APP_HAS_INGRESS_PREVIOS!=null
+			String ingressList = "PRO" == environment.toUpperCase() ? env.Cloud_APP_HAS_INGRESS : env.Cloud_APP_HAS_INGRESS_PREVIOS
 			
 			String artifactApp=pomXml.getApp(GarAppType.valueOfType(pipeline.garArtifactType.name) )
 			if (hasIngress) {
@@ -142,22 +142,22 @@ def call( PomXmlStructure pomXml, PipelineData pipeline, String buildIdMain, Str
 					 String ingressMaxSize=null
 					 String onlyMtls=null					
 					 */
-					 if (env.ICP_INGRESS_MAX_SIZE!=null) {
-						 deployStructure.ingressMaxSize=env.ICP_INGRESS_MAX_SIZE
+					 if (env.Cloud_INGRESS_MAX_SIZE!=null) {
+						 deployStructure.ingressMaxSize=env.Cloud_INGRESS_MAX_SIZE
 					 }					 
-					 if (env.ICP_INGRESS_CONNECT_TIMEOUT!=null) {
-						 deployStructure.ingressConnectTimeout=env.ICP_INGRESS_CONNECT_TIMEOUT
+					 if (env.Cloud_INGRESS_CONNECT_TIMEOUT!=null) {
+						 deployStructure.ingressConnectTimeout=env.Cloud_INGRESS_CONNECT_TIMEOUT
 					 }
-					 if (env.ICP_INGRESS_READ_TIMEOUT!=null) {
-						 deployStructure.ingressReadTimeout=env.ICP_INGRESS_READ_TIMEOUT
+					 if (env.Cloud_INGRESS_READ_TIMEOUT!=null) {
+						 deployStructure.ingressReadTimeout=env.Cloud_INGRESS_READ_TIMEOUT
 					 }
-					 if (env.ICP_INGRESS_SEND_TIMEOUT!=null) {
-						 deployStructure.ingressWriteTimeout=env.ICP_INGRESS_SEND_TIMEOUT
+					 if (env.Cloud_INGRESS_SEND_TIMEOUT!=null) {
+						 deployStructure.ingressWriteTimeout=env.Cloud_INGRESS_SEND_TIMEOUT
 					 }
 				}				
 			}
 			
-			if (pomXml.lowerThanMinICPArchVersion() && !"tauxconnector".equals(artifactApp)) {
+			if (pomXml.lowerThanMinCloudArchVersion() && !"tauxconnector".equals(artifactApp)) {
 				deployStructure.withoutAnnotations=true
 			}
 			
@@ -184,22 +184,22 @@ def call( PomXmlStructure pomXml, PipelineData pipeline, String buildIdMain, Str
 			
 			validateSecrets(deployStructure, pomXml, pipeline)
 		
-			ICPApiResponse response=null
+			CloudApiResponse response=null
 			
 			printOpen("The artifact is ${pomXml.artifactMicro} is Arch ${pomXml.isArchProject()}  ${pomXml.artifactSubType}",
 				EchoLevel.DEBUG)
 			
-			def icpAppResources=generateICPResources(deployStructure.memory,environment.toUpperCase(),pomXml.isArchProject(),pomXml.getApp(GarAppType.valueOfType(pipeline.garArtifactType.name)),pipeline.domain,pipeline.garArtifactType.name, pomXml.getMajorVersion(),pomXml.getICPAppName() )
+			def cloudAppResources=generateCloudResources(deployStructure.memory,environment.toUpperCase(),pomXml.isArchProject(),pomXml.getApp(GarAppType.valueOfType(pipeline.garArtifactType.name)),pipeline.domain,pipeline.garArtifactType.name, pomXml.getMajorVersion(),pomXml.getCloudAppName() )
 
-			pipeline.componentId=generateArtifactInICP(pomXml,pipeline,icpAppResources)
-			ICPk8sActualStatusInfo icpActualStatusInfo=null
+			pipeline.componentId=generateArtifactInCloud(pomXml,pipeline,cloudAppResources)
+			Cloudk8sActualStatusInfo cloudActualStatusInfo=null
 							
-		    icpActualStatusInfo=getActualDeploymentStatusOnICP(pomXml,pipeline,deployStructure,true,icpDistCenter,true)
+		    cloudActualStatusInfo=getActualDeploymentStatusOnCloud(pomXml,pipeline,deployStructure,true,cloudDistCenter,true)
 
 			//pipeline.componentId=2323
 			def component= MavenUtils.sanitizeArtifactName(pomXml.artifactName, pipeline.garArtifactType)
 
-            printOpen("The actualStatusInfo on ICP Environment is ${icpActualStatusInfo.toString()}\n" +
+            printOpen("The actualStatusInfo on Cloud Environment is ${cloudActualStatusInfo.toString()}\n" +
                 "The component Id of the new componnet ${pipeline.componentId} of the component ${component} The artifact is ${pomXml.artifactMicro} is Arch ${pomXml.isArchProject()}",
                 EchoLevel.DEBUG)
 		
@@ -207,17 +207,17 @@ def call( PomXmlStructure pomXml, PipelineData pipeline, String buildIdMain, Str
 			def versionImage=pomXml.artifactVersion
 			
 			if (pomXml.artifactVersion.contains('SNAPSHOT')) {
-				versionImage=versionImage+"-"+icpActualStatusInfo.getNextImage()
+				versionImage=versionImage+"-"+cloudActualStatusInfo.getNextImage()
 			} 
 		
 			def artifactMicro = pomXml.artifactMicro
 			
-			if (pipeline.deployOnIcp && pomXml.artifactType==ArtifactType.AGREGADOR && pomXml.artifactSampleApp != "") {
+			if (pipeline.deployOnCloud && pomXml.artifactType==ArtifactType.AGREGADOR && pomXml.artifactSampleApp != "") {
 				artifactMicro = pomXml.artifactSampleApp
 			}
 			
-			if (pipeline.deployOnIcp && pomXml.artifactType==ArtifactType.AGREGADOR && pomXml.artifactMicro!="") {
-				//Si hemos hecho deploy en ICP ahora no tenemos que hacer deploy ya que lo hemos hecho antes
+			if (pipeline.deployOnCloud && pomXml.artifactType==ArtifactType.AGREGADOR && pomXml.artifactMicro!="") {
+				//Si hemos hecho deploy en Cloud ahora no tenemos que hacer deploy ya que lo hemos hecho antes
 				artifactMicro=pomXml.artifactMicro
 			}
 			String versionArtifact = pomXml.artifactVersion
@@ -230,8 +230,8 @@ def call( PomXmlStructure pomXml, PipelineData pipeline, String buildIdMain, Str
 			}
 			
 			String additionalBuildParam="" 
-			if (deployStructure.isDb2 && getDb2Driver(deployStructure.envICP)!=null) {
-				additionalBuildParam=additionalBuildParam+",DB2_DRIVER_INPUT="+getDb2Driver(deployStructure.envICP)
+			if (deployStructure.isDb2 && getDb2Driver(deployStructure.envCloud)!=null) {
+				additionalBuildParam=additionalBuildParam+",DB2_DRIVER_INPUT="+getDb2Driver(deployStructure.envCloud)
 		  
 				printOpen("Overriding DB2 driver...", EchoLevel.INFO)
 			}
@@ -249,13 +249,13 @@ def call( PomXmlStructure pomXml, PipelineData pipeline, String buildIdMain, Str
 
                 try {
                     printOpen("Building docker image....", EchoLevel.INFO)
-                    response = buildArtifactOnIcp(pipeline, pomXml, "v1/type/PCLD/application/${pomXml.getICPAppName()}/component/${pipeline.componentId}/build", body, "POST", "${pomXml.getICPAppName()}", "v1/type/PCLD/application/${pomXml.getICPAppName()}/component/${pipeline.componentId}/build")
+                    response = buildArtifactOnCloud(pipeline, pomXml, "v1/type/PCLD/application/${pomXml.getCloudAppName()}/component/${pipeline.componentId}/build", body, "POST", "${pomXml.getCloudAppName()}", "v1/type/PCLD/application/${pomXml.getCloudAppName()}/component/${pipeline.componentId}/build")
                     printOpen("Docker image has been created successfully.", EchoLevel.INFO)
                     long wholeBuildImageEndMillis = new Date().getTime()
                     long wholeBuildImageDuration = wholeBuildImageEndMillis - wholeBuildImageStartMillis
 
                     kpiLogger(
-                        new KpiAlmEvent(pomXml, pipeline, KpiAlmEventStage.UNDEFINED, KpiAlmEventOperation.ICP_BUILD_DOCKER_IMAGE)
+                        new KpiAlmEvent(pomXml, pipeline, KpiAlmEventStage.UNDEFINED, KpiAlmEventOperation.Cloud_BUILD_DOCKER_IMAGE)
                             .callSuccess(wholeBuildImageDuration)
                     )
 
@@ -264,7 +264,7 @@ def call( PomXmlStructure pomXml, PipelineData pipeline, String buildIdMain, Str
                     long wholeBuildImageDuration = wholeBuildImageEndMillis - wholeBuildImageStartMillis
 
                     kpiLogger(
-                        new KpiAlmEvent(pomXml, pipeline, KpiAlmEventStage.UNDEFINED, KpiAlmEventOperation.ICP_BUILD_DOCKER_IMAGE)
+                        new KpiAlmEvent(pomXml, pipeline, KpiAlmEventStage.UNDEFINED, KpiAlmEventOperation.Cloud_BUILD_DOCKER_IMAGE)
                             .callAlmFail(wholeBuildImageDuration)
                     )
 
@@ -274,7 +274,7 @@ def call( PomXmlStructure pomXml, PipelineData pipeline, String buildIdMain, Str
 
 			} else {
 
-				response= new ICPApiResponse()
+				response= new CloudApiResponse()
 				def body1 = null
 				if (buildIdMain=="NoTenemosID") {
 					body1 = [
@@ -293,7 +293,7 @@ def call( PomXmlStructure pomXml, PipelineData pipeline, String buildIdMain, Str
 			}
 			//Deploy del artefacto
             boolean wasError = !(response.statusCode>=200 && response.statusCode<300)
-            printOpen("${response} De ICP statusCode ${response.statusCode} body ${response.body}", wasError ? EchoLevel.ERROR : EchoLevel.DEBUG)
+            printOpen("${response} De Cloud statusCode ${response.statusCode} body ${response.body}", wasError ? EchoLevel.ERROR : EchoLevel.DEBUG)
 
             String buildId = response?.body?.id
 
@@ -301,51 +301,51 @@ def call( PomXmlStructure pomXml, PipelineData pipeline, String buildIdMain, Str
 				//Validar las necesidades que debe tener esta pieza a nivel de probe
 				initProbeValues(deployStructure, pomXml.getApp(GarAppType.valueOfType(pipeline.garArtifactType.name)) )
 				
-				def firstICPState=ICPWorkflowStates.NEW_DEPLOY
+				def firstCloudState=CloudWorkflowStates.NEW_DEPLOY
 				
 				if ( environment.toUpperCase() == "DEV" ) {
-					firstICPState=ICPWorkflowStates.ELIMINATE_CURRENT_APP
+					firstCloudState=CloudWorkflowStates.ELIMINATE_CURRENT_APP
 				}
 				
-				ICPStateUtility icpStateUtility=new ICPStateUtility(pipeline,pomXml,response.body.imageRepo1, icpActualStatusInfo, firstICPState, MavenUtils.sanitizeArtifactName(pomXml.artifactName, pipeline.garArtifactType),pomXml.getArtifactMajorVersion())
-				icpStateUtility.suffixedComponentName=deployStructure.getSuffixedComponentName()
-				icpStateUtility.buildId=buildId
-				icpStateUtility.versionImage=versionImage
-				icpStateUtility.icpResources=icpAppResources
-				icpStateUtility.icpResources.garArtifactType=pipeline.garArtifactType
-				icpStateUtility.icpDeployStructure=deployStructure
-				icpStateUtility.initExtraRoute()
-				icpStateUtility.microType=deployStructure.microType
+				CloudStateUtility cloudStateUtility=new CloudStateUtility(pipeline,pomXml,response.body.imageRepo1, cloudActualStatusInfo, firstCloudState, MavenUtils.sanitizeArtifactName(pomXml.artifactName, pipeline.garArtifactType),pomXml.getArtifactMajorVersion())
+				cloudStateUtility.suffixedComponentName=deployStructure.getSuffixedComponentName()
+				cloudStateUtility.buildId=buildId
+				cloudStateUtility.versionImage=versionImage
+				cloudStateUtility.cloudResources=cloudAppResources
+				cloudStateUtility.cloudResources.garArtifactType=pipeline.garArtifactType
+				cloudStateUtility.cloudDeployStructure=deployStructure
+				cloudStateUtility.initExtraRoute()
+				cloudStateUtility.microType=deployStructure.microType
 				
 								
 				if (pomXml.artifactSubType!=ArtifactSubType.MICRO_APP && pomXml.artifactSubType!=ArtifactSubType.MICRO_ARCH) {
-					icpStateUtility.sampleAppFlag=true
+					cloudStateUtility.sampleAppFlag=true
 				}
 
 				printOpen("The app is ${pomXml.getBmxAppId()} ", EchoLevel.INFO)
 		
 				
-				if (icpActualStatusInfo!=null && icpActualStatusInfo.deployId!=null) icpStateUtility.deployId=icpActualStatusInfo.deployId
+				if (cloudActualStatusInfo!=null && cloudActualStatusInfo.deployId!=null) cloudStateUtility.deployId=cloudActualStatusInfo.deployId
 				
 				body = [
-					az: "${icpDistCenter}",
-					environment: "${deployStructure.envICP.toUpperCase()}",
-					values: "${deployStructure.getEnvVariables(pipeline.garArtifactType.name,pomXml.getApp(GarAppType.valueOfType(pipeline.garArtifactType.name) ),pomXml.getMajorVersion(),pipeline.domain,pipeline.subDomain,pipeline.company)}${icpStateUtility.getChartValues()}"
+					az: "${cloudDistCenter}",
+					environment: "${deployStructure.envCloud.toUpperCase()}",
+					values: "${deployStructure.getEnvVariables(pipeline.garArtifactType.name,pomXml.getApp(GarAppType.valueOfType(pipeline.garArtifactType.name) ),pomXml.getMajorVersion(),pipeline.domain,pipeline.subDomain,pipeline.company)}${cloudStateUtility.getChartValues()}"
 				]
 
                 printOpen("The body is ${body}", EchoLevel.DEBUG)
-                printOpen("[ICP-STATE] STATE OF THE ICP ${icpStateUtility.icpAppState.toString()}", EchoLevel.DEBUG)
+                printOpen("[Cloud-STATE] STATE OF THE Cloud ${cloudStateUtility.cloudAppState.toString()}", EchoLevel.DEBUG)
                 
                 printOpen("Deploying application to Kubernetes...", EchoLevel.INFO)
 				
-				response=sendRequestToICPApi("v1/application/PCLD/${pomXml.getICPAppName()}/component/${pipeline.componentId}/deploy",body,"POST","${pomXml.getICPAppName()}","v1/application/PCLD/${pomXml.getICPAppName()}/component/${pipeline.componentId}/deploy",true,true, pipeline, pomXml)
+				response=sendRequestToCloudApi("v1/application/PCLD/${pomXml.getCloudAppName()}/component/${pipeline.componentId}/deploy",body,"POST","${pomXml.getCloudAppName()}","v1/application/PCLD/${pomXml.getCloudAppName()}/component/${pipeline.componentId}/deploy",true,true, pipeline, pomXml)
 
                 printOpen("el resultado es ${response}", EchoLevel.DEBUG)
-                printOpen("icpStateUtility=$icpStateUtility", EchoLevel.DEBUG)
+                printOpen("cloudStateUtility=$cloudStateUtility", EchoLevel.DEBUG)
 
 				if (response.statusCode>300) {
 
-                    createMaximoAndThrow.icpDeployException(pipeline, pomXml, response)
+                    createMaximoAndThrow.cloudDeployException(pipeline, pomXml, response)
 
 				} else {
 					 pipeline.isNowDeployed = true
@@ -353,92 +353,92 @@ def call( PomXmlStructure pomXml, PipelineData pipeline, String buildIdMain, Str
 					 
 					 
 					 if (response!=null && response.body!=null)
-						icpStateUtility.deployId=response.body.id
-					 else icpStateUtility.deployId=0
+						cloudStateUtility.deployId=response.body.id
+					 else cloudStateUtility.deployId=0
 
-                     printOpen("The deploy with id ${icpStateUtility.deployId} ended successfully.", EchoLevel.INFO)
-                     printOpen("Chart values:\n${icpStateUtility.getChartValues()}", EchoLevel.DEBUG)
+                     printOpen("The deploy with id ${cloudStateUtility.deployId} ended successfully.", EchoLevel.INFO)
+                     printOpen("Chart values:\n${cloudStateUtility.getChartValues()}", EchoLevel.DEBUG)
 
 					 boolean isReady = false
 					 
 					 //Vamos a intentar solucionar el problema que tenemos... vamos a lanzar dos deploys.
 					 try {
 
-						 isReady=waitICPDeploymentReady(pomXml,pipeline,deployStructure,icpStateUtility.getNewColour(),icpDistCenter)
+						 isReady=waitCloudDeploymentReady(pomXml,pipeline,deployStructure,cloudStateUtility.getNewColour(),cloudDistCenter)
 					 } catch (org.jenkinsci.plugins.workflow.steps.FlowInterruptedException e) {
-						 if ("DEV".equals(deployStructure.envICP.toUpperCase())) {
-							 response=sendRequestToICPApi("v1/application/PCLD/${pomXml.getICPAppName()}/component/${pipeline.componentId}/deploy",body,"DELETE","${pomXml.getICPAppName()}","",false,false)
+						 if ("DEV".equals(deployStructure.envCloud.toUpperCase())) {
+							 response=sendRequestToCloudApi("v1/application/PCLD/${pomXml.getCloudAppName()}/component/${pipeline.componentId}/deploy",body,"DELETE","${pomXml.getCloudAppName()}","",false,false)
 							 
 							 if (response.statusCode>300) {
 								 printOpen("The current deployment has been deleted.",EchoLevel.INFO)	
 							 }
 						 }
-						 throw new Exception("${GlobalVars.ICP_ERROR_DEPLOY_INSTANCE_REBOOTING}")															 														   
+						 throw new Exception("${GlobalVars.Cloud_ERROR_DEPLOY_INSTANCE_REBOOTING}")															 														   
 					 } catch (TooManyRestartsException e){ 
 						 
 						 printOpen("${e.getMessage()}}", EchoLevel.ERROR)
 						 printOpen("We are going to delete the current deployment.",EchoLevel.INFO)
 						 
-						 response=sendRequestToICPApi("v1/application/PCLD/${pomXml.getICPAppName()}/component/${pipeline.componentId}/deploy",body,"DELETE","${pomXml.getICPAppName()}","",false,false)
+						 response=sendRequestToCloudApi("v1/application/PCLD/${pomXml.getCloudAppName()}/component/${pipeline.componentId}/deploy",body,"DELETE","${pomXml.getCloudAppName()}","",false,false)
 						 
 						 if (response.statusCode>300) {
 							 printOpen("The current deployment has been deleted.",EchoLevel.INFO)							 
 						 }
-						 throw new Exception("${GlobalVars.ICP_ERROR_DEPLOY_INSTANCE_REBOOTING}")
+						 throw new Exception("${GlobalVars.Cloud_ERROR_DEPLOY_INSTANCE_REBOOTING}")
 						 
 					 } catch(Exception e) {
 
-                         printOpen("Error at waitICPDeploymentReady:\n${Utilities.prettyException(e, false)}", EchoLevel.DEBUG)
+                         printOpen("Error at waitCloudDeploymentReady:\n${Utilities.prettyException(e, false)}", EchoLevel.DEBUG)
 
 						 if (e.getMessage()!=null && e.getMessage().contains("DEPLOY FALLIDO")) {
 
-							 response=sendRequestToICPApi("v1/application/PCLD/${pomXml.getICPAppName()}/component/${pipeline.componentId}/deploy",body,"POST","${pomXml.getICPAppName()}","v1/application/PCLD/${pomXml.getICPAppName()}/component/${pipeline.componentId}/deploy",true,true, pipeline, pomXml)
+							 response=sendRequestToCloudApi("v1/application/PCLD/${pomXml.getCloudAppName()}/component/${pipeline.componentId}/deploy",body,"POST","${pomXml.getCloudAppName()}","v1/application/PCLD/${pomXml.getCloudAppName()}/component/${pipeline.componentId}/deploy",true,true, pipeline, pomXml)
 
 							 if (response.statusCode>300) {
 
-                                 createMaximoAndThrow.icpDeployException(pipeline, pomXml, response)
+                                 createMaximoAndThrow.cloudDeployException(pipeline, pomXml, response)
 
                              }
 							 try {
 
-								 isReady=waitICPDeploymentReady(pomXml,pipeline,deployStructure,icpStateUtility.getNewColour(),icpDistCenter)
+								 isReady=waitCloudDeploymentReady(pomXml,pipeline,deployStructure,cloudStateUtility.getNewColour(),cloudDistCenter)
 
 							 } catch(Exception e1) {
 
-								 throw new Exception("${GlobalVars.ICP_ERROR_DEPLOY_INSTANCE_REBOOTING}")
+								 throw new Exception("${GlobalVars.Cloud_ERROR_DEPLOY_INSTANCE_REBOOTING}")
 							 }
 							 
 						 } else {
 
-							 throw new Exception("${GlobalVars.ICP_ERROR_DEPLOY_INSTANCE_REBOOTING}")
+							 throw new Exception("${GlobalVars.Cloud_ERROR_DEPLOY_INSTANCE_REBOOTING}")
 
 						 }
 					 }
 
-					 if (isReady) printOpen("The deployment with id ${icpStateUtility.deployId} ended successfully.", EchoLevel.INFO) 
+					 if (isReady) printOpen("The deployment with id ${cloudStateUtility.deployId} ended successfully.", EchoLevel.INFO) 
 					 
-					 icpStateUtility.icpAppState=icpStateUtility.getNextStateWorkflow()
+					 cloudStateUtility.cloudAppState=cloudStateUtility.getNextStateWorkflow()
 					 
 					 //Vamos a proceder a hacer el ELIMINATE NEW ROUTE
-					 if (icpStateUtility.icpAppState==ICPWorkflowStates.ELIMINATE_NEW_ROUTE_TO_CURRENT_APP) {
+					 if (cloudStateUtility.cloudAppState==CloudWorkflowStates.ELIMINATE_NEW_ROUTE_TO_CURRENT_APP) {
 
-						 deployICPState(icpStateUtility, pomXml, pipeline, icpDistCenter)
-						 icpStateUtility.icpAppState=icpStateUtility.getNextStateWorkflow()
+						 deployCloudState(cloudStateUtility, pomXml, pipeline, cloudDistCenter)
+						 cloudStateUtility.cloudAppState=cloudStateUtility.getNextStateWorkflow()
 
 					 }
 					 
 					 //Validate the micro is up.... maybe the micro is too slow
 					 String artifactId = BmxUtilities.calculateArtifactId(pomXml,pipeline.branchStructure)
 					 
-					 String pathToMicro=icpStateUtility.icpDeployStructure.getSuffixedComponentName().replace("<componentName>", artifactId)
+					 String pathToMicro=cloudStateUtility.cloudDeployStructure.getSuffixedComponentName().replace("<componentName>", artifactId)
 					 
 					 if (pipeline.branchStructure.branchType == BranchType.FEATURE) {
 
-						 pathToMicro=icpStateUtility.pathFeature
+						 pathToMicro=cloudStateUtility.pathFeature
 
 					 } else {
 
-						 if (icpStateUtility.sampleAppFlag) pathToMicro=BmxUtilities.calculateArtifactId(pomXml,pipeline.branchStructure,true).toLowerCase()
+						 if (cloudStateUtility.sampleAppFlag) pathToMicro=BmxUtilities.calculateArtifactId(pomXml,pipeline.branchStructure,true).toLowerCase()
 
                      }
 					 
@@ -447,44 +447,44 @@ def call( PomXmlStructure pomXml, PipelineData pipeline, String buildIdMain, Str
 					 }
 
                     // Start: Check Centers Avaiability
-                    def az1IsUp = validateMicroIsUp(icpStateUtility.icpDeployStructure.getUrlActuatorPrefixTesting() + icpStateUtility.icpDeployStructure.getUrlSuffixTesting("AZ1"))
-                    def az2IsUp = validateMicroIsUp(icpStateUtility.icpDeployStructure.getUrlActuatorPrefixTesting() + icpStateUtility.icpDeployStructure.getUrlSuffixTesting("AZ2"))
+                    def az1IsUp = validateMicroIsUp(cloudStateUtility.cloudDeployStructure.getUrlActuatorPrefixTesting() + cloudStateUtility.cloudDeployStructure.getUrlSuffixTesting("AZ1"))
+                    def az2IsUp = validateMicroIsUp(cloudStateUtility.cloudDeployStructure.getUrlActuatorPrefixTesting() + cloudStateUtility.cloudDeployStructure.getUrlSuffixTesting("AZ2"))
                   
-                    if (icpDistCenter == "ALL") {
+                    if (cloudDistCenter == "ALL") {
                         if (az1IsUp) {
                             printOpen("We are going to check our application at cluster 1...", EchoLevel.INFO)
-                            icpDistCenter = "AZ1"
+                            cloudDistCenter = "AZ1"
                         } else {
                             if (az2IsUp) {
                                 printOpen("We are going to check our application at cluster 2...", EchoLevel.DEBUG)
-                                icpDistCenter = "AZ2"
+                                cloudDistCenter = "AZ2"
                             } else {
-                                throw new Exception("${GlobalVars.ICP_ERROR_DEPLOY_KUBERNETES_DISABLED}")
+                                throw new Exception("${GlobalVars.Cloud_ERROR_DEPLOY_KUBERNETES_DISABLED}")
                             }
                         }
-                    } else if (icpDistCenter == "AZ1" && !az1IsUp) {
+                    } else if (cloudDistCenter == "AZ1" && !az1IsUp) {
                         // Lanzar la exception para decir no que si es por centro y se ha seleccionado el centro mitigado que falle
-                        throw new Exception("${GlobalVars.ICP_ERROR_DEPLOY_ON_MITIGATED_CENTER}")
-                    } else if (icpDistCenter == "AZ2" && !az2IsUp) {
+                        throw new Exception("${GlobalVars.Cloud_ERROR_DEPLOY_ON_MITIGATED_CENTER}")
+                    } else if (cloudDistCenter == "AZ2" && !az2IsUp) {
                         // Lanzar la exception para decir no que si es por centro y se ha seleccionado el centro mitigado que falle
-                        throw new Exception("${GlobalVars.ICP_ERROR_DEPLOY_ON_MITIGATED_CENTER}")
+                        throw new Exception("${GlobalVars.Cloud_ERROR_DEPLOY_ON_MITIGATED_CENTER}")
                     }
                     
                     // Check is micro Up
-                    String microUrl = icpStateUtility.icpDeployStructure.getUrlActuatorPrefixTesting() + icpStateUtility.icpDeployStructure.getUrlSuffixTesting(icpDistCenter) + "/" + pathToMicro
+                    String microUrl = cloudStateUtility.cloudDeployStructure.getUrlActuatorPrefixTesting() + cloudStateUtility.cloudDeployStructure.getUrlSuffixTesting(cloudDistCenter) + "/" + pathToMicro
                     
                     if (!validateMicroIsUp(microUrl)) {
-                         throw new Exception("${GlobalVars.ICP_ERROR_DEPLOY_INSTANCE_REBOOTING}")
+                         throw new Exception("${GlobalVars.Cloud_ERROR_DEPLOY_INSTANCE_REBOOTING}")
                     }
                     
                     printOpen("Our new deployment is UP and Running. Url: <a href='${microUrl}'>${microUrl}</a>", EchoLevel.DEBUG)
 					//Si tenemos old.... y vamos por centro deberiamos cerrar old.
 				}	
-				return icpStateUtility
+				return cloudStateUtility
 
 			} else {
 
-                createMaximoAndThrow.icpDeployException(pipeline, pomXml, response)
+                createMaximoAndThrow.cloudDeployException(pipeline, pomXml, response)
 
 			}
 		
@@ -493,8 +493,8 @@ def call( PomXmlStructure pomXml, PipelineData pipeline, String buildIdMain, Str
             long wholeCallEndMillis = new Date().getTime()
             wholeCallDuration = wholeCallEndMillis - wholeCallStartMillis
 
-            boolean isAppFail = e?.getMessage().contains(GlobalVars.ICP_ERROR_DEPLOY_NO_INSTANCE_AVAILABLE) ||
-                e?.getMessage().contains(GlobalVars.ICP_ERROR_DEPLOY_INSTANCE_REBOOTING)
+            boolean isAppFail = e?.getMessage().contains(GlobalVars.Cloud_ERROR_DEPLOY_NO_INSTANCE_AVAILABLE) ||
+                e?.getMessage().contains(GlobalVars.Cloud_ERROR_DEPLOY_INSTANCE_REBOOTING)
 
             if (isAppFail) {
                 printOpen(e.getMessage(), EchoLevel.ERROR)

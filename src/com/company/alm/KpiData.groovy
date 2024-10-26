@@ -211,7 +211,7 @@ class KpiData {
         return [
             space_name_str: GlobalVars.BMX_PRO_SPACE,
             loglevel: "INFO",
-            aplicacion: 'absis-alm',
+            aplicacion: 'alm-alm',
             app: [
                 clase_str: 'logs'
             ],

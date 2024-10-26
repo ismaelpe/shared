@@ -8,8 +8,8 @@ import com.project.alm.*
 @Field String artifactSubType
 @Field String targetBranch
 @Field String gitLabActionType
-@Field String deployICPPhases
-@Field String resultDeployICP
+@Field String deployCloudPhases
+@Field String resultDeployCloud
 
 @Field String lastCommitId
 @Field String lastCommit
@@ -22,7 +22,7 @@ import com.project.alm.*
 
 @Field BranchStructure branchStructure
 @Field def pipelineBehaviour
-@Field ICPStateUtility icpStateUtilitity
+@Field CloudStateUtility cloudStateUtilitity
 
 @Field KpiAlmEvent almEvent
 @Field long initCallStartMillis
@@ -32,14 +32,14 @@ import com.project.alm.*
 \* ************************************************************************************************************************************** */
 def call() {
     dataSourceFile = ""
-    deployICPPhases = "01-pre-deploy"
-    resultDeployICP = "OK"
+    deployCloudPhases = "01-pre-deploy"
+    resultDeployCloud = "OK"
 
     ifProceed = true
     initGpl = false
     successPipeline = false
     
-    icpStateUtilitity = null
+    cloudStateUtilitity = null
     almEvent = null	
     
     pipelineBehaviour = PipelineBehavior.LIKE_ALWAYS
@@ -47,7 +47,7 @@ def call() {
     initCallStartMillis = new Date().getTime()
     
     pipeline {
-		agent {	node (absisJenkinsAgent('standard')) }
+		agent {	node (almJenkinsAgent('standard')) }
         options {
             gitLabConnection('gitlab')
             buildDiscarder(logRotator(numToKeepStr: '40'))
@@ -57,8 +57,8 @@ def call() {
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
 			JNKMSV = credentials('JNKMSV-USER-TOKEN')
-            ICP_CERT = credentials('icp-alm-pro-cert')
-            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
+            Cloud_CERT = credentials('cloud-alm-pro-cert')
+            Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
             SONAR_TOKEN = credentials('sonartoken')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
@@ -97,7 +97,7 @@ def call() {
 			}
 			stage('deploy-ddl-bbdd'){
 				when {
-					expression { ifProceed && hasBBDD(pomXmlStructure,pipelineData,false) && absisPipelineBuildStageDeployDdlBbdd.shouldExecute(pipelineData)}
+					expression { ifProceed && hasBBDD(pomXmlStructure,pipelineData,false) && almPipelineBuildStageDeployDdlBbdd.shouldExecute(pipelineData)}
 				}
 				steps {
                     deployDdlBBDDStep()
@@ -159,12 +159,12 @@ def call() {
                     pushReleaseToGitStep()
                 }
             }
-            stage('deploy-micro-artifactory-icp') {
+            stage('deploy-micro-artifactory-cloud') {
                 when {
                     expression { ifProceed && !pipelineData.isPushCI() }
                 }
                 steps {
-                    deployMicroArtifactoryICPStep()
+                    deployMicroArtifactoryCloudStep()
                 }
             }
             stage('copy-config-files') {
@@ -194,7 +194,7 @@ def call() {
 			stage("consolidate-new-deploy") {
 				when{
 					//Validamos que el micro no este en DEV o que sea una sampleapp pendiente de borrar
-					expression { ifProceed && resultDeployICP=="OK" && !pipelineData.isPushCI() && !pipelineData.isRebaseOfARelease && (pomXmlStructure.artifactSampleApp!="" || (pipelineData.branchStructure.branchType != BranchType.MASTER && pipelineData.branchStructure.branchType != BranchType.FEATURE)) }
+					expression { ifProceed && resultDeployCloud=="OK" && !pipelineData.isPushCI() && !pipelineData.isRebaseOfARelease && (pomXmlStructure.artifactSampleApp!="" || (pipelineData.branchStructure.branchType != BranchType.MASTER && pipelineData.branchStructure.branchType != BranchType.FEATURE)) }
 				}
 				steps {
                     consolidateNewDeployStep()
@@ -202,7 +202,7 @@ def call() {
 			}
 			stage('clone-to-ocp') {
 				when{
-					expression { ifProceed && resultDeployICP=="OK" && !pipelineData.isPushCI() && !pipelineData.isRebaseOfARelease  && pipelineData.branchStructure.branchType != BranchType.MASTER && pipelineData.branchStructure.branchType != BranchType.FEATURE }
+					expression { ifProceed && resultDeployCloud=="OK" && !pipelineData.isPushCI() && !pipelineData.isRebaseOfARelease  && pipelineData.branchStructure.branchType != BranchType.MASTER && pipelineData.branchStructure.branchType != BranchType.FEATURE }
 				}
 				steps {
                     cloneToOCPStep()
@@ -485,21 +485,21 @@ def deployIfPrototypeStep() {
  * Stage 'deploy-ddl-bbdd'
  */
 def deployDdlBBDDStep() {
-    absisPipelineBuildStageDeployDdlBbdd(pipelineData, pomXmlStructure)
+    almPipelineBuildStageDeployDdlBbdd(pipelineData, pomXmlStructure)
 }
 
 /**
  * Stage 'validate-dependencies-version'
  */
 def validateDependenciesVersionStep() {
-    absisPipelineStageValidateDependenciesVersion(pomXmlStructure, pipelineData, "200")
+    almPipelineStageValidateDependenciesVersion(pomXmlStructure, pipelineData, "200")
 }
 
 /**
  * Stage 'validate-dependencies-restrictions'
  */
 def validateDependenciesRestrictiondsVersionStep() {
-    absisPipelineStageValidateDependencyRestrictions(pomXmlStructure, pipelineData, "250")
+    almPipelineStageValidateDependencyRestrictions(pomXmlStructure, pipelineData, "250")
 }
 
 /**
@@ -518,7 +518,7 @@ def updateVersionStep() {
  * Stage 'validate-version'
  */
 def validateVersionStep() {
-    absisPipelineStageValidateVersion(pomXmlStructure, pipelineData, "400")
+    almPipelineStageValidateVersion(pomXmlStructure, pipelineData, "400")
 }
 
 /**
@@ -566,9 +566,9 @@ def pushReleaseToGitStep() {
 }
 
 /**
- * Stage 'deploy-micro-artifactory-icp'
+ * Stage 'deploy-micro-artifactory-cloud'
  */
-def deployMicroArtifactoryICPStep() {
+def deployMicroArtifactoryCloudStep() {
     sendStageStartToGPL(pomXmlStructure, pipelineData, "415")
     
     if (existsArtifactDeployed(pomXmlStructure,pipelineData)) {
@@ -600,7 +600,7 @@ def copyConfigFilesStep() {
  * Stage 'deploy-to-cloud'
  */
 def deployToCloudStep() {
-    icpStateUtilitity = absisPipelineStageDeployToCloud(pomXmlStructure, pipelineData, "501", "01-<phase>-deploy")
+    cloudStateUtilitity = almPipelineStageDeployToCloud(pomXmlStructure, pipelineData, "501", "01-<phase>-deploy")
 }
 
 /**
@@ -617,14 +617,14 @@ def refreshConfigurationStep() {
  * Stage 'consolidate-new-deploy'
  */
 def consolidateNewDeployStep() {
-    absisPipelineStageConsolidateNewDeploy(pomXmlStructure, pipelineData, "506", "04-<phase>-consolidateNew", icpStateUtilitity)
+    almPipelineStageConsolidateNewDeploy(pomXmlStructure, pipelineData, "506", "04-<phase>-consolidateNew", cloudStateUtilitity)
 }
 
 /**
  * Stage 'clone-to-ocp'
  */
 def cloneToOCPStep() {
-	absisPipelineStageCloneToOcp(pomXmlStructure, pipelineData)
+	almPipelineStageCloneToOcp(pomXmlStructure, pipelineData)
 }
 
 /**
@@ -698,7 +698,7 @@ def publishCatalogStep() {
     pipelineData.prepareResultData(pomXmlStructure.artifactVersion, pomXmlStructure.artifactMicro, pomXmlStructure.artifactName)
     // Actualizamos el build path ya que estamos en el build ondemand
     // esto nos valdrá para ir actualizando el dato de las aplicaciones que aun no tiene este dato.
-    publishArtifactInCatalog(pipelineData, pomXmlStructure, icpStateUtilitity)
+    publishArtifactInCatalog(pipelineData, pomXmlStructure, cloudStateUtilitity)
     sendStageEndToGPL(pomXmlStructure, pipelineData, "910")
 }
 

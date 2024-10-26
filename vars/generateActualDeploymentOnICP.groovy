@@ -1,16 +1,16 @@
 import com.project.alm.*
-import com.project.alm.ICPk8sComponentDeploymentInfo
+import com.project.alm.Cloudk8sComponentDeploymentInfo
 import com.project.alm.BmxUtilities
-import com.project.alm.ICPk8sComponentInfo
-import com.project.alm.ICPk8sComponentServiceInfo
+import com.project.alm.Cloudk8sComponentInfo
+import com.project.alm.Cloudk8sComponentServiceInfo
 
 /**
-[{"metadata":{"cluster":"icp01-pre","company":"cxb","appName":"pasdev","componentName":"democonnecta22","platform":"icp"},
+[{"metadata":{"cluster":"cloud01-pre","company":"cxb","appName":"pasdev","componentName":"democonnecta22","platform":"cloud"},
 "items":{
 "deployments":[{"name":"democonnecta22-b","replicas":{"desired":1,"updated":1,"total":1,"available":1,"unavailable":null},"ready":true,"creationTimestamp":"2020-03-10T17:01:50Z"}],
 "ingresses":[{"name":"democonnecta2-micro-2-beta-system","ready":true}],
 "services":[{"name":"democonnecta2-micro-2-beta"}]}},
-{"metadata":{"cluster":"icp02-pre","company":"cxb","appName":"pasdev","componentName":"democonnecta22","platform":"icp"},
+{"metadata":{"cluster":"cloud02-pre","company":"cxb","appName":"pasdev","componentName":"democonnecta22","platform":"cloud"},
 "items":{
 "deployments":[{"name":"democonnecta22-b","replicas":{"desired":1,"updated":1,"total":1,"available":1,"unavailable":null},"ready":true,"creationTimestamp":"2020-03-10T17:02:13Z"}],
 "ingresses":[{"name":"democonnecta2-micro-2-beta-system","ready":true}],
@@ -31,24 +31,24 @@ def call(def body) {
 	//		items
 	//	Por cada item tenemos arrays de deployments, ingresses, services
 
-	def icpZoneLength=body.size()
-	ICPk8sComponentInfoMult resultado = new ICPk8sComponentInfoMult()
+	def cloudZoneLength=body.size()
+	Cloudk8sComponentInfoMult resultado = new Cloudk8sComponentInfoMult()
 	
 	boolean componentIsNull=true
 	
-	if (icpZoneLength>=1) {
+	if (cloudZoneLength>=1) {
 		def i = 0
-		while(i < icpZoneLength) {
+		while(i < cloudZoneLength) {
 			componentIsNull=true
 			
-			ICPk8sComponentInfo k8sComponentInfo = new ICPk8sComponentInfo()
+			Cloudk8sComponentInfo k8sComponentInfo = new Cloudk8sComponentInfo()
 			
 			def itemsk8s=body[i].items
 			
 			if (itemsk8s.deployments!=null) {
 				componentIsNull=false
 				itemsk8s.deployments.each{
-					ICPk8sComponentDeploymentInfo deployment=new ICPk8sComponentDeploymentInfo()
+					Cloudk8sComponentDeploymentInfo deployment=new Cloudk8sComponentDeploymentInfo()
 					
 					deployment.name=it.name
 					deployment.replicasAvailable = it.replicas.available
@@ -69,7 +69,7 @@ def call(def body) {
 			if (itemsk8s.services!=null) {
 				componentIsNull=false
 				itemsk8s.services.each{
-					ICPk8sComponentServiceInfo service=new ICPk8sComponentServiceInfo()
+					Cloudk8sComponentServiceInfo service=new Cloudk8sComponentServiceInfo()
 					service.name=it.name					
 					k8sComponentInfo.services.add(service)
 				}
@@ -78,7 +78,7 @@ def call(def body) {
 			//Pods
 			if (itemsk8s.pods!=null) {
 				itemsk8s.pods.each{
-					ICPk8sComponentPodInfo pod=new ICPk8sComponentPodInfo()
+					Cloudk8sComponentPodInfo pod=new Cloudk8sComponentPodInfo()
 					pod.name = it.name
 					pod.controlledByName = it.controlledByName
 					pod.restarts = it.restarts

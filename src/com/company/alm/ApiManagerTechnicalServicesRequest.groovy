@@ -39,8 +39,8 @@ class ApiManagerTechnicalServicesRequest {
     private static boolean shouldContractBeSent(PipelineData pipelineData, PomXmlStructure pomXml) {
 
         boolean isManualCopyWithBuild =
-            pipelineData.manualCopyExecutionMode == ICPVarPipelineCopyType.EX_MODE_ALL &&
-                pipelineData.manualCopyElectionOriginArtifact != ICPVarPipelineCopyType.ORIGIN_TAG
+            pipelineData.manualCopyExecutionMode == CloudVarPipelineCopyType.EX_MODE_ALL &&
+                pipelineData.manualCopyElectionOriginArtifact != CloudVarPipelineCopyType.ORIGIN_TAG
 
         boolean isSNAPSHOTDeploymentToTST =
             pipelineData.isCIReleaseBranch() && pomXml.isSNAPSHOT() &&

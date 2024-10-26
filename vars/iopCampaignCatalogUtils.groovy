@@ -29,12 +29,12 @@ def startOrStop(boolean isStart) {
 				initDate: date,
 				startDate: date
 			]
-			response=sendRequestToAbsis3MS('PUT', "${GlobalVars.URL_CATALOGO_ALM_PRO}/iop",bodyNew, "${GlobalVars.CATALOGO_ALM_ENV}")
+			response=sendRequestToAlm3MS('PUT', "${GlobalVars.URL_CATALOGO_ALM_PRO}/iop",bodyNew, "${GlobalVars.CATALOGO_ALM_ENV}")
 		}else {
 			bodyNew = [
 				endDate: date
 			]
-			response=sendRequestToAbsis3MS('POST', "${GlobalVars.URL_CATALOGO_ALM_PRO}/iop/close",null, "${GlobalVars.CATALOGO_ALM_ENV}")
+			response=sendRequestToAlm3MS('POST', "${GlobalVars.URL_CATALOGO_ALM_PRO}/iop/close",null, "${GlobalVars.CATALOGO_ALM_ENV}")
 		}
 
 		if (response.status == 200) {
@@ -67,7 +67,7 @@ def closeVersion(def pomXml, def pipelineData) {
 			typeVersion = "UNKNOWN"
 		}
 		
-		def response=sendRequestToAbsis3MS('POST', "${GlobalVars.URL_CATALOGO_ALM_PRO}/iop/${pipelineData.getGarArtifactType().getGarName()}/${pomXml.getApp(pipelineData.garArtifactType)}/${pomXml.artifactMajorVersion}/${pomXml.artifactMinorVersion}/${pomXml.artifactFixVersion}/${typeVersion}?state=E",null, "${GlobalVars.CATALOGO_ALM_ENV}")
+		def response=sendRequestToAlm3MS('POST', "${GlobalVars.URL_CATALOGO_ALM_PRO}/iop/${pipelineData.getGarArtifactType().getGarName()}/${pomXml.getApp(pipelineData.garArtifactType)}/${pomXml.artifactMajorVersion}/${pomXml.artifactMinorVersion}/${pomXml.artifactFixVersion}/${typeVersion}?state=E",null, "${GlobalVars.CATALOGO_ALM_ENV}")
 		if (response.status == 200) {
 		   printOpen("Version cerrada dentro de la IOP", EchoLevel.ALL)
 		} else if (response.status == 404) {
@@ -80,7 +80,7 @@ def closeVersion(def pomXml, def pipelineData) {
 
 def getCannaryCampaignValue(def pomXml, def pipelineData) {
 	if (env.CAMPAIGN_CANARY_FEATURE_ENABLED!=null && "true".equals(env.CAMPAIGN_CANARY_FEATURE_ENABLED)) {
-		def response=sendRequestToAbsis3MS('GET', "${GlobalVars.URL_CATALOGO_ALM_PRO}/iop?open=true",null, "${GlobalVars.CATALOGO_ALM_ENV}")
+		def response=sendRequestToAlm3MS('GET', "${GlobalVars.URL_CATALOGO_ALM_PRO}/iop?open=true",null, "${GlobalVars.CATALOGO_ALM_ENV}")
 		if (response.status == 200) {
 			//def listIop = new JsonSlurperClassic().parseText(response.content)
 			def listIop = response.content
@@ -99,7 +99,7 @@ def getCannaryCampaignValue(def pomXml, def pipelineData) {
 
 def getIop() {
 	
-	def response=sendRequestToAbsis3MS('GET', "${GlobalVars.URL_CATALOGO_ALM_PRO}/iop?open=true",null, "${GlobalVars.CATALOGO_ALM_ENV}")
+	def response=sendRequestToAlm3MS('GET', "${GlobalVars.URL_CATALOGO_ALM_PRO}/iop?open=true",null, "${GlobalVars.CATALOGO_ALM_ENV}")
 	if (response.status == 200) {
 	   printOpen("Devolveremos la info de la IOP", EchoLevel.ALL)
 	   
@@ -134,7 +134,7 @@ def addMicroToCampaign(def pomXml, def pipelineData) {
 			typeVersion = "UNKNOWN"
 		}
 		
-		def response=sendRequestToAbsis3MS('PUT', "${GlobalVars.URL_CATALOGO_ALM_PRO}/iop/${pipelineData.getGarArtifactType().getGarName()}/${pomXml.getApp(pipelineData.garArtifactType)}/${pomXml.artifactMajorVersion}/${pomXml.artifactMinorVersion}/${pomXml.artifactFixVersion}/${typeVersion}",null, "${GlobalVars.CATALOGO_ALM_ENV}")
+		def response=sendRequestToAlm3MS('PUT', "${GlobalVars.URL_CATALOGO_ALM_PRO}/iop/${pipelineData.getGarArtifactType().getGarName()}/${pomXml.getApp(pipelineData.garArtifactType)}/${pomXml.artifactMajorVersion}/${pomXml.artifactMinorVersion}/${pomXml.artifactFixVersion}/${typeVersion}",null, "${GlobalVars.CATALOGO_ALM_ENV}")
 		if (response.status == 200) {
 		   printOpen("App añadida a la IOP", EchoLevel.ALL)
 		} else if (response.status == 404) {
@@ -161,7 +161,7 @@ def deleteMicroFromCampaign(def pomXml, def pipelineData) {
 			typeVersion = "UNKNOWN"
 		}
 		
-		def response=sendRequestToAbsis3MS('DELETE', "${GlobalVars.URL_CATALOGO_ALM_PRO}/iop/${pipelineData.getGarArtifactType().getGarName()}/${pomXml.getApp(pipelineData.garArtifactType)}/${pomXml.artifactMajorVersion}/${pomXml.artifactMinorVersion}/${pomXml.artifactFixVersion}/${typeVersion}",null, "${GlobalVars.CATALOGO_ALM_ENV}")
+		def response=sendRequestToAlm3MS('DELETE', "${GlobalVars.URL_CATALOGO_ALM_PRO}/iop/${pipelineData.getGarArtifactType().getGarName()}/${pomXml.getApp(pipelineData.garArtifactType)}/${pomXml.artifactMajorVersion}/${pomXml.artifactMinorVersion}/${pomXml.artifactFixVersion}/${typeVersion}",null, "${GlobalVars.CATALOGO_ALM_ENV}")
 		if (response.status == 200) {
 		   printOpen("App eliminada de la IOP", EchoLevel.ALL)
 		} else if (response.status == 404) {
@@ -176,7 +176,7 @@ def deleteMicroFromCampaign(def pomXml, def pipelineData) {
 
 def validateCampaign() {	
 	if (env.CAMPAIGN_CANARY_FEATURE_ENABLED!=null && "true".equals(env.CAMPAIGN_CANARY_FEATURE_ENABLED)) {
-		def response=sendRequestToAbsis3MS('GET', "${GlobalVars.URL_CATALOGO_ALM_PRO}/iop/dependency/validate/${GlobalVars.CATALOGO_ALM_ENV}", null, "${GlobalVars.CATALOGO_ALM_ENV}")
+		def response=sendRequestToAlm3MS('GET', "${GlobalVars.URL_CATALOGO_ALM_PRO}/iop/dependency/validate/${GlobalVars.CATALOGO_ALM_ENV}", null, "${GlobalVars.CATALOGO_ALM_ENV}")
 		if (response.status == 200) {
 		   printOpen("Validaciones de depencias correctas", EchoLevel.ALL)
 		} else if (response.status == 400) {  
@@ -201,7 +201,7 @@ def increaseCannaryCampaign(def campaignCannaryPercentage) {
 			globalCannary: campaignCannaryPercentage
 		]
 		
-		def response=sendRequestToAbsis3MS('PUT', "${GlobalVars.URL_CATALOGO_ALM_PRO}/iop",bodyNew, "${GlobalVars.CATALOGO_ALM_ENV}")
+		def response=sendRequestToAlm3MS('PUT', "${GlobalVars.URL_CATALOGO_ALM_PRO}/iop",bodyNew, "${GlobalVars.CATALOGO_ALM_ENV}")
 		if (response.status == 200) {
 			printOpen("Deploy realizado", EchoLevel.ALL)
 		}else if (response.status == 404) {
@@ -216,7 +216,7 @@ def increaseCannaryCampaign(def campaignCannaryPercentage) {
 
 def notifyCloseIop(def iop) {
 	if (env.SEND_TO_ALM_CATALOG!="" && env.SEND_TO_ALM_CATALOG=="true") {
-		def response=sendRequestToAbsis3MS('GET', "${GlobalVars.URL_CATALOGO_ALM_PRO}/iop/version?open=true",null, "${GlobalVars.CATALOGO_ALM_ENV}")
+		def response=sendRequestToAlm3MS('GET', "${GlobalVars.URL_CATALOGO_ALM_PRO}/iop/version?open=true",null, "${GlobalVars.CATALOGO_ALM_ENV}")
 		if (response.status == 200) {
 			//def listIop = new JsonSlurperClassic().parseText(response.content)
 			def listIop = response.content

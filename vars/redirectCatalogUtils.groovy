@@ -9,7 +9,7 @@ import com.project.alm.PipelineStructureType
 import com.project.alm.GarAppType
 import com.project.alm.Utilities
 import groovy.json.JsonSlurperClassic
-import com.project.alm.ICPApiResponse
+import com.project.alm.CloudApiResponse
 
 import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.DumperOptions
@@ -18,11 +18,11 @@ import java.util.Date
 import java.text.SimpleDateFormat
 
 
-def retrieveNewAndStableAppICPDeploymentMetadata(def valuesDeployed, String tagServicesOrApps) {
+def retrieveNewAndStableAppCloudDeploymentMetadata(def valuesDeployed, String tagServicesOrApps) {
 	
-	if (valuesDeployed["absis"]!=null) {
+	if (valuesDeployed["alm"]!=null) {
 
-		Map valuesDeployedLocal=valuesDeployed["absis"]
+		Map valuesDeployedLocal=valuesDeployed["alm"]
 
 
 		if (valuesDeployedLocal[tagServicesOrApps]!=null) {
@@ -53,9 +53,9 @@ def getYamlDeploy( def body) {
 	
 	def microRedirgido=(Map)yaml.load( body)
 	printOpen("El map ${microRedirgido}",EchoLevel.INFO)
-	def appsDefinition=retrieveNewAndStableAppICPDeploymentMetadata(microRedirgido,'apps')
-	def servicesDefinition=retrieveNewAndStableAppICPDeploymentMetadata(microRedirgido,'services')
-	def appDefinition=retrieveNewAndStableAppICPDeploymentMetadata(microRedirgido,'app')
+	def appsDefinition=retrieveNewAndStableAppCloudDeploymentMetadata(microRedirgido,'apps')
+	def servicesDefinition=retrieveNewAndStableAppCloudDeploymentMetadata(microRedirgido,'services')
+	def appDefinition=retrieveNewAndStableAppCloudDeploymentMetadata(microRedirgido,'app')
 	//Setteamos el numero de pods a 0
 	appDefinition['replicas']=0
 	//Setteamos el numero de pods del new o del stable a 0
@@ -143,9 +143,9 @@ def getMicrosNotRedirected(def environment, def redirected=false) {
 def getMicrosNotRedirected(def environment, def redirected, def redirectedInterested) {
 	def response=null
 	if (redirectedInterested) {
-		response=sendRequestToAbsis3MS('GET', "${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${environment}?isRedirected=${redirected}",null, "${GlobalVars.CATALOGO_ALM_ENV}")
+		response=sendRequestToAlm3MS('GET', "${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${environment}?isRedirected=${redirected}",null, "${GlobalVars.CATALOGO_ALM_ENV}")
 	}else {
-		response=sendRequestToAbsis3MS('GET', "${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${environment}",null, "${GlobalVars.CATALOGO_ALM_ENV}")
+		response=sendRequestToAlm3MS('GET', "${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${environment}",null, "${GlobalVars.CATALOGO_ALM_ENV}")
 	}
 	
 	if (response.status == 200) {
@@ -169,11 +169,11 @@ def deployRedirectAndZeroPods(def micro,def newChar, def newDocker) {
 	//Tenemos que recoger el micro del id 
 	//Tenemos que recuperar el deploy
 	//Tenemos que hacer el deploy con 0 pods y redirigir los service contra la redirectora 
-	//appICPId
+	//appCloudId
 	def componentId=0
 	def app=micro.garApp.toUpperCase()+micro.major
-	//ICPApiResponse response = sendRequestToICPApi("v1/application/${GlobalVars.ICP_APP_ID_APPS}/component",null,"GET","${GlobalVars.ICP_APP_APPS}","", false, false)
-	ICPApiResponse response = sendRequestToICPApi("v2/api/application/PCLD/${GlobalVars.ICP_APP_APPS}/component/${app}",null,"GET","${GlobalVars.ICP_APP_APPS}","", false, false)
+	//CloudApiResponse response = sendRequestToCloudApi("v1/application/${GlobalVars.Cloud_APP_ID_APPS}/component",null,"GET","${GlobalVars.Cloud_APP_APPS}","", false, false)
+	CloudApiResponse response = sendRequestToCloudApi("v2/api/application/PCLD/${GlobalVars.Cloud_APP_APPS}/component/${app}",null,"GET","${GlobalVars.Cloud_APP_APPS}","", false, false)
 	
 	if (response.statusCode>=200 && response.statusCode<300) {
 		//if (response.body!=null && response.body.size()>=1) {
@@ -191,7 +191,7 @@ def deployRedirectAndZeroPods(def micro,def newChar, def newDocker) {
 				component.version.id=newDocker
 				printOpen("El nuevo componente actualizado es de ${component} ${component.name}",EchoLevel.INFO)
 				
-				response = sendRequestToICPApi("v1/api/application/PCLD/${GlobalVars.ICP_APP_APPS}/component/${component.name}",component,"PUT","${GlobalVars.ICP_APP_APPS}","", false, false)
+				response = sendRequestToCloudApi("v1/api/application/PCLD/${GlobalVars.Cloud_APP_APPS}/component/${component.name}",component,"PUT","${GlobalVars.Cloud_APP_APPS}","", false, false)
 				if (response.statusCode>=200 && response.statusCode<300) {
 					printOpen("Tecnologia correctamente actualizada",EchoLevel.INFO)
 				}else {
@@ -201,8 +201,8 @@ def deployRedirectAndZeroPods(def micro,def newChar, def newDocker) {
 		}
 		printOpen("El ID para la app ${app} son de ${componentId}",EchoLevel.INFO)
 		//Procedemos a recoger el ultimo Deploy
-		//response = sendRequestToICPApi("v1/application/PCLD/${GlobalVars.ICP_APP_APPS}/component/${componentId}/environment/${GlobalVars.DEV_ENVIRONMENT.toUpperCase()}/availabilityzone/ALL/status",null,"GET","${GlobalVars.ICP_APP_APPS}","",false,false)
-		response=sendRequestToICPApi("v1/application/PCLD/${GlobalVars.ICP_APP_APPS}/component/${componentId}/deploy/current/environment/${GlobalVars.DEV_ENVIRONMENT.toUpperCase()}/az/ALL",null,"GET","${GlobalVars.ICP_APP_APPS}","",false,false)
+		//response = sendRequestToCloudApi("v1/application/PCLD/${GlobalVars.Cloud_APP_APPS}/component/${componentId}/environment/${GlobalVars.DEV_ENVIRONMENT.toUpperCase()}/availabilityzone/ALL/status",null,"GET","${GlobalVars.Cloud_APP_APPS}","",false,false)
+		response=sendRequestToCloudApi("v1/application/PCLD/${GlobalVars.Cloud_APP_APPS}/component/${componentId}/deploy/current/environment/${GlobalVars.DEV_ENVIRONMENT.toUpperCase()}/az/ALL",null,"GET","${GlobalVars.Cloud_APP_APPS}","",false,false)
 		
 		if (response.statusCode>=200 && response.statusCode<300) {
 			if (response.body!=null) {
@@ -220,7 +220,7 @@ def deployRedirectAndZeroPods(def micro,def newChar, def newDocker) {
 					values: yamlDeployed
 				]	
 			
-				def response1 = sendRequestToICPApi("v1/application/PCLD/${GlobalVars.ICP_APP_APPS}/component/${componentId}/deploy",body,"POST","${GlobalVars.ICP_APP_APPS}","v1/application/PCLD/${GlobalVars.ICP_APP_APPS}/component/${componentId}/deploy",true,true)
+				def response1 = sendRequestToCloudApi("v1/application/PCLD/${GlobalVars.Cloud_APP_APPS}/component/${componentId}/deploy",body,"POST","${GlobalVars.Cloud_APP_APPS}","v1/application/PCLD/${GlobalVars.Cloud_APP_APPS}/component/${componentId}/deploy",true,true)
 				
 				if (response1.statusCode>=200 && response1.statusCode<300) {
 					printOpen("Redireccion efectuada ",EchoLevel.INFO)
@@ -228,7 +228,7 @@ def deployRedirectAndZeroPods(def micro,def newChar, def newDocker) {
 					if (env.ENV_K8S_OCP!=null && env.ENV_K8S_OCP.contains(GlobalVars.DEV_ENVIRONMENT.toUpperCase())) {
 						///api/publisher/v1/api/application/PCLD/AB3APP/component/SRVPIL1/deploy
 						try {
-							response1 = sendRequestToICPApi("v1/api/application/PCLD_MIGRATED/${GlobalVars.ICP_APP_APPS}/component/${app}/deploy",body,"POST","${GlobalVars.ICP_APP_APPS}","v1/api/application/PCLD_MIGRATED/${GlobalVars.ICP_APP_APPS}/component/${app}/deploy",true,true)
+							response1 = sendRequestToCloudApi("v1/api/application/PCLD_MIGRATED/${GlobalVars.Cloud_APP_APPS}/component/${app}/deploy",body,"POST","${GlobalVars.Cloud_APP_APPS}","v1/api/application/PCLD_MIGRATED/${GlobalVars.Cloud_APP_APPS}/component/${app}/deploy",true,true)
 							if (response1.statusCode>=200 && response1.statusCode<300) {
 								printOpen("Redireccion efectuada OCP",EchoLevel.INFO)
 							}
@@ -256,7 +256,7 @@ def deployRedirectAndZeroPods(def micro,def newChar, def newDocker) {
 			}
 		}		
 	}else {
-		printOpen("Error en la consulta contra el API de ICP ${response.statusCode}" ,EchoLevel.ERROR)
+		printOpen("Error en la consulta contra el API de Cloud ${response.statusCode}" ,EchoLevel.ERROR)
 		return false
 	}
 }
@@ -278,7 +278,7 @@ def deployRedirectedCatMsv(def micro) {
 	]
 	
 	printOpen("Se procede a updatear el catalogo los siguientes valores ${bodyDeploy} para el micro ${micro.appType}${micro.appName} ${micro.major}/${micro.minor}/${micro.fix}/${micro.typeVersion}",EchoLevel.INFO)
-	def response = sendRequestToAbsis3MS(
+	def response = sendRequestToAlm3MS(
 		'PUT',
 		"${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${micro.appType}/${micro.garApp}/version/${micro.major}/${micro.minor}/${micro.fix}/${micro.typeVersion}/deploy",
 		bodyDeploy,

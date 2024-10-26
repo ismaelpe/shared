@@ -1,8 +1,8 @@
 import groovy.transform.Field
 import com.project.alm.EchoLevel
 import com.project.alm.GlobalVars
-import com.project.alm.ICPApiResponse
-import com.project.alm.ICPStressDeployment
+import com.project.alm.CloudApiResponse
+import com.project.alm.CloudStressDeployment
 
 @Field Map pipelineParams
 
@@ -10,10 +10,10 @@ import com.project.alm.ICPStressDeployment
 @Field String artifactId
 @Field String version
 @Field String classifier
-@Field String icpEnv
-@Field String icpCenter
+@Field String cloudEnv
+@Field String cloudCenter
 
-@Field ICPStressDeployment icpStressDeployment
+@Field CloudStressDeployment cloudStressDeployment
 
 //Pipeline unico que construye todos los tipos de artefactos
 //Recibe los siguientes parametros
@@ -28,11 +28,11 @@ def call(Map pipelineParameters) {
 	artifactId = params.artifactId
 	version = params.version
 	classifier = params.classifier
-	icpEnv = params.environmentParam
-	icpCenter = params.centerParam
+	cloudEnv = params.environmentParam
+	cloudCenter = params.centerParam
     
     pipeline {		
-		agent {	node (absisJenkinsAgent(pipelineParams)) }
+		agent {	node (almJenkinsAgent(pipelineParams)) }
 		//Environment sobre el qual se ejecuta este tipo de job
 		options {
 			gitLabConnection('gitlab')
@@ -42,8 +42,8 @@ def call(Map pipelineParameters) {
 		}
 		environment {
 			GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
-            ICP_CERT = credentials('icp-alm-pro-cert')
-            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
+            Cloud_CERT = credentials('cloud-alm-pro-cert')
+            Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
 			http_proxy = "${GlobalVars.proxyCaixa}"
 			https_proxy = "${GlobalVars.proxyCaixa}"
 			proxyHost = "${GlobalVars.proxyCaixaHost}"
@@ -101,17 +101,17 @@ def initStep() {
  * Stage 'deployStep'
  */
 def deployStep() {
-	printOpen("Deploying Stress Test with GAVs: groupId: ${groupId} artifactId: ${artifactId} version: ${version} classifier: ${classifier} in environment ${icpEnv}", EchoLevel.ALL)
-	icpStressDeployment = new ICPStressDeployment(groupId, artifactId, version, classifier, icpCenter, icpEnv.toLowerCase(), "${currentBuild.startTimeInMillis}");
+	printOpen("Deploying Stress Test with GAVs: groupId: ${groupId} artifactId: ${artifactId} version: ${version} classifier: ${classifier} in environment ${cloudEnv}", EchoLevel.ALL)
+	cloudStressDeployment = new CloudStressDeployment(groupId, artifactId, version, classifier, cloudCenter, cloudEnv.toLowerCase(), "${currentBuild.startTimeInMillis}");
 	
 	def bodyDeploy=[
-		az: "AZ"+"${icpCenter}",
-		environment: "${icpEnv}",
-		values: icpStressDeployment.getChartValuesApps()
+		az: "AZ"+"${cloudCenter}",
+		environment: "${cloudEnv}",
+		values: cloudStressDeployment.getChartValuesApps()
 	]
 	
 	printOpen("Deploy value ${bodyDeploy}", EchoLevel.ALL)
-	ICPApiResponse response=sendRequestToICPApi("v1/application/PCLD/AB3COR/component/18401/deploy",bodyDeploy,"POST","AB3COR","v1/application/PCLD/AB3COR/component/18401/deploy",true,true, null, null)
+	CloudApiResponse response=sendRequestToCloudApi("v1/application/PCLD/AB3COR/component/18401/deploy",bodyDeploy,"POST","AB3COR","v1/application/PCLD/AB3COR/component/18401/deploy",true,true, null, null)
 	if (response.statusCode>300) {
 		throw new Exception("Error deploying stress component")
 	}
@@ -122,7 +122,7 @@ def deployStep() {
  */
 def collectDataStep() {
 	printOpen("Collecting data when finish", EchoLevel.ALL)
-	String url = "https://jmeter-micro-1." + "${icpEnv.toLowerCase()}" + ".icp-" + "${icpCenter}"+".absis.cloud.lacaixa.es"
+	String url = "https://jmeter-micro-1." + "${cloudEnv.toLowerCase()}" + ".cloud-" + "${cloudCenter}"+".alm.cloud.lacaixa.es"
 	validateStressTestIsFinish(url)
 	//Download csv and target.zip
 	String fileOutput= CopyGlobalLibraryScript('','.','resultsMetrics.csv')
@@ -148,13 +148,13 @@ def collectDataStep() {
 def undeployStep() {
 	printOpen("Undeploy component", EchoLevel.ALL)
 	def bodyDeploy=[
-		az: "AZ"+"${icpCenter}",
-		environment: "${icpEnv}",
-		values: icpStressDeployment.getChartValuesApps()
+		az: "AZ"+"${cloudCenter}",
+		environment: "${cloudEnv}",
+		values: cloudStressDeployment.getChartValuesApps()
 	]
 	
 	printOpen("Deploy value ${bodyDeploy}", EchoLevel.ALL)
-	ICPApiResponse response=sendRequestToICPApi("v1/application/PCLD/AB3COR/component/18401/deploy",bodyDeploy,"DELETE","AB3COR","",false,true, null, null)
+	CloudApiResponse response=sendRequestToCloudApi("v1/application/PCLD/AB3COR/component/18401/deploy",bodyDeploy,"DELETE","AB3COR","",false,true, null, null)
 	if (response.statusCode>300) {
 		throw new Exception("Error deploying stress component")
 	}

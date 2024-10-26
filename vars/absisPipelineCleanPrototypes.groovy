@@ -18,7 +18,7 @@ def call(Map pipelineParameters) {
     successPipeline = true
 
     pipeline {
-		agent {	node (absisJenkinsAgent(pipelineParams)) }
+		agent {	node (almJenkinsAgent(pipelineParams)) }
         options {
             buildDiscarder(logRotator(numToKeepStr: '10'))
 			timestamps()
@@ -27,17 +27,17 @@ def call(Map pipelineParameters) {
         //Environment sobre el qual se ejecuta este tipo de job
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
-            ICP_CERT = credentials('icp-alm-pro-cert')
-            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
+            Cloud_CERT = credentials('cloud-alm-pro-cert')
+            Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
 			https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
             proxyPort = "${GlobalVars.proxyCaixaPort}"
         }
         stages {
-            stage("clean-icp") {
+            stage("clean-cloud") {
                 steps {
-                   cleanIcpStep()
+                   cleanCloudStep()
                 }
             }
         }
@@ -60,19 +60,19 @@ def call(Map pipelineParameters) {
 \* ************************************************************************************************************************************** */
 
 /**
- * Stage 'cleanIcpStep'
+ * Stage 'cleanCloudStep'
  */
-def cleanIcpStep() {
+def cleanCloudStep() {
     Date today = new Date().clearTime()
     Date priorDate = today - Integer.parseInt(params.cleanProtypesDays)
     
-    currentBuild.displayName = "Cleaning ICP Prototypes ${params.cleanProtypesDays} apps before ${priorDate}" 
+    currentBuild.displayName = "Cleaning Cloud Prototypes ${params.cleanProtypesDays} apps before ${priorDate}" 
     
-    printOpen("Cleaning ICP with parameters ", EchoLevel.INFO)
-    printOpen("Clean ICP: ${params.cleanProtypesDays}", EchoLevel.INFO)
+    printOpen("Cleaning Cloud with parameters ", EchoLevel.INFO)
+    printOpen("Clean Cloud: ${params.cleanProtypesDays}", EchoLevel.INFO)
     printOpen("Clean Prototypes days before: ${priorDate}", EchoLevel.INFO)
     
-    cleanICP(false, Integer.valueOf(params.cleanProtypesDays), SampleAppCleanMode.NONE, params.cleanProtypesDays, true)
+    cleanCloud(false, Integer.valueOf(params.cleanProtypesDays), SampleAppCleanMode.NONE, params.cleanProtypesDays, true)
 }
 
 /**

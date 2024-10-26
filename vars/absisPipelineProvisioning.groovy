@@ -87,7 +87,7 @@ def call(Map pipelineParameters) {
     * */
     
     pipeline {		
-		agent {	node (absisJenkinsAgent(pipelineParams)) }
+		agent {	node (almJenkinsAgent(pipelineParams)) }
         options {
             buildDiscarder(logRotator(numToKeepStr: '50'))
             timestamps()
@@ -95,8 +95,8 @@ def call(Map pipelineParameters) {
         }
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
-            ICP_CERT = credentials('icp-alm-pro-cert')
-            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
+            Cloud_CERT = credentials('cloud-alm-pro-cert')
+            Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
 			JNKMSV = credentials('JNKMSV-USER-TOKEN')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
@@ -115,12 +115,12 @@ def call(Map pipelineParameters) {
                     createDefaultBranchStep()
                 }
             }
-			stage('call-absis-initializr') {
+			stage('call-alm-initializr') {
 				when {
 					expression { !existsPom }
 				}
 				steps {
-                    callAbsisInitializrStep()
+                    callAlmInitializrStep()
 				}
 			}
             stage('push-initial-configuration') {
@@ -232,9 +232,9 @@ def createDefaultBranchStep() {
 }
 
 /** 
- * Step callAbsisInitializrStep
+ * Step callAlmInitializrStep
  */
-def callAbsisInitializrStep() {
+def callAlmInitializrStep() {
     printOpen("Clean ${checkout_dir} dir", EchoLevel.ALL)
     sh "rm -rf  ./${checkout_dir}/*"
     
@@ -246,11 +246,11 @@ def callAbsisInitializrStep() {
     printOpen("Move ${tempArtifact}/${nameApp}/* to ${checkout_dir}", EchoLevel.ALL)
     sh "mv ${tempArtifact}/${nameApp}/*  ${checkout_dir}"
     
-    printOpen("Descomprimido nuevo codigo generado usando AbsisInitializr", EchoLevel.ALL)
+    printOpen("Descomprimido nuevo codigo generado usando AlmInitializr", EchoLevel.ALL)
     // Descomprimimos en la ruta del proyecto, sobrescribiendo. Como dentro del zip ya tendrá
     sh "cd ${checkout_dir} && git config user.name ${GlobalVars.GIT_USER_NAME} && git config user.email ${GlobalVars.GIT_USER_EMAIL}"
     sh "cd ${checkout_dir} && git add ."
-    sh "cd ${checkout_dir} && git commit -m 'First code generation with AbsisInitlizr to start testing with deploy' --allow-empty"
+    sh "cd ${checkout_dir} && git commit -m 'First code generation with AlmInitlizr to start testing with deploy' --allow-empty"
     sh "cd ${checkout_dir} && git -c http.sslVerify=false push origin master"
 }
 
@@ -258,7 +258,7 @@ def callAbsisInitializrStep() {
  * Step pushInitialConfigurationStep
  */
 def pushInitialConfigurationStep() {
-    absisPipelineStagePushInitialConfiguration(nameApp)
+    almPipelineStagePushInitialConfiguration(nameApp)
 }
 
 /** 
@@ -442,7 +442,7 @@ def addToProvisioning() {
 
     printOpen("Create app in calatogue is: $app", EchoLevel.INFO)
 
-    def response = sendRequestToAbsis3MS(
+    def response = sendRequestToAlm3MS(
         'PUT',
         "${GlobalVars.URL_CATALOGO_ALM_PRO}/app",
         app,

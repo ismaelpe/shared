@@ -17,7 +17,7 @@ def call(String subject,String to, String body, String body1) {
 				, replyTo: ''
 				, from: "${GlobalVars.EMAIL_FROM_ALM}"
 				, to: "${to}"
-				, subject: "[Absis3-SRV-ICP] ${subject} ${datePart} ")
+				, subject: "[Alm3-SRV-Cloud] ${subject} ${datePart} ")
 
 	}
 }
@@ -37,7 +37,7 @@ def call(String subject,String to, String body) {
 				, replyTo: ''
 				, from: "${GlobalVars.EMAIL_FROM_ALM}"
 				, to: "${to}"
-				, subject: "[Absis3-SRV-ICP] ${subject} ${datePart} ")
+				, subject: "[Alm3-SRV-Cloud] ${subject} ${datePart} ")
 
 	}
 }
@@ -54,7 +54,7 @@ def call(String subject,String from,String to, String replyTo,String attachments
 			replyTo: "${replyTo}",
 			attachmentsPattern: "${attachmentsPattern}",
 			body: "${body}",
-			subject: "[Absis3-SRV-ICP] ${subject} ${datePart} ",
+			subject: "[Alm3-SRV-Cloud] ${subject} ${datePart} ",
 			from: "${from}",
 			to: "${to}"
 		)
@@ -74,7 +74,7 @@ def call(String subject,String from,String to, String replyTo,String attachments
             replyTo: "${replyTo}",
             attachmentsPattern: "${attachmentsPattern}",
             body: "${body}",
-            subject: "[Absis3-SRV-ICP] ${subject} ${datePart} ",
+            subject: "[Alm3-SRV-Cloud] ${subject} ${datePart} ",
             from: "${from}",
             to: "${to}"
         )

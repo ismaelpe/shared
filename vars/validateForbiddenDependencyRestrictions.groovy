@@ -6,11 +6,11 @@ def call(PomXmlStructure pomXml, PipelineData pipeline) {
 		return
 	}
     def bffRestrictions = [
-        /com\.project\.absis\.ads\.transaction:ads-.*-lib/,
-        /com\.project\.absis\.arch\.backend\.ads:adsconnector-common-lib/,
-        /com\.project\.absis\.arch\.backend\.ads:adsconnector-lib-starter/,
-        /com\.project\.absis\.arch\.backend\.ase:se-.*-spring-boot-starter/,
-        /com\.project\.absis\.arch\.backend\.absis2:a2connector-spring-boot-starter/,
+        /com\.project\.alm\.ads\.transaction:ads-.*-lib/,
+        /com\.project\.alm\.arch\.backend\.ads:adsconnector-common-lib/,
+        /com\.project\.alm\.arch\.backend\.ads:adsconnector-lib-starter/,
+        /com\.project\.alm\.arch\.backend\.ase:se-.*-spring-boot-starter/,
+        /com\.project\.alm\.arch\.backend\.alm2:a2connector-spring-boot-starter/,
         /org\.hibernate:hibernate-core/,
         /com\.oracle:ojdbc6/,
         /org\.springframework:spring-jdbc/,
@@ -18,9 +18,9 @@ def call(PomXmlStructure pomXml, PipelineData pipeline) {
         /javax\.persistence-api:javax\.persistence/
     ]
     def dataserviceRestrictions = [
-        /com\.project\.absis\.ads\.transaction:ads-.*-lib/,
-        /com\.project\.absis\.arch\.backend\.ads:adsconnector-common-lib/,
-        /com\.project\.absis\.arch\.backend\.ads:adsconnector-lib-starter/
+        /com\.project\.alm\.ads\.transaction:ads-.*-lib/,
+        /com\.project\.alm\.arch\.backend\.ads:adsconnector-common-lib/,
+        /com\.project\.alm\.arch\.backend\.ads:adsconnector-lib-starter/
     ]
 
     def bffWhitelist = GlobalVars.ALM_SERVICES_DEPENDENCY_WHITELIST_BFF

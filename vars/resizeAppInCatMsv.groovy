@@ -19,7 +19,7 @@ def call(def namespace, def type, def app, def major, def environment, def cpu, 
 			]
 
 
-			response = sendRequestToAbsis3MS(
+			response = sendRequestToAlm3MS(
                 'PUT',
                 "${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${type}/${app}/${major}/config?env=${environment}",
                 bodyResize,

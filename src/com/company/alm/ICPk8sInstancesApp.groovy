@@ -3,20 +3,20 @@ package com.project.alm
 
 
 
-class ICPk8sInstancesApp{
+class Cloudk8sInstancesApp{
 
 	int available=0
 	int unavailable=0
 	int desired=0 
 	
 	
-	ICPk8sInstancesApp() {
+	Cloudk8sInstancesApp() {
 		available=0
 		unavailable=0
 		desired=0
 	}
 
-	def increment(ICPk8sInstancesApp other) {
+	def increment(Cloudk8sInstancesApp other) {
 		available=available+other.available
 		unavailable=unavailable+other.unavailable
 		desired=desired+other.desired

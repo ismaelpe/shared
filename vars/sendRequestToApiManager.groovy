@@ -13,12 +13,12 @@ def call(ApiManagerTechnicalServicesRequest request) {
     timeout(GlobalVars.DEFAULT_ALM_MS_REQUEST_RETRIES_TIMEOUT) {
         waitUntil(initialRecurrencePeriod: 15000) {
 
-            withCredentials([string(credentialsId: "${request.almTokenName}", variable: 'tokenAbsis3')]) {
+            withCredentials([string(credentialsId: "${request.almTokenName}", variable: 'tokenAlm3')]) {
 
                 def profileHeader =
                     goesThroughExternalGateway(request.apiManagerUri) ?
-                        "Authorization: Bearer ${tokenAbsis3}" :
-                        "x-absis-auto-profile: CBK;OFFICE"
+                        "Authorization: Bearer ${tokenAlm3}" :
+                        "x-alm-auto-profile: CBK;OFFICE"
 
                 def curlCall =
                     "curl --location --request POST -s -w \"%{http_code}\" \"${request.apiManagerUri}\" \\\n" +

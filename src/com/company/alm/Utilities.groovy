@@ -312,7 +312,7 @@ class Utilities {
      * @param secret jenkins git secret
      */
     static void parseJenkinsFilePipelineParams(scriptContext, String jenkinsFile, map = [:]) {
-        def regex = ~/(absisPipelineBuild|customPipelineConfigsBuild)\((?<params>.*)\)/
+        def regex = ~/(almPipelineBuild|customPipelineConfigsBuild)\((?<params>.*)\)/
         def matcher = regex.matcher(jenkinsFile)        
         if (matcher.find()) {
             matcher.group("params").split(",").each { it ->
@@ -436,7 +436,7 @@ class Utilities {
 
 
             case "updateCoreNocturneJobInBuildFailure":
-                arrayEmailFields.subject = "[Absis3] Resultado Jenkins Nocturne job: ${scriptContext.env.JOB_BASE_NAME} - ${scriptContext.currentBuild.result}"
+                arrayEmailFields.subject = "[Alm3] Resultado Jenkins Nocturne job: ${scriptContext.env.JOB_BASE_NAME} - ${scriptContext.currentBuild.result}"
                 arrayEmailFields.body = """
 				Componente: ${scriptContext.env.JOB_BASE_NAME}
 				Build: ${scriptContext.currentBuild.fullDisplayName}
@@ -452,7 +452,7 @@ class Utilities {
 
 
             case "updateCoreNocturneJobFailure":
-                arrayEmailFields.subject = "[Absis3] Resultado Jenkins Nocturne job: ${scriptContext.env.JOB_BASE_NAME} - PARTIAL FAILURE"
+                arrayEmailFields.subject = "[Alm3] Resultado Jenkins Nocturne job: ${scriptContext.env.JOB_BASE_NAME} - PARTIAL FAILURE"
                 arrayEmailFields.body = """
 Componente: ${scriptContext.env.JOB_BASE_NAME}
 Build: ${scriptContext.currentBuild.fullDisplayName}
@@ -468,7 +468,7 @@ Puedes ver la salida a consola completo aqui: ${scriptContext.env.BUILD_URL}/con
 
             case "provisioningFailure":
 				String appType = params.get("appType", "<UNKNOWN>")
-                arrayEmailFields.subject = "[Absis3] Resultado de Provisioning Failed: ${scriptContext.env.JOB_BASE_NAME}"
+                arrayEmailFields.subject = "[Alm3] Resultado de Provisioning Failed: ${scriptContext.env.JOB_BASE_NAME}"
                 arrayEmailFields.body = """
 Componente: ${scriptContext.env.JOB_BASE_NAME}
 Tipo de aplicación: ${appType}
@@ -483,7 +483,7 @@ Puedes ver la salida a consola completo aqui: ${scriptContext.env.BUILD_URL}cons
                 break
 				
 				case "deProvisioningFailure":
-				arrayEmailFields.subject = "[Absis3] Resultado del DeProvisioning Failed: ${scriptContext.env.JOB_BASE_NAME}"
+				arrayEmailFields.subject = "[Alm3] Resultado del DeProvisioning Failed: ${scriptContext.env.JOB_BASE_NAME}"
 				arrayEmailFields.body = """
 Componente: ${scriptContext.env.JOB_BASE_NAME}
 Tipo de aplicación: ${scriptContext.typeApp}

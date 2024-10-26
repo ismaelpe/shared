@@ -4,9 +4,9 @@ import com.project.alm.PipelineData
 import com.project.alm.GlobalVars
 import com.project.alm.DeployStructure
 import com.project.alm.BmxUtilities
-import com.project.alm.ICPDeployStructure
+import com.project.alm.CloudDeployStructure
 
-import com.project.alm.ICPApiResponse
+import com.project.alm.CloudApiResponse
 
 import java.util.Map
 
@@ -28,10 +28,10 @@ def call(Map infoApp) {
 	printOpen("The info is ${infoApp}", EchoLevel.ALL)
 	if (infoApp!=null) {
 		
-		Map absis=infoApp["absis"]
-		printOpen("The apps ${absis} ", EchoLevel.ALL)
-		Map absisApp=absis["apps"]
-		Map absisAppEnvQualifier=absisApp["envQualifier"]
+		Map alm=infoApp["alm"]
+		printOpen("The apps ${alm} ", EchoLevel.ALL)
+		Map almApp=alm["apps"]
+		Map almAppEnvQualifier=almApp["envQualifier"]
 		//Este map es el que contiene la info del micro desplegado
 		Map stable=null
 		Map old=null
@@ -42,16 +42,16 @@ def call(Map infoApp) {
 		def values=null
 		def response=null
 		
-		stable=absisAppEnvQualifier["stable"]
-		newApp=absisAppEnvQualifier["new"]
-		old=absisAppEnvQualifier["old"]
+		stable=almAppEnvQualifier["stable"]
+		newApp=almAppEnvQualifier["new"]
+		old=almAppEnvQualifier["old"]
 		
-		absisApp=absis["services"]
-		absisAppEnvQualifier=absisApp["envQualifier"]
+		almApp=alm["services"]
+		almAppEnvQualifier=almApp["envQualifier"]
 		
-		Map newService=absisAppEnvQualifier["new"]
-		Map stableService=absisAppEnvQualifier["stable"]
-		Map newNonDev=absisAppEnvQualifier["newNonDev"]
+		Map newService=almAppEnvQualifier["new"]
+		Map stableService=almAppEnvQualifier["stable"]
+		Map newNonDev=almAppEnvQualifier["newNonDev"]
 		
 		printOpen("==========================================================================================================", EchoLevel.ALL)
 		

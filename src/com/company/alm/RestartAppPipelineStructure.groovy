@@ -27,13 +27,13 @@ class RestartAppPipelineStructure extends PipelineStructure {
         return [
                 [id       : pipelineId + "100",
                  estado   : "inactive",
-                 nombre   : "100-get-app-icp",
+                 nombre   : "100-get-app-cloud",
                  resultado: "",
                  orden    : 0
                 ],
                 [id       : pipelineId + "200",
                  estado   : "inactive",
-                 nombre   : "200-restart-app-icp",
+                 nombre   : "200-restart-app-cloud",
                  resultado: "",
                  orden    : 0
                 ]

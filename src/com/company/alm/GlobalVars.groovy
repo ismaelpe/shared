@@ -6,8 +6,8 @@ class GlobalVars {
 	static String URL_REDIRECTORA_JENKINS = "https://jnkmsv.pro.int.srv.project.com/jenkins/"
 	static String PROFILES_SPRING="SPRING_PROFILES_ACTIVE"
 	
-	static Float ICP_RATIO_CPU_PRO = 1.05
-	static Float ICP_RATIO_CPU_PRE = 1.33
+	static Float Cloud_RATIO_CPU_PRO = 1.05
+	static Float Cloud_RATIO_CPU_PRE = 1.33
 	
 	static Float OCP_RATIO_CPU_PRO = 0.95
 	static Float OCP_RATIO_CPU_PRE = 0.75
@@ -31,24 +31,24 @@ class GlobalVars {
 	static String EMAIL_FROM_ALM = "openservices.alm@project.com"    
     static String JENKINS_CURRENT_LOGIN_USER = "admin"
 
-	//static String ICP_LIQUIBASE_IMAGE = "docker-registry.cloud.project.com/containers/ab3app/arqrunbbdd" 
-	//static String ICP_LIQUIBASE_IMAGE_VERSION = "1.4.0"
+	//static String Cloud_LIQUIBASE_IMAGE = "docker-registry.cloud.project.com/containers/ab3app/arqrunbbdd" 
+	//static String Cloud_LIQUIBASE_IMAGE_VERSION = "1.4.0"
 
-	//static String ICP_PROTOTYPE_IMAGE = "docker-registry.cloud.project.com/containers/ab3app/demoprototype1"
-	//static String ICP_PROTOTYPE_IMAGE_VERSION = "0.0.2"
+	//static String Cloud_PROTOTYPE_IMAGE = "docker-registry.cloud.project.com/containers/ab3app/demoprototype1"
+	//static String Cloud_PROTOTYPE_IMAGE_VERSION = "0.0.2"
 	
-	//static String ICP_LIQUIBASE_IMAGE = "docker-registry.cloud.project.com/containers/ab3app/arqrunbbdd" 
-	//static String ICP_LIQUIBASE_IMAGE_VERSION = "1.4.0"
-	static String ICP_LIQUIBASE_IMAGE = "docker-registry.cloud.project.com/containers/ab3cor/liquibasedemo1"
-	static String ICP_LIQUIBASE_IMAGE_VERSION = "4.5.0"
+	//static String Cloud_LIQUIBASE_IMAGE = "docker-registry.cloud.project.com/containers/ab3app/arqrunbbdd" 
+	//static String Cloud_LIQUIBASE_IMAGE_VERSION = "1.4.0"
+	static String Cloud_LIQUIBASE_IMAGE = "docker-registry.cloud.project.com/containers/ab3cor/liquibasedemo1"
+	static String Cloud_LIQUIBASE_IMAGE_VERSION = "4.5.0"
 	
-	static String ICP_PROTOTYPE_IMAGE = "docker-registry.cloud.project.com/containers/ab3app/demoprototype1"
-	static String ICP_PROTOTYPE_IMAGE_VERSION = "2.5.0"
+	static String Cloud_PROTOTYPE_IMAGE = "docker-registry.cloud.project.com/containers/ab3app/demoprototype1"
+	static String Cloud_PROTOTYPE_IMAGE_VERSION = "2.5.0"
 	
-	static int MAX_DEV_ICP_RESTARTS = 2
+	static int MAX_DEV_Cloud_RESTARTS = 2
 	
-	static int TIMEOUT_ICP = 16
-	static int TIMEOUT_MAX_ICP = 30
+	static int TIMEOUT_Cloud = 16
+	static int TIMEOUT_MAX_Cloud = 30
 	
 	static String JENKINS_GIT_USER = "SVC_ALM_CONTDELIVE"
 	static String SQL_SCRIPT_FILENAME = "script.sql"
@@ -66,7 +66,7 @@ class GlobalVars {
 
     static String ARCH_ARTIFACT = "almcore"
 
-    static String ALM_CORE_GROUPID = "com.project.absis"
+    static String ALM_CORE_GROUPID = "com.project.alm"
     static String ALM_CORE_ARTIFACTID = "almcore-lib"
 
     static String EMAIL_REPORT = "alm.microservices.support@project.com"
@@ -86,7 +86,7 @@ class GlobalVars {
      */
 	// Este es el valor de la version minima de arquitectura
 	static String MAX_VERSION_ARCH_NEXUS = "1.19.0"
-	static String MINIMUM_VERSION_ARCH_ICP = "1.11.0"
+	static String MINIMUM_VERSION_ARCH_Cloud = "1.11.0"
 	
     static String MINIMUM_VERSION_ARCH = "1.1.0"
    
@@ -150,7 +150,7 @@ class GlobalVars {
 	static String CAMPAIGN_CANNARY_PERCENTAGE_ALM = "info.campaign-beta-traffic.percentage"
     static String ALM_JOB_MANUAL_COPY = "alm/services/arch/alm/job-manual-Copy"
     static String ALM_JOB_CREATE_RC = "alm/services/arch/alm/job-create-RC"
-	static String ALM_JOB_DEPLOY_PROTOTYPE = "alm/services/arch/alm/job-deploy-Prototype-to-ICP"
+	static String ALM_JOB_DEPLOY_PROTOTYPE = "alm/services/arch/alm/job-deploy-Prototype-to-Cloud"
 	static String ALM_JOB_CREATE_RC_CONFIGLIB = "alm/services/arch/alm/job-create-RC-configlib"
     static String ALM_JOB_CREATE_RELEASE = "alm/services/arch/alm/job-create-Release"
 	static String ALM_JOB_CREATE_RELEASE_CONFIGLIB = "alm/services/arch/alm/job-create-Release-configlib"
@@ -223,8 +223,8 @@ class GlobalVars {
     static String GPL_STATE_RUNNING = "running"
 
     static String INTERNAL_BUILDPACK = "git.svb.lacaixa.es/cbk/cf/alm/java-buildpack.git/#"
-    static String INTERNAL_BUILDPACK_JAVA8 = GlobalVars.INTERNAL_BUILDPACK + "v4.8_Absis_1.0"
-    static String INTERNAL_BUILDPACK_JAVA11 = GlobalVars.INTERNAL_BUILDPACK + "v4.20_Absis_1.2"
+    static String INTERNAL_BUILDPACK_JAVA8 = GlobalVars.INTERNAL_BUILDPACK + "v4.8_Alm_1.0"
+    static String INTERNAL_BUILDPACK_JAVA11 = GlobalVars.INTERNAL_BUILDPACK + "v4.20_Alm_1.2"
 
     /**
      * END GPL
@@ -378,18 +378,18 @@ class GlobalVars {
     static String proxyCaixa = "http://${GlobalVars.proxyCaixaHost}:${GlobalVars.proxyCaixaPort}"
 
     //List separated by commas
-    static String HTTP_ADDITIONAL_NON_PROXY_HOSTS = "pro.k8i-singulars.intranet.cloud.lacaixa.es,pre.k8i-singulars.intranet.cloud.lacaixa.es,tst.k8i-singulars.intranet.cloud.lacaixa.es,api.tst.internal.cer.project.com,api.pre.internal.cer.project.com,api.pro.internal.cer.project.com,apigwi.pre.serveis.absiscloud.lacaixa.es,apigwi.pro.serveis.absiscloud.lacaixa.es"
+    static String HTTP_ADDITIONAL_NON_PROXY_HOSTS = "pro.k8i-singulars.intranet.cloud.lacaixa.es,pre.k8i-singulars.intranet.cloud.lacaixa.es,tst.k8i-singulars.intranet.cloud.lacaixa.es,api.tst.internal.cer.project.com,api.pre.internal.cer.project.com,api.pro.internal.cer.project.com,apigwi.pre.serveis.almcloud.lacaixa.es,apigwi.pro.serveis.almcloud.lacaixa.es"
 
-    static String URL_ZIP_INITIALIZR_DEV = "https://k8sgateway.dev.int.srv.project.com/arch-service/absisinitializr-micro-1/absis/starter.zip"
-	static String URL_ZIP_INITIALIZR_PRO = "https://absisinitializr-micro-1.pro.int.srv.project.com/absis/starter.zip"
+    static String URL_ZIP_INITIALIZR_DEV = "https://k8sgateway.dev.int.srv.project.com/arch-service/alminitializr-micro-1/alm/starter.zip"
+	static String URL_ZIP_INITIALIZR_PRO = "https://alminitializr-micro-1.pro.int.srv.project.com/alm/starter.zip"
 	
 	static String INITITALIZR_DEFAULT_BOOT_VERSION = "2.3.4.RELEASE"
 
     static String K8S_URL = "https://k8sgateway.{environment}.int.srv.project.com"
-    static String K8S_CENTER_URL = "https://k8sgateway.{environment}.icp-{datacenter}.absis.cloud.lacaixa.es"
+    static String K8S_CENTER_URL = "https://k8sgateway.{environment}.cloud-{datacenter}.alm.cloud.lacaixa.es"
 
 
-    static String urlZipInitializrTST = "https://k8sgateway.tst.int.srv.project.com/arch-service/absisinitializr-micro-1/absis/starter.zip"
+    static String urlZipInitializrTST = "https://k8sgateway.tst.int.srv.project.com/arch-service/alminitializr-micro-1/alm/starter.zip"
     static String initializrDefaultBootVersion = "2.3.4.RELEASE"
 
     static String EDEN_APPS_REGEX = /.*\-[[:digit:]]{1,}\-[[:graph:]]{1,16}\-[[:digit:]]{8}/
@@ -415,7 +415,7 @@ class GlobalVars {
 
     static String CONTRACT_VERSION_PROP = "contract.version"
 	
-	static String GIT_DEMO_PROTOTYPE_REPO_URL = "https://git.svb.lacaixa.es/cbk/alm/services/arch/icp/demo-prototype.git"
+	static String GIT_DEMO_PROTOTYPE_REPO_URL = "https://git.svb.lacaixa.es/cbk/alm/services/arch/cloud/demo-prototype.git"
 	
     static String GIT_CONFIG_REPO_URL_TST = "https://git.svb.lacaixa.es/cbk/alm/config/repository-tst.git"
     static String GIT_CONFIG_REPO_URL_PRE = "https://git.svb.lacaixa.es/cbk/alm/config/repository-pre.git"
@@ -429,7 +429,7 @@ class GlobalVars {
     static String GIT_CONFIG_REPO_TTSS_URL_PRE = "https://git.svb.lacaixa.es/cbk/alm/services/config-sys/repository-pre.git"
     static String GIT_CONFIG_REPO_TTSS_URL_PRO = "https://git.svb.lacaixa.es/cbk/alm/services/config-sys/repository-pro.git"
 	
-	static String CONFIG_SERVER_URL = "https://k8sgateway.{environment}.icp-{datacenter}.absis.cloud.lacaixa.es/arch-service/config-server-1"
+	static String CONFIG_SERVER_URL = "https://k8sgateway.{environment}.cloud-{datacenter}.alm.cloud.lacaixa.es/arch-service/config-server-1"
 	
     static int INCREMENT_CANNARY_PERCENTATGE = 25
     static int MAXIMUM_PERCENTATGE = 100
@@ -445,7 +445,7 @@ class GlobalVars {
 	
     static String NEW_COMPONENT_PREFIX = 'new-<componentName>'
     static String BETA_COMPONENT_SUFFIX = '<componentName>-beta'
-    static String NEW_COMPONENT_PREFIX_ICP = '<componentName>-new'
+    static String NEW_COMPONENT_PREFIX_Cloud = '<componentName>-new'
 
     static String DEFAULT_MEMORY = '768M'
     static String DEFAULT_JAVA_OPTS = '-Dspring.cloud.config.failFast=true'
@@ -490,8 +490,8 @@ class GlobalVars {
     /**
      * GPL
      */
-    static String URL_GPL = "https://idegpl.pro.absiscloud.lacaixa.es"
-    static String URL_GPL_PRE = "https://idegpl.pre.absiscloud.lacaixa.es"
+    static String URL_GPL = "https://idegpl.pro.almcloud.lacaixa.es"
+    static String URL_GPL_PRE = "https://idegpl.pre.almcloud.lacaixa.es"
 
     static String PATH_GPL_PIPELINE = "/api/v1/pipeline"
     static String PATH_GPL_STAGE = "/api/v1/stage"
@@ -511,8 +511,8 @@ class GlobalVars {
     /**
      * GSA
      */
-    static String CATALOG_URL = "https://idegsa.pro.absiscloud.lacaixa.es"
-    static String CATALOG_URL_PRE = "https://idegsa.pre.absiscloud.lacaixa.es"
+    static String CATALOG_URL = "https://idegsa.pro.almcloud.lacaixa.es"
+    static String CATALOG_URL_PRE = "https://idegsa.pre.almcloud.lacaixa.es"
     static String PATH_CATALOG_PIPELINE = "/api/v1/alm/insertComponenteALM"
 	static String GSA_ACTUAL_INSTALLATION_PATH = "/api/v1/alm/actualInstallationALM/{garType}/{application}/{component}"
 	
@@ -532,10 +532,10 @@ class GlobalVars {
 	/**
 	 *ERROR_MANAGEMENT
 	 *//*
-	static String URL_ERRORMGNT_DEV = "https://k8sgateway.dev.icp-1.absis.cloud.lacaixa.es/arch-service/errormanagement-micro-server-1"
-	static String URL_ERRORMGNT_TST = "https://k8sgateway.dev.icp-1.absis.cloud.lacaixa.es/arch-service/errormanagement-micro-server-1"
-	static String URL_ERRORMGNT_PRE = "https://k8sgateway.dev.icp-1.absis.cloud.lacaixa.es/arch-service/errormanagement-micro-server-1"
-	static String URL_ERRORMGNT_PRO = "https://k8sgateway.dev.icp-1.absis.cloud.lacaixa.es/arch-service/errormanagement-micro-server-1"
+	static String URL_ERRORMGNT_DEV = "https://k8sgateway.dev.cloud-1.alm.cloud.lacaixa.es/arch-service/errormanagement-micro-server-1"
+	static String URL_ERRORMGNT_TST = "https://k8sgateway.dev.cloud-1.alm.cloud.lacaixa.es/arch-service/errormanagement-micro-server-1"
+	static String URL_ERRORMGNT_PRE = "https://k8sgateway.dev.cloud-1.alm.cloud.lacaixa.es/arch-service/errormanagement-micro-server-1"
+	static String URL_ERRORMGNT_PRO = "https://k8sgateway.dev.cloud-1.alm.cloud.lacaixa.es/arch-service/errormanagement-micro-server-1"
 	*/
 	//DEV debe apuntar a TST	
 	static String URL_ERRORMGNT_DEV = "https://api.tst.internal.project.com/apps/almarq/error-management"
@@ -543,9 +543,9 @@ class GlobalVars {
 	static String URL_ERRORMGNT_PRE = "https://api.pre.internal.project.com/apps/almarq/error-management"
 	static String URL_ERRORMGNT_PRO = "https://api.pro.internal.project.com/apps/almarq/error-management"
 	/*
-	static String URL_CATALOGO_ALM_TST = "https://k8sgateway.dev.icp-1.absis.cloud.lacaixa.es/arch-service/catmsv-micro-server-1"
-	static String URL_CATALOGO_ALM_PRE = "https://k8sgateway.dev.icp-1.absis.cloud.lacaixa.es/arch-service/catmsv-micro-server-1"
-	static String URL_CATALOGO_ALM_PRO = "https://k8sgateway.dev.icp-1.absis.cloud.lacaixa.es/arch-service/catmsv-micro-server-1"
+	static String URL_CATALOGO_ALM_TST = "https://k8sgateway.dev.cloud-1.alm.cloud.lacaixa.es/arch-service/catmsv-micro-server-1"
+	static String URL_CATALOGO_ALM_PRE = "https://k8sgateway.dev.cloud-1.alm.cloud.lacaixa.es/arch-service/catmsv-micro-server-1"
+	static String URL_CATALOGO_ALM_PRO = "https://k8sgateway.dev.cloud-1.alm.cloud.lacaixa.es/arch-service/catmsv-micro-server-1"
     */
 	static String CATALOGO_ALM_ENV = "PRO"
 	//static String URL_CATALOGO_ALM_TST = "https://api.tst.internal.project.com/dev/tech/catmsv/1"
@@ -574,28 +574,28 @@ class GlobalVars {
 	static String LIQUIBASE_MESSAGE_EXPORT_BBDD = "Puede consultar el modelo de datos en la siguiente url "
 
     /**
-     * ICP VARIABLES
+     * Cloud VARIABLES
      */
-    static String ICP_APP_ARCH = "AB3COR"
-    static String ICP_APP_APPS = "AB3APP"
+    static String Cloud_APP_ARCH = "AB3COR"
+    static String Cloud_APP_APPS = "AB3APP"
 
-    static String ICP_APP_ID_ARCH = "1765"
-    static String ICP_APP_ID_APPS = "1766"
+    static String Cloud_APP_ID_ARCH = "1765"
+    static String Cloud_APP_ID_APPS = "1766"
 
 
-    static String ICP_PRE = "https://publisher-ssp-cldalm.pre.ap.intranet.cloud.lacaixa.es"
-    static String ICP_PRO = "https://publisher-ssp-cldalm.pro.ap.intranet.cloud.lacaixa.es"
+    static String Cloud_PRE = "https://publisher-ssp-cldalm.pre.ap.intranet.cloud.lacaixa.es"
+    static String Cloud_PRO = "https://publisher-ssp-cldalm.pro.ap.intranet.cloud.lacaixa.es"
 
-    static String ICP_ERROR_DEPLOY_NO_INSTANCE_AVAILABLE = "El micro no esta correctamente configurado, pueden faltar secrets. Abrid foro indicando problema de configuracion del micro ICP_DEPLOY_CONFIGURATION_ERROR Secret: "
-	static String ICP_ERROR_DEPLOY_INSTANCE_REBOOTING = "The application is not starting. Check Kibana's logs to find the reason...\n(Doc: https://confluence.cloud.lacaixa.es/confluence/display/serArqMcrsvcs/Kibana+-+Log+tracing#Kibana-Logtracing-Consultalogsdearranque)"
-	static String ICP_ERROR_DEPLOY_ON_MITIGATED_CENTER = "No se puede acceder al micro mediante la VIPA de un centro mitigado. (https://confluence.cloud.lacaixa.es/confluence/display/serArqMcrsvcs/Kibana+-+Log+tracing#Kibana-Logtracing-Consultalogsdearranque)  para asegurar que el problema no sea aplicativo antes de abrir un foro"
-    static String ICP_ERROR_DEPLOY_KUBERNETES_DISABLED = " deshabilitado en ICP debido a una intervención programada del equipo de Cloud. Intente la operación más tarde. En caso de considerarlo un incidente (p.e. perder una ventana de despliegue en PRO), puede abrir maximo contra Servicio TI: APLICACION \\ NO PROCEDE \\ CLDALM.PCLD Grupo resolutor: C-CXB-ES-ET-OTCAAS indicando el problema, recordando indicar la hora del error."
+    static String Cloud_ERROR_DEPLOY_NO_INSTANCE_AVAILABLE = "El micro no esta correctamente configurado, pueden faltar secrets. Abrid foro indicando problema de configuracion del micro Cloud_DEPLOY_CONFIGURATION_ERROR Secret: "
+	static String Cloud_ERROR_DEPLOY_INSTANCE_REBOOTING = "The application is not starting. Check Kibana's logs to find the reason...\n(Doc: https://confluence.cloud.lacaixa.es/confluence/display/serArqMcrsvcs/Kibana+-+Log+tracing#Kibana-Logtracing-Consultalogsdearranque)"
+	static String Cloud_ERROR_DEPLOY_ON_MITIGATED_CENTER = "No se puede acceder al micro mediante la VIPA de un centro mitigado. (https://confluence.cloud.lacaixa.es/confluence/display/serArqMcrsvcs/Kibana+-+Log+tracing#Kibana-Logtracing-Consultalogsdearranque)  para asegurar que el problema no sea aplicativo antes de abrir un foro"
+    static String Cloud_ERROR_DEPLOY_KUBERNETES_DISABLED = " deshabilitado en Cloud debido a una intervención programada del equipo de Cloud. Intente la operación más tarde. En caso de considerarlo un incidente (p.e. perder una ventana de despliegue en PRO), puede abrir maximo contra Servicio TI: APLICACION \\ NO PROCEDE \\ CLDALM.PCLD Grupo resolutor: C-CXB-ES-ET-OTCAAS indicando el problema, recordando indicar la hora del error."
 
-    static int ICP_SECRET_VERIFICATION_MAX_RETRIES = 5
-    static int ICP_RUN_ACTUATOR_REFRESH_MAX_RETRIES = 5
+    static int Cloud_SECRET_VERIFICATION_MAX_RETRIES = 5
+    static int Cloud_RUN_ACTUATOR_REFRESH_MAX_RETRIES = 5
 
-    static int ICP_API_REQUEST_MAX_RETRIES = 10
-    static int ICP_API_MAX_TIMEOUT_PER_REQUEST = 90
+    static int Cloud_API_REQUEST_MAX_RETRIES = 10
+    static int Cloud_API_MAX_TIMEOUT_PER_REQUEST = 90
 
 	/**
 	 * CHECKMARX VARIABLES
@@ -617,7 +617,7 @@ class GlobalVars {
      * KPI VARIABLES
      */   
     static String URL_KPI = "https://internal-reca3i-reca3i.pro.intranet.cloud.lacaixa.es/api/elk/logs"
-    //static String URL_ALMMETRICS = "https://k8sgateway.pre.icp-1.absis.cloud.lacaixa.es/arch-service/almlogcollector-micro-1/api/elk/logs"
+    //static String URL_ALMMETRICS = "https://k8sgateway.pre.cloud-1.alm.cloud.lacaixa.es/arch-service/almlogcollector-micro-1/api/elk/logs"
 	static String URL_ALMMETRICS = "https://almlogcollector.pro.int.srv.project.com/api/elk/logs"
     static String ALMENV_ALMMETRICS = "pro"
 	//static String ALMENV_ALMMETRICS = "dev"
@@ -663,7 +663,7 @@ class GlobalVars {
 	static String ALM_SERVICES_SKIP_VALIDATION_CONTRACT_ALL = false
 	static String ALM_SERVICES_SKIP_VALIDATION_SECRETS_ALL = false
 	
-	static String ICP_CUSTOM_LIVENESSPROBE_APPLICATIONS = ""
+	static String Cloud_CUSTOM_LIVENESSPROBE_APPLICATIONS = ""
 	static String REVAPI_SKIP_VALIDATION = "Bajo responsabilidad del equipo de desarrollo no se ejecutará la validación de versión. Esta versión rompe contrato con su major vigente"
 	
 	static String RESOURCE_PATH = "src/main/resources"

@@ -21,10 +21,10 @@ def call(PomXmlStructure pomXml, PipelineData pipeline, String mvnInputParameter
 }
 def call(PomXmlStructure pomXml, PipelineData pipeline, String mvnInputParameters, boolean isStressPackage) {
 
-    printOpen("${pipeline.deployFlag} ${pipeline.deployOnIcp} ${pomXml.artifactType.toString()} ${pomXml.artifactSubType.toString()}", EchoLevel.DEBUG)
+    printOpen("${pipeline.deployFlag} ${pipeline.deployOnCloud} ${pomXml.artifactType.toString()} ${pomXml.artifactSubType.toString()}", EchoLevel.DEBUG)
 
     if (isStressPackage || (pipeline.deployFlag == true && ( pipeline.branchStructure.branchType == BranchType.PROTOTYPE  || pipeline.branchStructure.branchType == BranchType.HOTFIX || pipeline.branchStructure.branchType == BranchType.MASTER || pipeline.branchStructure.branchType == BranchType.RELEASE) &&
-        !( pipeline.deployOnIcp && ( !pipeline.branchStructure.branchType == BranchType.PROTOTYPE && pomXml.artifactType == ArtifactType.SIMPLE && (pomXml.artifactSubType == ArtifactSubType.MICRO_APP || pomXml.artifactSubType == ArtifactSubType.MICRO_ARCH) ))) 
+        !( pipeline.deployOnCloud && ( !pipeline.branchStructure.branchType == BranchType.PROTOTYPE && pomXml.artifactType == ArtifactType.SIMPLE && (pomXml.artifactSubType == ArtifactSubType.MICRO_APP || pomXml.artifactSubType == ArtifactSubType.MICRO_ARCH) ))) 
         ) {
         //Se aplicara el true en caso de deploy
         //Esto se tiene que desplegar a menos que tenga la sample app
@@ -39,12 +39,12 @@ def call(PomXmlStructure pomXml, PipelineData pipeline, String mvnInputParameter
 
         //Si se trata de un prototipo generamos el jar de prototype
         if (pipeline.branchStructure.branchType == BranchType.PROTOTYPE) {
-            mvnParameters = " ${mvnParameters} -P generate-absis-prototype-jar "
+            mvnParameters = " ${mvnParameters} -P generate-alm-prototype-jar "
             printOpen("Deploying prototype jar to Nexus", EchoLevel.INFO)
         //Si se trata de un micro y no una libreria entonces generamos los jars para tests de integracion, tienen sufijo test.jar
-        //Si es un despliegue en ICP, realmente lo hemos desplegado antes
+        //Si es un despliegue en Cloud, realmente lo hemos desplegado antes
         } else if (testJarsApplyAsPerMicroType && notWhitelistedForTestJars) {
-            mvnParameters = " ${mvnParameters} -P generate-absis-it-test-jars "
+            mvnParameters = " ${mvnParameters} -P generate-alm-it-test-jars "
             printOpen("Deploying artifact with tests jars to Artifactory...", EchoLevel.INFO)
         } else {
             printOpen("Deploying artifact without tests jars to Artifactory...", EchoLevel.INFO)
@@ -83,7 +83,7 @@ def call(PomXmlStructure pomXml, PipelineData pipeline, String mvnInputParameter
         
         printOpen("The artifact has been deployed to Artifactory", EchoLevel.INFO)
 
-        if (pipeline.deployOnIcp && pomXml.artifactType==ArtifactType.SIMPLE) {
+        if (pipeline.deployOnCloud && pomXml.artifactType==ArtifactType.SIMPLE) {
             printOpen("El buildCode ha sido recogido de forma previa al deploy", EchoLevel.DEBUG)
         }else {
             def artifactDeployedOnNexus = NexusUtils.extractArtifactsFromLog(commitLog)

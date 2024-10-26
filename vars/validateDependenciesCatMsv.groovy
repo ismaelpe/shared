@@ -25,7 +25,7 @@ def call(PipelineData pipelineData, PomXmlStructure pomXml, boolean isCampaign, 
 	def response = null
 	printOpen("Procedemos a enviar las peticiones contra Catalogo", EchoLevel.ALL)
 	if (isCampaign) {
-		response = sendRequestToAbsis3MS(
+		response = sendRequestToAlm3MS(
 			'GET',
 			"${GlobalVars.URL_CATALOGO_ALM_PRO}/iop/dependency/validate/${environment}",
 			null,
@@ -49,7 +49,7 @@ def call(PipelineData pipelineData, PomXmlStructure pomXml, boolean isCampaign, 
 			typeVersion = "UNKNOWN"
 		}	
 			
-	     response = sendRequestToAbsis3MS(
+	     response = sendRequestToAlm3MS(
 			'GET',
 			"${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${pipelineData.getGarArtifactType().getGarName()}/${pomXml.getApp(pipelineData.garArtifactType)}/version/${pomXml.artifactMajorVersion}/${pomXml.artifactMinorVersion}/${pomXml.artifactFixVersion}/${typeVersion}/dependency/validate/${environment}",
 			null,

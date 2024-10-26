@@ -45,7 +45,7 @@ def call(Map pipelineParameters) {
     successPipeline = false
 
     pipeline {		
-		agent {	node (absisJenkinsAgent(pipelineParams)) }
+		agent {	node (almJenkinsAgent(pipelineParams)) }
         options {            
             buildDiscarder(logRotator(numToKeepStr: '10'))
             timestamps()
@@ -54,8 +54,8 @@ def call(Map pipelineParameters) {
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
 			JNKMSV = credentials('JNKMSV-USER-TOKEN')
-            ICP_CERT = credentials('icp-alm-pro-cert')
-            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
+            Cloud_CERT = credentials('cloud-alm-pro-cert')
+            Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
@@ -120,7 +120,7 @@ def initPipelineStep() {
     clientInfo.setArtifactVersion("${majorVersion}.X.X")
     clientInfo.setArtifactType(ArtifactType.valueOfType(artifactType))
     clientInfo.setArtifactSubType(ArtifactSubType.MICRO_APP)
-    clientInfo.setGroupId("com.project.absis")
+    clientInfo.setGroupId("com.project.alm")
 
     printOpen("Client Info: $clientInfo", EchoLevel.INFO)
 

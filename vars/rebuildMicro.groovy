@@ -6,15 +6,15 @@ import com.project.alm.KpiAlmEventStage
 import com.project.alm.PipelineData
 import com.project.alm.PomXmlStructure
 import com.project.alm.GlobalVars
-import com.project.alm.ICPDeployStructure
-import com.project.alm.ICPApiResponse
+import com.project.alm.CloudDeployStructure
+import com.project.alm.CloudApiResponse
 import groovy.json.JsonSlurperClassic
 
 
 private Map retrieveAppInfo(Map valuesDeployed)
 {
-	if (valuesDeployed["absis"]!=null) {
-		Map valuesDeployedLocal=valuesDeployed["absis"]
+	if (valuesDeployed["alm"]!=null) {
+		Map valuesDeployedLocal=valuesDeployed["alm"]
 		if (valuesDeployedLocal["app"]!=null) {
 			
 			Map valuesDeployedLocalApp=valuesDeployedLocal["app"]
@@ -24,11 +24,11 @@ private Map retrieveAppInfo(Map valuesDeployed)
 		}
 	}
 }
-private Map retrieveNewAndStableAppICPDeploymentMetadata(Map valuesDeployed) {
+private Map retrieveNewAndStableAppCloudDeploymentMetadata(Map valuesDeployed) {
 	
-		if (valuesDeployed["absis"]!=null) {
+		if (valuesDeployed["alm"]!=null) {
 	
-			Map valuesDeployedLocal=valuesDeployed["absis"]
+			Map valuesDeployedLocal=valuesDeployed["alm"]
 	
 	
 			if (valuesDeployedLocal["apps"]!=null) {
@@ -47,24 +47,24 @@ private Map retrieveNewAndStableAppICPDeploymentMetadata(Map valuesDeployed) {
 		return [:]
 	}
 
-def buildArtifactOnIcp(String requestURL, def body, String method, String aplicacionGAR, String pollingRequestUrl )  {
-	ICPApiResponse responseIcp=null
+def buildArtifactOnCloud(String requestURL, def body, String method, String aplicacionGAR, String pollingRequestUrl )  {
+	CloudApiResponse responseCloud=null
 	try {
 
 		try {
 
-			responseIcp = sendRequestToICPApi(requestURL,body,method,aplicacionGAR,pollingRequestUrl,true,false)
+			responseCloud = sendRequestToCloudApi(requestURL,body,method,aplicacionGAR,pollingRequestUrl,true,false)
 
 		} catch(java.io.NotSerializableException e) {
 
-			responseIcp = sendRequestToICPApi(requestURL,body,method,aplicacionGAR,pollingRequestUrl,true,false)
+			responseCloud = sendRequestToCloudApi(requestURL,body,method,aplicacionGAR,pollingRequestUrl,true,false)
 
 		}
 		
-		if (responseIcp.statusCode==500) {
+		if (responseCloud.statusCode==500) {
 
-            printOpen("Error puntual... vamos a probar suerte otra vez ${responseIcp.statusCode}", EchoLevel.ERROR)
-			responseIcp = sendRequestToICPApi(requestURL,body,method,aplicacionGAR,pollingRequestUrl,true,false)
+            printOpen("Error puntual... vamos a probar suerte otra vez ${responseCloud.statusCode}", EchoLevel.ERROR)
+			responseCloud = sendRequestToCloudApi(requestURL,body,method,aplicacionGAR,pollingRequestUrl,true,false)
 
 		}
 
@@ -74,11 +74,11 @@ def buildArtifactOnIcp(String requestURL, def body, String method, String aplica
 
 	}
 	
-	return responseIcp
+	return responseCloud
 }
 def call(def valuesDeployed, String componentType, String component, String major, String environment, String namespace) {
 	def app=component+major
-	def valuesDeployedLocalEnvVarsList = retrieveNewAndStableAppICPDeploymentMetadata(valuesDeployed)
+	def valuesDeployedLocalEnvVarsList = retrieveNewAndStableAppCloudDeploymentMetadata(valuesDeployed)
 	def valuesApp=retrieveAppInfo(valuesDeployed)
 	
 	if (valuesApp!=null) {
@@ -89,7 +89,7 @@ def call(def valuesDeployed, String componentType, String component, String majo
 	}
     printOpen("Los valores setteados son los siguientes ${valuesDeployedLocalEnvVarsList}", EchoLevel.DEBUG)
     printOpen("Antes de llamar a recuperar el id de componente", EchoLevel.DEBUG)
-	def response = sendRequestToAbsis3MS(
+	def response = sendRequestToAlm3MS(
 					'GET',
 					"${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${componentType}/${component}",
 					null,
@@ -111,7 +111,7 @@ def call(def valuesDeployed, String componentType, String component, String majo
 	//Recuperar el micro desplegado en el entorno
 
 	//Validar que estemos aun desplegando
-	response = sendRequestToAbsis3MS(
+	response = sendRequestToAlm3MS(
 		'GET',
 		"${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${componentType}/${component}/version/${major}/environment/${environment}",
 		null,
@@ -156,10 +156,10 @@ def call(def valuesDeployed, String componentType, String component, String majo
 			version: "${versionImage}"
 		]
 		
-		String appICPId = namespace=="ARCH" ? GlobalVars.ICP_APP_ID_ARCH : GlobalVars.ICP_APP_ID_APPS
-		String appICP = namespace=="ARCH" ? GlobalVars.ICP_APP_ARCH : GlobalVars.ICP_APP_APPS
+		String appCloudId = namespace=="ARCH" ? GlobalVars.Cloud_APP_ID_ARCH : GlobalVars.Cloud_APP_ID_APPS
+		String appCloud = namespace=="ARCH" ? GlobalVars.Cloud_APP_ARCH : GlobalVars.Cloud_APP_APPS
 		
-		ICPApiResponse responseComp = sendRequestToICPApi("v1/application/${appICPId}/component",null,"GET","${appICP}","", false, false)
+		CloudApiResponse responseComp = sendRequestToCloudApi("v1/application/${appCloudId}/component",null,"GET","${appCloud}","", false, false)
 		String componentId="0"
 		
 		if (responseComp.statusCode>=200 && responseComp.statusCode<300 && valuesDeployed!=null) {
@@ -170,7 +170,7 @@ def call(def valuesDeployed, String componentType, String component, String majo
 			}
 		}
 
-		def responseBuild = buildArtifactOnIcp("v1/type/PCLD/application/${appICP}/component/${componentId}/build", body, "POST", "${appICP}", "v1/type/PCLD/application/${appICP}/component/${componentId}/build")
+		def responseBuild = buildArtifactOnCloud("v1/type/PCLD/application/${appCloud}/component/${componentId}/build", body, "POST", "${appCloud}", "v1/type/PCLD/application/${appCloud}/component/${componentId}/build")
 		
 		//New image
 		if (responseBuild.statusCode>=200 && responseBuild.statusCode<300) {

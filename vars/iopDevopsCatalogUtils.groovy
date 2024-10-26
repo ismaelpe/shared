@@ -16,8 +16,8 @@ import groovy.json.JsonSlurperClassic
 
 def getOpenedMicros(def days) {
     
-    //def response=sendRequestToAbsis3MS('GET', "${GlobalVars.URL_CATALOGO_ALM_TST}/app/traceability/PRO/BETA?daysToDest=${days}&onlyInstalled=true",null, "TST")
-    def response=sendRequestToAbsis3MS('GET', "${GlobalVars.URL_CATALOGO_ALM_PRO}/app/traceability/PRO/BETA?daysToDest=${days}&onlyInstalled=true",null, "${GlobalVars.CATALOGO_ALM_ENV}")
+    //def response=sendRequestToAlm3MS('GET', "${GlobalVars.URL_CATALOGO_ALM_TST}/app/traceability/PRO/BETA?daysToDest=${days}&onlyInstalled=true",null, "TST")
+    def response=sendRequestToAlm3MS('GET', "${GlobalVars.URL_CATALOGO_ALM_PRO}/app/traceability/PRO/BETA?daysToDest=${days}&onlyInstalled=true",null, "${GlobalVars.CATALOGO_ALM_ENV}")
     if (response.status == 200) {
        printOpen("Devolveremos los micros abiertos", EchoLevel.ALL)
        
@@ -68,7 +68,7 @@ def notifyToAppTeam(def micros) {
 def validateCoherence(def type, def application, def major, def minor, def fix, def versionType, def enviroment) {
 
     ///app/${type}/${application}/version/${major}/${minor}/${fix}/${versionType}/dependency/validate/${enviroment}
-    def response=sendRequestToAbsis3MS('GET', "${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${type}/${application}/version/${major}/${minor}/${fix}/${versionType}/dependency/validate/${enviroment}", null, "${GlobalVars.CATALOGO_ALM_ENV}")
+    def response=sendRequestToAlm3MS('GET', "${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${type}/${application}/version/${major}/${minor}/${fix}/${versionType}/dependency/validate/${enviroment}", null, "${GlobalVars.CATALOGO_ALM_ENV}")
     printOpen("El status de las peticiones son de ${response.status}", EchoLevel.ALL)
     if (response.status == 200) {
        printOpen("Validaciones de depencias correctas", EchoLevel.ALL)

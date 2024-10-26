@@ -5,11 +5,11 @@ class AppMassive {
     private String appName = ''
     private String garApp = ''
     private Map valuesDeployed
-    private ICPAppResources
+    private CloudAppResources
     private String garType
     private String namespace
-    private String icpNamespace
-    private String icpNamespaceId
+    private String cloudNamespace
+    private String cloudNamespaceId
     private Boolean isArchProject
     private String state
 
@@ -19,11 +19,11 @@ class AppMassive {
         garApp = ''
         garType= ''
         valuesDeployed = new HashMap()
-        ICPAppResources= null
-        icpNamespace=''
+        CloudAppResources= null
+        cloudNamespace=''
         namespace=''
         isArchProject=false
-        icpNamespaceId= ''
+        cloudNamespaceId= ''
         state="Not Processed"
     }
 
@@ -36,11 +36,11 @@ class AppMassive {
     }
 
     String getIcpNamespaceId() {
-        return icpNamespaceId
+        return cloudNamespaceId
     }
     
-    void setIcpNamespaceId(String icpNamespaceId) {
-        this.icpNamespaceId = icpNamespaceId
+    void setIcpNamespaceId(String cloudNamespaceId) {
+        this.cloudNamespaceId = cloudNamespaceId
     }
     
     Boolean getIsArchProject() {
@@ -52,11 +52,11 @@ class AppMassive {
     }
     
     String getIcpNamespace() {
-        return icpNamespace
+        return cloudNamespace
     }
     
-    void setIcpNamespace(String icpNamespace) {
-        this.icpNamespace = icpNamespace
+    void setIcpNamespace(String cloudNamespace) {
+        this.cloudNamespace = cloudNamespace
     }
     
     String getNamespace() {
@@ -75,12 +75,12 @@ class AppMassive {
         this.garType = garType
     }
     
-    def getICPAppResources() {
-        return ICPAppResources
+    def getCloudAppResources() {
+        return CloudAppResources
     }
     
-    void setICPAppResources(ICPAppResources) {
-        this.ICPAppResources = ICPAppResources
+    void setCloudAppResources(CloudAppResources) {
+        this.CloudAppResources = CloudAppResources
     }
     
     String getAppName() {

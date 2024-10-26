@@ -1,21 +1,21 @@
 import com.project.alm.EchoLevel
 import com.project.alm.PipelineData
 import com.project.alm.PomXmlStructure
-import com.project.alm.ICPUtils
+import com.project.alm.CloudUtils
 
-def call(def componentName, def componentId, def appId,def appName, def environment, def centers, boolean deleteFromICP) {
-	deleteAppICP(componentName,componentId,appId,appName,environment,centers,deleteFromICP,false)
+def call(def componentName, def componentId, def appId,def appName, def environment, def centers, boolean deleteFromCloud) {
+	deleteAppCloud(componentName,componentId,appId,appName,environment,centers,deleteFromCloud,false)
 }
 
-def call(def componentName, def componentId, def appId,def appName, def environment, def centers, boolean deleteFromICP, boolean onlyDeleteFromICP) {
+def call(def componentName, def componentId, def appId,def appName, def environment, def centers, boolean deleteFromCloud, boolean onlyDeleteFromCloud) {
 	def body = [
 		az: centers,
 		environment: environment
 	]
 	
 	
-	if (onlyDeleteFromICP) {
-		def response=sendRequestToICPApi("v1/api/application/PCLD/${appName}/component/${componentName}",null,"DELETE","${appName}","",false,false)
+	if (onlyDeleteFromCloud) {
+		def response=sendRequestToCloudApi("v1/api/application/PCLD/${appName}/component/${componentName}",null,"DELETE","${appName}","",false,false)
 		printOpen(" The status code of the delete ${response.statusCode}", EchoLevel.INFO)
 		
 		if (response.statusCode>=200 && response.statusCode<300) {
@@ -26,7 +26,7 @@ def call(def componentName, def componentId, def appId,def appName, def environm
 		
 		//Tenemos que eliminar en OCP?
 		if (env.ENV_K8S_OCP!=null && env.ENV_K8S_OCP.contains(environment.toUpperCase())) {
-			response=sendRequestToICPApi("v1/api/application/PCLD_MIGRATED/${appName}/component/${componentName}",null,"DELETE","${appName}","",false,false)
+			response=sendRequestToCloudApi("v1/api/application/PCLD_MIGRATED/${appName}/component/${componentName}",null,"DELETE","${appName}","",false,false)
 			printOpen(" The status code of the delete ${response.statusCode}", EchoLevel.INFO)
 			
 			if (response.statusCode>=200 && response.statusCode<300) {
@@ -36,14 +36,14 @@ def call(def componentName, def componentId, def appId,def appName, def environm
 			}
 		}
 	}else {	
-		def response=sendRequestToICPApi("v1/api/application/PCLD/${appName}/component/${componentName}/deploy",body,"DELETE","${appName}","",false,false)
+		def response=sendRequestToCloudApi("v1/api/application/PCLD/${appName}/component/${componentName}/deploy",body,"DELETE","${appName}","",false,false)
 				
-		printOpen(" The status code of the undeploy ${response.statusCode} ${deleteFromICP}", EchoLevel.INFO)
+		printOpen(" The status code of the undeploy ${response.statusCode} ${deleteFromCloud}", EchoLevel.INFO)
 		
 		
-		if (deleteFromICP && (response.statusCode>=200 && response.statusCode<300 || response.statusCode==404)) {
+		if (deleteFromCloud && (response.statusCode>=200 && response.statusCode<300 || response.statusCode==404)) {
 			
-			response=sendRequestToICPApi("v1/api/application/PCLD/${appName}/component/${componentName}",null,"DELETE","${appName}","",false,false)
+			response=sendRequestToCloudApi("v1/api/application/PCLD/${appName}/component/${componentName}",null,"DELETE","${appName}","",false,false)
 			printOpen(" The status code of the delete ${response.statusCode}", EchoLevel.ALL)
 			
 			if (response.statusCode>=200 && response.statusCode<300) {
@@ -53,15 +53,15 @@ def call(def componentName, def componentId, def appId,def appName, def environm
 			}
 						
 		}else {
-			printOpen("Don't delete component from ICP", EchoLevel.INFO)
+			printOpen("Don't delete component from Cloud", EchoLevel.INFO)
 		}
 		if (env.ENV_K8S_OCP!=null && env.ENV_K8S_OCP.contains(environment.toUpperCase())) {
 			///api/publisher/v1/api/application/PCLD_MIGRATED/AB3APP/component/BRANCHLOCATIONOPERATIONS6/deploy
-			response=sendRequestToICPApi("v1/api/application/PCLD_MIGRATED/${appName}/component/${componentName}/deploy",body,"DELETE","${appName}","",false,false)
+			response=sendRequestToCloudApi("v1/api/application/PCLD_MIGRATED/${appName}/component/${componentName}/deploy",body,"DELETE","${appName}","",false,false)
 			
-			if (deleteFromICP && (response.statusCode>=200 && response.statusCode<300 || response.statusCode==404)) {
+			if (deleteFromCloud && (response.statusCode>=200 && response.statusCode<300 || response.statusCode==404)) {
 				
-				response=sendRequestToICPApi("v1/api/application/PCLD_MIGRATED/${appName}/component/${componentName}",null,"DELETE","${appName}","",false,false)
+				response=sendRequestToCloudApi("v1/api/application/PCLD_MIGRATED/${appName}/component/${componentName}",null,"DELETE","${appName}","",false,false)
 				printOpen(" The status code of the delete ${response.statusCode}", EchoLevel.ALL)
 				
 				if (response.statusCode>=200 && response.statusCode<300) {

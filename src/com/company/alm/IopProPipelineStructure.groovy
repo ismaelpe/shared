@@ -29,7 +29,7 @@ class IopProPipelineStructure extends PipelineStructure {
                 ],
 				[id       : pipelineId + "110",
 				 estado   : "inactive",
-				 nombre   : "110-check-icp-availability",
+				 nombre   : "110-check-cloud-availability",
 				 resultado: "",
 				 orden    : 0
 				],
@@ -53,7 +53,7 @@ class IopProPipelineStructure extends PipelineStructure {
                 ],
                 [id       : pipelineId + "400",
                  estado   : "inactive",
-                 nombre   : "400-deploy-to-cloud-icp",
+                 nombre   : "400-deploy-to-cloud-cloud",
                  resultado: "",
                  orden    : 0
                 ],

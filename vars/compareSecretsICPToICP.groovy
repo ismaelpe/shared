@@ -9,7 +9,7 @@ import java.util.HashMap
 def getSecretFromEnvNamespace(String env, String namespace) {
 	Map secrets=new HashMap()
 	
-	def response=sendRequestToICPApi("v2/api/application/PCLD/${namespace}/environment/${env.toUpperCase()}/availabilityzone/ALL/credentials",null,"GET","${namespace}","",false,false)
+	def response=sendRequestToCloudApi("v2/api/application/PCLD/${namespace}/environment/${env.toUpperCase()}/availabilityzone/ALL/credentials",null,"GET","${namespace}","",false,false)
 	
 	if (response.statusCode==200) {
 		response.body.each{

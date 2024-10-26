@@ -1,21 +1,21 @@
 import com.project.alm.*
 
-def migrateProfileAndResources(Map currentImage, String environment, String k8sOrigin='icp', String k8sDestination='ocp', Map resources ){
-	if (k8sOrigin.equals('icp') && k8sDestination.equals('ocp')) {
-		return migrateProfileIcpToOcpAndResources(currentImage, environment,resources)
+def migrateProfileAndResources(Map currentImage, String environment, String k8sOrigin='cloud', String k8sDestination='ocp', Map resources ){
+	if (k8sOrigin.equals('cloud') && k8sDestination.equals('ocp')) {
+		return migrateProfileCloudToOcpAndResources(currentImage, environment,resources)
 	} else {
-		if (k8sOrigin.equals('ocp') && k8sDestination.equals('icp')){
-			return migrateProfileOcpToIcpAndResources(currentImage, environment,resources)
+		if (k8sOrigin.equals('ocp') && k8sDestination.equals('cloud')){
+			return migrateProfileOcpToCloudAndResources(currentImage, environment,resources)
 		}
 	}	
 }
 
-def migrateProfileOcpToIcpAndResources(Map currentImage, String environment, Map resources){
+def migrateProfileOcpToCloudAndResources(Map currentImage, String environment, Map resources){
 	printOpen("Los datos de la imagen es de ${currentImage}",EchoLevel.INFO)
 	if (currentImage["envVars"]!=null) {
 		def envVars=currentImage["envVars"]
 		if (envVars[GlobalVars.PROFILES_SPRING]!=null && !'ocp'.contains(envVars[GlobalVars.PROFILES_SPRING])) {
-			envVars[GlobalVars.PROFILES_SPRING]=migrateProfileOcpToIcp(envVars[GlobalVars.PROFILES_SPRING],environment)		
+			envVars[GlobalVars.PROFILES_SPRING]=migrateProfileOcpToCloud(envVars[GlobalVars.PROFILES_SPRING],environment)		
 		}
 		Integer requestCpu=resources["requests"]["cpu"]-'m' as Integer
 		Integer limitsCpu=resources["limits"]["cpu"]-'m' as Integer
@@ -26,12 +26,12 @@ def migrateProfileOcpToIcpAndResources(Map currentImage, String environment, Map
 }
 
 
-def migrateProfileIcpToOcpAndResources(Map currentImage, String environment, Map resources){
+def migrateProfileCloudToOcpAndResources(Map currentImage, String environment, Map resources){
 	
 	if (currentImage["envVars"]!=null) {
 		def envVars=currentImage["envVars"]
 		if (envVars[GlobalVars.PROFILES_SPRING]!=null && !'ocp'.contains(envVars[GlobalVars.PROFILES_SPRING])) {
-			envVars[GlobalVars.PROFILES_SPRING]=migrateProfileIcpToOcp(envVars[GlobalVars.PROFILES_SPRING],environment)
+			envVars[GlobalVars.PROFILES_SPRING]=migrateProfileCloudToOcp(envVars[GlobalVars.PROFILES_SPRING],environment)
 			
 			//Integer requestCpu=currentImage["requests_cpu"]-'m' as Integer
 			//Integer limitsCpu=currentImage["limits_cpu"]-'m' as Integer
@@ -141,7 +141,7 @@ def migrateResourcesTo(Map resources, String environment,String micro, String ma
 	
 	//Sacar los datos del catalogo de componentes
 	
-	def response = sendRequestToAbsis3MS(
+	def response = sendRequestToAlm3MS(
 		'GET',
 		"${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${microType}/${micro}/${major}/config?env=${environment}",
 		null,
@@ -186,14 +186,14 @@ def migrateResourcesTo(Map resources, String environment,String micro, String ma
 }
 
 
-def migrateProfileIcpToOcp(String profile, String environment){
+def migrateProfileCloudToOcp(String profile, String environment){
 	if (profile!=null && !profile.contains('ocp')) {
 		profile=profile+",ocp,ocp${environment.toLowerCase()}"
 	}
 	return profile
 }
 
-def migrateProfileOcpToIcp(String profile, String environment){
+def migrateProfileOcpToCloud(String profile, String environment){
 	if (profile!=null && profile.contains('ocp')) {
 		profile=profile-",ocp${environment.toLowerCase()}"
 		profile=profile-",ocp"
@@ -256,7 +256,7 @@ def putImageDockerCompiled(def componentName, def image, boolean isRc) {
 		expiringDate: expiringDate,
 		user: "USER"
 	 ]
- def responseHire = sendRequestToAbsis3MS( 'PUT',
+ def responseHire = sendRequestToAlm3MS( 'PUT',
 											"${GlobalVars.URL_CATALOGO_ALM_PRO}/audit",
 											nuevoEvento,
 											"${GlobalVars.CATALOGO_ALM_ENV}")
@@ -265,7 +265,7 @@ def putImageDockerCompiled(def componentName, def image, boolean isRc) {
 }
 def imageDockesIsCompiled(def app, def version, boolean isRc) {
 	def appM=app.toUpperCase()
-	def response = sendRequestToAbsis3MS(
+	def response = sendRequestToAlm3MS(
 		'GET',
 		"${GlobalVars.URL_CATALOGO_ALM_PRO}/audit/OCP/${appM}",
 		null,
@@ -353,16 +353,16 @@ def buildImageDocker(def app, def path, def micro, def namespace, def versionScr
 				printOpen("El resultado buildCode ${versionScriptBuild}",EchoLevel.INFO)
 			}
 			
-			printOpen("${path}/buildArtifactICP.sh -h '${GlobalVars.ICP_PRO}' -M ${micro}"+
+			printOpen("${path}/buildArtifactCloud.sh -h '${GlobalVars.Cloud_PRO}' -M ${micro}"+
 				" -l '${GlobalVars.URL_ALMMETRICS}' -A ${namespace} -V ${versionScript} -T ${microType} -C ${nameComponentPom} -E ${environment} -B '${buildCode}' -k ${k8sdestination} "+
 				" -i '${groupId}:${versionScriptBuild}:${nameComponentPom}:${additionalBuildParam}:${versionDelMicroBuild}' ",EchoLevel.INFO)
 			
 			try {
-				resultScript = sh( returnStdout: true, script: "${path}/buildArtifactICP.sh -h '${GlobalVars.ICP_PRO}' -M ${micro}"+
+				resultScript = sh( returnStdout: true, script: "${path}/buildArtifactCloud.sh -h '${GlobalVars.Cloud_PRO}' -M ${micro}"+
 					" -l '${GlobalVars.URL_ALMMETRICS}' -A ${namespace} -V ${versionScript} -T ${microType} -C ${nameComponentPom} -E ${environment} -B '${buildCode}' -k ${k8sdestination} "+
 					" -i '${groupId}:${versionScriptBuild}:${nameComponentPom}:${additionalBuildParam}:${versionDelMicroBuild}' ")
 					
-				/*{"id":448619,"extraArgs":"[GROUP_ID=com.project.absis.apps.dataservice.demo, VERSION_ARTIFACT=2.17.0-SNAPSHOT, ARTIFACT_ID=arqrun-micro]","version":"MIGRATED-2.17.0-SNAPSHOT-A","status":"OK","imageRepo1":"docker-registry.cloud.project.com/containers/ab3app/arqrun2","imageRepo2":"docker-registry.cloud.project.com/containers/ab3app/arqrun2"}*/
+				/*{"id":448619,"extraArgs":"[GROUP_ID=com.project.alm.apps.dataservice.demo, VERSION_ARTIFACT=2.17.0-SNAPSHOT, ARTIFACT_ID=arqrun-micro]","version":"MIGRATED-2.17.0-SNAPSHOT-A","status":"OK","imageRepo1":"docker-registry.cloud.project.com/containers/ab3app/arqrun2","imageRepo2":"docker-registry.cloud.project.com/containers/ab3app/arqrun2"}*/
 				end=new Date()
 				printOpen("El resultado build ${resultScript}   Duration: ${(end.getTime()-start.getTime())/1000}sec ",EchoLevel.INFO)
 				
@@ -409,10 +409,10 @@ def buildImageDocker(def app, def path, def micro, def namespace, def versionScr
 def getArtifactId(def path, def micro, def namespace, def versionScript, def microType, def componentPom, def environment, def buildCode, def k8scluster) {
 	try {
 		
-		printOpen("${path}/getArtifactICP.sh -h '${GlobalVars.ICP_PRO}' -M ${micro}"+
+		printOpen("${path}/getArtifactCloud.sh -h '${GlobalVars.Cloud_PRO}' -M ${micro}"+
 			" -l '${GlobalVars.URL_ALMMETRICS}' -A ${namespace} -V ${versionScript} -T ${microType} -C ${micro}-micro -E ${environment} -B '${buildCode}' -k ${k8scluster}  "+
 			"  ",EchoLevel.INFO)
-		resultScript = sh( returnStdout: true, script: "${path}/getArtifactICP.sh -h '${GlobalVars.ICP_PRO}' -M ${micro}"+
+		resultScript = sh( returnStdout: true, script: "${path}/getArtifactCloud.sh -h '${GlobalVars.Cloud_PRO}' -M ${micro}"+
 			" -l '${GlobalVars.URL_ALMMETRICS}' -A ${namespace} -V ${versionScript} -T ${microType} -C ${componentPom} -E ${environment} -B '${buildCode}'  -k ${k8scluster}  "+
 			" "
 			)
@@ -443,10 +443,10 @@ def generateArtifact(def path, def micro, def namespace, def versionScript, def 
 		def cpu_req=resourcesMicro["requests"]["cpu"]
 		def cpu_limits=resourcesMicro["limits"]["cpu"]
 		
-		printOpen("${path}/generateArtifactICP.sh -h '${GlobalVars.ICP_PRO}' -M ${micro}"+
+		printOpen("${path}/generateArtifactCloud.sh -h '${GlobalVars.Cloud_PRO}' -M ${micro}"+
 			" -l '${GlobalVars.URL_ALMMETRICS}' -A ${namespace} -V ${versionScript} -T ${microType} -C ${micro}-micro -E ${environment} -B '${buildCode}' -k ${k8sdestination} "+
 			" -i '${mem_req}:${mem_limits}:${cpu_req}:${cpu_limits}' ",EchoLevel.INFO)
-		resultScript = sh( returnStdout: true, script: "${path}/generateArtifactICP.sh -h '${GlobalVars.ICP_PRO}' -M ${micro}"+
+		resultScript = sh( returnStdout: true, script: "${path}/generateArtifactCloud.sh -h '${GlobalVars.Cloud_PRO}' -M ${micro}"+
 			" -l '${GlobalVars.URL_ALMMETRICS}' -A ${namespace} -V ${versionScript} -T ${microType} -C ${componentPom} -E ${environment} -B '${buildCode}' -k ${k8sdestination} "+
 			" -i '${mem_req}:${mem_limits}:${cpu_req}:${cpu_limits}'"
 			)
@@ -510,7 +510,7 @@ def getInfoApp(def path, def micro, def namespace, def versionScript, def microT
 
 
 
-def call(String path, String environment, String micro, String version, String namespace, String microType, String buildCode, boolean buildAllImages = true, String groupId, String componentPom, String dontGenerateImages='false', String ignoreStart, String ignoreBuild, String dontDeployAsync, String command='CLONE', String k8sOrigin='icp', String k8sDestination='ocp') {
+def call(String path, String environment, String micro, String version, String namespace, String microType, String buildCode, boolean buildAllImages = true, String groupId, String componentPom, String dontGenerateImages='false', String ignoreStart, String ignoreBuild, String dontDeployAsync, String command='CLONE', String k8sOrigin='cloud', String k8sDestination='ocp') {
 	
 	//Necesitamos primero el ultimo deploy
 	//y a partir de ahi hacemos el deploy en OCP
@@ -524,7 +524,7 @@ def call(String path, String environment, String micro, String version, String n
 	String pcldOrigin="PCLD"
 	String pcldDestination="PCLD_MIGRATED"
 	
-	//String k8sOrigin='icp', 
+	//String k8sOrigin='cloud', 
 	//String k8sDestination='ocp'	
 	if ("ocp".equals(k8sOrigin)) {
 		pcldOrigin="PCLD_MIGRATED"
@@ -542,7 +542,7 @@ def call(String path, String environment, String micro, String version, String n
 	printOpen ("End getArtifactId  EndTime: ${end} Duration: ${(end.getTime()-start.getTime())/1000}sec",EchoLevel.INFO)
 	
 	printOpen("El componente a clonar es ${componentId}",EchoLevel.INFO)
-	//additionalBuildParam=additionalBuildParam+",DB2_DRIVER_INPUT="+getDb2Driver(deployStructure.envICP)
+	//additionalBuildParam=additionalBuildParam+",DB2_DRIVER_INPUT="+getDb2Driver(deployStructure.envCloud)
 	
 	if (componentId!=0) {
 		def infoApp=null
@@ -558,14 +558,14 @@ def call(String path, String environment, String micro, String version, String n
 		end=new Date()
 		printOpen ("End getInfoApp  EndTime: ${end} Duration: ${(end.getTime()-start.getTime())/1000}sec",EchoLevel.INFO)
 		
-		printOpen("${path}/getLastDeployment.sh -u '${GlobalVars.ICP_PRO}/api/publisher/v1/api/application/${pcldOrigin}/${namespace}/component/${nameMicro}/deploy/current/environment/${environment}/az/ALL' "+
+		printOpen("${path}/getLastDeployment.sh -u '${GlobalVars.Cloud_PRO}/api/publisher/v1/api/application/${pcldOrigin}/${namespace}/component/${nameMicro}/deploy/current/environment/${environment}/az/ALL' "+
 			" -l '${GlobalVars.URL_ALMMETRICS}' -A ${namespace} -V ${versionScript} -T ${microType} -C ${componentPom} -E ${environment} -B '${buildCode}' -M ${micro} ",EchoLevel.INFO)
 		
-		//Recogemos el deploy en ICP
+		//Recogemos el deploy en Cloud
 		def resultScript = null
 		startParcial=new Date()
 		try {	
-			resultScript = sh(returnStdout: true, script: "${path}/getLastDeployment.sh -u '${GlobalVars.ICP_PRO}/api/publisher/v1/api/application/${pcldOrigin}/${namespace}/component/${nameMicro}/deploy/current/environment/${environment}/az/ALL' "+
+			resultScript = sh(returnStdout: true, script: "${path}/getLastDeployment.sh -u '${GlobalVars.Cloud_PRO}/api/publisher/v1/api/application/${pcldOrigin}/${namespace}/component/${nameMicro}/deploy/current/environment/${environment}/az/ALL' "+
 			" -l '${GlobalVars.URL_ALMMETRICS}' -A ${namespace} -V ${versionScript} -T ${microType} -C ${componentPom} -E ${environment} -B '${buildCode}' -M ${micro} "
 				)
 		}catch(e) {
@@ -574,7 +574,7 @@ def call(String path, String environment, String micro, String version, String n
 		}
 		end=new Date()
 		printOpen ("End getLastDeployment   EndTime: ${end} Duration: ${(end.getTime()-start.getTime())/1000}sec Partial Duration: ${(end.getTime()-startParcial.getTime())/1000}sec",EchoLevel.INFO)
-		//def resultScript = sh(returnStdout: true, script: "${path}/sendCurlToICP.sh ")
+		//def resultScript = sh(returnStdout: true, script: "${path}/sendCurlToCloud.sh ")
 		
 		def zoneDistribution='ALL'
 		resultScript=resultScript.substring(3)
@@ -588,55 +588,55 @@ def call(String path, String environment, String micro, String version, String n
 		def searchForStable=true
 		def resourcesMicro=null
 		
-		def compareICPvsOCP="false"
+		def compareCloudvsOCP="false"
 		
 		//Build de la imagen
 		if (lastDeployment!=null) {
 			//VALIDAR QUE EL MICRO ESTE RUNNING
 			String microUrl=""
-			String microUrlICP=""
+			String microUrlCloud=""
 			
 			if ("AZ2".equals(zoneDistribution)) {
 				if ("ocp".equals(k8sOrigin)) {
-					microUrlICP="https://k8sgateway.${environment.toLowerCase()}.ocp-2.ocp-priv.absis.cloud.lacaixa.es"
-					microUrl="https://k8sgateway.${environment.toLowerCase()}.icp-2.absis.cloud.lacaixa.es"
+					microUrlCloud="https://k8sgateway.${environment.toLowerCase()}.ocp-2.ocp-priv.alm.cloud.lacaixa.es"
+					microUrl="https://k8sgateway.${environment.toLowerCase()}.cloud-2.alm.cloud.lacaixa.es"
 				} else {
-					microUrl="https://k8sgateway.${environment.toLowerCase()}.ocp-2.ocp-priv.absis.cloud.lacaixa.es"
-					microUrlICP="https://k8sgateway.${environment.toLowerCase()}.icp-2.absis.cloud.lacaixa.es"
+					microUrl="https://k8sgateway.${environment.toLowerCase()}.ocp-2.ocp-priv.alm.cloud.lacaixa.es"
+					microUrlCloud="https://k8sgateway.${environment.toLowerCase()}.cloud-2.alm.cloud.lacaixa.es"
 				}
 			}else if ("AZ1".equals(zoneDistribution)) {
 				if ("ocp".equals(k8sOrigin)) {
-					microUrlICP="https://k8sgateway.${environment.toLowerCase()}.ocp-1.ocp-priv.absis.cloud.lacaixa.es"
-					microUrl="https://k8sgateway.${environment.toLowerCase()}.icp-1.absis.cloud.lacaixa.es"
+					microUrlCloud="https://k8sgateway.${environment.toLowerCase()}.ocp-1.ocp-priv.alm.cloud.lacaixa.es"
+					microUrl="https://k8sgateway.${environment.toLowerCase()}.cloud-1.alm.cloud.lacaixa.es"
 				} else {
-					microUrl="https://k8sgateway.${environment.toLowerCase()}.ocp-1.ocp-priv.absis.cloud.lacaixa.es"
-					microUrlICP="https://k8sgateway.${environment.toLowerCase()}.icp-1.absis.cloud.lacaixa.es"
+					microUrl="https://k8sgateway.${environment.toLowerCase()}.ocp-1.ocp-priv.alm.cloud.lacaixa.es"
+					microUrlCloud="https://k8sgateway.${environment.toLowerCase()}.cloud-1.alm.cloud.lacaixa.es"
 				}
 			}else {
 				if ("ocp".equals(k8sOrigin)) {
-					microUrlICP="https://k8sgateway.${environment.toLowerCase()}.ocp-priv.absis.cloud.lacaixa.es"
-					microUrl="https://k8sgateway.${environment.toLowerCase()}.absis.cloud.lacaixa.es"
+					microUrlCloud="https://k8sgateway.${environment.toLowerCase()}.ocp-priv.alm.cloud.lacaixa.es"
+					microUrl="https://k8sgateway.${environment.toLowerCase()}.alm.cloud.lacaixa.es"
 				} else {
-					microUrl="https://k8sgateway.${environment.toLowerCase()}.ocp-priv.absis.cloud.lacaixa.es"
-					microUrlICP="https://k8sgateway.${environment.toLowerCase()}.absis.cloud.lacaixa.es"
+					microUrl="https://k8sgateway.${environment.toLowerCase()}.ocp-priv.alm.cloud.lacaixa.es"
+					microUrlCloud="https://k8sgateway.${environment.toLowerCase()}.alm.cloud.lacaixa.es"
 				}
 			}
 			
-			//RECUPERACION DEPLOYMENT ICP
+			//RECUPERACION DEPLOYMENT Cloud
 			
-			Map absis=lastDeployment["absis"]
-			Map absisApp=absis["apps"]
-			Map absisAppEnvQualifier=absisApp["envQualifier"]
+			Map alm=lastDeployment["alm"]
+			Map almApp=alm["apps"]
+			Map almAppEnvQualifier=almApp["envQualifier"]
 			
 			Map stableApp=null
 			Map newApp=null
 			Map oldApp=null
 			
 			
-			Map absisServices=absis["services"]
+			Map almServices=alm["services"]
 			def microRoute=componentPom.toLowerCase()
-			if (absisServices!=null) {
-				Map envQualifier=absisServices["envQualifier"]
+			if (almServices!=null) {
+				Map envQualifier=almServices["envQualifier"]
 				
 				if (envQualifier!=null) {
 					microRoute=envQualifier["stable"]["id"]
@@ -649,33 +649,33 @@ def call(String path, String environment, String micro, String version, String n
 				finalSuffix="/arch-service/${microRoute}/actuator/info"
 			}
 			microUrl=microUrl+finalSuffix
-			microUrlICP=microUrlICP+finalSuffix
+			microUrlCloud=microUrlCloud+finalSuffix
 			
 			try {
-				printOpen("${path}/compareMicroIcpVsOcp.sh -i '${microUrlICP}' -o '${microUrl}'",EchoLevel.INFO)
-				resultScript = sh( returnStdout: true, script: "${path}/compareMicroIcpVsOcp.sh -i '${microUrlICP}' -o '${microUrl}'")
+				printOpen("${path}/compareMicroCloudVsOcp.sh -i '${microUrlCloud}' -o '${microUrl}'",EchoLevel.INFO)
+				resultScript = sh( returnStdout: true, script: "${path}/compareMicroCloudVsOcp.sh -i '${microUrlCloud}' -o '${microUrl}'")
 				
-				compareICPvsOCP="${resultScript}"
-				printOpen("El resultado del compare Micros ${resultScript} #${compareICPvsOCP}#",EchoLevel.INFO)
+				compareCloudvsOCP="${resultScript}"
+				printOpen("El resultado del compare Micros ${resultScript} #${compareCloudvsOCP}#",EchoLevel.INFO)
 			}catch(e) {
-				printOpen("Error ocurrido en el compareMicroIcpVsOcp  ${e}",EchoLevel.ERROR)
+				printOpen("Error ocurrido en el compareMicroCloudVsOcp  ${e}",EchoLevel.ERROR)
 			}
 			
-			if (compareICPvsOCP.contains("false")){					
+			if (compareCloudvsOCP.contains("false")){					
 			
-				Map absisGeneralApp=absis["app"]		
+				Map almGeneralApp=alm["app"]		
 				
-				if (absisGeneralApp!=null && infoApp!=null) {
+				if (almGeneralApp!=null && infoApp!=null) {
 					printOpen("App catalogo ${infoApp}",EchoLevel.INFO)
 					if ((infoApp['isMq']!=null && infoApp['isMq']=='true') || (infoApp['isKafka']!=null && infoApp['isKafka']=='true')){
-						absisGeneralApp['stoppableByPlatform']=true
+						almGeneralApp['stoppableByPlatform']=true
 						if (dontDeployAsync!=null && dontDeployAsync=='true') {
 							return 5
 						}
 					}else {
-						absisGeneralApp['stoppableByPlatform']=false
+						almGeneralApp['stoppableByPlatform']=false
 					}
-					printOpen("App catalogo ${absisGeneralApp}",EchoLevel.INFO)
+					printOpen("App catalogo ${almGeneralApp}",EchoLevel.INFO)
 				}else{
 					printOpen("No tiene info en catalogo",EchoLevel.INFO)
 				}
@@ -689,16 +689,16 @@ def call(String path, String environment, String micro, String version, String n
 					envVars.collect{
 						if (GlobalVars.PROFILES_SPRING.equals(it.name)) {
 							if (!it.value.contains('ocp') && k8sDestination.equals('ocp')) {
-								it.value=migrateProfileIcpToOcp(it.value,environment)
-								Map resourcesApp=absis["resources"]
-								resourcesMicro=migrateResourcesTo(absis["resources"],environment,micro,versionArray[0],microType,k8sDestination)
-								absis["resources"]=resourcesMicro
+								it.value=migrateProfileCloudToOcp(it.value,environment)
+								Map resourcesApp=alm["resources"]
+								resourcesMicro=migrateResourcesTo(alm["resources"],environment,micro,versionArray[0],microType,k8sDestination)
+								alm["resources"]=resourcesMicro
 							}
-							if (it.value.contains('ocp') && k8sDestination.equals('icp')) {
-								it.value=migrateProfileOcpToIcp(it.value,environment)
-								Map resourcesApp=absis["resources"]
-								resourcesMicro=migrateResourcesTo(absis["resources"],environment,micro,versionArray[0],microType,k8sDestination)
-								absis["resources"]=resourcesMicro
+							if (it.value.contains('ocp') && k8sDestination.equals('cloud')) {
+								it.value=migrateProfileOcpToCloud(it.value,environment)
+								Map resourcesApp=alm["resources"]
+								resourcesMicro=migrateResourcesTo(alm["resources"],environment,micro,versionArray[0],microType,k8sDestination)
+								alm["resources"]=resourcesMicro
 							}
 						}
 						if (GlobalVars.nonProxyHosts_EnvVar.equals(it.name)) {
@@ -728,19 +728,19 @@ def call(String path, String environment, String micro, String version, String n
 				
 				printOpen("Los recursos a asignar a las nueva imagenes docker son de ${resourcesMicro}",EchoLevel.INFO)
 				
-				if (absisAppEnvQualifier["new"]!=null) {
-					newApp=absisAppEnvQualifier["new"]
+				if (almAppEnvQualifier["new"]!=null) {
+					newApp=almAppEnvQualifier["new"]
 				}
-				if (absisAppEnvQualifier["stable"]!=null) {
-					stableApp=absisAppEnvQualifier["stable"]
+				if (almAppEnvQualifier["stable"]!=null) {
+					stableApp=almAppEnvQualifier["stable"]
 				}
-				if (absisAppEnvQualifier["old"]!=null) {
-					oldApp=absisAppEnvQualifier["old"]
+				if (almAppEnvQualifier["old"]!=null) {
+					oldApp=almAppEnvQualifier["old"]
 				}
 				
 				if (stableApp!=null) {
 					def currentImage=stableApp["image"]
-					stableApp=migrateProfileAndResources(stableApp,environment,k8sOrigin,k8sDestination,absis["resources"])
+					stableApp=migrateProfileAndResources(stableApp,environment,k8sOrigin,k8sDestination,alm["resources"])
 					printOpen("El currentImage es de JSON ${currentImage} stable",EchoLevel.INFO)
 				}else {
 					printOpen("No tiene currentImage stable",EchoLevel.INFO)
@@ -748,7 +748,7 @@ def call(String path, String environment, String micro, String version, String n
 				if (newApp!=null) {
 					def currentImage=newApp["image"]
 					//docker-registry.cloud.project.com/containers/ab3app/arqrun2:2.17.0-SNAPSHOT-A
-					newApp=migrateProfileAndResources(stableApp,environment,k8sOrigin,k8sDestination,absis["resources"])
+					newApp=migrateProfileAndResources(stableApp,environment,k8sOrigin,k8sDestination,alm["resources"])
 					printOpen("El currentImage es de JSON ${currentImage} new",EchoLevel.INFO)
 				}else {
 					printOpen("No tiene currentImage new",EchoLevel.INFO)
@@ -756,14 +756,14 @@ def call(String path, String environment, String micro, String version, String n
 				if (oldApp!=null) {
 					def currentImage=oldApp["image"]
 					//docker-registry.cloud.project.com/containers/ab3app/arqrun2:2.17.0-SNAPSHOT-A
-					oldApp=migrateProfileAndResources(stableApp,environment,k8sOrigin,k8sDestination,absis["resources"])
+					oldApp=migrateProfileAndResources(stableApp,environment,k8sOrigin,k8sDestination,alm["resources"])
 					printOpen("El currentImage es de JSON ${currentImage} old",EchoLevel.INFO)
 				}else {
 					printOpen("No tiene currentImage old",EchoLevel.INFO)
 				}
 				
-				if (resourcesMicro!=null && absis["istio"]==null) {
-					absis["istio"]=genateSidecarResources(resourcesMicro,environment)
+				if (resourcesMicro!=null && alm["istio"]==null) {
+					alm["istio"]=genateSidecarResources(resourcesMicro,environment)
 				}
 				
 				printOpen("Generate Artifact ",EchoLevel.INFO)
@@ -773,16 +773,16 @@ def call(String path, String environment, String micro, String version, String n
 				printOpen ("End generateArtifact  EndTime: ${end} Duration: ${(end.getTime()-start.getTime())/1000}sec",EchoLevel.INFO)			
 				printOpen("El ID del componente es de ${idNewComponent}",EchoLevel.INFO)
 	
-				//localAbsis
-				Map localAbsis=lastDeployment["local"]
-				if (localAbsis!=null) {
-					Map localAppAbsis=localAbsis["app"]
-					if (localAppAbsis!=null) {
-						Map ingressAppAbsis=localAppAbsis["ingress"]
-						if (ingressAppAbsis!=null) {
+				//localAlm
+				Map localAlm=lastDeployment["local"]
+				if (localAlm!=null) {
+					Map localAppAlm=localAlm["app"]
+					if (localAppAlm!=null) {
+						Map ingressAppAlm=localAppAlm["ingress"]
+						if (ingressAppAlm!=null) {
 							Map nameSpaceSystem=["enabled":"false"]
-							ingressAppAbsis.put("namespacesSystem",nameSpaceSystem)
-							printOpen("Añadimos el ${ingressAppAbsis} ",EchoLevel.INFO)
+							ingressAppAlm.put("namespacesSystem",nameSpaceSystem)
+							printOpen("Añadimos el ${ingressAppAlm} ",EchoLevel.INFO)
 						}
 					}
 				}
@@ -841,15 +841,15 @@ def call(String path, String environment, String micro, String version, String n
 					
 					printOpen("El resultado es de JSON para ${k8sDestination} ${objectsParseUtils.toYamlString(resultScriptYaml,true)}",EchoLevel.INFO)
 					
-					printOpen("${path}/deployArtifactICP.sh -h '${GlobalVars.ICP_PRO}' -M ${micro}"+
+					printOpen("${path}/deployArtifactCloud.sh -h '${GlobalVars.Cloud_PRO}' -M ${micro}"+
 						" -l '${GlobalVars.URL_ALMMETRICS}' -A ${namespace} -V ${versionScript} -T ${microType} -C ${componentPom} -E ${environment} -B '${buildCode}' -k ${k8sDestination} "+
 						" -i '${objectsParseUtils.toYamlString(resultScriptYaml,true)}' -I ${idNewComponent} -c ${colour} -Z ${zoneDistribution} -w ${ignoreStart}",EchoLevel.INFO)
-					resultScript = sh( returnStdout: true, script: "${path}/deployArtifactICP.sh -h '${GlobalVars.ICP_PRO}' -M ${micro}"+
+					resultScript = sh( returnStdout: true, script: "${path}/deployArtifactCloud.sh -h '${GlobalVars.Cloud_PRO}' -M ${micro}"+
 						" -l '${GlobalVars.URL_ALMMETRICS}' -A ${namespace} -V ${versionScript} -T ${microType} -C ${componentPom} -E ${environment} -B '${buildCode}' -k ${k8sDestination} "+
 						" -i '${objectsParseUtils.toYamlString(resultScriptYaml,true)}' -I ${idNewComponent} -c ${colour} -Z ${zoneDistribution} -w ${ignoreStart}")
 					
 					end=new Date()
-					printOpen ("End deployArtifactICP  EndTime: ${end} Duration: ${(end.getTime()-start.getTime())/1000}sec  Partial Duration: ${(end.getTime()-startParcial.getTime())/1000}sec",EchoLevel.INFO)
+					printOpen ("End deployArtifactCloud  EndTime: ${end} Duration: ${(end.getTime()-start.getTime())/1000}sec  Partial Duration: ${(end.getTime()-startParcial.getTime())/1000}sec",EchoLevel.INFO)
 					
 				}catch(e) {
 					printOpen("Error ocurrido en el deploy ${e}",EchoLevel.ERROR)
@@ -873,7 +873,7 @@ def call(String path, String environment, String micro, String version, String n
 					}										
 				}				
 			} else {
-				printOpen("Esta version ya esta en OCP/ICP ${nameMicro} ${version}", EchoLevel.INFO)
+				printOpen("Esta version ya esta en OCP/Cloud ${nameMicro} ${version}", EchoLevel.INFO)
 			}		
 		} else {
 			return 0

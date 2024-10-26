@@ -4,7 +4,7 @@ import hudson.Functions
 def testMaximoButDoNotThrowException(PipelineData pipelineData, PomXmlStructure pomXml, String buildLog = null) {
 
     MaximoAbstractFallo fallo = new MaximoFalloPrueba()
-    fallo.attachments = ['buildICP.log': buildLog]
+    fallo.attachments = ['buildCloud.log': buildLog]
 
     boolean weShouldCreateMaximo = ( ! env.pruebaMaximoHasBeenCreated ) && weShouldCreateMaximoAccordingToEnvironment(pipelineData)
     // Solo haremos esta prueba en DEV
@@ -17,7 +17,7 @@ def testMaximoButDoNotThrowException(PipelineData pipelineData, PomXmlStructure 
                 .emailUsuarioCreador(idecuaRoutingUtils.getUsuarioEmailFromPipelineMetadata(pipelineData, pomXml))
                 .tipoFallo(fallo)
 
-        env.icpDeployMaximoHasBeenCreated = crearMaximo(request)
+        env.cloudDeployMaximoHasBeenCreated = crearMaximo(request)
 
     } else {
         printOpen("Ya se ha creado Máximo para este caso de uso en esta pipeline. No lo haremos de nuevo", EchoLevel.INFO)
@@ -25,22 +25,22 @@ def testMaximoButDoNotThrowException(PipelineData pipelineData, PomXmlStructure 
 
 }
 
-def icpDeployException(PipelineData pipelineData, PomXmlStructure pomXml, def responseOrException, String buildLog = null) {
+def cloudDeployException(PipelineData pipelineData, PomXmlStructure pomXml, def responseOrException, String buildLog = null) {
 
     String log = getLogFromObject(responseOrException)
     String environment = pipelineData.bmxStructure.environment.toUpperCase()
-    MaximoAbstractFallo fallo = new MaximoFalloICPDeploy(environment.toUpperCase(), log, buildLog)
+    MaximoAbstractFallo fallo = new MaximoFalloCloudDeploy(environment.toUpperCase(), log, buildLog)
 
-    boolean weShouldCreateMaximo = ( ! env.icpDeployMaximoHasBeenCreated ) && weShouldCreateMaximoAccordingToEnvironment(pipelineData)
+    boolean weShouldCreateMaximo = ( ! env.cloudDeployMaximoHasBeenCreated ) && weShouldCreateMaximoAccordingToEnvironment(pipelineData)
     //FIXME: Desactivamos maximos en EDEN hasta solucionar el problema de los IDs de despliegue repetidos
     weShouldCreateMaximo = weShouldCreateMaximo && ! pipelineData.deployStructure.env.equalsIgnoreCase("eden")
 
     if (GlobalVars.KPILOGGER_IS_NOW_ACTIVE) {
 
-        printOpen("Ibamos a crear un máximo por fallo ICP pero hemos detectado que el logger de KPIs estaba en ejecución por lo que entendemos que el fallo estaba en este último. No crearemos un máximo", EchoLevel.INFO)
+        printOpen("Ibamos a crear un máximo por fallo Cloud pero hemos detectado que el logger de KPIs estaba en ejecución por lo que entendemos que el fallo estaba en este último. No crearemos un máximo", EchoLevel.INFO)
         GlobalVars.KPILOGGER_IS_NOW_ACTIVE = false
 
-        throw new Exception("Ibamos a crear un máximo por fallo ICP pero hemos detectado que el logger de KPIs estaba en ejecución por lo que entendemos que el fallo estaba en este último")
+        throw new Exception("Ibamos a crear un máximo por fallo Cloud pero hemos detectado que el logger de KPIs estaba en ejecución por lo que entendemos que el fallo estaba en este último")
 
     } else if (weShouldCreateMaximo) {
 
@@ -49,7 +49,7 @@ def icpDeployException(PipelineData pipelineData, PomXmlStructure pomXml, def re
                 .emailUsuarioCreador(idecuaRoutingUtils.getUsuarioEmailFromPipelineMetadata(pipelineData, pomXml))
                 .tipoFallo(fallo)
 
-        env.icpDeployMaximoHasBeenCreated = crearMaximo(request)
+        env.cloudDeployMaximoHasBeenCreated = crearMaximo(request)
 
         throw new Exception(validateAndReplace(fallo.pipelineExceptionErrorMessage))
 
@@ -61,23 +61,23 @@ def icpDeployException(PipelineData pipelineData, PomXmlStructure pomXml, def re
 
         printOpen("Ya se ha creado Máximo para este caso de uso en esta pipeline. No lo haremos de nuevo", EchoLevel.INFO)
 
-        throw new Exception("Ibamos a crear un máximo por fallo ICP pero ya se ha creado")
+        throw new Exception("Ibamos a crear un máximo por fallo Cloud pero ya se ha creado")
     }
 
 }
 
 def kubernetesDisabledException(PipelineData pipelineData, PomXmlStructure pomXml, String environment, String feature) {
 
-    MaximoAbstractFallo fallo = new MaximoFalloICPDeployIsDisabled(environment, feature)
+    MaximoAbstractFallo fallo = new MaximoFalloCloudDeployIsDisabled(environment, feature)
 
     boolean weShouldCreateMaximo = ( ! env.kubernetesDisabledMaximoHasBeenCreated ) && weShouldCreateMaximoAccordingToEnvironment(pipelineData)
 
     if (GlobalVars.KPILOGGER_IS_NOW_ACTIVE) {
 
-        printOpen("Ibamos a crear un máximo por API ICP desactivada pero hemos detectado que el logger de KPIs estaba en ejecución por lo que entendemos que el fallo estaba en este último. No crearemos un máximo", EchoLevel.INFO)
+        printOpen("Ibamos a crear un máximo por API Cloud desactivada pero hemos detectado que el logger de KPIs estaba en ejecución por lo que entendemos que el fallo estaba en este último. No crearemos un máximo", EchoLevel.INFO)
         GlobalVars.KPILOGGER_IS_NOW_ACTIVE = false
 
-        throw new Exception("Ibamos a crear un máximo por API ICP desactivada pero hemos detectado que el logger de KPIs estaba en ejecución por lo que entendemos que el fallo estaba en este último")
+        throw new Exception("Ibamos a crear un máximo por API Cloud desactivada pero hemos detectado que el logger de KPIs estaba en ejecución por lo que entendemos que el fallo estaba en este último")
 
     } else if (weShouldCreateMaximo) {
 
@@ -97,7 +97,7 @@ def kubernetesDisabledException(PipelineData pipelineData, PomXmlStructure pomXm
     } else {
         printOpen("Ya se ha creado Máximo para este caso de uso en esta pipeline. No lo haremos de nuevo", EchoLevel.INFO)
 
-        throw new Exception("Ibamos a crear un máximo por API ICP desactivada pero ya se ha creado")
+        throw new Exception("Ibamos a crear un máximo por API Cloud desactivada pero ya se ha creado")
     }
 
     
@@ -120,7 +120,7 @@ def deployBuildDockerImageFailure(PipelineData pipelineData, PomXmlStructure pom
     }
 
     String environment = pipelineData.bmxStructure.environment.toUpperCase()
-    MaximoAbstractFallo fallo = new MaximoFalloICPBuildDocker(environment, log, buildLog)
+    MaximoAbstractFallo fallo = new MaximoFalloCloudBuildDocker(environment, log, buildLog)
 
     boolean weShouldCreateMaximo = ( ! env.deployBuildDockerImageFailureMaximoHasBeenCreated ) && weShouldCreateMaximoAccordingToEnvironment(pipelineData)
     //FIXME: Desactivamos maximos en EDEN hasta solucionar el problema de los IDs de despliegue repetidos
@@ -367,18 +367,18 @@ def sslEventualErrorWhileExecutingMavenGoal(PipelineData pipelineData, PomXmlStr
 
 }
 
-def icpSecretsVerificationFailed(PipelineData pipelineData, PomXmlStructure pomXml, String secret, String icpEnvironment, String url, ICPApiResponse icpApiResponse) {
+def cloudSecretsVerificationFailed(PipelineData pipelineData, PomXmlStructure pomXml, String secret, String cloudEnvironment, String url, CloudApiResponse cloudApiResponse) {
 
-    MaximoAbstractFallo fallo = new MaximoFalloICPSecretsVerificationFailed(secret, icpEnvironment, url, icpApiResponse)
+    MaximoAbstractFallo fallo = new MaximoFalloCloudSecretsVerificationFailed(secret, cloudEnvironment, url, cloudApiResponse)
 
-    boolean weShouldCreateMaximo = ( ! env.icpSecretsVerificationFailedMaximoHasBeenCreated ) && weShouldCreateMaximoAccordingToEnvironment(pipelineData)
+    boolean weShouldCreateMaximo = ( ! env.cloudSecretsVerificationFailedMaximoHasBeenCreated ) && weShouldCreateMaximoAccordingToEnvironment(pipelineData)
 
     if (GlobalVars.KPILOGGER_IS_NOW_ACTIVE) {
 
-        printOpen("Ibamos a crear un máximo por fallo al verificar secretos ICP pero hemos detectado que el logger de KPIs estaba en ejecución por lo que entendemos que el fallo estaba en este último. No crearemos un máximo", EchoLevel.INFO)
+        printOpen("Ibamos a crear un máximo por fallo al verificar secretos Cloud pero hemos detectado que el logger de KPIs estaba en ejecución por lo que entendemos que el fallo estaba en este último. No crearemos un máximo", EchoLevel.INFO)
         GlobalVars.KPILOGGER_IS_NOW_ACTIVE = false
 
-        throw new Exception("Ibamos a crear un máximo por fallo al verificar secretos ICP pero hemos detectado que el logger de KPIs estaba en ejecución por lo que entendemos que el fallo estaba en este último")
+        throw new Exception("Ibamos a crear un máximo por fallo al verificar secretos Cloud pero hemos detectado que el logger de KPIs estaba en ejecución por lo que entendemos que el fallo estaba en este último")
 
     } else if (weShouldCreateMaximo) {
 
@@ -387,7 +387,7 @@ def icpSecretsVerificationFailed(PipelineData pipelineData, PomXmlStructure pomX
                 .emailUsuarioCreador(idecuaRoutingUtils.getUsuarioEmailFromPipelineMetadata(pipelineData, pomXml))
                 .tipoFallo(fallo)
 
-        env.icpSecretsVerificationFailedMaximoHasBeenCreated = crearMaximo(request)
+        env.cloudSecretsVerificationFailedMaximoHasBeenCreated = crearMaximo(request)
 
         throw new Exception(validateAndReplace(fallo.pipelineExceptionErrorMessage))
 
@@ -398,7 +398,7 @@ def icpSecretsVerificationFailed(PipelineData pipelineData, PomXmlStructure pomX
     } else {
         printOpen("Ya se ha creado Máximo para este caso de uso en esta pipeline. No lo haremos de nuevo", EchoLevel.INFO)
 
-        throw new Exception("Ibamos a crear un máximo por fallo al verificar secretos ICP pero ya se ha creado")
+        throw new Exception("Ibamos a crear un máximo por fallo al verificar secretos Cloud pero ya se ha creado")
     }
 
     
@@ -621,10 +621,10 @@ private retrieveBuildLogIfAvailable(PipelineData pipeline, PomXmlStructure pomXm
 
         if (buildId) {
 
-            def icpAppMetadata = ICPUtils.calculateICPComponentName(pipeline, pomXml)
-            def nameComponentInICP = icpAppMetadata.icpComponentName
+            def cloudAppMetadata = CloudUtils.calculateCloudComponentName(pipeline, pomXml)
+            def nameComponentInCloud = cloudAppMetadata.cloudComponentName
 
-            ICPApiResponse buildLogResponse = getBuildLog(nameComponentInICP, pomXml.getICPAppName(), buildId)
+            CloudApiResponse buildLogResponse = getBuildLog(nameComponentInCloud, pomXml.getCloudAppName(), buildId)
 
             if (buildLogResponse.statusCode>=200 && buildLogResponse.statusCode<300) {
 
@@ -636,7 +636,7 @@ private retrieveBuildLogIfAvailable(PipelineData pipeline, PomXmlStructure pomXm
 
                     } catch(Exception e) {
 
-                        printOpen("The JSON containing the ICP build log couldn't be parsed. Raw data will be used.", EchoLevel.ERROR)
+                        printOpen("The JSON containing the Cloud build log couldn't be parsed. Raw data will be used.", EchoLevel.ERROR)
                         printOpen(Utilities.prettyException(e, true), EchoLevel.ERROR)
                         buildLog = buildLogResponse.body
 
@@ -654,7 +654,7 @@ private retrieveBuildLogIfAvailable(PipelineData pipeline, PomXmlStructure pomXm
 
     } catch (Exception e) {
 
-        printOpen("There was a problem while retrieving the ICP build log", EchoLevel.ERROR)
+        printOpen("There was a problem while retrieving the Cloud build log", EchoLevel.ERROR)
         printOpen(Utilities.prettyException(e, true), EchoLevel.ERROR)
 
     }
@@ -690,9 +690,9 @@ private String getLogFromObject(def responseOrException) {
 
         return "(No se proporcionó log)"
 
-    } else if (responseOrException instanceof ICPApiResponse) {
+    } else if (responseOrException instanceof CloudApiResponse) {
 
-        return getDeployErrorMessageFromICP(responseOrException)
+        return getDeployErrorMessageFromCloud(responseOrException)
 
     } else if (responseOrException instanceof Throwable) {
 

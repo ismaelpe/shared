@@ -15,7 +15,7 @@ def call(String environment, String secret, String namespace) {
 	if (namespace=="APP") {
 		//Tenemos que validar primero ante todos si existe
 		
-		response=sendRequestToICPApi("v2/api/application/PCLD/AB3APP/environment/${environment.toUpperCase()}/availabilityzone/ALL/credentials/${secret}",null,"DELETE","AB3APP","",false,false)
+		response=sendRequestToCloudApi("v2/api/application/PCLD/AB3APP/environment/${environment.toUpperCase()}/availabilityzone/ALL/credentials/${secret}",null,"DELETE","AB3APP","",false,false)
 		
 		if (response.statusCode==200) {
 			def outputS=null
@@ -27,7 +27,7 @@ def call(String environment, String secret, String namespace) {
 		}		
 	}
 	if (namespace=="ARCH") {
-		response=sendRequestToICPApi("v2/api/application/PCLD/AB3COR/environment/${environment.toUpperCase()}/availabilityzone/ALL/credentials/${secret}",null,"DELETE","AB3COR","",false,false)
+		response=sendRequestToCloudApi("v2/api/application/PCLD/AB3COR/environment/${environment.toUpperCase()}/availabilityzone/ALL/credentials/${secret}",null,"DELETE","AB3COR","",false,false)
 			
 		if (response.statusCode==200) {
 			def outputS=null

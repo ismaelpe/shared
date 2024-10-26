@@ -25,7 +25,7 @@ def call(String method, String path, String environment,String datacenter) {
             try {
 
                 fecha = new Date()
-                printOpen("Absis3 ConfigServer iteration at date ${fecha} the environment ${environ}", EchoLevel.ALL)
+                printOpen("Alm3 ConfigServer iteration at date ${fecha} the environment ${environ}", EchoLevel.ALL)
                 
                 withCredentials([usernamePassword(credentialsId: 'CONFIGSERVER_CREDENTIALS', usernameVariable: 'CONFIGSERVER_USERNAME', passwordVariable: 'CONFIGSERVER_PASSWORD')]) {
                     String url = GlobalVars.CONFIG_SERVER_URL.replace("{environment}",environ).replace("{datacenter}",datacenter)
@@ -52,7 +52,7 @@ def call(String method, String path, String environment,String datacenter) {
 
     if (response == null || response?.status == null) {
 
-        throw new Exception("No response from Absis3 ConfigServer")
+        throw new Exception("No response from Alm3 ConfigServer")
 
         //call to endpoint /refresh-bus responsee is 204
     } else if (response.status == 200 || response.status == 204) {

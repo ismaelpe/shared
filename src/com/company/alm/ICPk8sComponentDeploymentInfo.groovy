@@ -1,13 +1,13 @@
 package com.project.alm
 
 import java.util.ArrayList
-import com.project.alm.ICPk8sInstancesApp
+import com.project.alm.Cloudk8sInstancesApp
 
 
 import java.lang.Integer
 
 
-class ICPk8sComponentDeploymentInfo{
+class Cloudk8sComponentDeploymentInfo{
 	
 	String name
 	String replicasAvailable
@@ -18,7 +18,7 @@ class ICPk8sComponentDeploymentInfo{
 	def errors
 	
 	
-	ICPk8sComponentDeploymentInfo() {
+	Cloudk8sComponentDeploymentInfo() {
 		errors=null
 	}
 	
@@ -36,7 +36,7 @@ class ICPk8sComponentDeploymentInfo{
 		int replicasAvailableInt=((replicasAvailable==null || "null".equals(replicasAvailable))?0:Integer.parseInt(replicasAvailable))
 		int replicasUnavailableInt=((replicasUnavailable==null || "null".equals(replicasUnavailable))?0:Integer.parseInt(replicasUnavailable))
 		
-		ICPk8sInstancesApp instancesApp=new ICPk8sInstancesApp()
+		Cloudk8sInstancesApp instancesApp=new Cloudk8sInstancesApp()
 		instancesApp.available=replicasAvailableInt
 		instancesApp.unavailable=replicasUnavailableInt
 		instancesApp.desired=replicasDesiredInt

@@ -7,7 +7,7 @@ import com.project.alm.GlobalVars
 
 @Field boolean successPipeline
 
-@Field String icpEnv
+@Field String cloudEnv
 @Field String namespace
 @Field String center
 @Field Map routes
@@ -20,19 +20,19 @@ def call(Map pipelineParameters) {
 
 	successPipeline = true
 
-	icpEnv = params.environmentParam
+	cloudEnv = params.environmentParam
 	namespace = params.namespaceParam
 	center = params.centerParam
     
     pipeline {		
-		agent {	node (absisJenkinsAgent(pipelineParams)) }
+		agent {	node (almJenkinsAgent(pipelineParams)) }
 		options {
 			buildDiscarder(logRotator(numToKeepStr: '10'))
 		}
 		environment {
 			GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
-            ICP_CERT = credentials('icp-alm-pro-cert')
-            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
+            Cloud_CERT = credentials('cloud-alm-pro-cert')
+            Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
 			https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
@@ -73,7 +73,7 @@ def call(Map pipelineParameters) {
  */
 def getAppRoutesStep() {				
 	printOpen("Get app's routes...", EchoLevel.ALL)
-	Map valuesDeployed=getAllDeployedAppsInfoICP(icpEnv, namespace, center)
+	Map valuesDeployed=getAllDeployedAppsInfoCloud(cloudEnv, namespace, center)
 	routes = getRoutesFromAppsInfo(valuesDeployed)					
 }
 
@@ -82,7 +82,7 @@ def getAppRoutesStep() {
  */
 def getArchVersionStep() {
 	printOpen("Get arch's versions...", EchoLevel.ALL)
-	Map archVersions = getArchVersions(routes, icpEnv, namespace, center)
+	Map archVersions = getArchVersions(routes, cloudEnv, namespace, center)
 	printArchVersions(archVersions)
 }
 

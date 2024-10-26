@@ -6,10 +6,10 @@ import com.project.alm.DevBmxStructure
 import com.project.alm.EchoLevel
 import com.project.alm.GarAppType
 import com.project.alm.GlobalVars
-import com.project.alm.ICPDeployStructure
-import com.project.alm.ICPStateUtility
-import com.project.alm.ICPVarPipelineCopyType
-import com.project.alm.ICPWorkflowStates
+import com.project.alm.CloudDeployStructure
+import com.project.alm.CloudStateUtility
+import com.project.alm.CloudVarPipelineCopyType
+import com.project.alm.CloudWorkflowStates
 import groovy.transform.Field
 import com.project.alm.MavenUtils
 import com.project.alm.PipelineData
@@ -79,7 +79,7 @@ def call(Map pipelineParameters) {
 	initCallStartMillis = new Date().getTime()
 
     pipeline {		
-		agent {	node (absisJenkinsAgent(pipelineParams)) }
+		agent {	node (almJenkinsAgent(pipelineParams)) }
         options {
             buildDiscarder(logRotator(numToKeepStr: '20'))
 			timestamps()
@@ -89,8 +89,8 @@ def call(Map pipelineParameters) {
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
 			JNKMSV = credentials('JNKMSV-USER-TOKEN')
-            ICP_CERT = credentials('icp-alm-pro-cert')
-            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
+            Cloud_CERT = credentials('cloud-alm-pro-cert')
+            Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
@@ -102,9 +102,9 @@ def call(Map pipelineParameters) {
 					initStep()
                 }
             }
-			stage('check-ICP-availiability'){
+			stage('check-Cloud-availiability'){
 				steps {
-					checkICPAavailiabilityStep()
+					checkCloudAavailiabilityStep()
 				}
 			}
             stage('deploy-prototype') {
@@ -174,9 +174,9 @@ def initStep() {
 }
 
 /**
- * Stage 'checkICPAavailiabilityStep'
+ * Stage 'checkCloudAavailiabilityStep'
  */
-def checkICPAavailiabilityStep() {
+def checkCloudAavailiabilityStep() {
 	if (sendToGpl) {
 		sendStageStartToGPL(pomXmlStructure, pipelineData, "200")
 	}
@@ -185,7 +185,7 @@ def checkICPAavailiabilityStep() {
 	try {
 		
 		printOpen("environment is ${pipelineData.bmxStructure.environment}", EchoLevel.ALL)
-		checkICPAvailability(pomXmlStructure,pipelineData,"CALCULATE","DEPLOY")
+		checkCloudAvailability(pomXmlStructure,pipelineData,"CALCULATE","DEPLOY")
 		
 		if (sendToGpl) {
 			sendStageEndToGPL(pomXmlStructure, pipelineData, "200")

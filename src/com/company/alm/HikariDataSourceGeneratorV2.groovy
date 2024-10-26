@@ -192,14 +192,14 @@ class HikariDataSourceGeneratorV2 extends DataSourceGenerator {
     List<Map> getConnectionsMaps(Map originalData) {
         List<Map> connectionNames = new ArrayList<Map>()
 
-        Map connectionsMap = getConnectionsMap(originalData, "absis", "datasource", "connections")
+        Map connectionsMap = getConnectionsMap(originalData, "alm", "datasource", "connections")
         connectionNames.add(connectionsMap)
 
-        Map connectionsMapReplica = getConnectionsMap(originalData, "absis", "datasource", "readonly-replica-connections")
+        Map connectionsMapReplica = getConnectionsMap(originalData, "alm", "datasource", "readonly-replica-connections")
         connectionNames.add(connectionsMapReplica)
 
 
-        Map connectionsReadOnlyMap = getConnectionsMap(originalData, "absis", "readonly-datasource", "connections")
+        Map connectionsReadOnlyMap = getConnectionsMap(originalData, "alm", "readonly-datasource", "connections")
 
         //verification for not repeat connection names
         for (entry in connectionsReadOnlyMap) {
@@ -211,7 +211,7 @@ class HikariDataSourceGeneratorV2 extends DataSourceGenerator {
 
         connectionNames.add(connectionsReadOnlyMap)
 		
-		Map connectionsReadOnlyListMap = getConnectionsMapFromList(originalData, "absis", "readonly-datasource-list","datasources","connections")
+		Map connectionsReadOnlyListMap = getConnectionsMapFromList(originalData, "alm", "readonly-datasource-list","datasources","connections")
 		
 		//verification for not repeat connection names
 		for (entry in connectionsReadOnlyListMap) {
@@ -387,11 +387,11 @@ class HikariDataSourceGeneratorV2 extends DataSourceGenerator {
 
     void generateJpaInfo(Map originalData) {
         List<Map> connectionMaps = new ArrayList<Map>()
-        if (originalData.get("absis").get("datasource") != null) {
-            connectionMaps.add(originalData.get("absis").get("datasource"))
+        if (originalData.get("alm").get("datasource") != null) {
+            connectionMaps.add(originalData.get("alm").get("datasource"))
         }
-        if (originalData.get("absis").get("readonly-datasource") != null) {
-            connectionMaps.add(originalData.get("absis").get("readonly-datasource"))
+        if (originalData.get("alm").get("readonly-datasource") != null) {
+            connectionMaps.add(originalData.get("alm").get("readonly-datasource"))
         }
 		
 	   generateJpaInfoFromConnectionsListMap(connectionMaps)
@@ -404,14 +404,14 @@ class HikariDataSourceGeneratorV2 extends DataSourceGenerator {
 
 	public def generate(String domain, String app, GarAppType appType, Map originalData, Map tenants) {
 		Map resultYaml = new HashMap();
-		resultYaml.put("absis", new HashMap(originalData))
+		resultYaml.put("alm", new HashMap(originalData))
 
 		//for read-write datasources
 		try {
 			if(originalData.containsKey("datasource")) {
 				Map datasourcesConns = originalData.get("datasource").get("connections")
 				Map datasourceReplica = originalData.get("datasource").get("readonly-replica-connections")
-				Map datasourcesDestino = resultYaml.get("absis").get("datasource")
+				Map datasourcesDestino = resultYaml.get("alm").get("datasource")
 				boolean hasCustomTenants = originalData.get('datasource').containsKey('customTenants') ? originalData.get('datasource').get('customTenants') : false
                 datasourcesDestino.put("connections", generateTargetConnections(datasourcesConns, tenants, hasCustomTenants))
 				if (datasourceReplica!=null){
@@ -425,7 +425,7 @@ class HikariDataSourceGeneratorV2 extends DataSourceGenerator {
 		try {
 			if(originalData.containsKey("readonly-datasource")) {
 				Map datasourcesConns = originalData.get("readonly-datasource").get("connections")
-				Map datasourcesDestino = resultYaml.get("absis").get("readonly-datasource")
+				Map datasourcesDestino = resultYaml.get("alm").get("readonly-datasource")
 				boolean hasCustomTenants = originalData.get('readonly-datasource').containsKey('customTenants') ? originalData.get('readonly-datasource').get('customTenants') : false
                 datasourcesDestino.put("connections", generateTargetConnections(datasourcesConns, tenants, hasCustomTenants))
 			}
@@ -448,8 +448,8 @@ class HikariDataSourceGeneratorV2 extends DataSourceGenerator {
 						Map dataSourceReadOnly=datasourcesConnsList.get(nombreConnexion)
 						Map datasourcesConns = dataSourceReadOnly.get("connections")
 	
-						Map datasourcesDestino = resultYaml.get("absis").get("readonly-datasource-list").get("datasources").get(nombreConnexion)						
-						//resultYaml.get("absis").get("readonly-datasource-list").get("datasources").remove(nombreConnexion)
+						Map datasourcesDestino = resultYaml.get("alm").get("readonly-datasource-list").get("datasources").get(nombreConnexion)						
+						//resultYaml.get("alm").get("readonly-datasource-list").get("datasources").remove(nombreConnexion)
 						
 						boolean hasCustomTenants = originalData.get("readonly-datasource-list").get("datasources").get(nombreConnexion).containsKey('customTenants') ? originalData.get("readonly-datasource-list").get("datasources").get(nombreConnexion).get('customTenants') : false
 						printOnConsole("Generating target connections for datasource $nombreConnexion", EchoLevel.DEBUG)
@@ -459,7 +459,7 @@ class HikariDataSourceGeneratorV2 extends DataSourceGenerator {
 						generateJpaInfoFromConnectionsListMap(connectionMaps )
 						listadoConexionesValues.put(nombreConnexion, datasourcesDestino)				
 					}
-					resultYaml.get("absis").get("readonly-datasource-list").putAt("datasources", listadoConexionesValues)
+					resultYaml.get("alm").get("readonly-datasource-list").putAt("datasources", listadoConexionesValues)
 				}
 			}
 		} catch (Exception e) {

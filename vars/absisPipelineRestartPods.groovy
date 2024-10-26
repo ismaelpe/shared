@@ -1,8 +1,8 @@
 import groovy.transform.Field
 import com.project.alm.EchoLevel
 import com.project.alm.GlobalVars
-import com.project.alm.ICPApiResponse
-import com.project.alm.ICPPodsStatus
+import com.project.alm.CloudApiResponse
+import com.project.alm.CloudPodsStatus
 
 @Field Map pipelineParams
 
@@ -12,7 +12,7 @@ import com.project.alm.ICPPodsStatus
 @Field String centerId
 @Field String env_param
 
-@Field ICPPodsStatus preRestartPodsStatus
+@Field CloudPodsStatus preRestartPodsStatus
 
 /* ************************************************************************************************************************************** *\
  * Pipeline Definition                                                                                                                    *
@@ -30,7 +30,7 @@ def call(Map pipelineParameters) {
     env_param = params.environment
 
     pipeline {		
-		agent {	node (absisJenkinsAgent(pipelineParams)) }
+		agent {	node (almJenkinsAgent(pipelineParams)) }
         options {
             buildDiscarder(logRotator(numToKeepStr: '10'))
             timestamps()
@@ -39,8 +39,8 @@ def call(Map pipelineParameters) {
         //Environment sobre el qual se ejecuta este tipo de job
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
-            ICP_CERT = credentials('icp-alm-pro-cert')
-            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
+            Cloud_CERT = credentials('cloud-alm-pro-cert')
+            Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
@@ -112,8 +112,8 @@ def call(Map pipelineParameters) {
  * Stage 'acquirePodInfoStep'
  */
 def acquirePodInfoStep() {
-    def response = sendRequestToICP.getPodsInfo(namespaceId, env_param, centerId)
-    preRestartPodsStatus = new ICPPodsStatus(response.body, components, env_param)
+    def response = sendRequestToCloud.getPodsInfo(namespaceId, env_param, centerId)
+    preRestartPodsStatus = new CloudPodsStatus(response.body, components, env_param)
     printOpen("preRestartPodsStatus: ${preRestartPodsStatus.podsStatus}", EchoLevel.ALL)
 }
 
@@ -153,8 +153,8 @@ def restartGreenPodsCenterTwoStep() {
  * Stage 'acquirePodInfoAfterRestartStep'
  */
 def acquirePodInfoAfterRestartStep() {
-    def response = sendRequestToICP.getPodsInfo(namespaceId, env_param, centerId)
-    postRestartPodsStatus = new ICPPodsStatus(response.body, components, env_param)
+    def response = sendRequestToCloud.getPodsInfo(namespaceId, env_param, centerId)
+    postRestartPodsStatus = new CloudPodsStatus(response.body, components, env_param)
     printOpen("postRestartPodsStatus: ${postRestartPodsStatus.podsStatus}", EchoLevel.ALL)
 }
 

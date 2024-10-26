@@ -345,7 +345,7 @@ def sendEmailToAT(PomXmlStructure artifactPom, PipelineData pipeline,def errores
 			, replyTo: ''
 			, from: "${GlobalVars.EMAIL_FROM_ALM}"			
 			, to: "${to}"
-			, subject: "[Absis3-SRV-Validacion BBDD] Validación script BBDD ${app} ${datePart} ")
+			, subject: "[Alm3-SRV-Validacion BBDD] Validación script BBDD ${app} ${datePart} ")
 }
 
 def call(PomXmlStructure artifactPom, PipelineData pipeline) {

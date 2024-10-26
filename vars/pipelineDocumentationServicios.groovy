@@ -1,7 +1,7 @@
 /**
  * Pipeline para la documentacion de arquitectura canal SPA
  *
- * Se encuentra documentado aqui https://git.svb.lacaixa.es/absis2cloud/canal/blob/master/arquitectura/20-elementos-arquitectura/30-application-lifecycle-management-arq/continuous-integration/pipelines/documentacion-canal.md
+ * Se encuentra documentado aqui https://git.svb.lacaixa.es/alm2cloud/canal/blob/master/arquitectura/20-elementos-arquitectura/30-application-lifecycle-management-arq/continuous-integration/pipelines/documentacion-canal.md
  */
 
 import com.project.alm.EchoLevel
@@ -36,8 +36,8 @@ def call(domain) {
             stage('Deploy') {
                 environment {
                     GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
-                    ICP_CERT = credentials('icp-alm-pro-cert')
-                    ICP_PASS = credentials('icp-alm-pro-cert-passwd')                    
+                    Cloud_CERT = credentials('cloud-alm-pro-cert')
+                    Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')                    
                     BLUEMIX_CREDENTIALS = credentials('BLUEMIX_CREDENTIALS')
                     http_proxy = "${GlobalVars.proxyCaixa}"
                     https_proxy = "${GlobalVars.proxyCaixa}"

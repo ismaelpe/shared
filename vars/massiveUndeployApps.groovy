@@ -5,7 +5,7 @@ def call(String path, String namespace, String enviroment, String period, String
 	
 	printOpen(command, EchoLevel.INFO)
 		
-	//Recogemos el deploy en ICP
+	//Recogemos el deploy en Cloud
 	def resultScript = null
 	try {	
 		resultScript = sh(returnStdout: true, script: command)

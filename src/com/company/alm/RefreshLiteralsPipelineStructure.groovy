@@ -2,7 +2,7 @@ package com.project.alm
 
 /**
  * Contains the structure of the executing pipeline
- * @author absis
+ * @author alm
  */
 class RefreshLiteralsPipelineStructure extends PipelineStructure {
 

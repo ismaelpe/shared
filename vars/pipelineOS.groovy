@@ -10,12 +10,12 @@ def call(pipelineParams = [:], body) {
 		 gitLabConnection('gitlab')
 	 ])
 	 try {
-		 def absisJenkinsAgentInfo = absisJenkinsAgent(pipelineParams)
+		 def almJenkinsAgentInfo = almJenkinsAgent(pipelineParams)
 		 
-		 //podTemplate(absisJenkinsAgentInfo){
+		 //podTemplate(almJenkinsAgentInfo){
 		 
-	 		 //node( absisJenkinsAgentInfo.label ){
-	 		 node( absisJenkinsAgentInfo ){
+	 		 //node( almJenkinsAgentInfo.label ){
+	 		 node( almJenkinsAgentInfo ){
 				 
 				 def executionProfile="executionProfile=${pipelineParams ? pipelineParams.get('executionProfile', 'DEFAULT') : 'DEFAULT'}"
 				 def proxyHost="proxyHost=${GlobalVars.proxyCaixaHost}"
@@ -26,20 +26,20 @@ def call(pipelineParams = [:], body) {
 				 withCredentials([usernamePassword(credentialsId: 'ALM_LOGCOLLECTOR_CREDENTIALS', passwordVariable: 'ALM_LOGCOLLECTOR_PASSWORD', usernameVariable: 'ALM_LOGCOLLECTOR_USERNAME')]) {
 					 
 				 }
-				 withCredentials([string(credentialsId: 'icp-alm-pro-cert-passwd', variable: 'ICP_PASS_CRED'),
-								  file(credentialsId: 'icp-alm-pro-cert', variable: 'ICP_CERT_CRED'),
+				 withCredentials([string(credentialsId: 'cloud-alm-pro-cert-passwd', variable: 'Cloud_PASS_CRED'),
+								  file(credentialsId: 'cloud-alm-pro-cert', variable: 'Cloud_CERT_CRED'),
 								  usernamePassword(credentialsId: 'ALM_LOGCOLLECTOR_CREDENTIALS', passwordVariable: 'ALM_LOGCOLLECTOR_PASSWORD_CRED', usernameVariable: 'ALM_LOGCOLLECTOR_USERNAME'),
 								  usernamePassword(credentialsId: 'IDECUA-JENKINS-USER-TOKEN', passwordVariable: 'GPL_PSW', usernameVariable: 'GPL_USR')]){
 					 
 					 def GPL_USR_VAR="GPL_TEST=${GPL_USR}"
-					 def ICP_PASS_VAR="ICP_PASS=${ICP_PASS_CRED}"
-					 def ICP_CERT_VAR="ICP_CERT=${ICP_CERT_CRED}"				 
+					 def Cloud_PASS_VAR="Cloud_PASS=${Cloud_PASS_CRED}"
+					 def Cloud_CERT_VAR="Cloud_CERT=${Cloud_CERT_CRED}"				 
 					 def ALM_LOGCOLLECTOR_PASSWORD_VAR="ALM_LOGCOLLECTOR_PASSWORD=${ALM_LOGCOLLECTOR_PASSWORD_CRED}"
 					 
 					 withEnv([proxyHost,
 							  proxyPort,
-							  ICP_PASS_VAR,
-							  ICP_CERT_VAR,
+							  Cloud_PASS_VAR,
+							  Cloud_CERT_VAR,
 							  ALM_LOGCOLLECTOR_PASSWORD_VAR,
 							  https_proxy,
 							  http_proxy,
@@ -51,8 +51,8 @@ def call(pipelineParams = [:], body) {
 									printOpen ("Execution ${executionProfile}",EchoLevel.INFO)
 									printOpen ("Init pipeline ${env.proxyHost}",EchoLevel.INFO)
 									printOpen ("Init executionProfile ${env.executionProfile}",EchoLevel.INFO)
-									printOpen ("${env.ICP_CERT}",EchoLevel.INFO)
-									printOpen ("${env.ICP_PASS}",EchoLevel.INFO)
+									printOpen ("${env.Cloud_CERT}",EchoLevel.INFO)
+									printOpen ("${env.Cloud_PASS}",EchoLevel.INFO)
 									def varSCM=checkout scm
 									
 									env.GIT_URL=varSCM.GIT_URL
@@ -86,12 +86,12 @@ def call(pipelineParams = [:], body) {
 	 ])
 	 try {
 		 
-		 def absisJenkinsAgentInfo = absisJenkinsAgent(pipelineParams)		 
+		 def almJenkinsAgentInfo = almJenkinsAgent(pipelineParams)		 
 
-		 //podTemplate(absisJenkinsAgentInfo){
+		 //podTemplate(almJenkinsAgentInfo){
 		 
-			 //node( absisJenkinsAgentInfo.label ){
-			 node( absisJenkinsAgentInfo ){
+			 //node( almJenkinsAgentInfo.label ){
+			 node( almJenkinsAgentInfo ){
 				 
 				 def executionProfile="executionProfile=${pipelineParams ? pipelineParams.get('executionProfile', 'DEFAULT') : 'DEFAULT'}"
 				 def proxyHost="proxyHost=${GlobalVars.proxyCaixaHost}"
@@ -99,20 +99,20 @@ def call(pipelineParams = [:], body) {
 				 def https_proxy="https_proxy=${GlobalVars.proxyCaixa}"
 				 def http_proxy="http_proxy =${GlobalVars.proxyCaixa}"
 				 
-				 withCredentials([string(credentialsId: 'icp-alm-pro-cert-passwd', variable: 'ICP_PASS_CRED'),
-								  file(credentialsId: 'icp-alm-pro-cert', variable: 'ICP_CERT_CRED'),
+				 withCredentials([string(credentialsId: 'cloud-alm-pro-cert-passwd', variable: 'Cloud_PASS_CRED'),
+								  file(credentialsId: 'cloud-alm-pro-cert', variable: 'Cloud_CERT_CRED'),
 								  usernamePassword(credentialsId: 'ALM_LOGCOLLECTOR_CREDENTIALS', passwordVariable: 'ALM_LOGCOLLECTOR_PASSWORD_CRED', usernameVariable: 'ALM_LOGCOLLECTOR_USERNAME'),
 								  usernamePassword(credentialsId: 'IDECUA-JENKINS-USER-TOKEN', passwordVariable: 'GPL_PSW', usernameVariable: 'GPL_USR')]){
 					 
 					 def GPL_USR_VAR="GPL_TEST=${GPL_USR}"
-					 def ICP_PASS_VAR="ICP_PASS=${ICP_PASS_CRED}"
-					 def ICP_CERT_VAR="ICP_CERT=${ICP_CERT_CRED}"
+					 def Cloud_PASS_VAR="Cloud_PASS=${Cloud_PASS_CRED}"
+					 def Cloud_CERT_VAR="Cloud_CERT=${Cloud_CERT_CRED}"
 					 def ALM_LOGCOLLECTOR_PASSWORD_VAR="ALM_LOGCOLLECTOR_PASSWORD=${ALM_LOGCOLLECTOR_PASSWORD_CRED}"
 						 
 					 withEnv([proxyHost,
 							  proxyPort,
-							  ICP_PASS_VAR,
-							  ICP_CERT_VAR,
+							  Cloud_PASS_VAR,
+							  Cloud_CERT_VAR,
 							  ALM_LOGCOLLECTOR_PASSWORD_VAR,
 							  https_proxy,
 							  http_proxy,
@@ -124,8 +124,8 @@ def call(pipelineParams = [:], body) {
 									printOpen ("Execution ${executionProfile}",EchoLevel.INFO)
 									printOpen ("Init pipeline ${env.proxyHost}",EchoLevel.INFO)
 									printOpen ("Init executionProfile ${env.executionProfile}",EchoLevel.INFO)
-									printOpen ("${env.ICP_CERT}",EchoLevel.INFO)
-									printOpen ("${env.ICP_PASS}",EchoLevel.INFO)
+									printOpen ("${env.Cloud_CERT}",EchoLevel.INFO)
+									printOpen ("${env.Cloud_PASS}",EchoLevel.INFO)
 	
 									body()
 									   

@@ -2,10 +2,10 @@ package com.project.alm
 
 class ASEVars {
 
-    static String ARCHETYPE_GROUP_ID = "com.project.absis.arch.backend.archetype.aseclient"
+    static String ARCHETYPE_GROUP_ID = "com.project.alm.arch.backend.archetype.aseclient"
     static String ARCHETYPE_ARTIFACT_ID = "seconnector-spring-boot-starter-archetype"
 
-    static String CLIENT_GROUP_ID = "com.project.absis.arch.backend.ase"
+    static String CLIENT_GROUP_ID = "com.project.alm.arch.backend.ase"
     static String CLIENT_ARTIFACT_ID = "se-<servicename>-starter"
 
     static String GAR_APPLICATION_NAME = "seconnector"

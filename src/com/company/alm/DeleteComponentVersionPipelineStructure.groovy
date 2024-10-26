@@ -48,7 +48,7 @@ class DeleteComponentVersionPipelineStructure extends PipelineStructure {
                 ],
 				[id       : pipelineId + "305",
 				 estado   : "inactive",
-				 nombre   : "305-undeploy-artifact-from-icp",
+				 nombre   : "305-undeploy-artifact-from-cloud",
 				 resultado: "",
 				 orden    : 0
 				],

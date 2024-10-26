@@ -1,7 +1,7 @@
 import com.project.alm.EchoLevel
 import com.project.alm.GlobalVars
-import com.project.alm.ICPApiResponse
-import com.project.alm.ICPAppResources
+import com.project.alm.CloudApiResponse
+import com.project.alm.CloudAppResources
 import com.project.alm.KpiAlmEvent
 import com.project.alm.KpiAlmEventOperation
 import com.project.alm.KpiAlmEventStage
@@ -11,7 +11,7 @@ def call(Map valuesDeployed, String app, String center, String namespace, String
 	startAndStopApp(valuesDeployed,app,center,namespace,environment,startOrStop,stableOrNewOrBoth,garAppName,jvmConfig,scalingMap, null,workspace)
 }
 
-def call(Map valuesDeployed, String app, String center, String namespace, String environment, boolean startOrStop, String stableOrNewOrBoth, String garAppName, String jvmConfig, def scalingMap = [:], ICPAppResources icpAppResources, String workspace=null ) {
+def call(Map valuesDeployed, String app, String center, String namespace, String environment, boolean startOrStop, String stableOrNewOrBoth, String garAppName, String jvmConfig, def scalingMap = [:], CloudAppResources cloudAppResources, String workspace=null ) {
 	startAndStopApp(valuesDeployed,app,center,namespace,environment,startOrStop,stableOrNewOrBoth,garAppName,jvmConfig,scalingMap, null, null,workspace)
 }
 
@@ -23,17 +23,17 @@ def isAnyToScale(Map valuesDeployed) {
 	}
 }
 
-def call(Map valuesDeployed, String app, String center, String namespace, String environment, boolean startOrStop, String stableOrNewOrBoth, String garAppName, String jvmConfig, def scalingMap = [:], ICPAppResources icpAppResources, def  type, String workspace=null ) {
+def call(Map valuesDeployed, String app, String center, String namespace, String environment, boolean startOrStop, String stableOrNewOrBoth, String garAppName, String jvmConfig, def scalingMap = [:], CloudAppResources cloudAppResources, def  type, String workspace=null ) {
 
     if(workspace==null)
         workspace=""
     else workspace = "/${workspace}"
 
-    String appICPId = namespace=="ARCH" ? GlobalVars.ICP_APP_ID_ARCH : GlobalVars.ICP_APP_ID_APPS
-	String appICP = namespace=="ARCH" ? GlobalVars.ICP_APP_ARCH : GlobalVars.ICP_APP_APPS
+    String appCloudId = namespace=="ARCH" ? GlobalVars.Cloud_APP_ID_ARCH : GlobalVars.Cloud_APP_ID_APPS
+	String appCloud = namespace=="ARCH" ? GlobalVars.Cloud_APP_ARCH : GlobalVars.Cloud_APP_APPS
 
     String componentId="0"
-	ICPApiResponse response = sendRequestToICPApi("v1/application/${appICPId}/component",null,"GET","${appICP}","", false, false)
+	CloudApiResponse response = sendRequestToCloudApi("v1/application/${appCloudId}/component",null,"GET","${appCloud}","", false, false)
 	if (response.statusCode>=200 && response.statusCode<300 && valuesDeployed!=null) {
 		
 		if (response.body!=null && response.body.size()>=1) {
@@ -42,13 +42,13 @@ def call(Map valuesDeployed, String app, String center, String namespace, String
                 componentId="0"    
             }
 
-            if (icpAppResources) {
-                printOpen("The component Id is '${componentId}' los recursos son de ${icpAppResources}",EchoLevel.INFO)
+            if (cloudAppResources) {
+                printOpen("The component Id is '${componentId}' los recursos son de ${cloudAppResources}",EchoLevel.INFO)
             } else {
                 printOpen("The component Id is '${componentId}'",EchoLevel.INFO)
             }
 			
-			response = sendRequestToICPApi("v1/application/PCLD/${appICP}/component/${componentId}/environment/${environment.toUpperCase()}/availabilityzone/${center}/status",null,"GET","${appICP}","",false,false)
+			response = sendRequestToCloudApi("v1/application/PCLD/${appCloud}/component/${componentId}/environment/${environment.toUpperCase()}/availabilityzone/${center}/status",null,"GET","${appCloud}","",false,false)
 
             analyzeResponseAndThrowExceptionIfApplicable(response, center, true)
 
@@ -59,24 +59,24 @@ def call(Map valuesDeployed, String app, String center, String namespace, String
                 namespace: "${namespace}"
             ]
 
-            def valuesDeployedLocalEnvVarsList = retrieveNewAndStableAppICPDeploymentMetadata(valuesDeployed)
+            def valuesDeployedLocalEnvVarsList = retrieveNewAndStableAppCloudDeploymentMetadata(valuesDeployed)
 
-            if (icpAppResources) {
-                printOpen("Los jvm son de #${icpAppResources?.jvmArgs}# #${jvmConfig}#",EchoLevel.INFO)
+            if (cloudAppResources) {
+                printOpen("Los jvm son de #${cloudAppResources?.jvmArgs}# #${jvmConfig}#",EchoLevel.INFO)
             } 
 			
             if ((stableOrNewOrBoth=="BOTH" || stableOrNewOrBoth=="STABLE") && valuesDeployedLocalEnvVarsList["stable"] != null ) {
 
                 Map app1 = valuesDeployedLocalEnvVarsList["stable"]
-                icpAppResources=configureAppScaling(app1, startOrStop, scalingMap, appMetadata, icpAppResources)
-				configureJvm(app1, startOrStop, icpAppResources.getJvmConfig(jvmConfig))
+                cloudAppResources=configureAppScaling(app1, startOrStop, scalingMap, appMetadata, cloudAppResources)
+				configureJvm(app1, startOrStop, cloudAppResources.getJvmConfig(jvmConfig))
 				printOpen("El Json a desplegar es de  ${app1}", EchoLevel.INFO)
             }
             if ((stableOrNewOrBoth=="BOTH" || stableOrNewOrBoth=="NEW") && valuesDeployedLocalEnvVarsList["new"]!=null ) {
 
                 Map app1 = valuesDeployedLocalEnvVarsList["new"]
-                icpAppResources=configureAppScaling(app1, startOrStop, scalingMap, appMetadata, icpAppResources)
-				configureJvm(app1, startOrStop, icpAppResources.getJvmConfig(jvmConfig))
+                cloudAppResources=configureAppScaling(app1, startOrStop, scalingMap, appMetadata, cloudAppResources)
+				configureJvm(app1, startOrStop, cloudAppResources.getJvmConfig(jvmConfig))
 				printOpen("El Json a desplegar es es de  ${app1}", EchoLevel.INFO)
             }
 			
@@ -89,19 +89,19 @@ def call(Map valuesDeployed, String app, String center, String namespace, String
 			]
 			printOpen("El Json a desplegar ed de  ${body}", EchoLevel.INFO)
 			
-			response = sendRequestToICPApi("v1/application/PCLD/${appICP}/component/${componentId}/deploy",body,"POST","${appICP}","v1/application/PCLD/${appICP}/component/${componentId}/deploy",true,true)
+			response = sendRequestToCloudApi("v1/application/PCLD/${appCloud}/component/${componentId}/deploy",body,"POST","${appCloud}","v1/application/PCLD/${appCloud}/component/${componentId}/deploy",true,true)
 
             if (response?.body?.id != 0) {
                 //Tenemos que actualizar el catalogo... con los nuevos valores
                 printOpen("Se pasara a validar el ${type}", EchoLevel.ALL)
                 //No se tiene que llamar al catalogo sino toca
-                if (type!=null && icpAppResources!=null && isAnyToScale(valuesDeployed)) {
-                    updateCat(type,app,environment,garAppName,icpAppResources)
+                if (type!=null && cloudAppResources!=null && isAnyToScale(valuesDeployed)) {
+                    updateCat(type,app,environment,garAppName,cloudAppResources)
                 } else {
                     printOpen("No se ha indicado el tipo de artefacto o no han modificado nada de nada", EchoLevel.ALL)
                 }
             } else {
-                throw new Exception("Invalid response code from ICP API: ${response?.body?.id}")                        
+                throw new Exception("Invalid response code from Cloud API: ${response?.body?.id}")                        
             }
 		}
 
@@ -112,13 +112,13 @@ def call(Map valuesDeployed, String app, String center, String namespace, String
 	return valuesDeployed
 }
 
-private def updateCat(def type, def app, def environment, def garApp, ICPAppResources icpResources) {
-	if (env.SEND_TO_ALM_CATALOG!="" && env.SEND_TO_ALM_CATALOG=="true" && icpResources!=null) {
+private def updateCat(def type, def app, def environment, def garApp, CloudAppResources cloudResources) {
+	if (env.SEND_TO_ALM_CATALOG!="" && env.SEND_TO_ALM_CATALOG=="true" && cloudResources!=null) {
 		
 		def major=app-garApp
 		//https://catmsv-micro-server-1.pro.int.srv.project.com/app/ARQ.MIA/catmsv/version/1/environment/PRO
 
-        def response = sendRequestToAbsis3MS(
+        def response = sendRequestToAlm3MS(
             'GET',			
             "${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${type}/${garApp}/version/${major}/environment/${environment}",			
             null,
@@ -136,7 +136,7 @@ private def updateCat(def type, def app, def environment, def garApp, ICPAppReso
 			def json = response.content
 			printOpen("Recuperado los datos ${json}", EchoLevel.ALL)
 			
-			updateCatMsv(type,garApp,major,json.minor,json.fix,json.typeVersion,environment,icpResources)
+			updateCatMsv(type,garApp,major,json.minor,json.fix,json.typeVersion,environment,cloudResources)
 		}else {
 			printOpen("Error al proceder al despliegue del micro", EchoLevel.ALL)
 		}
@@ -144,23 +144,23 @@ private def updateCat(def type, def app, def environment, def garApp, ICPAppReso
 } 
 
 //Tenemos que recoger esta info del catalogo
-private def updateCatMsv(def type, def app, def major, def minor, def fix, def typeVersion, def environmetNew, ICPAppResources icpResources) {
-	if (env.SEND_TO_ALM_CATALOG!="" && env.SEND_TO_ALM_CATALOG=="true" && icpResources!=null) {
+private def updateCatMsv(def type, def app, def major, def minor, def fix, def typeVersion, def environmetNew, CloudAppResources cloudResources) {
+	if (env.SEND_TO_ALM_CATALOG!="" && env.SEND_TO_ALM_CATALOG=="true" && cloudResources!=null) {
 
 		def deployParams = 
 		   [ 
 			 deploy:
 			   [
-				   replicas: icpResources.getNumInstances(environmetNew),
-				   memoryLimits: icpResources.getLimitsMemory(environmetNew)-'Mi',
-				   memoryRequests: icpResources.getRequestsMemory(environmetNew)-'Mi',
-				   cpuLimits: icpResources.getLimitsCPU(environmetNew)-'m',
-				   cpuRequests: icpResources.getRequestsCPU(environmetNew)-'m'			
+				   replicas: cloudResources.getNumInstances(environmetNew),
+				   memoryLimits: cloudResources.getLimitsMemory(environmetNew)-'Mi',
+				   memoryRequests: cloudResources.getRequestsMemory(environmetNew)-'Mi',
+				   cpuLimits: cloudResources.getLimitsCPU(environmetNew)-'m',
+				   cpuRequests: cloudResources.getRequestsCPU(environmetNew)-'m'			
 			   ],
 			   srvEnvId: environmetNew.toUpperCase()
 		   ]
 
-		def response = sendRequestToAbsis3MS(
+		def response = sendRequestToAlm3MS(
             'PUT',
             "${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${type}/${app}/version/${major}/${minor}/${fix}/${typeVersion}/deploy",
             deployParams,
@@ -213,11 +213,11 @@ private void analyzeResponseAndThrowExceptionIfApplicable(def response, String c
 
 }
 
-private Map retrieveNewAndStableAppICPDeploymentMetadata(Map valuesDeployed) {
+private Map retrieveNewAndStableAppCloudDeploymentMetadata(Map valuesDeployed) {
 
-    if (valuesDeployed["absis"]!=null) {
+    if (valuesDeployed["alm"]!=null) {
 
-        Map valuesDeployedLocal=valuesDeployed["absis"]
+        Map valuesDeployedLocal=valuesDeployed["alm"]
 
 
         if (valuesDeployedLocal["apps"]!=null) {
@@ -236,13 +236,13 @@ private Map retrieveNewAndStableAppICPDeploymentMetadata(Map valuesDeployed) {
     return [:]
 }
 
-def getNumInstances(String environment, ICPAppResources resourcesICP) {
+def getNumInstances(String environment, CloudAppResources resourcesCloud) {
 	
-	return Integer.parseInt(resourcesICP.getNumInstances(environment,false))
+	return Integer.parseInt(resourcesCloud.getNumInstances(environment,false))
 }
 
 
-private ICPAppResources configureAppScaling(Map appICPDeploymentMetadata, boolean startOrStop, Map scalingMap, Map appMetadata = [:], ICPAppResources icpAppResources) {
+private CloudAppResources configureAppScaling(Map appCloudDeploymentMetadata, boolean startOrStop, Map scalingMap, Map appMetadata = [:], CloudAppResources cloudAppResources) {
 	
     String cpuCoresNewSize = scalingMap.scaleCPUCores
     String memoryNewSize = scalingMap.scaleMemory
@@ -253,13 +253,13 @@ private ICPAppResources configureAppScaling(Map appICPDeploymentMetadata, boolea
     String garAppName = appMetadata.garAppName
     String namespace = appMetadata.namespace
 
-    ICPAppResources resourcesICP = new ICPAppResources()
-	if (icpAppResources!=null) resourcesICP=icpAppResources
-    resourcesICP.environment=environment.toUpperCase()
-    resourcesICP.isArchProject = namespace=="ARCH"
+    CloudAppResources resourcesCloud = new CloudAppResources()
+	if (cloudAppResources!=null) resourcesCloud=cloudAppResources
+    resourcesCloud.environment=environment.toUpperCase()
+    resourcesCloud.isArchProject = namespace=="ARCH"
 
-	printOpen("El appICPDeploymentMetadata ${appICPDeploymentMetadata}",EchoLevel.INFO)
-	printOpen("El icpAppResources ${icpAppResources}",EchoLevel.INFO)
+	printOpen("El appCloudDeploymentMetadata ${appCloudDeploymentMetadata}",EchoLevel.INFO)
+	printOpen("El cloudAppResources ${cloudAppResources}",EchoLevel.INFO)
 	printOpen("El numberInstancesNewSize ${numberInstancesNewSize}",EchoLevel.INFO)
 	printOpen("El sscalingMap ${scalingMap}",EchoLevel.INFO)
 	printOpen("El startOrStop ${startOrStop}",EchoLevel.INFO)
@@ -268,13 +268,13 @@ private ICPAppResources configureAppScaling(Map appICPDeploymentMetadata, boolea
 
         if (numberInstancesNewSize == 'DEFAULT') {
 
-            appICPDeploymentMetadata.put("replicas", getNumInstances(environment,app,garAppName))
+            appCloudDeploymentMetadata.put("replicas", getNumInstances(environment,app,garAppName))
 
         } else {
 			if (numberInstancesNewSize != 'NO') {				
-				appICPDeploymentMetadata.put("replicas",getNumInstances(environment,resourcesICP))
-				printOpen("Numero de instancias1 ${getNumInstances(environment,resourcesICP)}",EchoLevel.INFO)
-				printOpen("Numero de instancias2 ${appICPDeploymentMetadata})",EchoLevel.INFO)
+				appCloudDeploymentMetadata.put("replicas",getNumInstances(environment,resourcesCloud))
+				printOpen("Numero de instancias1 ${getNumInstances(environment,resourcesCloud)}",EchoLevel.INFO)
+				printOpen("Numero de instancias2 ${appCloudDeploymentMetadata})",EchoLevel.INFO)
 			}
 			/*
             def instancesSizing = [
@@ -286,57 +286,57 @@ private ICPAppResources configureAppScaling(Map appICPDeploymentMetadata, boolea
 				XXXL: 6
             ]*/
 			
-            //appICPDeploymentMetadata.put("replicas", instancesSizing[numberInstancesNewSize])
+            //appCloudDeploymentMetadata.put("replicas", instancesSizing[numberInstancesNewSize])
 
         }
 
         if (cpuCoresNewSize!='NO') {
 
-            appICPDeploymentMetadata.put("requests_cpu", getRequestsCpu(resourcesICP, cpuCoresNewSize))
-            appICPDeploymentMetadata.put("limits_cpu", getLimitsCpu(resourcesICP, cpuCoresNewSize))
-			appICPDeploymentMetadata.put("limits_cpu", getLimitsCpu(resourcesICP, cpuCoresNewSize))
+            appCloudDeploymentMetadata.put("requests_cpu", getRequestsCpu(resourcesCloud, cpuCoresNewSize))
+            appCloudDeploymentMetadata.put("limits_cpu", getLimitsCpu(resourcesCloud, cpuCoresNewSize))
+			appCloudDeploymentMetadata.put("limits_cpu", getLimitsCpu(resourcesCloud, cpuCoresNewSize))
 			
 
         }
         if (memoryNewSize!='NO') {
 
-            appICPDeploymentMetadata.put("requests_memory", getRequestsMemory(resourcesICP,memoryNewSize))
-            appICPDeploymentMetadata.put("limits_memory", getLimitsMemory(resourcesICP,memoryNewSize))
-			appICPDeploymentMetadata.put("limits_cpu", getLimitsCpu(resourcesICP, cpuCoresNewSize))
+            appCloudDeploymentMetadata.put("requests_memory", getRequestsMemory(resourcesCloud,memoryNewSize))
+            appCloudDeploymentMetadata.put("limits_memory", getLimitsMemory(resourcesCloud,memoryNewSize))
+			appCloudDeploymentMetadata.put("limits_cpu", getLimitsCpu(resourcesCloud, cpuCoresNewSize))
 
         }
 
 
 
     } else {
-        appICPDeploymentMetadata.put("replicas", 0)
+        appCloudDeploymentMetadata.put("replicas", 0)
     }
 
-	printOpen("El ${resourcesICP} para el nuevo start y el original es de ${icpAppResources}",EchoLevel.INFO)
+	printOpen("El ${resourcesCloud} para el nuevo start y el original es de ${cloudAppResources}",EchoLevel.INFO)
 	
-    return resourcesICP
+    return resourcesCloud
 }
 
-private void configureJvm(Map appICPDeploymentMetadata, boolean startOrStop, String jvmConfig) {
+private void configureJvm(Map appCloudDeploymentMetadata, boolean startOrStop, String jvmConfig) {
     if (startOrStop && jvmConfig!=null && !"".equals(jvmConfig)) {
 		printOpen("Adding JVM Config: ${jvmConfig}", EchoLevel.INFO)
-		if(!appICPDeploymentMetadata.containsKey("envVars")) {
+		if(!appCloudDeploymentMetadata.containsKey("envVars")) {
 			printOpen("Creating envVars map since it doesn't exist", EchoLevel.INFO)
-			appICPDeploymentMetadata.put("envVars", [:])
+			appCloudDeploymentMetadata.put("envVars", [:])
 		}
-		appICPDeploymentMetadata.get("envVars").put("jvmConfig", jvmConfig)
+		appCloudDeploymentMetadata.get("envVars").put("jvmConfig", jvmConfig)
 	}else {
 		printOpen("No tenemos jvmconfig en la entrada", EchoLevel.INFO)
 		//Revisaremos que no tenga nada raro el jvmConfig
-		if(appICPDeploymentMetadata.containsKey("envVars")) {
+		if(appCloudDeploymentMetadata.containsKey("envVars")) {
 			//Tenemos envVars del estable o no
-			if (appICPDeploymentMetadata.get("envVars").containsKey("jvmConfig")) {
-				String actualJvmconfig=appICPDeploymentMetadata.get("envVars").get("jvmConfig")
+			if (appCloudDeploymentMetadata.get("envVars").containsKey("jvmConfig")) {
+				String actualJvmconfig=appCloudDeploymentMetadata.get("envVars").get("jvmConfig")
 			    if (actualJvmconfig==null || "null".equals(actualJvmconfig.trim())) {
 					printOpen("Procedemos a eliminar el jvmconfig", EchoLevel.INFO)
-					appICPDeploymentMetadata.get("envVars").remove("jvmConfig")
+					appCloudDeploymentMetadata.get("envVars").remove("jvmConfig")
 				}else {
-					printOpen("Tiene un jvmConfig correcto ${appICPDeploymentMetadata.get('envVars').get('jvmConfig')}", EchoLevel.INFO)
+					printOpen("Tiene un jvmConfig correcto ${appCloudDeploymentMetadata.get('envVars').get('jvmConfig')}", EchoLevel.INFO)
 				}
 			}else {
 				printOpen("El envVars no tiene jvmConfig", EchoLevel.INFO)
@@ -345,41 +345,41 @@ private void configureJvm(Map appICPDeploymentMetadata, boolean startOrStop, Str
 			printOpen("No tenemos envVars", EchoLevel.INFO)
 		}
 	}
-	printOpen("El nuevo deployment map es de ${appICPDeploymentMetadata}", EchoLevel.INFO)
+	printOpen("El nuevo deployment map es de ${appCloudDeploymentMetadata}", EchoLevel.INFO)
 }
 
 def getNumInstances(String environment, String app, String garAppName) {
 
 
     if (environment.toUpperCase()=="PRO") {
-        if (env.ICP_REPLICA_SIZE_S!=null && env.ICP_REPLICA_SIZE_S.contains(garAppName)) return 1
-        else if (env.ICP_REPLICA_SIZE_L!=null && env.ICP_REPLICA_SIZE_L.contains(garAppName)) return 3
-		else if (env.ICP_REPLICA_SIZE_XL!=null && env.ICP_REPLICA_SIZE_XL.contains(garAppName)) return 4
-		else if (env.ICP_REPLICA_SIZE_XXL!=null && env.ICP_REPLICA_SIZE_XXL.contains(garAppName)) return 5
-		else if (env.ICP_REPLICA_SIZE_XXXL!=null && env.ICP_REPLICA_SIZE_XXXL.contains(garAppName)) return 6
+        if (env.Cloud_REPLICA_SIZE_S!=null && env.Cloud_REPLICA_SIZE_S.contains(garAppName)) return 1
+        else if (env.Cloud_REPLICA_SIZE_L!=null && env.Cloud_REPLICA_SIZE_L.contains(garAppName)) return 3
+		else if (env.Cloud_REPLICA_SIZE_XL!=null && env.Cloud_REPLICA_SIZE_XL.contains(garAppName)) return 4
+		else if (env.Cloud_REPLICA_SIZE_XXL!=null && env.Cloud_REPLICA_SIZE_XXL.contains(garAppName)) return 5
+		else if (env.Cloud_REPLICA_SIZE_XXXL!=null && env.Cloud_REPLICA_SIZE_XXXL.contains(garAppName)) return 6
         return 2
     }else {
         return 1
     }
 }
 
-def getRequestsCpu(ICPAppResources resourcesICP,String newSize) {
-    resourcesICP.cpuSize=newSize
+def getRequestsCpu(CloudAppResources resourcesCloud,String newSize) {
+    resourcesCloud.cpuSize=newSize
 
-    return resourcesICP.getRequestCPUPersonalized()
+    return resourcesCloud.getRequestCPUPersonalized()
 }
 
-def getRequestsMemory(ICPAppResources resourcesICP,String newSize) {
-    resourcesICP.memSize=newSize
-    return resourcesICP.getRequestMemoryPersonalized()
+def getRequestsMemory(CloudAppResources resourcesCloud,String newSize) {
+    resourcesCloud.memSize=newSize
+    return resourcesCloud.getRequestMemoryPersonalized()
 }
 
-def getLimitsCpu(ICPAppResources resourcesICP,String newSize) {
-    resourcesICP.cpuSize=newSize
-    return resourcesICP.getLimitsCPUPersonalized()
+def getLimitsCpu(CloudAppResources resourcesCloud,String newSize) {
+    resourcesCloud.cpuSize=newSize
+    return resourcesCloud.getLimitsCPUPersonalized()
 }
 
-def getLimitsMemory(ICPAppResources resourcesICP,String newSize) {
-    resourcesICP.memSize=newSize
-    return resourcesICP.getLimitsMemoryPersonalized()
+def getLimitsMemory(CloudAppResources resourcesCloud,String newSize) {
+    resourcesCloud.memSize=newSize
+    return resourcesCloud.getLimitsMemoryPersonalized()
 }

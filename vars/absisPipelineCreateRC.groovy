@@ -76,7 +76,7 @@ def call(Map pipelineParameters) {
      * 9- Feina feta
      * */
     pipeline {      
-		agent {	node (absisJenkinsAgent(agentParam)) }
+		agent {	node (almJenkinsAgent(agentParam)) }
         options {
             buildDiscarder(logRotator(numToKeepStr: '30'))
 			timestamps()
@@ -89,8 +89,8 @@ def call(Map pipelineParameters) {
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
 			JNKMSV = credentials('JNKMSV-USER-TOKEN')
-            ICP_CERT = credentials('icp-alm-pro-cert')
-            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
+            Cloud_CERT = credentials('cloud-alm-pro-cert')
+            Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
@@ -207,7 +207,7 @@ def checkmarxScanStep() {
 def prepareRCStep() {
     pipelineData.buildCode = pomXmlStructure.getArtifactVersionQualifier()
     initGpl = true
-    absisPipelineStageValidateDependenciesVersion(pomXmlStructure, pipelineData, "110")
+    almPipelineStageValidateDependenciesVersion(pomXmlStructure, pipelineData, "110")
 }
 
 /** 
@@ -228,8 +228,8 @@ def verifyProState() {
         }else {
 
             printOpen("Checking deployments state of both centers", EchoLevel.INFO)
-            AppDeploymentState center1State = getMultipleDeploymentsStateFromICP(pomXmlStructure,pipelineData,"AZ1","PRO")
-            AppDeploymentState center2State = getMultipleDeploymentsStateFromICP(pomXmlStructure,pipelineData,"AZ2","PRO")
+            AppDeploymentState center1State = getMultipleDeploymentsStateFromCloud(pomXmlStructure,pipelineData,"AZ1","PRO")
+            AppDeploymentState center2State = getMultipleDeploymentsStateFromCloud(pomXmlStructure,pipelineData,"AZ2","PRO")
 
             printOpen("For the center 1 state ${center1State}, the current is ${center1State.current}", EchoLevel.INFO)
             printOpen("For the center 2 state ${center2State}, the current is ${center2State.current}", EchoLevel.INFO)

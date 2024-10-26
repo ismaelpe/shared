@@ -1,14 +1,14 @@
 import groovy.transform.Field
 import com.project.alm.EchoLevel
 import com.project.alm.GlobalVars
-import com.project.alm.ICPAppResources
-import com.project.alm.ICPAppResourcesCatMsv
+import com.project.alm.CloudAppResources
+import com.project.alm.CloudAppResourcesCatMsv
 
 @Field Map pipelineParams
 
 @Field boolean successPipeline
 
-@Field String icpEnv
+@Field String cloudEnv
 @Field String namespace
 @Field String app
 @Field String garApp
@@ -38,7 +38,7 @@ def call(Map pipelineParameters) {
 
 	successPipeline = true
 
-	icpEnv = params.environmentParam
+	cloudEnv = params.environmentParam
 	namespace = params.namespaceParam
 	app  = params.appnameParam
 	garApp  = params.garAppnameParam
@@ -58,7 +58,7 @@ def call(Map pipelineParameters) {
 	valuesDeployed = null
     
     pipeline {		
-		agent {	node (absisJenkinsAgent(pipelineParams)) }
+		agent {	node (almJenkinsAgent(pipelineParams)) }
 		options {
 			buildDiscarder(logRotator(numToKeepStr: '10'))			
             timestamps()
@@ -66,22 +66,22 @@ def call(Map pipelineParameters) {
 		}		
 		environment {
 			GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
-            ICP_CERT = credentials('icp-alm-pro-cert')
-            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
+            Cloud_CERT = credentials('cloud-alm-pro-cert')
+            Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
 			https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
             proxyPort = "${GlobalVars.proxyCaixaPort}"
 		}
 		stages {
-			stage("get-app-icp") {
+			stage("get-app-cloud") {
 				steps {
-					getAppIcpStep()
+					getAppCloudStep()
 				}
 			}
-			stage("restart-app-icp") {
+			stage("restart-app-cloud") {
 				steps {
-					restartAppIcpStep()
+					restartAppCloudStep()
 				}
 			}
 		}
@@ -104,20 +104,20 @@ def call(Map pipelineParameters) {
 \* ************************************************************************************************************************************** */
 
 /**
- * Stage 'getAppIcpStep'
+ * Stage 'getAppCloudStep'
  */
-def getAppIcpStep() {
-	currentBuild.displayName = "Rebuild_${app} of ${icpEnv} and the namespace ${namespace} and the center ${center}"
+def getAppCloudStep() {
+	currentBuild.displayName = "Rebuild_${app} of ${cloudEnv} and the namespace ${namespace} and the center ${center}"
 	printOpen("Get App ", EchoLevel.ALL)
 	valuesDeployed = null
-	valuesDeployed=getLastAppInfoICP(icpEnv,app, namespace,center)
-	printAppICP(valuesDeployed)
+	valuesDeployed=getLastAppInfoCloud(cloudEnv,app, namespace,center)
+	printAppCloud(valuesDeployed)
 }
 
 /**
- * Stage 'restartAppIcpStep'
+ * Stage 'restartAppCloudStep'
  */
-def restartAppIcpStep() {
+def restartAppCloudStep() {
 	printOpen("Restart App ${garApp} ", EchoLevel.ALL)
 
 	def scalingMap = [
@@ -134,8 +134,8 @@ def restartAppIcpStep() {
 		* Aplicamos el start & stop
 		*/
 	printOpen("No quieren escalar nada, no hace falta consultar el catalogo", EchoLevel.ALL)
-	rebuildMicro(valuesDeployed,garType,garApp,app-garApp,icpEnv ,namespace)
-	startAndStopApp(valuesDeployed,app,center,namespace,icpEnv,startAndStop,stableOrNew,garApp,jvmConfig,scalingMap)
+	rebuildMicro(valuesDeployed,garType,garApp,app-garApp,cloudEnv ,namespace)
+	startAndStopApp(valuesDeployed,app,center,namespace,cloudEnv,startAndStop,stableOrNew,garApp,jvmConfig,scalingMap)
 }
 
 /**

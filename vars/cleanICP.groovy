@@ -1,17 +1,17 @@
 import com.project.alm.EchoLevel
 import com.project.alm.SampleAppCleanMode
-import com.project.alm.ICPUtils
+import com.project.alm.CloudUtils
 import com.project.alm.KpiAlmEvent
 
 import com.project.alm.GlobalVars
-import com.project.alm.ICPApiResponse
+import com.project.alm.CloudApiResponse
 import java.text.SimpleDateFormat
 import java.util.Date
 
 
 
 def call(boolean cleanEden, int beforeDays, SampleAppCleanMode sampleAppCleanMode,def edenDays) {
-    cleanICP(cleanEden,beforeDays,sampleAppCleanMode,edenDays,false)
+    cleanCloud(cleanEden,beforeDays,sampleAppCleanMode,edenDays,false)
 }
 
 def call(boolean cleanEden, int beforeDays, SampleAppCleanMode sampleAppCleanMode,def edenDays, def cleanPrototype) {
@@ -25,21 +25,21 @@ def call(boolean cleanEden, int beforeDays, SampleAppCleanMode sampleAppCleanMod
 	printOpen("cleanEden ${cleanEden} days ${beforeDays} typeOfSampleModeClean ${sampleAppCleanMode}", EchoLevel.ALL)
 	if (cleanEden || sampleAppCleanMode != SampleAppCleanMode.NONE) {
 		//Primero eliminamos el AB3APP
-		ICPApiResponse response=sendRequestToICPApi("v1/application/${GlobalVars.ICP_APP_ID_ARCH}/component",null,"GET","${GlobalVars.ICP_APP_ARCH}","",false,false)
-		deleteAndUndeployApps(response,GlobalVars.ICP_APP_ID_ARCH,GlobalVars.ICP_APP_ARCH,beforeDays,deleteAllEden)
+		CloudApiResponse response=sendRequestToCloudApi("v1/application/${GlobalVars.Cloud_APP_ID_ARCH}/component",null,"GET","${GlobalVars.Cloud_APP_ARCH}","",false,false)
+		deleteAndUndeployApps(response,GlobalVars.Cloud_APP_ID_ARCH,GlobalVars.Cloud_APP_ARCH,beforeDays,deleteAllEden)
 		
 		if (sampleAppCleanMode == SampleAppCleanMode.ALL) {
-			deleteAllSampleAPPS(response,GlobalVars.ICP_APP_ID_ARCH,GlobalVars.ICP_APP_ARCH,'DEV')
-			deleteAllSampleAPPS(response,GlobalVars.ICP_APP_ID_ARCH,GlobalVars.ICP_APP_ARCH,'TST')
-			deleteAllSampleAPPS(response,GlobalVars.ICP_APP_ID_ARCH,GlobalVars.ICP_APP_ARCH,'PRE')
+			deleteAllSampleAPPS(response,GlobalVars.Cloud_APP_ID_ARCH,GlobalVars.Cloud_APP_ARCH,'DEV')
+			deleteAllSampleAPPS(response,GlobalVars.Cloud_APP_ID_ARCH,GlobalVars.Cloud_APP_ARCH,'TST')
+			deleteAllSampleAPPS(response,GlobalVars.Cloud_APP_ID_ARCH,GlobalVars.Cloud_APP_ARCH,'PRE')
 		}
 		//Segundo eliminamos el AB3COR
-		response=sendRequestToICPApi("v1/application/${GlobalVars.ICP_APP_ID_APPS}/component",null,"GET","${GlobalVars.ICP_APP_APPS}","",false,false)
-		deleteAndUndeployApps(response,GlobalVars.ICP_APP_ID_APPS,GlobalVars.ICP_APP_APPS ,beforeDays,deleteAllEden)
+		response=sendRequestToCloudApi("v1/application/${GlobalVars.Cloud_APP_ID_APPS}/component",null,"GET","${GlobalVars.Cloud_APP_APPS}","",false,false)
+		deleteAndUndeployApps(response,GlobalVars.Cloud_APP_ID_APPS,GlobalVars.Cloud_APP_APPS ,beforeDays,deleteAllEden)
 
 	}else if (cleanPrototype) { 
-		ICPApiResponse response=sendRequestToICPApi("v1/application/${GlobalVars.ICP_APP_ID_APPS}/component",null,"GET","${GlobalVars.ICP_APP_APPS}","",false,false)
-		deleteAndUndeployAppsPrototype(response,GlobalVars.ICP_APP_ID_APPS,GlobalVars.ICP_APP_APPS,beforeDays)
+		CloudApiResponse response=sendRequestToCloudApi("v1/application/${GlobalVars.Cloud_APP_ID_APPS}/component",null,"GET","${GlobalVars.Cloud_APP_APPS}","",false,false)
+		deleteAndUndeployAppsPrototype(response,GlobalVars.Cloud_APP_ID_APPS,GlobalVars.Cloud_APP_APPS,beforeDays)
 	}else {
 		printOpen("No selected environment/type to clean", EchoLevel.ALL)
 	}
@@ -47,7 +47,7 @@ def call(boolean cleanEden, int beforeDays, SampleAppCleanMode sampleAppCleanMod
 
 }
 
-def deleteAllSampleAPPS(ICPApiResponse response, String icpAppId, String icpAppName, String environment) {
+def deleteAllSampleAPPS(CloudApiResponse response, String cloudAppId, String cloudAppName, String environment) {
 	if (response.body!=null && response.body.size()>=1) {
 		
 		response.body.each {
@@ -55,8 +55,8 @@ def deleteAllSampleAPPS(ICPApiResponse response, String icpAppId, String icpAppN
 				az: "ALL",
 				environment: "${environment}"
 			]
-			if (ICPUtils.isSampleApp(it.name) && it.name!="AB3COR" && it.name!="AB3APP") {
-				def responseUndeploy=sendRequestToICPApi("v1/application/PCLD/${icpAppName}/component/${it.id}/deploy",body,"DELETE","${icpAppName}","",false,false)
+			if (CloudUtils.isSampleApp(it.name) && it.name!="AB3COR" && it.name!="AB3APP") {
+				def responseUndeploy=sendRequestToCloudApi("v1/application/PCLD/${cloudAppName}/component/${it.id}/deploy",body,"DELETE","${cloudAppName}","",false,false)
 				
 				//printOpen(" The status code of the undeploy ${responseUndeploy.statusCode}", EchoLevel.DEBUG)
 				printOpen(" Deleting the sample app ${it.name} ${environment} ${it.id} with the ${responseUndeploy.statusCode}", EchoLevel.ALL)
@@ -66,7 +66,7 @@ def deleteAllSampleAPPS(ICPApiResponse response, String icpAppId, String icpAppN
 }
 
 def deleteEvent(def id) {
-	def response = sendRequestToAbsis3MS(
+	def response = sendRequestToAlm3MS(
 		'DELETE',
 		"${GlobalVars.URL_CATALOGO_ALM_PRO}/audit/${id}",
 		null,
@@ -80,7 +80,7 @@ def deleteEvent(def id) {
 
 def getPrototypeEvents(def app) {
 	
-	def response = sendRequestToAbsis3MS(
+	def response = sendRequestToAlm3MS(
 		'GET',
 		"${GlobalVars.URL_CATALOGO_ALM_PRO}/audit/PRT/${app}",
 		null,
@@ -95,7 +95,7 @@ def getPrototypeEvents(def app) {
 	}
 }
 
-def deleteAndUndeployAppsPrototype(ICPApiResponse response, String icpAppId, String icpAppName, int beforeDays) {
+def deleteAndUndeployAppsPrototype(CloudApiResponse response, String cloudAppId, String cloudAppName, int beforeDays) {
 	
 	if (response.body!=null && response.body.size()>=1) {
 		
@@ -107,9 +107,9 @@ def deleteAndUndeployAppsPrototype(ICPApiResponse response, String icpAppId, Str
 			//de caducidad
 			//en caso que haya caducado se debera eliminar aplicar el delete sobre el entorno
 			//eliminar el evento
-			//En caso que no tenga ningun evento tiene sentido la aplicacion en ICP?
+			//En caso que no tenga ningun evento tiene sentido la aplicacion en Cloud?
 			
-			if (ICPUtils.isPrototypeApp(it.name)) {
+			if (CloudUtils.isPrototypeApp(it.name)) {
 				printOpen("${it} is a prototype APP ", EchoLevel.INFO)
 				
 						
@@ -133,7 +133,7 @@ def deleteAndUndeployAppsPrototype(ICPApiResponse response, String icpAppId, Str
 								if (datOfApp.before(priorDate)) {
 									//Se tiene que hacer el delete del micro en el entorno X
 									printOpen("Se tiene que eliminar el micro en el entorno ${val.description} i eliminar el id evento", EchoLevel.INFO)
-									deleteAppICP(it.name, it.id, icpAppId, icpAppName, val.description.toUpperCase(), 'ALL',false)
+									deleteAppCloud(it.name, it.id, cloudAppId, cloudAppName, val.description.toUpperCase(), 'ALL',false)
 									deleteEvent(val.id)
 								}else {
 									seTieneQueEliminar=false
@@ -142,12 +142,12 @@ def deleteAndUndeployAppsPrototype(ICPApiResponse response, String icpAppId, Str
 							}
 					}
 					if (seTieneQueEliminar) {
-						printOpen("Eliminamos la app en ICP", EchoLevel.INFO)
-						//deleteAppICP(it.name, it.id, icpAppId, icpAppName, 'DEV', 'ALL',true, true)
+						printOpen("Eliminamos la app en Cloud", EchoLevel.INFO)
+						//deleteAppCloud(it.name, it.id, cloudAppId, cloudAppName, 'DEV', 'ALL',true, true)
 					}
 				}else {
-					//deleteAppICP(it.name, it.id, icpAppId, icpAppName, 'DEV', 'ALL',true, true)
-					printOpen("Eliminamos la app en ICP", EchoLevel.INFO)
+					//deleteAppCloud(it.name, it.id, cloudAppId, cloudAppName, 'DEV', 'ALL',true, true)
+					printOpen("Eliminamos la app en Cloud", EchoLevel.INFO)
 				}
 			}
 		}
@@ -155,7 +155,7 @@ def deleteAndUndeployAppsPrototype(ICPApiResponse response, String icpAppId, Str
 }
 	
 
-def deleteAndUndeployApps(ICPApiResponse response, String icpAppId, String icpAppName, int beforeDays,boolean deleteAll) {
+def deleteAndUndeployApps(CloudApiResponse response, String cloudAppId, String cloudAppName, int beforeDays,boolean deleteAll) {
 	
 	if (response.body!=null && response.body.size()>=1) {
 		
@@ -163,7 +163,7 @@ def deleteAndUndeployApps(ICPApiResponse response, String icpAppId, String icpAp
 			printOpen("Evaluating the app ${it}", EchoLevel.ALL)
 	
 			
-			if (ICPUtils.isEdenApp(it.name)) {
+			if (CloudUtils.isEdenApp(it.name)) {
 				printOpen("${it} is an Eden APP ", EchoLevel.ALL)
 				
 				String date=it.name.substring(it.name.length()-9,it.name.length()-1)
@@ -185,7 +185,7 @@ def deleteAndUndeployApps(ICPApiResponse response, String icpAppId, String icpAp
 					if (mantainEdenMicro!=null && mantainEdenMicro.contains(it.name)) {
 					    printOpen("We have to mantain the app ${it.name}", EchoLevel.ALL)
 					}else {
-					   deleteAppICP(it.name, it.id, icpAppId, icpAppName, 'DEV', 'ALL',true)
+					   deleteAppCloud(it.name, it.id, cloudAppId, cloudAppName, 'DEV', 'ALL',true)
 					}
 				}
 			}

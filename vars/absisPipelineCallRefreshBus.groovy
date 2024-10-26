@@ -31,7 +31,7 @@ def call(Map pipelineParameters) {
     configServerURL = null
 
     pipeline {
-        agent {    node(absisJenkinsAgent(pipelineParams)) }
+        agent {    node(almJenkinsAgent(pipelineParams)) }
         options {
             buildDiscarder(logRotator(numToKeepStr: '10'))
             timestamps()
@@ -40,8 +40,8 @@ def call(Map pipelineParameters) {
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
             JNKMSV = credentials('JNKMSV-USER-TOKEN')
-            ICP_CERT = credentials('icp-alm-pro-cert')
-            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
+            Cloud_CERT = credentials('cloud-alm-pro-cert')
+            Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
@@ -201,20 +201,20 @@ def stageReportStep() {
     int responsesSize = 0
 
     try {
-        //el /actuator/absis-log-bus-operations nos dice si las llamada asincrona de refresh fue recibida por las instancias, estas devuelven un ACK
-        response =     sendRequestToConfigServer('GET', '/actuator/absis-log-bus-operations', configServerEnvironmentParam, dataCenterParam)
+        //el /actuator/alm-log-bus-operations nos dice si las llamada asincrona de refresh fue recibida por las instancias, estas devuelven un ACK
+        response =     sendRequestToConfigServer('GET', '/actuator/alm-log-bus-operations', configServerEnvironmentParam, dataCenterParam)
         def json = new groovy.json.JsonSlurper().parseText(response.content)
         responsesSize  = json[0]?.responses?.size()
         printOpen("latest response acks size=${responsesSize}", EchoLevel.DEBUG)
                         } catch (Exception e) {
-        printOpen('Error absis-log-bus-operations ', EchoLevel.ERROR)
+        printOpen('Error alm-log-bus-operations ', EchoLevel.ERROR)
         printOpen(e.getMessage(), EchoLevel.ERROR)
         throw e
     }
 
     if (responsesSize == null || responsesSize == 0) {
         printOpen('WARNING cero respuestas en ultimo tracking de respuestas ACKs contestadas por la ultima llamada asincrona de refresh', EchoLevel.ERROR)
-        printOpen('Please check the last call to <config_server>/actuator/absis-log-bus-operations in your browser in order to track the last refresh-bus call', EchoLevel.ERROR)
+        printOpen('Please check the last call to <config_server>/actuator/alm-log-bus-operations in your browser in order to track the last refresh-bus call', EchoLevel.ERROR)
     }
 }
 

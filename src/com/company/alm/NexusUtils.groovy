@@ -32,7 +32,7 @@ class NexusUtils {
 		try {
             String metadata = ""
 
-            scriptContext.withCredentials([scriptContext.usernamePassword(credentialsId: 'icpcoucxba3msje01', passwordVariable: 'MVN_PASS', usernameVariable: 'MVN_USR')]) {
+            scriptContext.withCredentials([scriptContext.usernamePassword(credentialsId: 'cloudcoucxba3msje01', passwordVariable: 'MVN_PASS', usernameVariable: 'MVN_USR')]) {
                 String url = "https://$scriptContext.env.MVN_USR:$scriptContext.env.MVN_PASS@$GlobalVars.NEXUS_URL_BASE/artifactory/$GlobalVars.NEXUS_PUBLIC_REPO_NAME/$groupId/$artifactId/maven-metadata.xml$avoidCaching"
 
                 metadata = scriptContext.sh(
@@ -67,7 +67,7 @@ class NexusUtils {
         try {
             String httpHEADResult = ""
             
-            scriptContext.withCredentials([scriptContext.usernamePassword(credentialsId: 'icpcoucxba3msje01', passwordVariable: 'MVN_PASS', usernameVariable: 'MVN_USR')]) {
+            scriptContext.withCredentials([scriptContext.usernamePassword(credentialsId: 'cloudcoucxba3msje01', passwordVariable: 'MVN_PASS', usernameVariable: 'MVN_USR')]) {
                 String url = "https://$scriptContext.env.MVN_USR:$scriptContext.env.MVN_PASS@$GlobalVars.NEXUS_URL_BASE/artifactory/$GlobalVars.NEXUS_PUBLIC_REPO_NAME/$groupId/$artifactId/$version/$artifactId-${version$artifactClassifier}.$artifactExtension$avoidCaching"
 
                 httpHEADResult = scriptContext.sh(
@@ -95,7 +95,7 @@ class NexusUtils {
 		String versionWithOut=version-"SNAPSHOT"
 		String url = null
 		try {
-			scriptContext.withCredentials([scriptContext.usernamePassword(credentialsId: 'icpcoucxba3msje01', passwordVariable: 'MVN_PASS', usernameVariable: 'MVN_USR')]) {
+			scriptContext.withCredentials([scriptContext.usernamePassword(credentialsId: 'cloudcoucxba3msje01', passwordVariable: 'MVN_PASS', usernameVariable: 'MVN_USR')]) {
 				url = "https://$scriptContext.env.MVN_USR:$scriptContext.env.MVN_PASS@$GlobalVars.NEXUS_URL_BASE/artifactory/${repositoryName}/${groupId}/${artifactId}/${version}/maven-metadata.xml${avoidCaching}"
 			
 				version = scriptContext.sh(
@@ -150,7 +150,7 @@ class NexusUtils {
         }
 
         try {
-            scriptContext.withCredentials([scriptContext.usernamePassword(credentialsId: 'icpcoucxba3msje01', passwordVariable: 'MVN_PASS', usernameVariable: 'MVN_USR')]) {
+            scriptContext.withCredentials([scriptContext.usernamePassword(credentialsId: 'cloudcoucxba3msje01', passwordVariable: 'MVN_PASS', usernameVariable: 'MVN_USR')]) {
                 String url = "https://$scriptContext.env.MVN_USR:$scriptContext.env.MVN_PASS@$GlobalVars.NEXUS_URL_BASE/artifactory/${repositoryName}/${groupId}/${artifactId}/maven-metadata.xml${avoidCaching}"
             
                 version = scriptContext.sh(

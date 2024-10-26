@@ -3,7 +3,7 @@ import com.project.alm.AppMassive
 import groovy.transform.Field
 import com.project.alm.EchoLevel
 import com.project.alm.GlobalVars
-import com.project.alm.ICPAppResources
+import com.project.alm.CloudAppResources
 import com.project.alm.PipelineData
 
 
@@ -13,7 +13,7 @@ import com.project.alm.PipelineData
 
 @Field boolean successPipeline = false
 
-@Field String icpEnv = "${environmentParam}"
+@Field String cloudEnv = "${environmentParam}"
 @Field String appList = "${appnameParam}"
 @Field String center = "${centerParam}"
 @Field String stableOrNew = "${stableOrNewParam}"
@@ -31,11 +31,11 @@ import com.project.alm.PipelineData
 
 @Field ArrayList<AppMassive> apps = null
 @Field int numThreads = 0
-@Field ICPAppResources icpResources = null
+@Field CloudAppResources cloudResources = null
 @Field String sizeCPU = "M"
 @Field String sizeMEM = "M"
 @Field String sizeREP = "M"
-@Field String icpEnvResources
+@Field String cloudEnvResources
 @Field LinkedHashMap<String, GString> scalingMap
 @Field boolean resize
 /* ************************************************************************************************************************************** *\
@@ -49,7 +49,7 @@ def call(Map pipelineParameters) {
     // las variables que se obtienen como parametro del job no es necesario
     // redefinirlas, se hace por legibilidad del codigo
     successPipeline = false
-    icpEnv = params.environmentParam
+    cloudEnv = params.environmentParam
     center = params.centerParam
     stableOrNew = params.stableOrNewParam
     scaleCPUCores = params.scaleCPUCoresParam
@@ -66,7 +66,7 @@ def call(Map pipelineParameters) {
 
 
     pipeline {
-        agent { node(absisJenkinsAgent(pipelineParams)) }
+        agent { node(almJenkinsAgent(pipelineParams)) }
         options {
             gitLabConnection('gitlab')
             buildDiscarder(logRotator(numToKeepStr: '10'))
@@ -77,8 +77,8 @@ def call(Map pipelineParameters) {
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
             JNKMSV = credentials('JNKMSV-USER-TOKEN')
-            ICP_CERT = credentials('icp-alm-pro-cert')
-            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
+            Cloud_CERT = credentials('cloud-alm-pro-cert')
+            Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
@@ -90,14 +90,14 @@ def call(Map pipelineParameters) {
                     initStep()
                 }
             }
-            stage("get-app-icp") {
+            stage("get-app-cloud") {
                 steps {
-                    getAppIcpStep()
+                    getAppCloudStep()
                 }
             }
-            stage("restart-app-icp") {
+            stage("restart-app-cloud") {
                 steps {
-                    restartAppIcpStep()
+                    restartAppCloudStep()
                 }
             }
             stage('Parallel For Loop') {
@@ -117,7 +117,7 @@ def call(Map pipelineParameters) {
                                         dir(workDir) {
                                             printOpen("Aqui llega? ", EchoLevel.DEBUG)
                                             if (resize) {
-                                                toPararel(app, icpEnvResources, sizeMEM, sizeCPU, sizeREP, scalingMap, icpResources, workDir)
+                                                toPararel(app, cloudEnvResources, sizeMEM, sizeCPU, sizeREP, scalingMap, cloudResources, workDir)
                                             } else {
                                                 toparalell2(app, scalingMap,workDir)
                                             }
@@ -171,20 +171,20 @@ def initStep() {
 }
 
 /**
- * Stage 'getAppIcpStep'
+ * Stage 'getAppCloudStep'
  */
-def getAppIcpStep() {
+def getAppCloudStep() {
 // Fomato lista SRV.DS.micro_1,SRV.DS.micro_2
     apps = new ArrayList<AppMassive>()
     def appSplit = appList.split(",")
     appSplit.each { String appname ->
         AppMassive appMassive = createAppMassive(appname)
-        currentBuild.displayName = "${action}_${appMassive.getAppName()} of ${icpEnv} and the namespace ${appMassive.getNamespace()} and the center ${center}"
+        currentBuild.displayName = "${action}_${appMassive.getAppName()} of ${cloudEnv} and the namespace ${appMassive.getNamespace()} and the center ${center}"
         try {
             printOpen("Get App ", EchoLevel.ALL)
             Map valuesDeployed = null
-            valuesDeployed = getLastAppInfoICP(icpEnv, appMassive.getAppName(), appMassive.getNamespace(), center)
-            printAppICP(valuesDeployed)
+            valuesDeployed = getLastAppInfoCloud(cloudEnv, appMassive.getAppName(), appMassive.getNamespace(), center)
+            printAppCloud(valuesDeployed)
             appMassive.setValuesDeployed(valuesDeployed)
         } catch (Exception e) {
             throw e
@@ -211,32 +211,32 @@ private static void calculateNamespace(AppMassive appMassive) {
     switch (appMassive.getGarType()) {
         case "SRV.MS":
             appMassive.setNamespace("APP")
-            appMassive.setIcpNamespace(GlobalVars.ICP_APP_APPS)
-            appMassive.setIcpNamespaceId(GlobalVars.ICP_APP_ID_APPS)
+            appMassive.setCloudNamespace(GlobalVars.Cloud_APP_APPS)
+            appMassive.setCloudNamespaceId(GlobalVars.Cloud_APP_ID_APPS)
             break
         case "SRV.DS":
             appMassive.setNamespace("APP")
-            appMassive.setIcpNamespace(GlobalVars.ICP_APP_APPS)
-            appMassive.setIcpNamespaceId(GlobalVars.ICP_APP_ID_APPS)
+            appMassive.setCloudNamespace(GlobalVars.Cloud_APP_APPS)
+            appMassive.setCloudNamespaceId(GlobalVars.Cloud_APP_ID_APPS)
             break
         case "ARQ.MIA":
             appMassive.setNamespace("ARCH")
-            appMassive.setIcpNamespace(GlobalVars.ICP_APP_ARCH)
-            appMassive.setIcpNamespaceId(GlobalVars.ICP_APP_ID_ARCH)
+            appMassive.setCloudNamespace(GlobalVars.Cloud_APP_ARCH)
+            appMassive.setCloudNamespaceId(GlobalVars.Cloud_APP_ID_ARCH)
             appMassive.setIsArchProject(true)
             break
         default:
             appMassive.setNamespace("APP")
-            appMassive.setIcpNamespace(GlobalVars.ICP_APP_APPS)
-            appMassive.setIcpNamespaceId(GlobalVars.ICP_APP_ID_APPS)
+            appMassive.setCloudNamespace(GlobalVars.Cloud_APP_APPS)
+            appMassive.setCloudNamespaceId(GlobalVars.Cloud_APP_ID_APPS)
     }
 }
 
 /**
- * Stage 'restartAppIcpStep'
+ * Stage 'restartAppCloudStep'
  */
 
-def restartAppIcpStep() {
+def restartAppCloudStep() {
     try {
         printOpen("Restart Apps", EchoLevel.ALL)
 
@@ -251,7 +251,7 @@ def restartAppIcpStep() {
         }
 
         if ("yes".equals(useCatalogSize) || (!"NO".equals(scaleCPUCores) || !"NO".equals(scaleMemory) || !"DEFAULT".equals(scaleNumInstances)) && (env.CATMSV_SIZE!=null && "true".equals(env.CATMSV_SIZE))) {
-            icpResources = null
+            cloudResources = null
             sizeCPU = "M"
             sizeMEM = "M"
             sizeREP = "M"
@@ -273,15 +273,15 @@ def restartAppIcpStep() {
                 sizeREP = scaleNumInstances
             }
 
-            icpEnvResources = icpEnv
+            cloudEnvResources = cloudEnv
             /**
              * Vamos a usar los tamaños del catalogo de PRO para realizar el deploy sea cual sea el entorno
              */
             if ("yes".equals(useProSize)) {
-                icpEnvResources = "PRO" //Usaremos recursos de PRO
+                cloudEnvResources = "PRO" //Usaremos recursos de PRO
                 printOpen("El tamaño que queremos usar es el de PRO no el del entorno donde estamos", EchoLevel.ALL)
             } else {
-                printOpen("El entorno del tamaño a usar es el del entorno ${icpEnv}", EchoLevel.ALL)
+                printOpen("El entorno del tamaño a usar es el del entorno ${cloudEnv}", EchoLevel.ALL)
             }
 
             //   numThreads = numberParalel.toInteger() > apps.size() ? apps.size() : numberParalel.toInteger()
@@ -291,7 +291,7 @@ def restartAppIcpStep() {
             /**
              * Consultamos el tamaño del micro en catalogo o usamos los tamaños definidos para el entorno
              */
-            //          toPararel(app, icpEnvResources, sizeMEM, sizeCPU, sizeREP, scalingMap, icpResources)
+            //          toPararel(app, cloudEnvResources, sizeMEM, sizeCPU, sizeREP, scalingMap, cloudResources)
             //   }
 
             resize = true
@@ -322,44 +322,44 @@ private void toparalell2(AppMassive app, LinkedHashMap<String, GString> scalingM
     Map valuesDeployed = app.getValuesDeployed()
     String appname = app.getAppName()
     printOpen("No se desea escalar nada, no hace falta consultar el catalogo", EchoLevel.DEBUG)
-    startAndStopApp(valuesDeployed, appname, center, namespace, icpEnv, startAndStop, stableOrNew, garApp, jvmConfig, scalingMap,workspace)
-    absisPipelineStageCloneToOcp(appname - garApp + '.0.0', garApp + '-micro', garApp, namespace, icpEnv, userId, garType, userId, 'false', 'true', action)
+    startAndStopApp(valuesDeployed, appname, center, namespace, cloudEnv, startAndStop, stableOrNew, garApp, jvmConfig, scalingMap,workspace)
+    almPipelineStageCloneToOcp(appname - garApp + '.0.0', garApp + '-micro', garApp, namespace, cloudEnv, userId, garType, userId, 'false', 'true', action)
 }
 
 
-private void toPararel(AppMassive app, String icpEnvResources, String sizeMEM, String sizeCPU,
-                       String sizeREP, LinkedHashMap<String, GString> scalingMap, ICPAppResources icpResources, String workspace) {
+private void toPararel(AppMassive app, String cloudEnvResources, String sizeMEM, String sizeCPU,
+                       String sizeREP, LinkedHashMap<String, GString> scalingMap, CloudAppResources cloudResources, String workspace) {
     String garApp = app.getGarApp()
     String appname = app.getAppName()
     String garType = app.getGarType()
-    String icpNamespace = app.getNamespace()
+    String cloudNamespace = app.getNamespace()
     Boolean isArchProject = app.getIsArchProject()
     String namespace = app.getNamespace()
     Map valuesDeployed = app.getValuesDeployed()
 
     if ("yes".equals(useCatalogSize)) {
         printOpen("Se deben usar los tamaños del catalogo", EchoLevel.DEBUG)
-        icpResources = generateICPResources(null, icpEnvResources, true, garApp, null, garType, appname - garApp, icpNamespace)
+        cloudResources = generateCloudResources(null, cloudEnvResources, true, garApp, null, garType, appname - garApp, cloudNamespace)
 
     } else {
         printOpen("No se debe usar los tamaños del catalogo", EchoLevel.DEBUG)
-        icpResources = getSizesFromCatalog(icpNamespace, garType, icpEnvResources, isArchProject, sizeMEM, sizeCPU, sizeREP)
+        cloudResources = getSizesFromCatalog(cloudNamespace, garType, cloudEnvResources, isArchProject, sizeMEM, sizeCPU, sizeREP)
     }
 
-    app.setICPAppResources(icpResources)
+    app.setCloudAppResources(cloudResources)
     /**
      * Tenemos que aplicar las restricciones de tamaño para poder ya que sino es PRO ciertos valores no se pueden permitir
      */
-    //icpResources=restrictSizesFromCatalog(icpResources,icpEnv)
+    //cloudResources=restrictSizesFromCatalog(cloudResources,cloudEnv)
 
     if (!"NO".equals(scaleCPUCores) || "yes".equals(useCatalogSize)) {
-        scaleCPUCores = icpResources.cpuSize
+        scaleCPUCores = cloudResources.cpuSize
     }
     if (!"NO".equals(scaleMemory) || "yes".equals(useCatalogSize)) {
-        scaleMemory = icpResources.memSize
+        scaleMemory = cloudResources.memSize
     }
     if (!"DEFAULT".equals(scaleNumInstances) || "yes".equals(useCatalogSize)) {
-        scaleNumInstances = icpResources.replicasSize
+        scaleNumInstances = cloudResources.replicasSize
     }
 
     scalingMap = [
@@ -370,10 +370,10 @@ private void toPararel(AppMassive app, String icpEnvResources, String sizeMEM, S
     /**
      * Aplicamos el start & stop
      */
-    printOpen("Se desea escalar, no hace falta consultar el catalogo ${scalingMap} ${icpResources}", EchoLevel.INFO)
-    startAndStopApp(valuesDeployed, appname, center, namespace, icpEnv, startAndStop, stableOrNew, garApp, jvmConfig, scalingMap, app.getICPAppResources(), app.getGarType(), workspace)
+    printOpen("Se desea escalar, no hace falta consultar el catalogo ${scalingMap} ${cloudResources}", EchoLevel.INFO)
+    startAndStopApp(valuesDeployed, appname, center, namespace, cloudEnv, startAndStop, stableOrNew, garApp, jvmConfig, scalingMap, app.getCloudAppResources(), app.getGarType(), workspace)
     //Se tiene que clonar OCP
-    absisPipelineStageCloneToOcp(appname - garApp + '.0.0', garApp + '-micro', garApp, icpNamespace, icpEnv, userId, garType, userId, 'false', 'true', action)
+    almPipelineStageCloneToOcp(appname - garApp + '.0.0', garApp + '-micro', garApp, cloudNamespace, cloudEnv, userId, garType, userId, 'false', 'true', action)
 }
 
 /**

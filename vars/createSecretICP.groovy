@@ -70,7 +70,7 @@ def call(String environment, String secret, String username, String password, St
 	if (namespace=="APP" || namespace=="BOTH") {
 		//Tenemos que validar primero ante todos si existe
 		printOpen("El environment es de ${environment} el secret es de ${secret}", EchoLevel.ALL)
-		response=sendRequestToICPApi("v2/api/application/PCLD/AB3APP/environment/${environment.toUpperCase()}/availabilityzone/ALL/credentials/${secret}",null,"GET","AB3APP","",false,false)
+		response=sendRequestToCloudApi("v2/api/application/PCLD/AB3APP/environment/${environment.toUpperCase()}/availabilityzone/ALL/credentials/${secret}",null,"GET","AB3APP","",false,false)
 		if (response.statusCode==200) {
 			method="PUT"
 			command="v2/api/application/PCLD/AB3APP/environment/${environment.toUpperCase()}/availabilityzone/ALL/credentials/${secret}"
@@ -79,12 +79,12 @@ def call(String environment, String secret, String username, String password, St
 			method="POST"
 			command="v2/api/application/PCLD/AB3APP/environment/${environment.toUpperCase()}/availabilityzone/ALL/credentials"			
 		}
-		response=sendRequestToICPApi("${command}",body,method,"AB3APP","",false,false)
+		response=sendRequestToCloudApi("${command}",body,method,"AB3APP","",false,false)
 		if (response.statusCode==201 || response.statusCode==200) {
-			printOpen("SECRET CREATED OR MODIFIED ${method} ICP. Procedemos contra OCP ", EchoLevel.INFO)
+			printOpen("SECRET CREATED OR MODIFIED ${method} Cloud. Procedemos contra OCP ", EchoLevel.INFO)
 			printOpen("Ahora ejecutamos contra OCP. ", EchoLevel.INFO)
 			
-			response=sendRequestToICPApi("v2/api/application/PCLD_MIGRATED/AB3APP/environment/${environment.toUpperCase()}/availabilityzone/ALL/credentials/${secret}",null,"GET","AB3APP","",false,false)
+			response=sendRequestToCloudApi("v2/api/application/PCLD_MIGRATED/AB3APP/environment/${environment.toUpperCase()}/availabilityzone/ALL/credentials/${secret}",null,"GET","AB3APP","",false,false)
 			if (response.statusCode==200 && validateSecretOCP(response)) {
 				method="PUT"
 				command="v2/api/application/PCLD_MIGRATED/AB3APP/environment/${environment.toUpperCase()}/availabilityzone/ALL/credentials/${secret}"
@@ -93,7 +93,7 @@ def call(String environment, String secret, String username, String password, St
 				method="POST"
 				command="v2/api/application/PCLD_MIGRATED/AB3APP/environment/${environment.toUpperCase()}/availabilityzone/ALL/credentials"
 			}
-			response=sendRequestToICPApi("${command}",body,method,"AB3APP","",false,false)
+			response=sendRequestToCloudApi("${command}",body,method,"AB3APP","",false,false)
 			if (response.statusCode==201 || response.statusCode==200) {
 				printOpen("SECRET CREATED OR MODIFIED ${method} OCP ", EchoLevel.INFO)
 			}else {
@@ -107,7 +107,7 @@ def call(String environment, String secret, String username, String password, St
 	}
 	if (namespace=="ARCH" || namespace=="BOTH") {
 		printOpen("El environment es de ${environment} el secret es de ${secret}", EchoLevel.ALL)
-		response=sendRequestToICPApi("v2/api/application/PCLD/AB3COR/environment/${environment.toUpperCase()}/availabilityzone/ALL/credentials/${secret}",null,"GET","AB3COR","",false,false)
+		response=sendRequestToCloudApi("v2/api/application/PCLD/AB3COR/environment/${environment.toUpperCase()}/availabilityzone/ALL/credentials/${secret}",null,"GET","AB3COR","",false,false)
 		
 		if (response.statusCode==200) {
 			method="PUT"
@@ -118,11 +118,11 @@ def call(String environment, String secret, String username, String password, St
 			command="v2/api/application/PCLD/AB3COR/environment/${environment.toUpperCase()}/availabilityzone/ALL/credentials"
 		}
 		
-		response=sendRequestToICPApi("${command}",body,method,"AB3COR","",false,false)
+		response=sendRequestToCloudApi("${command}",body,method,"AB3COR","",false,false)
 		if (response.statusCode==201 || response.statusCode==200) {
-			printOpen("SECRET CREATED OR MODIFIED ${method} ICP", EchoLevel.INFO)
+			printOpen("SECRET CREATED OR MODIFIED ${method} Cloud", EchoLevel.INFO)
 			
-			response=sendRequestToICPApi("v2/api/application/PCLD_MIGRATED/AB3COR/environment/${environment.toUpperCase()}/availabilityzone/ALL/credentials/${secret}",null,"GET","AB3COR","",false,false)
+			response=sendRequestToCloudApi("v2/api/application/PCLD_MIGRATED/AB3COR/environment/${environment.toUpperCase()}/availabilityzone/ALL/credentials/${secret}",null,"GET","AB3COR","",false,false)
 			
 			if (response.statusCode==200  && validateSecretOCP(response)) {
 				method="PUT"
@@ -133,7 +133,7 @@ def call(String environment, String secret, String username, String password, St
 				command="v2/api/application/PCLD_MIGRATED/AB3COR/environment/${environment.toUpperCase()}/availabilityzone/ALL/credentials"
 			}
 			
-			response=sendRequestToICPApi("${command}",body,method,"AB3COR","",false,false)
+			response=sendRequestToCloudApi("${command}",body,method,"AB3COR","",false,false)
 			if (response.statusCode==201 || response.statusCode==200) {
 				printOpen("SECRET CREATED OR MODIFIED ${method} OCP", EchoLevel.INFO)
 			}else {
@@ -150,7 +150,7 @@ def call(String environment, String secret, String username, String password, St
 	
 	if ((secret.contains("mq") || secret.contains("kafka")) && app!=null) {
 		//Consultaremos el componente
-		 response1 = sendRequestToAbsis3MS(
+		 response1 = sendRequestToAlm3MS(
 			 'GET',
 			 "${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${tipoApp}/${app}",			 
 			 null,
@@ -191,7 +191,7 @@ def call(String environment, String secret, String username, String password, St
 			
 			printOpen("Contains kafka ${microOwnerOfTheSecret}", EchoLevel.ALL)
 	    }
-		response = sendRequestToAbsis3MS(
+		response = sendRequestToAlm3MS(
 			'PUT',
 			"${GlobalVars.URL_CATALOGO_ALM_PRO}/app",			
 			microOwnerOfTheSecret,

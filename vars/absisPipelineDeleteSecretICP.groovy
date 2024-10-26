@@ -7,7 +7,7 @@ import com.project.alm.GlobalVars
 
 @Field boolean successPipeline
 
-@Field String icpEnv
+@Field String cloudEnv
 @Field String namespace
 @Field String secret
 
@@ -22,12 +22,12 @@ def call(Map pipelineParameters) {
 
     successPipeline = true
 
-	icpEnv = params.environmentParam
+	cloudEnv = params.environmentParam
 	namespace = params.namespaceParam
 	secret  = params.secretParam
     
     pipeline {		
-		agent {	node (absisJenkinsAgent(pipelineParams)) }
+		agent {	node (almJenkinsAgent(pipelineParams)) }
         options {
             buildDiscarder(logRotator(numToKeepStr: '10'))
             timestamps()
@@ -36,17 +36,17 @@ def call(Map pipelineParameters) {
         //Environment sobre el qual se ejecuta este tipo de job
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
-            ICP_CERT = credentials('icp-alm-pro-cert')
-            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
+            Cloud_CERT = credentials('cloud-alm-pro-cert')
+            Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
 			https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
             proxyPort = "${GlobalVars.proxyCaixaPort}"
         }
 		stages {
-			stage("delete-secret-icp") {
+			stage("delete-secret-cloud") {
 				steps {
-                    deleteSecretIcpStep()
+                    deleteSecretCloudStep()
 				}
 			}
 		}
@@ -69,12 +69,12 @@ def call(Map pipelineParameters) {
 \* ************************************************************************************************************************************** */
 
 /**
- * Stage 'deleteSecretIcpStep'
+ * Stage 'deleteSecretCloudStep'
  */
-def deleteSecretIcpStep() {
-    currentBuild.displayName = "Delete ${secret}_Namespace: ${namespace}_Environment: ${icpEnv}"
+def deleteSecretCloudStep() {
+    currentBuild.displayName = "Delete ${secret}_Namespace: ${namespace}_Environment: ${cloudEnv}"
     printOpen("delete Secret ", EchoLevel.ALL)
-    deleteSecretICP(icpEnv,secret, namespace)
+    deleteSecretCloud(cloudEnv,secret, namespace)
 }
 
 /**

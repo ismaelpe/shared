@@ -15,7 +15,7 @@ def call(def typeApp, def nameApp) {
 	def nameAppRegularizado=nameApp.trim().toUpperCase()
 		//Consultaremos el componente
 	def microOwnerOfTheSecret
-	def response1 = sendRequestToAbsis3MS(
+	def response1 = sendRequestToAlm3MS(
 			 'GET',
 			 "${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${typeApp}/${nameAppRegularizado}",
 			 null,
@@ -35,7 +35,7 @@ def call(def typeApp, def nameApp) {
 		 }else {
 			 throw new Exception("La aplicacion indicada no existe ${typeApp}.${nameAppRegularizado}"); 
 		 }
-    def response = sendRequestToAbsis3MS(
+    def response = sendRequestToAlm3MS(
 			'PUT',
 			"${GlobalVars.URL_CATALOGO_ALM_PRO}/app",
 			microOwnerOfTheSecret,

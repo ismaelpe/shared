@@ -5,12 +5,12 @@ import com.project.alm.KpiAlmEventStage
 import com.project.alm.PipelineData
 import com.project.alm.PomXmlStructure
 import com.project.alm.GlobalVars
-import com.project.alm.ICPDeployStructure
+import com.project.alm.CloudDeployStructure
 import groovy.json.JsonSlurperClassic
 
 def call(String componentType, String component) {
 	try {
-		def response = sendRequestToAbsis3MS(
+		def response = sendRequestToAlm3MS(
 			'GET',
 			"${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${componentType}/${component}",
 			null,
@@ -31,12 +31,12 @@ def call(String componentType, String component) {
 	}
 }
 
-def call(PomXmlStructure pomXml, PipelineData pipeline, ICPDeployStructure deployStructure) {
+def call(PomXmlStructure pomXml, PipelineData pipeline, CloudDeployStructure deployStructure) {
 	try {
 		String componentType = pipeline.garArtifactType.name
 		String component = pomXml.getApp(pipeline.garArtifactType)
 
-		def response = sendRequestToAbsis3MS(
+		def response = sendRequestToAlm3MS(
             'GET',
             "${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${componentType}/${component}",
             null,

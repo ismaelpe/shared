@@ -1,7 +1,7 @@
 import groovy.transform.Field
 import com.project.alm.EchoLevel
 import com.project.alm.GlobalVars
-import com.project.alm.ICPApiResponse
+import com.project.alm.CloudApiResponse
 
 @Field Map pipelineParams
 @Field String[] technologyVersions
@@ -23,7 +23,7 @@ def call(Map pipelineParameters) {
     showAllApps = params.showAllAppsOnLog.toString().toBoolean()
     
     pipeline {		
-		agent {	node (absisJenkinsAgent(pipelineParams)) }
+		agent {	node (almJenkinsAgent(pipelineParams)) }
         options {
             buildDiscarder(logRotator(numToKeepStr: '50'))
             timestamps()
@@ -32,8 +32,8 @@ def call(Map pipelineParameters) {
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
 			JNKMSV = credentials('JNKMSV-USER-TOKEN')
-            ICP_CERT = credentials('icp-alm-pro-cert')
-            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
+            Cloud_CERT = credentials('cloud-alm-pro-cert')
+            Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
 			https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
@@ -78,26 +78,26 @@ def retrieveVersionsAndUpdateStep() {
         dockerVersionsBlacklist.add(Integer.valueOf(it))
     }
 
-    ICPApiResponse appApps = icpApplicationApi.getICPAppInfo("AB3APP")
-    ICPApiResponse archApps = icpApplicationApi.getICPAppInfo("AB3COR")
+    CloudApiResponse appApps = cloudApplicationApi.getCloudAppInfo("AB3APP")
+    CloudApiResponse archApps = cloudApplicationApi.getCloudAppInfo("AB3COR")
 
     boolean appCallWasOk = appApps.statusCode == 200
     boolean archCallWasOk = archApps.statusCode == 200
 
-    def filteredAppApps = icpApplicationApi.filterApps(appApps.body, appsToBeUpdatedArray, dockerVersionsBlacklist)
+    def filteredAppApps = cloudApplicationApi.filterApps(appApps.body, appsToBeUpdatedArray, dockerVersionsBlacklist)
 
 
     if (appCallWasOk && showAllApps) {
 
-        icpApplicationApi.dumpAppsMetadataToLog(filteredAppApps, "AB3APP apps")
+        cloudApplicationApi.dumpAppsMetadataToLog(filteredAppApps, "AB3APP apps")
 
     }
 
-    def filteredArchApps = icpApplicationApi.filterApps(archApps.body, appsToBeUpdatedArray, dockerVersionsBlacklist)
+    def filteredArchApps = cloudApplicationApi.filterApps(archApps.body, appsToBeUpdatedArray, dockerVersionsBlacklist)
 
     if (archCallWasOk && showAllApps) {
 
-        icpApplicationApi.dumpAppsMetadataToLog(filteredArchApps, "AB3COR apps")
+        cloudApplicationApi.dumpAppsMetadataToLog(filteredArchApps, "AB3COR apps")
 
     }
     
@@ -108,13 +108,13 @@ def retrieveVersionsAndUpdateStep() {
 
     if (appCallWasOk) {
 
-        icpApplicationApi.updateChartAndDockerVersionsOrShowEligibleForUpdate(filteredAppApps, "AB3APP", chartVer, dockerVersion, updateVersion)
+        cloudApplicationApi.updateChartAndDockerVersionsOrShowEligibleForUpdate(filteredAppApps, "AB3APP", chartVer, dockerVersion, updateVersion)
 
     }
 
     if (archCallWasOk) {
 
-        icpApplicationApi.updateChartAndDockerVersionsOrShowEligibleForUpdate(filteredArchApps, "AB3COR", chartVer, dockerVersion, updateVersion)
+        cloudApplicationApi.updateChartAndDockerVersionsOrShowEligibleForUpdate(filteredArchApps, "AB3COR", chartVer, dockerVersion, updateVersion)
 
     }
 }

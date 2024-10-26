@@ -1,20 +1,20 @@
 import com.project.alm.EchoLevel
 import com.project.alm.GarAppType
-import com.project.alm.ICPStateUtility
+import com.project.alm.CloudStateUtility
 import com.project.alm.PipelineData
 import com.project.alm.PomXmlStructure
 import com.project.alm.Strings
 import hudson.Functions
 
-def call(PomXmlStructure pomXmlStructure, PipelineData pipelineData, String stageId, String deployICPPhasesPattern, ICPStateUtility icpStateUtility) {
+def call(PomXmlStructure pomXmlStructure, PipelineData pipelineData, String stageId, String deployCloudPhasesPattern, CloudStateUtility cloudStateUtility) {
 
     try {
 
         sendStageStartToGPL(pomXmlStructure, pipelineData, stageId)
         
-        this.deployICPPhases = deployICPPhasesPattern.replace("<phase>", "pre")
-        def microUrl = consolidateNewDeployICP(pomXmlStructure, pipelineData, icpStateUtility)
-        this.deployICPPhases = deployICPPhasesPattern.replace("<phase>", "post")
+        this.deployCloudPhases = deployCloudPhasesPattern.replace("<phase>", "pre")
+        def microUrl = consolidateNewDeployCloud(pomXmlStructure, pipelineData, cloudStateUtility)
+        this.deployCloudPhases = deployCloudPhasesPattern.replace("<phase>", "post")
         
 		def messageUrl = ""
 		
@@ -30,14 +30,14 @@ def call(PomXmlStructure pomXmlStructure, PipelineData pipelineData, String stag
         printOpen("Error consolidating new deployment:\n${Functions.printThrowable(e)}", EchoLevel.ERROR)
 
         String artifactAppAbort = pomXmlStructure.getApp(GarAppType.valueOfType(pipelineData.garArtifactType.name))
-        this.resultDeployICP = "KO"
+        this.resultDeployCloud = "KO"
 
         if (pipelineData.isCreateRelease()) {
-            sendEmail(" Resultado ejecucion app ${artifactAppAbort} - ${pipelineData.getPipelineBuildName()}  KO - ${this.deployICPPhases}", env.ALM_SERVICES_EMAIL_ICP_DEPLOY_RESULT, "${artifactAppAbort} rama ${pipelineData.getPipelineBuildName()}", "KO en el paso ${this.deployICPPhases}")
+            sendEmail(" Resultado ejecucion app ${artifactAppAbort} - ${pipelineData.getPipelineBuildName()}  KO - ${this.deployCloudPhases}", env.ALM_SERVICES_EMAIL_Cloud_DEPLOY_RESULT, "${artifactAppAbort} rama ${pipelineData.getPipelineBuildName()}", "KO en el paso ${this.deployCloudPhases}")
         }
 
         sendStageEndToGPL(pomXmlStructure, pipelineData, stageId, null, pipelineData.bmxStructure.environment, "error")
-        abortPipelineICP(pomXmlStructure, pipelineData, " Resultado ejecucion app ${artifactAppAbort} - ${pipelineData.getPipelineBuildName()}  KO", this.deployICPPhases, e)
+        abortPipelineCloud(pomXmlStructure, pipelineData, " Resultado ejecucion app ${artifactAppAbort} - ${pipelineData.getPipelineBuildName()}  KO", this.deployCloudPhases, e)
 
     }
 

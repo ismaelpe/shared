@@ -19,7 +19,7 @@ import org.jenkinsci.plugins.plaincredentials.impl.FileCredentialsImpl
 
 class ExportConfig implements Serializable {
     private final def scriptContext
-    private AbsisCipher absisCipher 
+    private AlmCipher almCipher 
     
     String jenkinsHome
     String workSpace
@@ -30,15 +30,15 @@ class ExportConfig implements Serializable {
         def credential  = entry.find().value
         
         if (credentialType == "usernamePassword") {
-            credential['password'] = absisCipher.decrypt(credential['password'])
+            credential['password'] = almCipher.decrypt(credential['password'])
         }
         
         if (credentialType == "string") {
-            credential['secret'] = absisCipher.decrypt(credential['secret'])
+            credential['secret'] = almCipher.decrypt(credential['secret'])
         }
         
         if (credentialType == "file") {
-            credential['secretBytes'] = SecretBytes.fromBytes(absisCipher.decryptBytes(credential['secretBytes'])).toString()
+            credential['secretBytes'] = SecretBytes.fromBytes(almCipher.decryptBytes(credential['secretBytes'])).toString()
         }
         
         return entry	
@@ -57,14 +57,14 @@ class ExportConfig implements Serializable {
             credentialType = "usernamePassword"
             commonsMap += [
                 "username": credential['username'],
-                "password": absisCipher.encrypt(credential['password'].toString())
+                "password": almCipher.encrypt(credential['password'].toString())
             ]            
         }
         
         if (credential instanceof org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl) {
             credentialType = "string"
             commonsMap += [
-                "secret": absisCipher.encrypt(credential['secret'].toString())
+                "secret": almCipher.encrypt(credential['secret'].toString())
             ]
         }
         
@@ -72,7 +72,7 @@ class ExportConfig implements Serializable {
             credentialType = "file"
             commonsMap += [
                 "fileName": credential['fileName'],
-                "secretBytes": absisCipher.encrypt(new String(SecretBytes.fromString(credential['secretBytes'].toString()).getPlainData()))
+                "secretBytes": almCipher.encrypt(new String(SecretBytes.fromString(credential['secretBytes'].toString()).getPlainData()))
             ]
         }  
         
@@ -83,7 +83,7 @@ class ExportConfig implements Serializable {
         this.scriptContext = scriptContext
         this.jenkinsHome = scriptContext.env.JENKINS_HOME
         this.workSpace = scriptContext.env.WORKSPACE
-        this.absisCipher = new AbsisCipher(this.scriptContext.env.CIPHER_PASSWORD.split("\\+"), this.scriptContext.env.CIPHER_IV)
+        this.almCipher = new AlmCipher(this.scriptContext.env.CIPHER_PASSWORD.split("\\+"), this.scriptContext.env.CIPHER_IV)
         this.scriptContext.printOpen("Jenkins Home setted: $jenkinsHome", EchoLevel.INFO)
 
         this.jcascFullFilePath = "$jenkinsHome/casc_configs/jenkins.yaml"
@@ -138,8 +138,8 @@ class ExportConfig implements Serializable {
         def configurationLdap = jcascMap.get("jenkins").get("securityRealm").get('ldap').get('configurations').get(0)
         // Jenkins secret -> plainText
         def ldapSecretPlainText = Secret.fromString(configurationLdap.get('managerPasswordSecret')).toString()
-        // plainText -> absisChiper to export to git
-        configurationLdap.put('managerPasswordSecret', absisCipher.encrypt(ldapSecretPlainText))
+        // plainText -> almChiper to export to git
+        configurationLdap.put('managerPasswordSecret', almCipher.encrypt(ldapSecretPlainText))
      
         yml.dump(jcascMap, new FileWriter("$workSpace/$yamlFileName"))
     }
@@ -205,8 +205,8 @@ class ExportConfig implements Serializable {
 
         // Ldap
         def configurationLdap = jenkinsYml.get("jenkins").get("securityRealm").get('ldap').get('configurations').get(0)
-        // absisChiper -> plainText
-        def ldapSecretPlainText = absisCipher.decrypt(configurationLdap.get('managerPasswordSecret'))
+        // almChiper -> plainText
+        def ldapSecretPlainText = almCipher.decrypt(configurationLdap.get('managerPasswordSecret'))
         // plainText -> Jenkins Secret
         configurationLdap.put('managerPasswordSecret', Secret.fromString(ldapSecretPlainText).getEncryptedValue())
 

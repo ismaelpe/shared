@@ -91,7 +91,7 @@ class CIPipelineStructure extends PipelineStructure {
                 ],
                 [id       : pipelineId + "415",
                  estado   : "inactive",
-                 nombre   : "415-deploy-micro-artifactory-icp",
+                 nombre   : "415-deploy-micro-artifactory-cloud",
                  resultado: "",
                  orden    : 0
                 ],

@@ -33,7 +33,7 @@ class CreateReleasePipelineStructure extends PipelineStructure {
                 ],
 				[id       : pipelineId + "110",
 				 estado   : "inactive",
-				 nombre   : "110-check-icp-availability",
+				 nombre   : "110-check-cloud-availability",
 				 resultado: "",
 				 orden    : 0
 				],
@@ -100,7 +100,7 @@ class CreateReleasePipelineStructure extends PipelineStructure {
                 ],
 				[id       : pipelineId + "501",
 				 estado   : "inactive",
-				 nombre   : "501-deploy-to-cloud-icp",
+				 nombre   : "501-deploy-to-cloud-cloud",
 				 resultado: "",
 				 orden    : 0
 				],
@@ -118,7 +118,7 @@ class CreateReleasePipelineStructure extends PipelineStructure {
 				],
 				[id       : pipelineId + "505",
 				 estado   : "inactive",
-				 nombre   : "505-consolidate-cloud-icp",
+				 nombre   : "505-consolidate-cloud-cloud",
 				 resultado: "",
 				 orden    : 0
 				],
@@ -136,13 +136,13 @@ class CreateReleasePipelineStructure extends PipelineStructure {
                 ],
 				[id       : pipelineId + "521",
 				 estado   : "inactive",
-				 nombre   : "521-copy-config-files-to-tst-icp",
+				 nombre   : "521-copy-config-files-to-tst-cloud",
 				 resultado: "",
 				 orden    : 0
 				],
                 [id       : pipelineId + "522",
 				 estado   : "inactive",
-				 nombre   : "522-deploy-to-tst-icp",
+				 nombre   : "522-deploy-to-tst-cloud",
 				 resultado: "",
 				 orden    : 0
 				],

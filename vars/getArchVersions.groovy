@@ -4,18 +4,18 @@ import com.project.alm.PipelineData
 import com.project.alm.GlobalVars
 import com.project.alm.DeployStructure
 import com.project.alm.BmxUtilities
-import com.project.alm.ICPDeployStructure
+import com.project.alm.CloudDeployStructure
 
-import com.project.alm.ICPApiResponse
+import com.project.alm.CloudApiResponse
 
 import java.util.Map
 
-def call(Map appsRoutes, String envICP, String namespace, String center) {
+def call(Map appsRoutes, String envCloud, String namespace, String center) {
 	Map versions=new HashMap<String, Map>()
 	appsRoutes.each {
 		Map routes = it.value
 		routes.each {
-			String microURL = getK8sGatewayURL(envICP, center);
+			String microURL = getK8sGatewayURL(envCloud, center);
 			if (namespace=="ARCH") microURL = microURL + "/arch-service"
 			microURL = microURL + "/" + it.value
 			try {
@@ -35,10 +35,10 @@ def call(Map appsRoutes, String envICP, String namespace, String center) {
 	return versions
 }
 
-public String getK8sGatewayURL(String envICP, String center = "AZ1") {
+public String getK8sGatewayURL(String envCloud, String center = "AZ1") {
 	//new-democonnecta2-micro-2.dev.ap.intranet.cloud.lacaixa.es
-	if (center=="AZ1"|| center=="ALL") return "https://k8sgateway."+envICP.toLowerCase()+".icp-1.absis.cloud.lacaixa.es"
-	else return "https://k8sgateway."+envICP.toLowerCase()+".icp-2.absis.cloud.lacaixa.es"
+	if (center=="AZ1"|| center=="ALL") return "https://k8sgateway."+envCloud.toLowerCase()+".cloud-1.alm.cloud.lacaixa.es"
+	else return "https://k8sgateway."+envCloud.toLowerCase()+".cloud-2.alm.cloud.lacaixa.es"
 }
 
 

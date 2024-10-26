@@ -57,7 +57,7 @@ def call(PomXmlStructure pomXmlStructure, PipelineData pipelineData, String data
 	
     def response=null
 	
-	response = sendRequestToAbsis3MS(
+	response = sendRequestToAlm3MS(
         'GET',
         "${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${type}/${application}/version/${major}/${minor}/${fix}/${typeVersion}/dependency/invokers/${environmentUpperCase}?recursive=true&ignoreFix=true",
         null,

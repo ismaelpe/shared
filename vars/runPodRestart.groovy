@@ -1,7 +1,7 @@
 import com.project.alm.EchoLevel
-import com.project.alm.ICPPodsStatus
+import com.project.alm.CloudPodsStatus
 
-def call(ICPPodsStatus pods, String namespace, String environment, String center, String color) {
+def call(CloudPodsStatus pods, String namespace, String environment, String center, String color) {
 
     def restartedPods = []
 
@@ -38,13 +38,13 @@ private triggerPodRestartAndGetPodNewId(String componentName, String podId, Stri
 
     def restartingPod
 
-    sendRequestToICP.restartPod(componentName, podId, namespace, environment, center)
+    sendRequestToCloud.restartPod(componentName, podId, namespace, environment, center)
 
     while ( ! restartingPod ) {
 
         sleep 5
-        def response = sendRequestToICP.getPodsInfo(namespace, environment, center)
-        ICPPodsStatus pods = new ICPPodsStatus(response?.body, componentName, environment)
+        def response = sendRequestToCloud.getPodsInfo(namespace, environment, center)
+        CloudPodsStatus pods = new CloudPodsStatus(response?.body, componentName, environment)
         restartingPod = pods.getNotReadyPod(center, color, componentName, [podId])
 
     }
@@ -54,8 +54,8 @@ private triggerPodRestartAndGetPodNewId(String componentName, String podId, Stri
 
 private boolean checkIfPodRestarted(String componentName, String podId, String namespace, String environment, String center) {
 
-    def response = sendRequestToICP.getPodsInfo(namespace, environment, center)
-    ICPPodsStatus pods = new ICPPodsStatus(response?.body, componentName, environment)
+    def response = sendRequestToCloud.getPodsInfo(namespace, environment, center)
+    CloudPodsStatus pods = new CloudPodsStatus(response?.body, componentName, environment)
 
     def podOnRestart = pods.findPod(podId)
 

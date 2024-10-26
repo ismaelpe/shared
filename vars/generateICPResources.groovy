@@ -1,19 +1,19 @@
 import com.project.alm.EchoLevel
-import com.project.alm.ICPAppResources
-import com.project.alm.ICPAppResourcesCatMsv
+import com.project.alm.CloudAppResources
+import com.project.alm.CloudAppResourcesCatMsv
 import com.project.alm.GlobalVars
 import com.project.alm.KpiAlmEvent
 import com.project.alm.KpiAlmEventOperation
 import com.project.alm.KpiAlmEventStage
 
 
-def setICPResources( def type, def app, def major, def environment, def namespace){
-	//ICPAppResources icpResources=new ICPAppResources()
-	ICPAppResourcesCatMsv icpResources=new ICPAppResourcesCatMsv()
+def setCloudResources( def type, def app, def major, def environment, def namespace){
+	//CloudAppResources cloudResources=new CloudAppResources()
+	CloudAppResourcesCatMsv cloudResources=new CloudAppResourcesCatMsv()
  
 	printOpen("Requesting application's sizes to Open's catalogue...", EchoLevel.INFO)
 
-    def response = sendRequestToAbsis3MS(
+    def response = sendRequestToAlm3MS(
         'GET',
         "${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${type}/${app}/${major}/config?env=${environment}",
         null,
@@ -31,21 +31,21 @@ def setICPResources( def type, def app, def major, def environment, def namespac
 		//def json = new groovy.json.JsonSlurper().parseText(response.content)
 		def json = response.content
 		printOpen("Parametros de arranque son de ${json.jvmArgs} ", EchoLevel.DEBUG)
-		icpResources.requestsMemory = "${json.memRequests}"
-		icpResources.requestsCpu="${json.cpuRequests}"
-		icpResources.limitsMemory="${json.memLimits}"
-		icpResources.limitsCpu="${json.cpuLimits}"
-		icpResources.numInstances="${json.replicas}"
-		icpResources.memSize="${json.memSize}".trim()
-		icpResources.cpuSize="${json.cpuSize}".trim()
+		cloudResources.requestsMemory = "${json.memRequests}"
+		cloudResources.requestsCpu="${json.cpuRequests}"
+		cloudResources.limitsMemory="${json.memLimits}"
+		cloudResources.limitsCpu="${json.cpuLimits}"
+		cloudResources.numInstances="${json.replicas}"
+		cloudResources.memSize="${json.memSize}".trim()
+		cloudResources.cpuSize="${json.cpuSize}".trim()
         if (json.jvmArgs!=null){
-            icpResources.jvmArgs=json.jvmArgs
+            cloudResources.jvmArgs=json.jvmArgs
         }else{
-            icpResources.jvmArgs=null
+            cloudResources.jvmArgs=null
         }
-		icpResources.replicasSize="${json.replicaSize}".trim()
+		cloudResources.replicasSize="${json.replicaSize}".trim()
 
-        printOpen("El tamaño recuperado del dimensionamiento del micro es de ${icpResources.toString()} este esta en el catalogo", EchoLevel.DEBUG)
+        printOpen("El tamaño recuperado del dimensionamiento del micro es de ${cloudResources.toString()} este esta en el catalogo", EchoLevel.DEBUG)
 		
 		// Get : {"id":41,"srvAppId":2417,
 		//"cpuSize":"L     ",
@@ -59,13 +59,13 @@ def setICPResources( def type, def app, def major, def environment, def namespac
 	}else {
 		//Tendriamos que recuperar la default size para los micros de talla M del entorno en concreto
 		//@GetMapping(value = "/config/micro-size/{namespace}/{type}/{env}/{replicas}/{cpu}/{memory}
-		icpResources.memSize='M'
-		icpResources.cpuSize='M'
-		icpResources.replicasSize='M'
+		cloudResources.memSize='M'
+		cloudResources.cpuSize='M'
+		cloudResources.replicasSize='M'
   
 		printOpen("Requesting default sizes to Open's catalogue for namespace:${namespace} type:${type} app:${app}", EchoLevel.INFO)
 
-		response = sendRequestToAbsis3MS(
+		response = sendRequestToAlm3MS(
             'GET',
             "${GlobalVars.URL_CATALOGO_ALM_PRO}/config/micro-size/${namespace}/${type}/${environment}/M/M/M",
             null,
@@ -81,46 +81,46 @@ def setICPResources( def type, def app, def major, def environment, def namespac
             printOpen("Get : ${response.content}", EchoLevel.DEBUG)
 			//def json = new groovy.json.JsonSlurper().parseText(response.content)
 			def json = response.content
-			icpResources.requestsMemory = "${json.memRequests}"
-			icpResources.requestsCpu="${json.cpuRequests}"
-			icpResources.limitsMemory="${json.memLimits}"
-			icpResources.limitsCpu="${json.cpuLimits}"
-			icpResources.jvmArgs=json.jvmArgs
-			icpResources.numInstances="${json.replicas}"
+			cloudResources.requestsMemory = "${json.memRequests}"
+			cloudResources.requestsCpu="${json.cpuRequests}"
+			cloudResources.limitsMemory="${json.memLimits}"
+			cloudResources.limitsCpu="${json.cpuLimits}"
+			cloudResources.jvmArgs=json.jvmArgs
+			cloudResources.numInstances="${json.replicas}"
    
 		}else{
             printOpen("There are no default sizes for namespace:${namespace} type:${type} app:${app}", EchoLevel.INFO)
 			return null
 		}
 
-        printOpen("The application sizes are ${icpResources.getValue()}", EchoLevel.INFO)
+        printOpen("The application sizes are ${cloudResources.getValue()}", EchoLevel.INFO)
 		
 	}
-	return icpResources
+	return cloudResources
 
 }
 
 def call(String memory, String environment, boolean isArchProjectOrSkipMinimum, String applicationNameWithoutVersion, String domain) {
-	generateICPResources(memory,environment,isArchProjectOrSkipMinimum,applicationNameWithoutVersion,domain,null,null,null)
+	generateCloudResources(memory,environment,isArchProjectOrSkipMinimum,applicationNameWithoutVersion,domain,null,null,null)
 }
 
 def call(String memory, String environment, boolean isArchProjectOrSkipMinimum, String applicationNameWithoutVersion, String domain,String type, String major, String namespace) {
-	ICPAppResources icpResources=null
+	CloudAppResources cloudResources=null
 	if (environment=='EDEN') environment='DEV'
 	
 	if ( type!=null && env.CATMSV_SIZE!=null && "true".equals(env.CATMSV_SIZE) && major!=null && applicationNameWithoutVersion!=null) {
-		//ICPAppResourcesCatMsv icpResources=new ICPAppResourcesCatMsv()
-		icpResources=setICPResources(type,applicationNameWithoutVersion,major,environment,namespace)
-		//return icpResources		
+		//CloudAppResourcesCatMsv cloudResources=new CloudAppResourcesCatMsv()
+		cloudResources=setCloudResources(type,applicationNameWithoutVersion,major,environment,namespace)
+		//return cloudResources		
 	}
 	
 
-	if (icpResources==null) {
+	if (cloudResources==null) {
 
         printOpen("En el catalogo no tenemos la info... tenemos que recurrir al sistema antiguo mediante variables jenkins", EchoLevel.INFO)
-		icpResources=new ICPAppResources()
-		icpResources.environment=environment
-		icpResources.isArchProject=isArchProjectOrSkipMinimum
+		cloudResources=new CloudAppResources()
+		cloudResources.environment=environment
+		cloudResources.isArchProject=isArchProjectOrSkipMinimum
 
         printOpen("Vamos a comprobar el size del artifact ${applicationNameWithoutVersion.toLowerCase()} Entorno: ${environment} Memory: ${memory} ArchProject: ${isArchProjectOrSkipMinimum} domain: ${domain} los dominios de ARQ son: ${env.DEMO_DOMAIN_ARQ}", EchoLevel.DEBUG)
 		if(domain == null) {
@@ -129,46 +129,46 @@ def call(String memory, String environment, boolean isArchProjectOrSkipMinimum, 
 		
 		if ("NO_DOMAIN" != domain && env.DEMO_DOMAIN_ARQ!=null && env.DEMO_DOMAIN_ARQ.indexOf(domain) !=-1) {
 			
-			icpResources.replicasSize="S"
-			icpResources.memSize="S"
-			icpResources.cpuSize="S"
+			cloudResources.replicasSize="S"
+			cloudResources.memSize="S"
+			cloudResources.cpuSize="S"
 			
 		} else {
-			if (isArchProjectOrSkipMinimum==false && env.ICP_ALL_APPS_MINIMUM!=null && env.ICP_ALL_APPS_MINIMUM.contains("true")) icpResources.allAppsMinimum=true
-			else if (env.ICP_REPLICA_SIZE_S!=null && env.ICP_REPLICA_SIZE_S.contains(applicationNameWithoutVersion.toLowerCase())) icpResources.replicasSize="S"
-			else if (env.ICP_REPLICA_SIZE_L!=null && env.ICP_REPLICA_SIZE_L.contains(applicationNameWithoutVersion.toLowerCase())) icpResources.replicasSize="L"
-			else if (env.ICP_REPLICA_SIZE_XL!=null && env.ICP_REPLICA_SIZE_XL.contains(applicationNameWithoutVersion.toLowerCase())) icpResources.replicasSize="XL"
-			else if (env.ICP_REPLICA_SIZE_XXL!=null && env.ICP_REPLICA_SIZE_XXL.contains(applicationNameWithoutVersion.toLowerCase())) icpResources.replicasSize="XXL"
-			else if (env.ICP_REPLICA_SIZE_XXXL!=null && env.ICP_REPLICA_SIZE_XXXL.contains(applicationNameWithoutVersion.toLowerCase())) icpResources.replicasSize="XXXL"
+			if (isArchProjectOrSkipMinimum==false && env.Cloud_ALL_APPS_MINIMUM!=null && env.Cloud_ALL_APPS_MINIMUM.contains("true")) cloudResources.allAppsMinimum=true
+			else if (env.Cloud_REPLICA_SIZE_S!=null && env.Cloud_REPLICA_SIZE_S.contains(applicationNameWithoutVersion.toLowerCase())) cloudResources.replicasSize="S"
+			else if (env.Cloud_REPLICA_SIZE_L!=null && env.Cloud_REPLICA_SIZE_L.contains(applicationNameWithoutVersion.toLowerCase())) cloudResources.replicasSize="L"
+			else if (env.Cloud_REPLICA_SIZE_XL!=null && env.Cloud_REPLICA_SIZE_XL.contains(applicationNameWithoutVersion.toLowerCase())) cloudResources.replicasSize="XL"
+			else if (env.Cloud_REPLICA_SIZE_XXL!=null && env.Cloud_REPLICA_SIZE_XXL.contains(applicationNameWithoutVersion.toLowerCase())) cloudResources.replicasSize="XXL"
+			else if (env.Cloud_REPLICA_SIZE_XXXL!=null && env.Cloud_REPLICA_SIZE_XXXL.contains(applicationNameWithoutVersion.toLowerCase())) cloudResources.replicasSize="XXXL"
 		
-			if (env.ICP_MEM_SIZE_S!=null && env.ICP_MEM_SIZE_S.contains(applicationNameWithoutVersion.toLowerCase())) icpResources.memSize="S"
-			else if (env.ICP_MEM_SIZE_L!=null && env.ICP_MEM_SIZE_L.contains(applicationNameWithoutVersion.toLowerCase())) icpResources.memSize="L"
-			else if (env.ICP_MEM_SIZE_XL!=null && env.ICP_MEM_SIZE_XL.contains(applicationNameWithoutVersion.toLowerCase())) icpResources.memSize="XL"
-			else if (env.ICP_MEM_SIZE_XXL!=null && env.ICP_MEM_SIZE_XXL.contains(applicationNameWithoutVersion.toLowerCase())) icpResources.memSize="XXL"
-			else if (env.ICP_MEM_SIZE_XXXL!=null && env.ICP_MEM_SIZE_XXXL.contains(applicationNameWithoutVersion.toLowerCase())) icpResources.memSize="XXXL"
+			if (env.Cloud_MEM_SIZE_S!=null && env.Cloud_MEM_SIZE_S.contains(applicationNameWithoutVersion.toLowerCase())) cloudResources.memSize="S"
+			else if (env.Cloud_MEM_SIZE_L!=null && env.Cloud_MEM_SIZE_L.contains(applicationNameWithoutVersion.toLowerCase())) cloudResources.memSize="L"
+			else if (env.Cloud_MEM_SIZE_XL!=null && env.Cloud_MEM_SIZE_XL.contains(applicationNameWithoutVersion.toLowerCase())) cloudResources.memSize="XL"
+			else if (env.Cloud_MEM_SIZE_XXL!=null && env.Cloud_MEM_SIZE_XXL.contains(applicationNameWithoutVersion.toLowerCase())) cloudResources.memSize="XXL"
+			else if (env.Cloud_MEM_SIZE_XXXL!=null && env.Cloud_MEM_SIZE_XXXL.contains(applicationNameWithoutVersion.toLowerCase())) cloudResources.memSize="XXXL"
 			
-			if (env.ICP_CPU_SIZE_S!=null && env.ICP_CPU_SIZE_S.contains(applicationNameWithoutVersion.toLowerCase())) icpResources.cpuSize="S"
-			else if (env.ICP_CPU_SIZE_L!=null && env.ICP_CPU_SIZE_L.contains(applicationNameWithoutVersion.toLowerCase())) icpResources.cpuSize="L"
-			else if (env.ICP_CPU_SIZE_XL!=null && env.ICP_CPU_SIZE_XL.contains(applicationNameWithoutVersion.toLowerCase())) icpResources.cpuSize="XL"
-			else if (env.ICP_CPU_SIZE_XXL!=null && env.ICP_CPU_SIZE_XXL.contains(applicationNameWithoutVersion.toLowerCase())) icpResources.cpuSize="XXL"
-			else if (env.ICP_CPU_SIZE_XXXL!=null && env.ICP_CPU_SIZE_XXXL.contains(applicationNameWithoutVersion.toLowerCase())) icpResources.cpuSize="XXXL"
+			if (env.Cloud_CPU_SIZE_S!=null && env.Cloud_CPU_SIZE_S.contains(applicationNameWithoutVersion.toLowerCase())) cloudResources.cpuSize="S"
+			else if (env.Cloud_CPU_SIZE_L!=null && env.Cloud_CPU_SIZE_L.contains(applicationNameWithoutVersion.toLowerCase())) cloudResources.cpuSize="L"
+			else if (env.Cloud_CPU_SIZE_XL!=null && env.Cloud_CPU_SIZE_XL.contains(applicationNameWithoutVersion.toLowerCase())) cloudResources.cpuSize="XL"
+			else if (env.Cloud_CPU_SIZE_XXL!=null && env.Cloud_CPU_SIZE_XXL.contains(applicationNameWithoutVersion.toLowerCase())) cloudResources.cpuSize="XXL"
+			else if (env.Cloud_CPU_SIZE_XXXL!=null && env.Cloud_CPU_SIZE_XXXL.contains(applicationNameWithoutVersion.toLowerCase())) cloudResources.cpuSize="XXXL"
 		}
 		
 	    /*Esto es obsoleto... esto viene imagino de cuando nos parametrizaban los tamaños en los ficheros
 		if (memory==null || memory=="") memory="768"		
-		icpResources.limitsMemory=memory+"Mi"*/
+		cloudResources.limitsMemory=memory+"Mi"*/
 
-        printOpen("Resources para artifact ${applicationNameWithoutVersion.toLowerCase()} replicasSize: ${icpResources.replicasSize} memSize: ${icpResources.memSize} cpuSize: ${icpResources.cpuSize}", EchoLevel.INFO)
-        printOpen("${icpResources.toString()}", EchoLevel.INFO)
-		return icpResources
+        printOpen("Resources para artifact ${applicationNameWithoutVersion.toLowerCase()} replicasSize: ${cloudResources.replicasSize} memSize: ${cloudResources.memSize} cpuSize: ${cloudResources.cpuSize}", EchoLevel.INFO)
+        printOpen("${cloudResources.toString()}", EchoLevel.INFO)
+		return cloudResources
 				
 	}else {
-		icpResources.environment=environment		
-		icpResources.isArchProject=isArchProjectOrSkipMinimum
+		cloudResources.environment=environment		
+		cloudResources.isArchProject=isArchProjectOrSkipMinimum
 		/*
 		if (memory==null || memory=="") memory="768"
-		icpResources.limitsMemory=memory+"Mi"*/
-		return icpResources
+		cloudResources.limitsMemory=memory+"Mi"*/
+		return cloudResources
 	}	
 
 }

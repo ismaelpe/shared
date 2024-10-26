@@ -8,7 +8,7 @@ import com.project.alm.GlobalVars
 @Field boolean successPipeline
 @Field String bmxEnv
 
-@Field String icpEnv
+@Field String cloudEnv
 @Field String username
 @Field String password
 @Field String uri
@@ -29,7 +29,7 @@ def call(Map pipelineParameters) {
     successPipeline = true
 	bmxEnv = params.environmentParam
 
-	icpEnv = params.environmentParam
+	cloudEnv = params.environmentParam
 	username = params.usernameParam
 	password = params.passwordParam
 	uri = params.uriParam
@@ -39,7 +39,7 @@ def call(Map pipelineParameters) {
 	tipoVersionApp = params.tipoVersionParam
     
     pipeline {		
-		agent {	node (absisJenkinsAgent(pipelineParams)) }
+		agent {	node (almJenkinsAgent(pipelineParams)) }
         options {
 			buildDiscarder(logRotator(numToKeepStr: '0'))
 			timestamps()
@@ -48,17 +48,17 @@ def call(Map pipelineParameters) {
         //Environment sobre el qual se ejecuta este tipo de job
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
-            ICP_CERT = credentials('icp-alm-pro-cert')
-            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
+            Cloud_CERT = credentials('cloud-alm-pro-cert')
+            Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
             proxyPort = "${GlobalVars.proxyCaixaPort}"
         }
 		stages {
-			stage("create-secret-icp") {
+			stage("create-secret-cloud") {
 				steps {					
-                     createSecretIcpStep()
+                     createSecretCloudStep()
 				}
 			}
 		}
@@ -81,11 +81,11 @@ def call(Map pipelineParameters) {
 \* ************************************************************************************************************************************** */
 
 /**
- * Stage 'createSecretIcpStep'
+ * Stage 'createSecretCloudStep'
  */
-def createSecretIcpStep() {			
+def createSecretCloudStep() {			
     printOpen("Create Secret1 ", EchoLevel.INFO)
-    if (namespace!="CLEAN") createSecretICP(icpEnv,secret, username,password,uri,namespace,tipoVersionApp,nameApp)
+    if (namespace!="CLEAN") createSecretCloud(cloudEnv,secret, username,password,uri,namespace,tipoVersionApp,nameApp)
 }
 
 /**

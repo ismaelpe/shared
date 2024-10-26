@@ -2,11 +2,11 @@ package com.project.alm
 
 import java.util.ArrayList
 
-class ICPk8sComponentServiceInfo{
+class Cloudk8sComponentServiceInfo{
 
 	String name
 	
-	ICPk8sComponentServiceInfo() {
+	Cloudk8sComponentServiceInfo() {
 	}
 	
 	String toString() {

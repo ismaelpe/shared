@@ -16,10 +16,10 @@ def call(Map pipelineParameters) {
     compile = params.compile.toString().toBoolean()
     execute = params.execute.toString().toBoolean()
 
-    morningCheckArtifactoryUrl = "https://artifacts.cloud.project.com/artifactory/arq-openservices-maven-releases/com/project/absis/arch/management/morning-check/1.0.0/morning-check-1.0.0.jar"
+    morningCheckArtifactoryUrl = "https://artifacts.cloud.project.com/artifactory/arq-openservices-maven-releases/com/project/alm/arch/management/morning-check/1.0.0/morning-check-1.0.0.jar"
 
     pipeline {		
-        agent {	node (absisJenkinsAgent('standard')) }
+        agent {	node (almJenkinsAgent('standard')) }
         options {
             buildDiscarder(logRotator(numToKeepStr: '7'))
             timestamps()

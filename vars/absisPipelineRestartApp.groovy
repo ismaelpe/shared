@@ -16,7 +16,7 @@ import java.util.Map
 @Field boolean successPipeline
 @Field boolean initGpl
 
-@Field String icpEnv
+@Field String cloudEnv
 @Field String namespace
 @Field String app
 @Field String garApp
@@ -37,7 +37,7 @@ def call(Map pipelineParameters) {
     successPipeline = false
     initGpl = false
 
-    icpEnv = params.environmentParam
+    cloudEnv = params.environmentParam
     namespace = params.namespaceParam
     app = params.appnameParam
     garApp = params.garappnameParam
@@ -48,7 +48,7 @@ def call(Map pipelineParameters) {
     valuesDeployed = null
     
     pipeline {		
-		agent {	node (absisJenkinsAgent(pipelineParams)) }
+		agent {	node (almJenkinsAgent(pipelineParams)) }
         options {
             buildDiscarder(logRotator(numToKeepStr: '10'))
             timestamps()
@@ -58,8 +58,8 @@ def call(Map pipelineParameters) {
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
             JNKMSV = credentials('JNKMSV-USER-TOKEN')
-            ICP_CERT = credentials('icp-alm-pro-cert')
-            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
+            Cloud_CERT = credentials('cloud-alm-pro-cert')
+            Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
             http_proxy = "$GlobalVars.proxyCaixa"
             https_proxy = "$GlobalVars.proxyCaixa"
             proxyHost = "$GlobalVars.proxyCaixaHost"
@@ -71,14 +71,14 @@ def call(Map pipelineParameters) {
                     initStep()
                 }
             }
-            stage("get-app-icp") {
+            stage("get-app-cloud") {
                 steps {
-                    getAppIcpStep()
+                    getAppCloudStep()
                 }
             }
-            stage("restart-app-icp") {
+            stage("restart-app-cloud") {
                 steps {
-                    restartAppIcpStep()
+                    restartAppCloudStep()
                 }
             }
         }
@@ -105,21 +105,21 @@ def call(Map pipelineParameters) {
  */
 def initStep() {
     pipelineData = new PipelineData(PipelineStructureType.RESTART_APP, "${env.BUILD_TAG}", env.JOB_NAME, null)
-    sendPipelineStartToGPL(pipelineData, garType, garApp, app-garApp, icpEnv.toUpperCase(),userId)
+    sendPipelineStartToGPL(pipelineData, garType, garApp, app-garApp, cloudEnv.toUpperCase(),userId)
     initGpl = true
 }
 
 /**
- * Stage 'getAppIcpStep'
+ * Stage 'getAppCloudStep'
  */
-def getAppIcpStep() {
+def getAppCloudStep() {
     sendStageStartToGPL(pipelineData, garType, garApp, "100")
-    currentBuild.displayName = "RestartingApp_${app} of ${icpEnv} and the namespace ${namespace} and the center ${center}"
+    currentBuild.displayName = "RestartingApp_${app} of ${cloudEnv} and the namespace ${namespace} and the center ${center}"
     try {
         printOpen("Get App ", EchoLevel.ALL)
         valuesDeployed = null
-        valuesDeployed=getLastAppInfoICP(icpEnv, app, namespace,center)
-        printAppICP(valuesDeployed)
+        valuesDeployed=getLastAppInfoCloud(cloudEnv, app, namespace,center)
+        printAppCloud(valuesDeployed)
         sendStageEndToGPL(pipelineData, garType, garApp, "100")
     } catch (Exception e) {
         sendStageEndToGPL(pipelineData, garType, garApp, "100", Strings.toHtml(e.getMessage()), null, "error")
@@ -128,17 +128,17 @@ def getAppIcpStep() {
 }
 
 /**
- * Stage 'restartAppIcpStep'
+ * Stage 'restartAppCloudStep'
  */
-def restartAppIcpStep() {
+def restartAppCloudStep() {
     sendStageStartToGPL(pipelineData, garType, garApp, "200")
     try {
         printOpen("Restart App ", EchoLevel.ALL)
-        restartApp(valuesDeployed,app,center,namespace,icpEnv)
-        sendStageEndToGPL(pipelineData, garType, garApp, "200", null, icpEnv )
+        restartApp(valuesDeployed,app,center,namespace,cloudEnv)
+        sendStageEndToGPL(pipelineData, garType, garApp, "200", null, cloudEnv )
 
     } catch (Exception e) {
-        sendStageEndToGPL(pipelineData, garType, garApp, "200", Strings.toHtml(e.getMessage()), icpEnv, "error")
+        sendStageEndToGPL(pipelineData, garType, garApp, "200", Strings.toHtml(e.getMessage()), cloudEnv, "error")
         throw e
     }
 }

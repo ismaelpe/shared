@@ -58,17 +58,17 @@ def call(PomXmlStructure pomXml, PipelineData pipeline) {
  */
 def resolveColorForNewService(PomXmlStructure pomXml,PipelineData pipeline) {
 
-	String envICP = pipeline.bmxStructure.environment
+	String envCloud = pipeline.bmxStructure.environment
 	String componentName = MavenUtils.sanitizeArtifactName(pomXml.artifactName, pipeline.garArtifactType).toUpperCase() + pomXml.getArtifactMajorVersion()
 	String namespace = pomXml.isArchProject() ? "ARCH" : "APP"
 	String center = "ALL"
 	
-	Map valuesDeployed=getLastAppInfoICP(envICP,componentName, namespace,center)
-	printAppICP(valuesDeployed)
+	Map valuesDeployed=getLastAppInfoCloud(envCloud,componentName, namespace,center)
+	printAppCloud(valuesDeployed)
 	String color = null
 	try {
 		//el new es la ruta beta
-		color = valuesDeployed["absis"]["services"]["envQualifier"]["new"]["targetColour"]
+		color = valuesDeployed["alm"]["services"]["envQualifier"]["new"]["targetColour"]
 		
 	}catch(Exception e) {
 		throw new RuntimeException("cannot resolve color",e)
@@ -166,8 +166,8 @@ private retrieveRefreshReport(String configServerEnvironmentParam, String dataCe
 
     try {
 
-        //el /actuator/absis-log-bus-operations nos dice si las llamada asincrona de refresh fue recibida por las instancias, estas devuelven un ACK
-        def response = 	sendRequestToConfigServer('GET',"/actuator/absis-log-bus-operations", configServerEnvironmentParam, dataCenterParam)
+        //el /actuator/alm-log-bus-operations nos dice si las llamada asincrona de refresh fue recibida por las instancias, estas devuelven un ACK
+        def response = 	sendRequestToConfigServer('GET',"/actuator/alm-log-bus-operations", configServerEnvironmentParam, dataCenterParam)
         def json = new groovy.json.JsonSlurper().parseText(response.content)
 		if(json[0]) {
 			responsesSize = json[0].responses.size()
@@ -176,14 +176,14 @@ private retrieveRefreshReport(String configServerEnvironmentParam, String dataCe
 
     } catch (Exception e) {
 
-        throw new Exception("Refresh Bus call has failed! (config-server /actuator/absis-log-bus-operations)", e)
+        throw new Exception("Refresh Bus call has failed! (config-server /actuator/alm-log-bus-operations)", e)
 
     }
 
     if (responsesSize == 0) {
 
         printOpen('WARNING cero respuestas en ultimo tracking de respuestas ACKs contestadas por la ultima llamada asincrona de refresh', EchoLevel.DEBUG)
-        printOpen("Please check the last call to <config_server>/actuator/absis-log-bus-operations in your browser in order to track the last refresh-bus call", EchoLevel.DEBUG)
+        printOpen("Please check the last call to <config_server>/actuator/alm-log-bus-operations in your browser in order to track the last refresh-bus call", EchoLevel.DEBUG)
 
     }
 

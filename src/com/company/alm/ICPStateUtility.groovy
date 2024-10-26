@@ -5,10 +5,10 @@ import com.project.alm.BmxUtilities
 import com.project.alm.BmxStructure
 import com.project.alm.GlobalVars
 import com.project.alm.PomXmlStructure
-import com.project.alm.ICPWorkflowStates
-import com.project.alm.ICPAppResources
+import com.project.alm.CloudWorkflowStates
+import com.project.alm.CloudAppResources
 import com.project.alm.PipelineData
-import com.project.alm.ICPDeployStructure
+import com.project.alm.CloudDeployStructure
 import com.project.alm.BranchType
 import com.project.alm.BranchStructure
 import com.project.alm.ArtifactSubType
@@ -17,11 +17,11 @@ import com.project.alm.Utilities
 import java.util.Random
 import org.apache.commons.lang.RandomStringUtils
 
-class ICPStateUtility {
+class CloudStateUtility {
 
     /**
      * Generate
-     absis:
+     alm:
      app:
      instance: demoConnectA22
      name: demoConnectA2
@@ -68,11 +68,11 @@ class ICPStateUtility {
      */
     String pathFeature=""
     String versionImage=""
-    ICPAppResources icpResources
+    CloudAppResources cloudResources
     PipelineData pipelineData
     PomXmlStructure pomXml
     String buildId
-    ICPDeployStructure icpDeployStructure
+    CloudDeployStructure cloudDeployStructure
 
     String suffixedComponentName
 
@@ -92,37 +92,37 @@ class ICPStateUtility {
 
     String environment=""
 
-    String nameComponentInICP
+    String nameComponentInCloud
     String aplicacion
     String deployId
     String additionalRoute=null
     boolean sampleAppFlag=false
     String microType=null
 
-    ICPWorkflowStates icpAppState
+    CloudWorkflowStates cloudAppState
 
     def scriptContext
 
-    ICPStateUtility(PipelineData pipelineData,PomXmlStructure pomXml, String aplicacion, String majorMicro) {
+    CloudStateUtility(PipelineData pipelineData,PomXmlStructure pomXml, String aplicacion, String majorMicro) {
         this.pipelineData=pipelineData
         this.pomXml=pomXml
         this.aplicacion = aplicacion
-        this.nameComponentInICP = aplicacion+majorMicro
+        this.nameComponentInCloud = aplicacion+majorMicro
 
         if (pipelineData.branchStructure.branchType == BranchType.FEATURE) {
-            this.nameComponentInICP=this.nameComponentInICP + pipelineData.branchStructure.featureNumber
+            this.nameComponentInCloud=this.nameComponentInCloud + pipelineData.branchStructure.featureNumber
             this.pathFeature=""
         }
         if (pomXml.artifactSubType!=ArtifactSubType.MICRO_APP && pomXml.artifactSubType!=ArtifactSubType.MICRO_ARCH) {
             //Es una sample app
-            this.nameComponentInICP=this.nameComponentInICP+"S"
+            this.nameComponentInCloud=this.nameComponentInCloud+"S"
             this.sampleAppFlag = true
         }
 
         this.environment=pipelineData.bmxStructure.environment.toUpperCase()
     }
 
-    ICPStateUtility(PipelineData pipelineData,PomXmlStructure pomXml,String newImage, ICPk8sActualStatusInfo actualStatusInfo, ICPWorkflowStates icpAppState, String aplicacion, String majorMicro) {
+    CloudStateUtility(PipelineData pipelineData,PomXmlStructure pomXml,String newImage, Cloudk8sActualStatusInfo actualStatusInfo, CloudWorkflowStates cloudAppState, String aplicacion, String majorMicro) {
         this.pipelineData=pipelineData
         this.pomXml=pomXml
         this.newImage=newImage
@@ -135,22 +135,22 @@ class ICPStateUtility {
         this.currentReplicas = actualStatusInfo.replicas
 
         this.aplicacion = aplicacion
-        this.nameComponentInICP = aplicacion+majorMicro
+        this.nameComponentInCloud = aplicacion+majorMicro
 
         if (pipelineData.branchStructure.branchType == BranchType.FEATURE) {
-            this.nameComponentInICP=this.nameComponentInICP + pipelineData.branchStructure.featureNumber
+            this.nameComponentInCloud=this.nameComponentInCloud + pipelineData.branchStructure.featureNumber
             this.pathFeature=""
         }
         if (pomXml.artifactSubType != ArtifactSubType.MICRO_APP && pomXml.artifactSubType != ArtifactSubType.MICRO_ARCH) {
             //Es una sample app
-            this.nameComponentInICP = this.nameComponentInICP+"S"
+            this.nameComponentInCloud = this.nameComponentInCloud+"S"
         }
 
-        this.icpAppState=icpAppState
+        this.cloudAppState=cloudAppState
         this.environment=pipelineData.bmxStructure.environment.toUpperCase()
     }
 
-    ICPStateUtility(PipelineData pipelineData,PomXmlStructure pomXml,String newImage, String currentImage, String currentColour, String currentVersion, String currentReadinessProbePath, String currentLivenessProbePath, ICPWorkflowStates icpAppState, String aplicacion, String majorMicro) {
+    CloudStateUtility(PipelineData pipelineData,PomXmlStructure pomXml,String newImage, String currentImage, String currentColour, String currentVersion, String currentReadinessProbePath, String currentLivenessProbePath, CloudWorkflowStates cloudAppState, String aplicacion, String majorMicro) {
         this.pipelineData=pipelineData
         this.pomXml=pomXml
         this.newImage=newImage
@@ -161,28 +161,28 @@ class ICPStateUtility {
         this.currentLivenessProbePath = currentLivenessProbePath
 
         this.aplicacion = aplicacion
-        this.nameComponentInICP = aplicacion+majorMicro
+        this.nameComponentInCloud = aplicacion+majorMicro
 
         if (pipelineData.branchStructure.branchType == BranchType.FEATURE) {
-            this.nameComponentInICP=this.nameComponentInICP + pipelineData.branchStructure.featureNumber
+            this.nameComponentInCloud=this.nameComponentInCloud + pipelineData.branchStructure.featureNumber
             this.pathFeature=""
         }
         if (pomXml.artifactSubType!=ArtifactSubType.MICRO_APP && pomXml.artifactSubType!=ArtifactSubType.MICRO_ARCH) {
             //Es una sample app
-            this.nameComponentInICP=this.nameComponentInICP+"S"
+            this.nameComponentInCloud=this.nameComponentInCloud+"S"
         }
 
-        this.icpAppState=icpAppState
+        this.cloudAppState=cloudAppState
         this.environment=pipelineData.bmxStructure.environment.toUpperCase()
 
     }
 
-    ICPStateUtility(PipelineData pipelineData,PomXmlStructure pomXml,String newImage, String currentColour, String currentVersion, String currentReadinessProbePath, String currentLivenessProbePath, ICPWorkflowStates icpAppState) {
+    CloudStateUtility(PipelineData pipelineData,PomXmlStructure pomXml,String newImage, String currentColour, String currentVersion, String currentReadinessProbePath, String currentLivenessProbePath, CloudWorkflowStates cloudAppState) {
         this.pipelineData=pipelineData
         this.pomXml=pomXml
         this.newImage=newImage
         this.currentColour=currentColour
-        this.icpAppState=icpAppState
+        this.cloudAppState=cloudAppState
         this.currentVersion=currentVersion
         this.currentReadinessProbePath = currentReadinessProbePath
         this.currentLivenessProbePath = currentLivenessProbePath
@@ -190,15 +190,15 @@ class ICPStateUtility {
 
         aplicacion = MavenUtils.sanitizeArtifactName(pomXml.artifactName, pipelineData.garArtifactType).toLowerCase()
 
-        nameComponentInICP=aplicacion+pomXml.getArtifactMajorVersion()
+        nameComponentInCloud=aplicacion+pomXml.getArtifactMajorVersion()
 
         if (pipelineData.branchStructure.branchType == BranchType.FEATURE) {
-            nameComponentInICP=aplicacion + majorMicro + pipelineData.branchStructure.featureNumber
+            nameComponentInCloud=aplicacion + majorMicro + pipelineData.branchStructure.featureNumber
             this.pathFeature=""
         }
         if (pomXml.artifactSubType!=ArtifactSubType.MICRO_APP && pomXml.artifactSubType!=ArtifactSubType.MICRO_ARCH) {
             //Es una sample app
-            this.nameComponentInICP=this.nameComponentInICP+"S"
+            this.nameComponentInCloud=this.nameComponentInCloud+"S"
         }
     }
 
@@ -224,25 +224,25 @@ class ICPStateUtility {
         }
     }
 
-    ICPWorkflowStates getNextStateWorkflow() {
-        if (icpAppState==ICPWorkflowStates.NEW_DEPLOY) {
+    CloudWorkflowStates getNextStateWorkflow() {
+        if (cloudAppState==CloudWorkflowStates.NEW_DEPLOY) {
             if (currentColour==null) {
-                return ICPWorkflowStates.ADD_STABLE_ROUTE_TO_NEW_APP
+                return CloudWorkflowStates.ADD_STABLE_ROUTE_TO_NEW_APP
             }
-            else return ICPWorkflowStates.ELIMINATE_NEW_ROUTE_TO_CURRENT_APP
-        }else if (icpAppState==ICPWorkflowStates.ELIMINATE_NEW_ROUTE_TO_CURRENT_APP) {
-            return ICPWorkflowStates.ADD_STABLE_ROUTE_TO_NEW_APP
-        }else if (icpAppState==ICPWorkflowStates.ADD_STABLE_ROUTE_TO_NEW_APP) {
-            if (currentColour==null) return ICPWorkflowStates.ELIMINATE_CURRENT_APP
-            else return ICPWorkflowStates.ELIMINATE_STABLE_ROUTE_TO_CURRENT_APP
-        }else if (icpAppState==ICPWorkflowStates.ELIMINATE_STABLE_ROUTE_TO_CURRENT_APP) {
-            return ICPWorkflowStates.ELIMINATE_CURRENT_APP
-        }else return ICPWorkflowStates.END
+            else return CloudWorkflowStates.ELIMINATE_NEW_ROUTE_TO_CURRENT_APP
+        }else if (cloudAppState==CloudWorkflowStates.ELIMINATE_NEW_ROUTE_TO_CURRENT_APP) {
+            return CloudWorkflowStates.ADD_STABLE_ROUTE_TO_NEW_APP
+        }else if (cloudAppState==CloudWorkflowStates.ADD_STABLE_ROUTE_TO_NEW_APP) {
+            if (currentColour==null) return CloudWorkflowStates.ELIMINATE_CURRENT_APP
+            else return CloudWorkflowStates.ELIMINATE_STABLE_ROUTE_TO_CURRENT_APP
+        }else if (cloudAppState==CloudWorkflowStates.ELIMINATE_STABLE_ROUTE_TO_CURRENT_APP) {
+            return CloudWorkflowStates.ELIMINATE_CURRENT_APP
+        }else return CloudWorkflowStates.END
     }
 
     String getNumReplicas() {
         if (this.environment!=null && this.environment.equals("PRO")) {
-            return icpResources.getNumInstances(environment)
+            return cloudResources.getNumInstances(environment)
         }else {
             return "1"
         }
@@ -256,7 +256,7 @@ class ICPStateUtility {
         }
     }
     String getChartValues() {
-        String applicationName = nameComponentInICP;
+        String applicationName = nameComponentInCloud;
 
         if (pipelineData.branchStructure.branchType == BranchType.FEATURE) {
 			applicationName=applicationName.replace('-','')
@@ -264,14 +264,14 @@ class ICPStateUtility {
                 applicationName = applicationName.substring(0, GlobalVars.LIMIT_LENGTH_FOR_PODNAME_WITHOUT_K8_SUFFIX);
             }
         }
-        return "absis:\n"+
+        return "alm:\n"+
             "  app:\n"+
             "    loggingElkStack: alm0\n"+
             "    replicas: 1\n"+
             "    instance: "+applicationName+"\n"+
             "    name: "+aplicacion+"\n"+
             getValueOfMicroType()+
-            icpResources.getChartValues(this.environment)+
+            cloudResources.getChartValues(this.environment)+
             getChartValuesApps()+
             getChartValuesServices()
     }
@@ -322,7 +322,7 @@ class ICPStateUtility {
 
     String getChartValuesApps() {
         String newImagePlusVersion=newImage
-        //No tienee la version por alguna mejora en el api de icp
+        //No tienee la version por alguna mejora en el api de cloud
         if (!newImagePlusVersion.contains(":"))  newImagePlusVersion=newImagePlusVersion+":"+versionImage
         String forceDeploy = ""
 		String forceDeployRetro = ""
@@ -340,7 +340,7 @@ class ICPStateUtility {
         //Si es feature no nos interesa nada mas que el nuevo servicio
         if (pipelineData.branchStructure.branchType == BranchType.FEATURE) {
 
-            String featureAppName = nameComponentInICP.toLowerCase().replace('-','') + "-b";
+            String featureAppName = nameComponentInCloud.toLowerCase().replace('-','') + "-b";
 			
             if(featureAppName.length() > GlobalVars.LIMIT_LENGTH_FOR_PODNAME_WITHOUT_K8_SUFFIX) {
                 featureAppName = featureAppName.substring(0, GlobalVars.LIMIT_LENGTH_FOR_PODNAME_WITHOUT_K8_SUFFIX) + "-b";
@@ -358,13 +358,13 @@ class ICPStateUtility {
                 "        readinessProbePath: "+getNewReadinessProbePath(pomXml.archVersion)+"\n"+
                 "        livenessProbePath: "+getNewLivenessProbePath(pomXml.archVersion)+"\n"+
                 "        envVars:\n"+
-                "          SPRING_PROFILES_ACTIVE: "+icpDeployStructure.springProfilesActive+"\n"+
+                "          SPRING_PROFILES_ACTIVE: "+cloudDeployStructure.springProfilesActive+"\n"+
                 forceDeploy+
-                icpResources.getChartAppValues(this.environment)
+                cloudResources.getChartAppValues(this.environment)
         }else if (isSampleApp()) {
             //Es una sample app debe ser eliminada
 
-            String sampleAppName = nameComponentInICP.toLowerCase()+"-"+getNewColour().toLowerCase()+getLastDeployId();
+            String sampleAppName = nameComponentInCloud.toLowerCase()+"-"+getNewColour().toLowerCase()+getLastDeployId();
             if(sampleAppName.length() > GlobalVars.LIMIT_LENGTH_FOR_PODNAME_WITHOUT_K8_SUFFIX) {
                 sampleAppName = sampleAppName.substring(0, GlobalVars.LIMIT_LENGTH_FOR_PODNAME_WITHOUT_K8_SUFFIX);
             }
@@ -380,15 +380,15 @@ class ICPStateUtility {
                 "        readinessProbePath: "+getNewReadinessProbePath(pomXml.archVersion)+"\n"+
                 "        livenessProbePath: "+getNewLivenessProbePath(pomXml.archVersion)+"\n"+
                 "        envVars:\n"+
-                "          SPRING_PROFILES_ACTIVE: "+icpDeployStructure.springProfilesActive+"\n"+
+                "          SPRING_PROFILES_ACTIVE: "+cloudDeployStructure.springProfilesActive+"\n"+
                 forceDeploy+
-                icpResources.getChartAppValues(this.environment)
+                cloudResources.getChartAppValues(this.environment)
         }else {
-            if (icpAppState==ICPWorkflowStates.NEW_DEPLOY ||  icpAppState==ICPWorkflowStates.ADD_STABLE_ROUTE_TO_NEW_APP) {
+            if (cloudAppState==CloudWorkflowStates.NEW_DEPLOY ||  cloudAppState==CloudWorkflowStates.ADD_STABLE_ROUTE_TO_NEW_APP) {
                 if (currentColour==null) { //Primera Major
                     valuesApps=valuesApps+
                         "      stable:\n"+
-                        "        id: "+nameComponentInICP.toLowerCase()+"-"+getNewColour().toLowerCase()+getLastDeployId()+"\n"+
+                        "        id: "+nameComponentInCloud.toLowerCase()+"-"+getNewColour().toLowerCase()+getLastDeployId()+"\n"+
                         "        colour: "+getNewColour()+"\n"+
                         "        image: "+newImagePlusVersion+"\n"+
                         "        version: "+pomXml.artifactVersion+"\n"+
@@ -398,13 +398,13 @@ class ICPStateUtility {
                         "        readinessProbePath: "+getNewReadinessProbePath(pomXml.archVersion)+"\n"+
                         "        livenessProbePath: "+getNewLivenessProbePath(pomXml.archVersion)+"\n"+
                         "        envVars:\n"+
-                        "          SPRING_PROFILES_ACTIVE: "+icpDeployStructure.springProfilesActive+"\n"+
-                        getJvmConfigFromICPResource() +
-                        icpResources.getChartAppValues(this.environment)
+                        "          SPRING_PROFILES_ACTIVE: "+cloudDeployStructure.springProfilesActive+"\n"+
+                        getJvmConfigFromCloudResource() +
+                        cloudResources.getChartAppValues(this.environment)
                 }else {
                     valuesApps=valuesApps+
                         "      stable:\n"+
-                        "        id: "+nameComponentInICP.toLowerCase()+"-"+currentColour.toLowerCase()+"\n"+
+                        "        id: "+nameComponentInCloud.toLowerCase()+"-"+currentColour.toLowerCase()+"\n"+
                         "        colour: "+currentColour+"\n"+
                         "        image: "+currentImage+"\n"+
                         "        version: "+currentVersion+"\n"+
@@ -415,9 +415,9 @@ class ICPStateUtility {
                         (currentLivenessProbePath==null?"":"        livenessProbePath: "+currentLivenessProbePath+"\n")+
                         getEnvVarsYmlFormat(currentEnvVars)+
 						forceDeployRetro+
-                        icpResources.getChartAppValues(this.environment)+
+                        cloudResources.getChartAppValues(this.environment)+
                         "      new:\n"+
-                        "        id: "+nameComponentInICP.toLowerCase()+"-"+getNewColour().toLowerCase()+getLastDeployId()+"\n"+
+                        "        id: "+nameComponentInCloud.toLowerCase()+"-"+getNewColour().toLowerCase()+getLastDeployId()+"\n"+
                         "        colour: "+getNewColour()+"\n"+
                         "        image: "+newImagePlusVersion+"\n"+
                         "        version: "+pomXml.artifactVersion+"\n"+
@@ -427,15 +427,15 @@ class ICPStateUtility {
                         "        readinessProbePath: "+getNewReadinessProbePath(pomXml.archVersion)+"\n"+
                         "        livenessProbePath: "+getNewLivenessProbePath(pomXml.archVersion)+"\n"+
                         "        envVars:\n"+
-                        "          SPRING_PROFILES_ACTIVE: "+icpDeployStructure.springProfilesActive+"\n"+
-                        getJvmConfigFromICPResource() +
+                        "          SPRING_PROFILES_ACTIVE: "+cloudDeployStructure.springProfilesActive+"\n"+
+                        getJvmConfigFromCloudResource() +
                         forceDeploy+
-                        icpResources.getChartAppValues(this.environment)
+                        cloudResources.getChartAppValues(this.environment)
                 }
-            }else if (icpAppState==ICPWorkflowStates.ELIMINATE_NEW_ROUTE_TO_CURRENT_APP || icpAppState==ICPWorkflowStates.ELIMINATE_STABLE_ROUTE_TO_CURRENT_APP) {
+            }else if (cloudAppState==CloudWorkflowStates.ELIMINATE_NEW_ROUTE_TO_CURRENT_APP || cloudAppState==CloudWorkflowStates.ELIMINATE_STABLE_ROUTE_TO_CURRENT_APP) {
                 valuesApps=valuesApps+
                     "      stable:\n"+
-                    "        id: "+nameComponentInICP.toLowerCase()+"-"+currentColour.toLowerCase()+"\n"+
+                    "        id: "+nameComponentInCloud.toLowerCase()+"-"+currentColour.toLowerCase()+"\n"+
                     "        colour: "+currentColour+"\n"+
                     "        image: "+currentImage+"\n"+
                     "        version: "+currentVersion+"\n"+
@@ -446,9 +446,9 @@ class ICPStateUtility {
                     (currentLivenessProbePath==null?"":"        livenessProbePath: "+currentLivenessProbePath+"\n")+
                     getEnvVarsYmlFormat(currentEnvVars)+
 					forceDeployRetro+
-                    icpResources.getChartAppValues(this.environment)+
+                    cloudResources.getChartAppValues(this.environment)+
                     "      new:\n"+
-                    "        id: "+nameComponentInICP.toLowerCase()+"-"+getNewColour().toLowerCase()+getLastDeployId()+"\n"+
+                    "        id: "+nameComponentInCloud.toLowerCase()+"-"+getNewColour().toLowerCase()+getLastDeployId()+"\n"+
                     "        colour: "+getNewColour()+"\n"+
                     "        image: "+newImagePlusVersion+"\n"+
                     "        version: "+pomXml.artifactVersion+"\n"+
@@ -458,14 +458,14 @@ class ICPStateUtility {
                     "        readinessProbePath: "+getNewReadinessProbePath(pomXml.archVersion)+"\n"+
                     "        livenessProbePath: "+getNewLivenessProbePath(pomXml.archVersion)+"\n"+
                     "        envVars:\n"+
-                    "          SPRING_PROFILES_ACTIVE: "+icpDeployStructure.springProfilesActive+"\n"+
-                    getJvmConfigFromICPResource() +
+                    "          SPRING_PROFILES_ACTIVE: "+cloudDeployStructure.springProfilesActive+"\n"+
+                    getJvmConfigFromCloudResource() +
                     forceDeploy+
-                    icpResources.getChartAppValues(this.environment)
-            }else if (icpAppState==ICPWorkflowStates.ELIMINATE_CURRENT_APP) {
+                    cloudResources.getChartAppValues(this.environment)
+            }else if (cloudAppState==CloudWorkflowStates.ELIMINATE_CURRENT_APP) {
                 valuesApps=valuesApps+
                     "      stable:\n"+
-                    "        id: "+nameComponentInICP.toLowerCase()+"-"+getNewColour().toLowerCase()+getLastDeployId()+"\n"+
+                    "        id: "+nameComponentInCloud.toLowerCase()+"-"+getNewColour().toLowerCase()+getLastDeployId()+"\n"+
                     "        colour: "+getNewColour()+"\n"+
                     "        image: "+newImagePlusVersion+"\n"+
                     "        version: "+pomXml.artifactVersion+"\n"+
@@ -475,14 +475,14 @@ class ICPStateUtility {
                     "        readinessProbePath: "+getNewReadinessProbePath(pomXml.archVersion)+"\n"+
                     "        livenessProbePath: "+getNewLivenessProbePath(pomXml.archVersion)+"\n"+
                     "        envVars:\n"+
-                    "          SPRING_PROFILES_ACTIVE: "+icpDeployStructure.springProfilesActive+"\n"+
-                    getJvmConfigFromICPResource() +
-                    icpResources.getChartAppValues(this.environment)
+                    "          SPRING_PROFILES_ACTIVE: "+cloudDeployStructure.springProfilesActive+"\n"+
+                    getJvmConfigFromCloudResource() +
+                    cloudResources.getChartAppValues(this.environment)
 
                 if (currentColour!=null && !"".equals(currentColour) && !environment.equals("DEV")) {
                     valuesApps=valuesApps+
                         "      old:\n"+
-                        "        id: "+nameComponentInICP.toLowerCase()+"-"+currentColour.toLowerCase()+"\n"+
+                        "        id: "+nameComponentInCloud.toLowerCase()+"-"+currentColour.toLowerCase()+"\n"+
                         "        colour: "+currentColour+"\n"+
                         "        image: "+currentImage+"\n"+
                         "        version: "+currentVersion+"\n"+
@@ -492,16 +492,16 @@ class ICPStateUtility {
                         (currentReadinessProbePath==null?"":"        readinessProbePath: "+currentReadinessProbePath+"\n")+
                         (currentLivenessProbePath==null?"":"        livenessProbePath: "+currentLivenessProbePath+"\n")+
                         getEnvVarsYmlFormat(currentEnvVars)+
-                        icpResources.getChartAppValues(this.environment)
+                        cloudResources.getChartAppValues(this.environment)
                 }
             }
         }
         return valuesApps
     }
 
-    String getJvmConfigFromICPResource() {
-        if (icpResources != null) {
-            def jvmConfig = icpResources.jvmArgs
+    String getJvmConfigFromCloudResource() {
+        if (cloudResources != null) {
+            def jvmConfig = cloudResources.jvmArgs
             if (jvmConfig != null) {
                 return "          jvmConfig: ${jvmConfig}\n"
             } else {
@@ -567,7 +567,7 @@ class ICPStateUtility {
                 "        id: "+BmxUtilities.calculateArtifactId(pomXml,pipelineData.branchStructure,true).toLowerCase()+"\n"+
                 "        targetColour: B\n"
         }else {
-            if (icpAppState==ICPWorkflowStates.NEW_DEPLOY) {
+            if (cloudAppState==CloudWorkflowStates.NEW_DEPLOY) {
                 if (currentColour==null) { //Primera Major
                     valuesService=valuesService+
                         "      stable:\n"+
@@ -586,7 +586,7 @@ class ICPStateUtility {
                         "        id: "+suffixedComponentName.replace("<componentName>", BmxUtilities.calculateArtifactId(pomXml,pipelineData.branchStructure)).toLowerCase()+"\n"+
                         "        targetColour: "+currentColour+"\n"+addAditionalRoute(currentColour)
                 }
-            }else if (icpAppState==ICPWorkflowStates.ELIMINATE_NEW_ROUTE_TO_CURRENT_APP) {
+            }else if (cloudAppState==CloudWorkflowStates.ELIMINATE_NEW_ROUTE_TO_CURRENT_APP) {
                 valuesService=valuesService+
                     "      stable:\n"+
                     "        id: "+BmxUtilities.calculateArtifactId(pomXml,pipelineData.branchStructure).toLowerCase()+"\n"+
@@ -594,7 +594,7 @@ class ICPStateUtility {
                     "      new:\n"+
                     "        id: "+suffixedComponentName.replace("<componentName>", BmxUtilities.calculateArtifactId(pomXml,pipelineData.branchStructure)).toLowerCase()+"\n"+
                     "        targetColour: "+getNewColour()+"\n"+addAditionalRoute(currentColour)
-            }else if (icpAppState==ICPWorkflowStates.ADD_STABLE_ROUTE_TO_NEW_APP) {
+            }else if (cloudAppState==CloudWorkflowStates.ADD_STABLE_ROUTE_TO_NEW_APP) {
                 valuesService=valuesService+
                     "      stable:\n"+
                     "        id: "+BmxUtilities.calculateArtifactId(pomXml,pipelineData.branchStructure).toLowerCase()+"\n"+

@@ -4,16 +4,16 @@ import com.project.alm.GarAppType
 import com.project.alm.PipelineData
 import com.project.alm.PomXmlStructure
 
-def call(PomXmlStructure pomXml, PipelineData pipeline, String resultDeployICP, String deployICPPhases , Exception e) {
+def call(PomXmlStructure pomXml, PipelineData pipeline, String resultDeployCloud, String deployCloudPhases , Exception e) {
 	
 	String artifactApp = pomXml.getApp(GarAppType.valueOfType(pipeline.garArtifactType.name))
-	if (resultDeployICP=="OK") {
-		sendEmail(" Resultado ejecucion app ${artifactApp} - ${pipeline.getPipelineBuildName()}  OK ", env.ALM_SERVICES_EMAIL_ICP_DEPLOY_RESULT, "${artifactApp} rama ${pipeline.getPipelineBuildName()}", "OK en el paso ${deployICPPhases}")
+	if (resultDeployCloud=="OK") {
+		sendEmail(" Resultado ejecucion app ${artifactApp} - ${pipeline.getPipelineBuildName()}  OK ", env.ALM_SERVICES_EMAIL_Cloud_DEPLOY_RESULT, "${artifactApp} rama ${pipeline.getPipelineBuildName()}", "OK en el paso ${deployCloudPhases}")
 	}else {
-		sendEmail(" Resultado ejecucion app ${artifactApp} - ${pipeline.getPipelineBuildName()}  KO - ${deployICPPhases}", env.ALM_SERVICES_EMAIL_ICP_DEPLOY_RESULT, "${artifactApp} rama ${pipeline.getPipelineBuildName()}", "KO en el paso ${deployICPPhases}")
-		abortPipelineICP(pomXml, pipeline," Resultado ejecucion app ${artifactApp} - ${pipeline.getPipelineBuildName()}  KO - ${deployICPPhases}")
+		sendEmail(" Resultado ejecucion app ${artifactApp} - ${pipeline.getPipelineBuildName()}  KO - ${deployCloudPhases}", env.ALM_SERVICES_EMAIL_Cloud_DEPLOY_RESULT, "${artifactApp} rama ${pipeline.getPipelineBuildName()}", "KO en el paso ${deployCloudPhases}")
+		abortPipelineCloud(pomXml, pipeline," Resultado ejecucion app ${artifactApp} - ${pipeline.getPipelineBuildName()}  KO - ${deployCloudPhases}")
 	}
-	if (e!=null) printOpen("Error en el deploy a ICP, de momento nos comemos el error hasta que esto sea estable ${e}", EchoLevel.ERROR)
+	if (e!=null) printOpen("Error en el deploy a Cloud, de momento nos comemos el error hasta que esto sea estable ${e}", EchoLevel.ERROR)
 }
 
 
@@ -21,18 +21,18 @@ def call(PomXmlStructure pomXml, PipelineData pipeline, String message) {
 	
 	String artifactApp=pomXml.getApp(GarAppType.valueOfType(pipeline.garArtifactType.name) )
 	
-	printOpen("Evaluating aborting the execution the app ${artifactApp} versus ${env.ICP_ABORT_DEPLOY_PIPELINE} the  branch is ${pipeline.branchStructure.branchType} # ", EchoLevel.DEBUG)
+	printOpen("Evaluating aborting the execution the app ${artifactApp} versus ${env.Cloud_ABORT_DEPLOY_PIPELINE} the  branch is ${pipeline.branchStructure.branchType} # ", EchoLevel.DEBUG)
 	
 	boolean abortExecution=false
 	
 	
-	if (env.ICP_ABORT_DEPLOY_PIPELINE!=null) {
+	if (env.Cloud_ABORT_DEPLOY_PIPELINE!=null) {
 				
-		if (pipeline.branchStructure.branchType == BranchType.FEATURE && env.ICP_ABORT_DEPLOY_PIPELINE.contains('ALL_FEATURE')) {
+		if (pipeline.branchStructure.branchType == BranchType.FEATURE && env.Cloud_ABORT_DEPLOY_PIPELINE.contains('ALL_FEATURE')) {
 			abortExecution=true
-		}else if (pipeline.branchStructure.branchType == BranchType.MASTER && env.ICP_ABORT_DEPLOY_PIPELINE.contains('ALL_MASTER')) {
+		}else if (pipeline.branchStructure.branchType == BranchType.MASTER && env.Cloud_ABORT_DEPLOY_PIPELINE.contains('ALL_MASTER')) {
 			abortExecution=true
-		}else if ((pipeline.branchStructure.branchType == BranchType.HOTFIX || pipeline.branchStructure.branchType == BranchType.RELEASE) && env.ICP_ABORT_DEPLOY_PIPELINE.contains('ALL_RELEASE')) {
+		}else if ((pipeline.branchStructure.branchType == BranchType.HOTFIX || pipeline.branchStructure.branchType == BranchType.RELEASE) && env.Cloud_ABORT_DEPLOY_PIPELINE.contains('ALL_RELEASE')) {
 			abortExecution=true
 		}		
 		

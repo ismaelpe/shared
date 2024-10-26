@@ -34,7 +34,7 @@ class DeployStructure {
 
 
     public String getEnvVariables(String garAppType, String appName,String appMajorVersion, String domain, String subDomain, String company) {
-        String absisBlueGreen = getAbsisBlueGreen()
+        String almBlueGreen = getAlmBlueGreen()
 
         return "'\n    ALM_APP_ID: " + appName + "'" +
                 "'\n    ALM_APP_TYPE: " + garAppType + "'" +
@@ -45,20 +45,20 @@ class DeployStructure {
                 "'\n    ALM_APP_SUBDOMAIN: " + subDomain + "'" +
                 "'\n    ALM_APP_COMPANY: " + company + "'" +
                 "'\n    http.additionalNonProxyHosts: " + this.url_int + "," + this.url_ext + "," + GlobalVars.HTTP_ADDITIONAL_NON_PROXY_HOSTS + "'" +
-				"'\n    ALM_BLUE_GREEN: " + absisBlueGreen + "'" +
+				"'\n    ALM_BLUE_GREEN: " + almBlueGreen + "'" +
                 "'\n    SPRING_PROFILES_ACTIVE: " + springProfilesActive + "'"
 
     }
 	
 
 	
-	public String getAbsisBlueGreen() {
-		String absisBlueGreen = "G";
+	public String getAlmBlueGreen() {
+		String almBlueGreen = "G";
 		if (ancientVersion != null && !ancientVersion.notSupported) {
-			if (ancientVersion.isBlue) absisBlueGreen = "B"
-			else absisBlueGreen = "G"
+			if (ancientVersion.isBlue) almBlueGreen = "B"
+			else almBlueGreen = "G"
 		}
-		return absisBlueGreen;
+		return almBlueGreen;
 	}
 
     public String calculateSpringCloudActiveProfiles(boolean useHealthGroups) {

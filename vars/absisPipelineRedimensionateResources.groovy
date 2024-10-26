@@ -3,8 +3,8 @@ import com.project.alm.ArtifactSubType
 import com.project.alm.ArtifactType
 import com.project.alm.EchoLevel
 import com.project.alm.GlobalVars
-import com.project.alm.ICPAppResources
-import com.project.alm.ICPAppResourcesCatMsv
+import com.project.alm.CloudAppResources
+import com.project.alm.CloudAppResourcesCatMsv
 import com.project.alm.PipelineData
 import com.project.alm.PipelineStructureType
 import com.project.alm.Strings
@@ -16,7 +16,7 @@ import com.project.alm.Strings
 @Field boolean successPipeline = false
 @Field boolean initGpl = false
 
-@Field String icpEnv = "${environmentParam}"
+@Field String cloudEnv = "${environmentParam}"
 @Field String namespace = "${namespaceParam}"
 @Field String app  = "${appnameParam}"
 @Field String garApp  = "${garAppnameParam}"
@@ -43,7 +43,7 @@ def call(Map pipelineParameters) {
     successPipeline = false
     initGpl = false
 
-    icpEnv = params.environmentParam
+    cloudEnv = params.environmentParam
     namespace = params.namespaceParam
     app  = params.appnameParam
     garApp  = params.garAppnameParam
@@ -59,7 +59,7 @@ def call(Map pipelineParameters) {
     valuesDeployed = null
     
     pipeline {		
-		agent {	node (absisJenkinsAgent(pipelineParams)) }
+		agent {	node (almJenkinsAgent(pipelineParams)) }
         options {
             gitLabConnection('gitlab')
             buildDiscarder(logRotator(numToKeepStr: '10'))
@@ -70,8 +70,8 @@ def call(Map pipelineParameters) {
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
             JNKMSV = credentials('JNKMSV-USER-TOKEN')
-            ICP_CERT = credentials('icp-alm-pro-cert')
-            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
+            Cloud_CERT = credentials('cloud-alm-pro-cert')
+            Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
@@ -83,14 +83,14 @@ def call(Map pipelineParameters) {
                     initStep()
                 }
             }
-            stage("get-app-icp") {
+            stage("get-app-cloud") {
                 steps {
-                    getAppIcpStep()
+                    getAppCloudStep()
                 }
             }
-            stage("restart-app-icp") {
+            stage("restart-app-cloud") {
                 steps {
-                    restartAppIcpStep()
+                    restartAppCloudStep()
                 }
             }
         }
@@ -118,21 +118,21 @@ def call(Map pipelineParameters) {
 def initStep() {
     initGlobalVars(pipelineParams)
     pipelineData = new PipelineData(PipelineStructureType.START_STOP, "${env.BUILD_TAG}", env.JOB_NAME, null)
-    sendPipelineStartToGPL(pipelineData, garType, garApp, app-garApp, icpEnv.toUpperCase(),userId)
+    sendPipelineStartToGPL(pipelineData, garType, garApp, app-garApp, cloudEnv.toUpperCase(),userId)
     initGpl = true
 }
 
 /**
- * Stage 'getAppIcpStep'
+ * Stage 'getAppCloudStep'
  */
-def getAppIcpStep() {
+def getAppCloudStep() {
     sendStageStartToGPL(pipelineData, garType, garApp, "100")
-    currentBuild.displayName = "${app} of ${icpEnv} and the namespace ${namespace} and the center ${center}"
+    currentBuild.displayName = "${app} of ${cloudEnv} and the namespace ${namespace} and the center ${center}"
     try {
         printOpen("Get App ", EchoLevel.ALL)
         valuesDeployed = null
-        valuesDeployed = getLastAppInfoICP(icpEnv, app, namespace, center)
-        printAppICP(valuesDeployed)
+        valuesDeployed = getLastAppInfoCloud(cloudEnv, app, namespace, center)
+        printAppCloud(valuesDeployed)
         sendStageEndToGPL(pipelineData, garType, garApp, "100")
     } catch (Exception e) {
         sendStageEndToGPL(pipelineData, garType, garApp, "100", Strings.toHtml(e.getMessage()), null, "error")
@@ -141,12 +141,12 @@ def getAppIcpStep() {
 }
 
 /**
- * Stage 'restartAppIcpStep'
+ * Stage 'restartAppCloudStep'
  */
-def restartAppIcpStep() {
+def restartAppCloudStep() {
     sendStageStartToGPL(pipelineData, garType, garApp, "200")
 	
-	def icpNamespace=null
+	def cloudNamespace=null
 	boolean isArchProject=false
 	
 	try {
@@ -159,14 +159,14 @@ def restartAppIcpStep() {
         ]
 
 		if (namespace=="APP") {
-			icpNamespace=GlobalVars.ICP_APP_APPS
+			cloudNamespace=GlobalVars.Cloud_APP_APPS
 			isArchProject=false
 		}else {
-			icpNamespace=GlobalVars.ICP_APP_ARCH
+			cloudNamespace=GlobalVars.Cloud_APP_ARCH
 			isArchProject=true
 		}
         if (  (!"NO".equals(scaleCPUCores) ||  !"NO".equals(scaleMemory) || !"DEFAULT".equals(scaleNumInstances)) && (env.CATMSV_SIZE!=null && "true".equals(env.CATMSV_SIZE))) {
-            ICPAppResources icpResources = null
+            CloudAppResources cloudResources = null
             def sizeCPU="M"
             def sizeMEM="M"
             def sizeREP="M"
@@ -186,12 +186,12 @@ def restartAppIcpStep() {
                 sizeREP=scaleNumInstances
             }
 
-            def icpEnvResources=icpEnv
+            def cloudEnvResources=cloudEnv
             /**
                 * Vamos a usar los tamaños del catalogo de PRO para realizar el deploy sea cual sea el entorno
                 */
 
-                printOpen("El entorno del tamaño a usar es el del entorno ${icpEnv}", EchoLevel.ALL)
+                printOpen("El entorno del tamaño a usar es el del entorno ${cloudEnv}", EchoLevel.ALL)
 
 
             /**
@@ -199,21 +199,21 @@ def restartAppIcpStep() {
                 */
 
                 printOpen("No se debe usar los tamaños del catalogo", EchoLevel.ALL)
-                icpResources = getSizesFromCatalog(icpNamespace,garType,icpEnvResources,isArchProject,sizeMEM,sizeCPU,sizeREP)
+                cloudResources = getSizesFromCatalog(cloudNamespace,garType,cloudEnvResources,isArchProject,sizeMEM,sizeCPU,sizeREP)
 
             /**
                 * Tenemos que aplicar las restricciones de tamaño para poder ya que sino es PRO ciertos valores no se pueden permitir
                 */
-            //icpResources=restrictSizesFromCatalog(icpResources,icpEnv)
+            //cloudResources=restrictSizesFromCatalog(cloudResources,cloudEnv)
 
             if (!"NO".equals(scaleCPUCores)) {
-                scaleCPUCores=icpResources.cpuSize
+                scaleCPUCores=cloudResources.cpuSize
             }
             if (!"NO".equals(scaleMemory)) {
-                scaleMemory=icpResources.memSize
+                scaleMemory=cloudResources.memSize
             }
             if (!"DEFAULT".equals(scaleNumInstances)) {
-                scaleNumInstances=icpResources.replicasSize
+                scaleNumInstances=cloudResources.replicasSize
             }
 
             scalingMap = [
@@ -224,14 +224,14 @@ def restartAppIcpStep() {
             /**
                 * Aplicamos el escalado
                 */
-            printOpen("Se desea escalar, no hace falta consultar el catalogo ${scalingMap} ${icpResources}", EchoLevel.INFO)
-            redimensionApp(valuesDeployed,app,center,namespace,icpEnv,stableOrNew,garApp,jvmConfig,scalingMap,icpResources,garType)
+            printOpen("Se desea escalar, no hace falta consultar el catalogo ${scalingMap} ${cloudResources}", EchoLevel.INFO)
+            redimensionApp(valuesDeployed,app,center,namespace,cloudEnv,stableOrNew,garApp,jvmConfig,scalingMap,cloudResources,garType)
 			//Se tiene que clonar OCP
-			absisPipelineStageCloneToOcp(app-garApp+'.0.0',garApp+'-micro',garApp,icpNamespace,icpEnv,userId,garType,userId,'false','true','start')
+			almPipelineStageCloneToOcp(app-garApp+'.0.0',garApp+'-micro',garApp,cloudNamespace,cloudEnv,userId,garType,userId,'false','true','start')
         }
-        sendStageEndToGPL(pipelineData, garType, garApp, "200", null, icpEnv )
+        sendStageEndToGPL(pipelineData, garType, garApp, "200", null, cloudEnv )
     } catch (Exception e) {
-        sendStageEndToGPL(pipelineData, garType, garApp, "200", Strings.toHtml(e.getMessage()), icpEnv, "error")
+        sendStageEndToGPL(pipelineData, garType, garApp, "200", Strings.toHtml(e.getMessage()), cloudEnv, "error")
         throw e
     }
 }

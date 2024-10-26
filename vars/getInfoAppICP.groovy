@@ -12,7 +12,7 @@ def call(PomXmlStructure pomXmlStructure, PipelineData pipelineData, String endp
     // EN caso de que se trate de un rollback en TST de una SNAPSHOT no debería incluir "-dev".
     artifactRoute = pipelineData.bmxStructure.environment.toUpperCase().equals("TST") ? artifactRoute.replace("-dev", "") : artifactRoute
 
-	def url = "https://k8sgateway.${environment}.icp-1.absis.cloud.lacaixa.es$suffix/$artifactRoute/$endpoint"
+	def url = "https://k8sgateway.${environment}.cloud-1.alm.cloud.lacaixa.es$suffix/$artifactRoute/$endpoint"
 
     printOpen("Lanzando peticion contra $url", EchoLevel.INFO)
 

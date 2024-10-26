@@ -28,7 +28,7 @@ import com.project.alm.*
 @Field AppDeploymentState center2State
 @Field boolean initGpl
 @Field boolean successPipeline
-@Field boolean hasAncientICP
+@Field boolean hasAncientCloud
 
 /* ************************************************************************************************************************************** *\
  * Pipeline Definition                                                                                                                    *
@@ -69,13 +69,13 @@ def call(Map pipelineParameters) {
      */
     boolean initGpl = false
     boolean successPipeline = false
-	boolean hasAncientICP = false
+	boolean hasAncientCloud = false
     /*
      * Pasos a seguir:
      * */
     
     pipeline {      
-		agent {	node (absisJenkinsAgent(agentParam)) }
+		agent {	node (almJenkinsAgent(agentParam)) }
         options {
             buildDiscarder(logRotator(numToKeepStr: '30'))
 			timestamps()
@@ -84,8 +84,8 @@ def call(Map pipelineParameters) {
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
 			JNKMSV = credentials('JNKMSV-USER-TOKEN')
-            ICP_CERT = credentials('icp-alm-pro-cert')
-            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
+            Cloud_CERT = credentials('cloud-alm-pro-cert')
+            Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
@@ -164,7 +164,7 @@ def getGitRepoStep() {
     sendStageEndToGPL(pomXmlStructure, pipelineData, "100")
 
     //INIT AND DEPLOY
-    if (pipelineData.deployFlag) initICPDeploy(pomXmlStructure, pipelineData)
+    if (pipelineData.deployFlag) initCloudDeploy(pomXmlStructure, pipelineData)
     calculatePreviousInstalledVersionInEnvironment(pipelineData, pomXmlStructure)
 }
 

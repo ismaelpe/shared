@@ -101,14 +101,14 @@ def updateYamlFile(fileToUpdate, literalsMap) {
             rootMap = yaml.load(yamlString)
         } 
         
-        if (rootMap.containsKey("absis")) {
-            def absisMap = rootMap.get("absis")
-            if (absisMap.containsKey("litmid")) {
-                absisMap.remove("litmid")
+        if (rootMap.containsKey("alm")) {
+            def almMap = rootMap.get("alm")
+            if (almMap.containsKey("litmid")) {
+                almMap.remove("litmid")
             }
-            absisMap.put("litmid", literalsMap)
+            almMap.put("litmid", literalsMap)
         } else {
-            rootMap.put("absis", [litmid: literalsMap])
+            rootMap.put("alm", [litmid: literalsMap])
         }
 
         printOpen("Modification result: $rootMap", EchoLevel.DEBUG)

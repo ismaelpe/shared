@@ -12,9 +12,9 @@ def call(PomXmlStructure pomXml, PipelineData pipeline, def result) {
 	syntheticTestStructure.appName = pomXml.artifactName
 	
 	if (pomXml.isArchProject()) {
-		syntheticTestStructure.urlIcp = "https://k8sgateway.${pipeline.deployStructure.env.toLowerCase()}.icp-1.absis.cloud.lacaixa.es/arch-service/${pomXml.getBmxAppId()}"
+		syntheticTestStructure.urlCloud = "https://k8sgateway.${pipeline.deployStructure.env.toLowerCase()}.cloud-1.alm.cloud.lacaixa.es/arch-service/${pomXml.getBmxAppId()}"
 	}else {
-		syntheticTestStructure.urlIcp = "https://k8sgateway.${pipeline.deployStructure.env.toLowerCase()}.icp-1.absis.cloud.lacaixa.es/${pomXml.getBmxAppId()}"
+		syntheticTestStructure.urlCloud = "https://k8sgateway.${pipeline.deployStructure.env.toLowerCase()}.cloud-1.alm.cloud.lacaixa.es/${pomXml.getBmxAppId()}"
 	}
     if (pomXml.artifactSubType == ArtifactSubType.MICRO_APP){
         syntheticTestStructure.isArchMicro = true
@@ -40,8 +40,8 @@ def call(PomXmlStructure pomXml, PipelineData pipeline, def result) {
 def call(def appsList) {
 	//the goal in this 'for' is discard all endpoints that we cannot test : item.resultOK = false
 	for (SyntheticTestStructure item : appsList) {
-        printOpen("HTTP URL ${item.urlIcp}", EchoLevel.DEBUG)
-		def url = item.urlIcp + "/actuator/info"
+        printOpen("HTTP URL ${item.urlCloud}", EchoLevel.DEBUG)
+		def url = item.urlCloud + "/actuator/info"
 		def response = null
 
 		try {
@@ -88,7 +88,7 @@ def call(def appsList) {
 			loggerTest.append("**** EXECUTE INTEGRATION TEST FOR:\n")
 			loggerTest.append("- artifactId:${item.pomArtifactId}\n")
 			loggerTest.append("- version:${item.pomVersion}\n")
-			loggerTest.append("- enpoint:${item.urlIcp}\n")
+			loggerTest.append("- enpoint:${item.urlCloud}\n")
             printOpen(loggerTest.toString(), EchoLevel.DEBUG)
 
 
@@ -99,17 +99,17 @@ def call(def appsList) {
 				generateSyntheticTestPom(item)
 	
 				String pathToSyntheticTestPom = item.pathToSyntheticTestPom
-				String url = item.urlIcp
+				String url = item.urlCloud
 				String goal = "verify"
 
 				try {
 					configFileProvider([configFile(fileId: 'alm-maven-settings-with-singulares', variable: 'MAVEN_SETTINGS')]) {
-						//ICP
+						//Cloud
                         def cmd = ""
                         if (item.isArchMicro) {
-                            cmd = "mvn  -s $MAVEN_SETTINGS ${GlobalVars.GLOBAL_MVN_PARAMS} -f ${pathToSyntheticTestPom}  ${goal} -Dmicro-url=${item.urlIcp} -Dskip-it=false -Dskip-ut=true"
+                            cmd = "mvn  -s $MAVEN_SETTINGS ${GlobalVars.GLOBAL_MVN_PARAMS} -f ${pathToSyntheticTestPom}  ${goal} -Dmicro-url=${item.urlCloud} -Dskip-it=false -Dskip-ut=true"
                         } else {
-                            cmd = "mvn  -s $MAVEN_SETTINGS ${GlobalVars.GLOBAL_MVN_PARAMS} -f ${pathToSyntheticTestPom}  ${goal} -Dmicro-url=${item.urlIcp} -Dskip-it=false -Dskip-ut=true -P micro-app"
+                            cmd = "mvn  -s $MAVEN_SETTINGS ${GlobalVars.GLOBAL_MVN_PARAMS} -f ${pathToSyntheticTestPom}  ${goal} -Dmicro-url=${item.urlCloud} -Dskip-it=false -Dskip-ut=true -P micro-app"
                         }
 
                         runMavenCommand(cmd)

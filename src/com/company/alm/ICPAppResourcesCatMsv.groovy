@@ -3,7 +3,7 @@ package com.project.alm
 import com.project.alm.GarAppType
 
 
-class ICPAppResourcesCatMsv extends ICPAppResources{
+class CloudAppResourcesCatMsv extends CloudAppResources{
 
 	String requestsMemory = "300Mi"
 	String requestsCpu = "200m"

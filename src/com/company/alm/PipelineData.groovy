@@ -11,10 +11,10 @@ class PipelineData {
 
     PipelineBehavior pipelineBehavior = PipelineBehavior.LIKE_ALWAYS
     PipelineExecutionMode pipelineDataExecutionMode = new DefaultExecutionMode()
-    ICPVarPipelineCopyType manualCopyExecutionMode = ICPVarPipelineCopyType.DOES_NOT_APPLY
-    ICPVarPipelineCopyType manualCopyElectionOriginArtifact = ICPVarPipelineCopyType.DOES_NOT_APPLY
+    CloudVarPipelineCopyType manualCopyExecutionMode = CloudVarPipelineCopyType.DOES_NOT_APPLY
+    CloudVarPipelineCopyType manualCopyElectionOriginArtifact = CloudVarPipelineCopyType.DOES_NOT_APPLY
 
-    String icpPath
+    String cloudPath
     String componentId
 	boolean isNowDeployed = false
     boolean isRebaseOfARelease = false
@@ -38,7 +38,7 @@ class PipelineData {
     String gitProject
     BmxStructure bmxStructure
     DistributionModePRO distributionModePRO
-	ICPDeployStructure deployStructure
+	CloudDeployStructure deployStructure
 
     String pushUserEmail = ""
     String pushUser = ""

@@ -12,7 +12,7 @@ def call(def namespace, def type, def app, def major, def environment) {
 	if (env.SEND_TO_ALM_CATALOG!="" && env.SEND_TO_ALM_CATALOG=="true") {
 		try{
 
-			response = sendRequestToAbsis3MS(
+			response = sendRequestToAlm3MS(
                 'GET',
                 "${GlobalVars.URL_CATALOGO_ALM_PRO}/app/${type}/${app}/${major}/config?env=${environment}",
                 null,

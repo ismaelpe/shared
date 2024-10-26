@@ -1,33 +1,33 @@
 import com.project.alm.BmxStructure
 import com.project.alm.BmxUtilities
 import com.project.alm.DeployStructure
-import com.project.alm.AppDeploymentStateICP
+import com.project.alm.AppDeploymentStateCloud
 import com.project.alm.EchoLevel
 import com.project.alm.PipelineData
 import com.project.alm.PomXmlStructure
-import com.project.alm.ICPDeployStructure
+import com.project.alm.CloudDeployStructure
 import com.project.alm.BranchStructure
 import com.project.alm.GlobalVars
-import com.project.alm.ICPAppResources
-import com.project.alm.ICPApiResponse
+import com.project.alm.CloudAppResources
+import com.project.alm.CloudApiResponse
 
 import java.util.Map
 
 def thereIsAncient(lastDeployedValuesYamlC1) {
-	Map absisApp=lastDeployedValuesYamlC1["apps"]
-	Map absisAppEnvQualifier=absisApp["envQualifier"]
+	Map almApp=lastDeployedValuesYamlC1["apps"]
+	Map almAppEnvQualifier=almApp["envQualifier"]
 	
 	//Esto no es del todo correcto.
 	//si es primera version esto devuelve que tienen ancient i no es cierto
 	//Casos:
 	//1-Solo Stable sin New
 	//2-Stable y New
-	if (absisAppEnvQualifier["stable"]!=null && absisAppEnvQualifier["new"]!=null) return true
+	if (almAppEnvQualifier["stable"]!=null && almAppEnvQualifier["new"]!=null) return true
 	else return false
 }
 
 
-def call( PomXmlStructure pomXmlStructure, PipelineData pipelineData, String icpCenter, String env) {
+def call( PomXmlStructure pomXmlStructure, PipelineData pipelineData, String cloudCenter, String env) {
 	//Validaremos el ultimo deploy para saber si tenemos ancient
 	//Posibilidades
 	//Que tenga old...
@@ -35,12 +35,12 @@ def call( PomXmlStructure pomXmlStructure, PipelineData pipelineData, String icp
 
 	
 	String environment= env
-	ICPDeployStructure deployStructure=new ICPDeployStructure('cxb-ab3cor','cxb-ab3app',environment)
+	CloudDeployStructure deployStructure=new CloudDeployStructure('cxb-ab3cor','cxb-ab3app',environment)
 
     BranchStructure branchStructure = pipelineData.branchStructure
 	
 	if (pipelineData.componentId==null) {
-		pipelineData.componentId=generateArtifactInICP(pomXmlStructure,pipelineData,new ICPAppResources())
+		pipelineData.componentId=generateArtifactInCloud(pomXmlStructure,pipelineData,new CloudAppResources())
 		
 	}
 	
@@ -50,7 +50,7 @@ def call( PomXmlStructure pomXmlStructure, PipelineData pipelineData, String icp
 	
 	//Si el micro no existe esto nos devuelve el ultimo deploy 
 	//se tiene que validar previamente si el micro existe o no 
-	ICPApiResponse response=sendRequestToICPApi("v1/application/PCLD/${pomXmlStructure.getICPAppName()}/component/${pipelineData.componentId}/environment/${deployStructure.envICP.toUpperCase()}/availabilityzone/${icpCenter}/status",null,"GET","${pomXmlStructure.getICPAppName()}","",false,false, pipelineData, pomXmlStructure)
+	CloudApiResponse response=sendRequestToCloudApi("v1/application/PCLD/${pomXmlStructure.getCloudAppName()}/component/${pipelineData.componentId}/environment/${deployStructure.envCloud.toUpperCase()}/availabilityzone/${cloudCenter}/status",null,"GET","${pomXmlStructure.getCloudAppName()}","",false,false, pipelineData, pomXmlStructure)
 	//Revisamos el status del micro
 	Map lastDeployedValuesYamlC1=new HashMap()
 	def appName = "${pomXmlStructure.artifactMicro}-${pomXmlStructure.artifactMajorVersion}"
@@ -59,26 +59,26 @@ def call( PomXmlStructure pomXmlStructure, PipelineData pipelineData, String icp
 		
 		if (response.body==null) {
 			printOpen("El micro no existe posiblemente es un primer deploy", EchoLevel.ALL)
-			return new AppDeploymentStateICP(lastDeployedValuesYamlC1,appName)
+			return new AppDeploymentStateCloud(lastDeployedValuesYamlC1,appName)
 		}
 		
 		
-		if (icpCenter!="ALL") {
+		if (cloudCenter!="ALL") {
 			if (response.body.size()==1 && response.body.getAt(0).items!=null && response.body.getAt(0).items.size()!=0) {
 				printOpen("Existe una version anterior del micro ${response.body.getAt(0).items} ", EchoLevel.ALL)
-				lastDeployedValuesYamlC1=generateValuesYamlLastICPDeployment(pomXmlStructure,pipelineData,deployStructure.envICP,icpCenter)
+				lastDeployedValuesYamlC1=generateValuesYamlLastCloudDeployment(pomXmlStructure,pipelineData,deployStructure.envCloud,cloudCenter)
 			}else {
 				printOpen("El micro no existe posiblemente es un primer deploy", EchoLevel.ALL)
-				return new AppDeploymentStateICP(lastDeployedValuesYamlC1,appName)
+				return new AppDeploymentStateCloud(lastDeployedValuesYamlC1,appName)
 			}
 		}
-		if (icpCenter=="ALL") {
+		if (cloudCenter=="ALL") {
 			if (response.body.size()==2 && response.body.getAt(0).items!=null && response.body.getAt(0).items.size()!=0) {
 				printOpen("Existe una version anterior del micro ${response.body.getAt(0).items} ", EchoLevel.ALL)
-				lastDeployedValuesYamlC1=generateValuesYamlLastICPDeployment(pomXmlStructure,pipelineData,deployStructure.envICP,icpCenter)
+				lastDeployedValuesYamlC1=generateValuesYamlLastCloudDeployment(pomXmlStructure,pipelineData,deployStructure.envCloud,cloudCenter)
 			}else {
 				printOpen("El micro no existe posiblemente es un primer deploy", EchoLevel.ALL)
-				return new AppDeploymentStateICP(lastDeployedValuesYamlC1,appName)
+				return new AppDeploymentStateCloud(lastDeployedValuesYamlC1,appName)
 			}
 		}
 
@@ -88,19 +88,19 @@ def call( PomXmlStructure pomXmlStructure, PipelineData pipelineData, String icp
 	
 
 	
-	AppDeploymentStateICP appState = new AppDeploymentStateICP(lastDeployedValuesYamlC1,appName)
+	AppDeploymentStateCloud appState = new AppDeploymentStateCloud(lastDeployedValuesYamlC1,appName)
 	
 	
 	return appState
 }
 
-def call( PomXmlStructure pomXmlStructure, PipelineData pipelineData, String icpCenter) {
+def call( PomXmlStructure pomXmlStructure, PipelineData pipelineData, String cloudCenter) {
 
 	//Validaremos el ultimo deploy para saber si tenemos ancient
 	//Posibilidades
 	//Que tenga old... 
 	//O que tenga stable y new a la vez
-	return getMultipleDeploymentsStateFromICP(pomXmlStructure,pipelineData,icpCenter,pipelineData.bmxStructure.environment.toUpperCase())
+	return getMultipleDeploymentsStateFromCloud(pomXmlStructure,pipelineData,cloudCenter,pipelineData.bmxStructure.environment.toUpperCase())
 	
 
 }

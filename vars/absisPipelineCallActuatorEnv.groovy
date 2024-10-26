@@ -18,7 +18,7 @@ import java.util.HashMap
 @Field String targetAlmFolder
 @Field String loggerLevel
 @Field String agentParam
-@Field String icpEnv
+@Field String cloudEnv
 @Field String prettySystemResult
 
 //Pipeline para realizar consultar la configuración de un micro llamando al endpoint del actuator/env
@@ -45,12 +45,12 @@ def call(Map pipelineParameters) {
     loggerLevel = params.loggerLevel
     agentParam = params.agent
 
-    icpEnv = GlobalVars.PRO_ENVIRONMENT
+    cloudEnv = GlobalVars.PRO_ENVIRONMENT
 
     prettySystemResult = ""
 
     pipeline {
-        agent {    node(absisJenkinsAgent(pipelineParams)) }
+        agent {    node(almJenkinsAgent(pipelineParams)) }
         options {
             buildDiscarder(logRotator(numToKeepStr: '10'))
             timestamps()
@@ -59,8 +59,8 @@ def call(Map pipelineParameters) {
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
             JNKMSV = credentials('JNKMSV-USER-TOKEN')
-            ICP_CERT = credentials('icp-alm-pro-cert')
-            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
+            Cloud_CERT = credentials('cloud-alm-pro-cert')
+            Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
@@ -114,7 +114,7 @@ def getGitRepoStep() {
     pomXmlStructure = getGitRepo(pathToRepo, '', '', false, ArtifactType.valueOfType(artifactType), ArtifactSubType.valueOfSubType(artifactSubType), version, true)
     
     pipelineData = new PipelineData(PipelineStructureType.CALL_ACTUATOR_ENV, "${env.BUILD_TAG}", env.JOB_NAME, params)
-    pipelineData.initVoidActions(pathToRepo, originBranch, ArtifactSubType.valueOfSubType(artifactSubType), null, icpEnv)
+    pipelineData.initVoidActions(pathToRepo, originBranch, ArtifactSubType.valueOfSubType(artifactSubType), null, cloudEnv)
 	pipelineData.setDefaultAgent(agentParam)
 
     pipelineData.buildCode = pomXmlStructure.artifactVersion
@@ -151,9 +151,9 @@ def stageExecuteActuatorEnvStep() {
     String url = null
 
     if (isCenterOne) {
-        url = GlobalVars.K8S_CENTER_URL.replace("{environment}",icpEnv).replace("{datacenter}","1") + "/"
+        url = GlobalVars.K8S_CENTER_URL.replace("{environment}",cloudEnv).replace("{datacenter}","1") + "/"
     } else {
-        url = GlobalVars.K8S_URL.replace("{environment}",icpEnv) + "/" 
+        url = GlobalVars.K8S_URL.replace("{environment}",cloudEnv) + "/" 
     }
 
     String archPath = "arch-service/"
@@ -183,7 +183,7 @@ def stageExecuteActuatorEnvStep() {
         timeout(GlobalVars.DEFAULT_ALM_MS_REQUEST_RETRIES_TIMEOUT) {
             waitUntil(initialRecurrencePeriod: 15000) {
 
-                withCredentials([usernamePassword(credentialsId: "K8SGATEWAY_${icpEnv.toUpperCase()}", usernameVariable: 'K8SGATEWAY_USERNAME', passwordVariable: 'K8SGATEWAY_PASSWORD')]) {
+                withCredentials([usernamePassword(credentialsId: "K8SGATEWAY_${cloudEnv.toUpperCase()}", usernameVariable: 'K8SGATEWAY_USERNAME', passwordVariable: 'K8SGATEWAY_PASSWORD')]) {
                     
                     String microBasicCredentials = "${K8SGATEWAY_USERNAME}:${K8SGATEWAY_PASSWORD}"
                     String auth = microBasicCredentials.bytes.encodeBase64().toString()

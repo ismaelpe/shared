@@ -9,7 +9,7 @@ import java.util.List
 
 @Field boolean successPipeline
 
-@Field String icpEnv
+@Field String cloudEnv
 @Field String namespace
 @Field String app
 @Field Map valuesDeployed
@@ -25,13 +25,13 @@ def call(Map pipelineParameters) {
 
     successPipeline = true
 
-    icpEnv = params.environmentParam
+    cloudEnv = params.environmentParam
     namespace = params.namespaceParam
     app = params.appnameParam
     valuesDeployed = null
 
     pipeline {
-        agent {    node(absisJenkinsAgent(pipelineParams)) }
+        agent {    node(almJenkinsAgent(pipelineParams)) }
         options {
             buildDiscarder(logRotator(numToKeepStr: '10'))
             timestamps()
@@ -40,8 +40,8 @@ def call(Map pipelineParameters) {
         //Environment sobre el qual se ejecuta este tipo de job
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
-            ICP_CERT = credentials('icp-alm-pro-cert')
-            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
+            Cloud_CERT = credentials('cloud-alm-pro-cert')
+            Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
@@ -76,9 +76,9 @@ def call(Map pipelineParameters) {
  * Stage 'getEdenAppsStep'
  */
 def getEdenAppsStep() {
-    currentBuild.displayName = "Getting EDEN artifacts of ${app} of ${icpEnv} and the namespace ${namespace} "
+    currentBuild.displayName = "Getting EDEN artifacts of ${app} of ${cloudEnv} and the namespace ${namespace} "
     printOpen('Get App ', EchoLevel.INFO)
-    List edenApps = getEdenVersionsOfApp(icpEnv, app, namespace)
+    List edenApps = getEdenVersionsOfApp(cloudEnv, app, namespace)
     edenApps.each {
         printOpen("El artefacto es de: ${it}", EchoLevel.INFO)
     }

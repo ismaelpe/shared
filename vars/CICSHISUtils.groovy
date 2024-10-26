@@ -4,7 +4,7 @@ class CICSHISUtils implements Serializable {
 
     /*
     Ejemplo de un path de git
-    pathToDllFile = "proxy/426-coreabsisbpi/hisTxDemoAlm/txdemoalm/bin/txdemoalm.DLL"
+    pathToDllFile = "proxy/426-corealmbpi/hisTxDemoAlm/txdemoalm/bin/txdemoalm.DLL"
      */
 
     static String extensionSeparator = "."

@@ -9,13 +9,13 @@ import java.util.ArrayList
 import static org.yaml.snakeyaml.DumperOptions.FlowStyle.BLOCK
 
 
-class ICPDeployStructure extends DeployStructure{
+class CloudDeployStructure extends DeployStructure{
 	
 	String url_int
 	String url_ext
 	String url_cdp
 	String env=""
-	String envICP=""
+	String envCloud=""
 	String org
 	String space	
 	String console_Admin
@@ -55,7 +55,7 @@ class ICPDeployStructure extends DeployStructure{
 	String nonSystemRoute=""
 	boolean needsSpecialVerifyDepth=false
 	String verifyDepth="2"
-	String deploymentArea = "absis"
+	String deploymentArea = "alm"
 	
 	
 	boolean isDb2=false
@@ -104,12 +104,12 @@ class ICPDeployStructure extends DeployStructure{
 	public String getUrlSuffixTesting(String center = "ALL") {
 		//new-democonnecta2-micro-2.dev.ap.intranet.cloud.lacaixa.es
 		if (center=="ALL") {
-			return "."+envICP.toLowerCase()+".int.srv.project.com"
+			return "."+envCloud.toLowerCase()+".int.srv.project.com"
 		}else {
 			if (center=="AZ1") {
-				return "."+envICP.toLowerCase()+".icp-1.absis.cloud.lacaixa.es"
+				return "."+envCloud.toLowerCase()+".cloud-1.alm.cloud.lacaixa.es"
 			} else {
-				return "."+envICP.toLowerCase()+".icp-2.absis.cloud.lacaixa.es"
+				return "."+envCloud.toLowerCase()+".cloud-2.alm.cloud.lacaixa.es"
 			}
 		}
 	}
@@ -117,12 +117,12 @@ class ICPDeployStructure extends DeployStructure{
 	
 	public String getUrlPrefixApiGateway(String center = "ALL") {
 		if (center=="ALL") {
-			return "https://api-gateway-1." + envICP.toLowerCase() +".int.srv.project.com"
+			return "https://api-gateway-1." + envCloud.toLowerCase() +".int.srv.project.com"
 		}else {
 			if (center=="AZ1") {
-				return "https://api-gateway-1." + envICP.toLowerCase() +".icp-1.absis.cloud.lacaixa.es"
+				return "https://api-gateway-1." + envCloud.toLowerCase() +".cloud-1.alm.cloud.lacaixa.es"
 			} else {
-				return "https://api-gateway-1." + envICP.toLowerCase() +".icp-2.absis.cloud.lacaixa.es"
+				return "https://api-gateway-1." + envCloud.toLowerCase() +".cloud-2.alm.cloud.lacaixa.es"
 			}
 		}
 	}
@@ -138,22 +138,22 @@ class ICPDeployStructure extends DeployStructure{
 	}	
 	
 	
-	public ICPDeployStructure(String url_int,String url_ext,String environment) {
+	public CloudDeployStructure(String url_int,String url_ext,String environment) {
 		this.env=environment
 		
 		if (this.env.equalsIgnoreCase("eden")) {
-			 this.envICP="DEV"
+			 this.envCloud="DEV"
 		}else{
-			this.envICP=environment
+			this.envCloud=environment
 		}
-		this.url_int=url_int+'-'+this.envICP.toLowerCase()
-		this.url_ext=url_ext+'-'+this.envICP.toLowerCase()
+		this.url_int=url_int+'-'+this.envCloud.toLowerCase()
+		this.url_ext=url_ext+'-'+this.envCloud.toLowerCase()
 		
 		this.secrets=new ArrayList()
 		this.volumeSecrets=new ArrayList()
 	}
 		
-	public ICPDeployStructure(String url_int,String url_ext,String url_cdp,String environment,String org, String space, String console_Admin,String idCenter) {
+	public CloudDeployStructure(String url_int,String url_ext,String url_cdp,String environment,String org, String space, String console_Admin,String idCenter) {
 		this.url_int=url_int
 		this.url_ext=url_ext
 		this.url_cdp=url_cdp
@@ -218,7 +218,7 @@ class ICPDeployStructure extends DeployStructure{
 			   "      deploymentArea: "+deploymentArea+"\n"+
 			   maxSize +
 			   timeouts +
-			   "      absis:\n"+
+			   "      alm:\n"+
 			   "        enabled: true\n"+
 			   "      mtls:\n"+
 			   "        enabled: "+hasMtls+"\n"+
@@ -255,14 +255,14 @@ class ICPDeployStructure extends DeployStructure{
 			   "        value: true\n"+
 			   "      - name: SPRING_PROFILES_ACTIVE\n"+
 			   "        value: "+springProfilesActive+"\n"+
-			   "      - name: ALM_ICP_ENVIRONMENT\n"+
-			   "        value: "+this.envICP.toLowerCase()+"\n"+
+			   "      - name: ALM_Cloud_ENVIRONMENT\n"+
+			   "        value: "+this.envCloud.toLowerCase()+"\n"+
 			   "      - name: "+GlobalVars.CANARY_TYPE_PROPERTY+"\n"+
 			   "        value: "+this.cannaryType+"\n"
 			   
 		yamlLocal=yamlLocal+"    secrets:\n"
 		//Lo añadimos siempre
-		yamlLocal=yamlLocal+"      - name: absis-kafka-cloudbus\n"
+		yamlLocal=yamlLocal+"      - name: alm-kafka-cloudbus\n"
 	    if (secrets!=null && secrets.size()>0) {
 			String secretName=""
 			boolean isVolumeSecret=false
@@ -292,9 +292,9 @@ class ICPDeployStructure extends DeployStructure{
 		return yamlLocal
 	}
 
-    //FIXME: Remove this when icp and icp+env profiles are deprecated
+    //FIXME: Remove this when cloud and cloud+env profiles are deprecated
     public String calculateSpringCloudActiveProfiles(boolean useHealthGroups) {
-        String activeProfiles = "cloud,litmid,"+this.env+",icp,icp"+this.env
+        String activeProfiles = "cloud,litmid,"+this.env+",cloud,cloud"+this.env
 		activeProfiles += useHealthGroups ? ",healthgroups" : ""
         return activeProfiles.toLowerCase()
     }
@@ -323,7 +323,7 @@ class ICPDeployStructure extends DeployStructure{
 			if (resourcesApp.get('secrets')!=null) {
 				List secretsTmp=resourcesApp.get('secrets')
 				secretsTmp.each {
-					if (!"configserver".equals(it) && !"absis-kafka-cloudbus".equals(it)) {
+					if (!"configserver".equals(it) && !"alm-kafka-cloudbus".equals(it)) {
 						volumeSecrets.add(it)
 					}
 				}
@@ -348,7 +348,7 @@ class ICPDeployStructure extends DeployStructure{
 		if (application.get('services')!=null) {
 			List secretsTmp=application.get('services')
 			secretsTmp.each {  
-				if (!"configserver".equals(it) &&  !"absis-kafka-cloudbus".equals(it)) {
+				if (!"configserver".equals(it) &&  !"alm-kafka-cloudbus".equals(it)) {
 					secrets.add(it)
 				}
 			}

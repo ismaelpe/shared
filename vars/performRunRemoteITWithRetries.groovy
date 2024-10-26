@@ -44,7 +44,7 @@ def call(String mvnCommand) {
 
 private boolean shallWeStopTheExecutionOfITTest(MavenGoalExecutionFailureError error) {
 
-	if (MavenGoalExecutionFailureErrorConditionals.isAnICPSSLEventualErrorOnITTest(error)) {
+	if (MavenGoalExecutionFailureErrorConditionals.isAnCloudSSLEventualErrorOnITTest(error)) {
 
 		return false
 	} else if (MavenGoalExecutionFailureErrorConditionals.isAContractServerSSLEventualErrorOnOpenApiGeneration(error)) {

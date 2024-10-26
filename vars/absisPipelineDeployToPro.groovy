@@ -32,12 +32,12 @@ import com.project.alm.KpiAlmEventOperation
 
 @Field PomXmlStructure pomXmlStructure
 @Field PipelineData pipelineData
-@Field ICPStateUtility icpStateUtilitity
+@Field CloudStateUtility cloudStateUtilitity
 @Field AppDeploymentState center1State
 @Field AppDeploymentState center2State
 @Field boolean initGpl
 @Field boolean successPipeline
-@Field boolean hasAncientICP
+@Field boolean hasAncientCloud
 
 //Pipeline unico que construye todos los tipos de artefactos
 //Recibe los siguientes parametros
@@ -74,11 +74,11 @@ def call(Map pipelineParameters) {
 	almEvent = null
 	initCallStartMillis = new Date().getTime()
 
-    icpStateUtilitity = null
+    cloudStateUtilitity = null
 
     initGpl = false
     successPipeline = false
-	hasAncientICP = false
+	hasAncientCloud = false
 
     /**
      * 1. Recoger el artifact
@@ -87,7 +87,7 @@ def call(Map pipelineParameters) {
      * 3.5. Preparar Canario
      */
     pipeline {      
-		agent {	node (absisJenkinsAgent(agentParam)) }
+		agent {	node (almJenkinsAgent(agentParam)) }
         options {        
             buildDiscarder(logRotator(numToKeepStr: '30'))
 			timestamps()
@@ -96,8 +96,8 @@ def call(Map pipelineParameters) {
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
 			JNKMSV = credentials('JNKMSV-USER-TOKEN')
-            ICP_CERT = credentials('icp-alm-pro-cert')
-            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
+            Cloud_CERT = credentials('cloud-alm-pro-cert')
+            Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
@@ -113,12 +113,12 @@ def call(Map pipelineParameters) {
                     getGitRepoStep()
                 }
             }
-			stage('check-ICP-availiability'){
+			stage('check-Cloud-availiability'){
 				when {
 					expression { pipelineData.deployFlag && pomXmlStructure.isMicro() }
 				}
 				steps {
-                    checkICPAvailiabilityStep()
+                    checkCloudAvailiabilityStep()
 				}
 			}
             stage('error-translations') {
@@ -145,12 +145,12 @@ def call(Map pipelineParameters) {
                     copyConfigFilesStep()
                 }
             }
-            stage('deploy-to-cloud-icp') {
+            stage('deploy-to-cloud-cloud') {
                 when {
-                    expression { pipelineData.deployFlag == true && pipelineData.deployOnIcp }
+                    expression { pipelineData.deployFlag == true && pipelineData.deployOnCloud }
                 }
                 steps {
-                    deployToCloudICPStep()
+                    deployToCloudCloudStep()
                 }
             }
             stage('post-deploy') {
@@ -259,20 +259,20 @@ def getGitRepoStep() {
     sendStageEndToGPL(pomXmlStructure, pipelineData, "100")
 
     //INIT AND DEPLOY
-    if (pipelineData.deployFlag) initICPDeploy(pomXmlStructure, pipelineData)
+    if (pipelineData.deployFlag) initCloudDeploy(pomXmlStructure, pipelineData)
 }
 
 /**
- * Step checkICPAvailiabilityStep
+ * Step checkCloudAvailiabilityStep
  */
-def checkICPAvailiabilityStep(){
+def checkCloudAvailiabilityStep(){
     printOpen("The artifact ${pomXmlStructure.artifactName}  from group ${pomXmlStructure.groupId} the micro to deploy is ${pomXmlStructure.artifactMicro}", EchoLevel.INFO)
     sendStageStartToGPL(pomXmlStructure, pipelineData, "110")
     try {
-        checkICPAvailability(pomXmlStructure,pipelineData,"PRO","DEPLOY")
+        checkCloudAvailability(pomXmlStructure,pipelineData,"PRO","DEPLOY")
         sendStageEndToGPL(pomXmlStructure, pipelineData, "110")
     } catch (Exception e) {
-        printOpen("Error al comprobar la disponibilidad de ICP : ${e.getMessage()}", EchoLevel.ERROR)
+        printOpen("Error al comprobar la disponibilidad de Cloud : ${e.getMessage()}", EchoLevel.ERROR)
         sendStageEndToGPL(pomXmlStructure, pipelineData, "110", null, null, "error")
         throw e				
     }
@@ -335,33 +335,33 @@ def copyConfigFilesStep() {
 }
 
 /**
- * Step deployToCloudICPStep
+ * Step deployToCloudCloudStep
  */
-def deployToCloudICPStep() {
+def deployToCloudCloudStep() {
     String artifactApp = pomXmlStructure.getApp(GarAppType.valueOfType(pipelineData.garArtifactType.name))
     sendStageStartToGPL(pomXmlStructure, pipelineData, "400")
     try {
         kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.DEPLOY_STARTED, KpiLifeCycleStatus.OK, "BETA")
-        String icpArch = ""
-        if (pomXmlStructure.isArchProject()) icpArch = GlobalVars.ICP_APP_ARCH.toLowerCase()
-        else icpArch = GlobalVars.ICP_APP_APPS.toLowerCase()
+        String cloudArch = ""
+        if (pomXmlStructure.isArchProject()) cloudArch = GlobalVars.Cloud_APP_ARCH.toLowerCase()
+        else cloudArch = GlobalVars.Cloud_APP_APPS.toLowerCase()
 
         String aplicacion = MavenUtils.sanitizeArtifactName(pomXmlStructure.artifactName, pipelineData.garArtifactType)
-        def nameComponentInICP = aplicacion + pomXmlStructure.getArtifactMajorVersion()
+        def nameComponentInCloud = aplicacion + pomXmlStructure.getArtifactMajorVersion()
 
         //String newImage="pro-registry.pro.caas.project.com/containers/ab3cor/monitoring1:${version}"
-        String newImage = "${env.ICP_REGISTRY_URL}/${icpArch}/${nameComponentInICP.toLowerCase()}:${version}"
+        String newImage = "${env.Cloud_REGISTRY_URL}/${cloudArch}/${nameComponentInCloud.toLowerCase()}:${version}"
 
-        icpStateUtilitity = deployICP(pomXmlStructure, pipelineData, "NoTenemosID", newImage)
+        cloudStateUtilitity = deployCloud(pomXmlStructure, pipelineData, "NoTenemosID", newImage)
             
-        sendEmail(" Resultado ejecucion app ${artifactApp} - ${pipelineData.getPipelineBuildName()}  OK ", env.ALM_SERVICES_EMAIL_ICP_DEPLOY_RESULT, "${artifactApp} rama ${pipelineData.getPipelineBuildName()}", "OK en el paso DEPLOY")
+        sendEmail(" Resultado ejecucion app ${artifactApp} - ${pipelineData.getPipelineBuildName()}  OK ", env.ALM_SERVICES_EMAIL_Cloud_DEPLOY_RESULT, "${artifactApp} rama ${pipelineData.getPipelineBuildName()}", "OK en el paso DEPLOY")
         kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.DEPLOY_FINISHED, KpiLifeCycleStatus.OK, "BETA")
      
         sendStageEndToGPL(pomXmlStructure, pipelineData, "400", null, pipelineData.bmxStructure.environment)
     } catch (Exception e) {
-        sendEmail(" Resultado ejecucion app ${artifactApp} - ${pipelineData.getPipelineBuildName()}  KO - DEPLOY", env.ALM_SERVICES_EMAIL_ICP_DEPLOY_RESULT, "${artifactApp} rama ${pipelineData.getPipelineBuildName()}", "KO en el paso DEPLOY")
+        sendEmail(" Resultado ejecucion app ${artifactApp} - ${pipelineData.getPipelineBuildName()}  KO - DEPLOY", env.ALM_SERVICES_EMAIL_Cloud_DEPLOY_RESULT, "${artifactApp} rama ${pipelineData.getPipelineBuildName()}", "KO en el paso DEPLOY")
         kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.DEPLOY_FINISHED, KpiLifeCycleStatus.KO, "BETA")
-        printOpen("Error en el deploy a ICP:  ${e.getMessage()}", EchoLevel.ERROR)
+        printOpen("Error en el deploy a Cloud:  ${e.getMessage()}", EchoLevel.ERROR)
         sendStageEndToGPL(pomXmlStructure, pipelineData, "400", null, null, "error")
         throw e
     }
@@ -384,7 +384,7 @@ def postDeployStep() {
  * Step runRemoteITStep
  */
 def runRemoteITStep() {
-    absisPipelineStageRunRemoteIT(pomXmlStructure, pipelineData, "500", "<phase>-runRemoteIT", icpStateUtilitity, "${GlobalVars.ALM_SERVICES_EXECUTE_IT_PRO}")
+    almPipelineStageRunRemoteIT(pomXmlStructure, pipelineData, "500", "<phase>-runRemoteIT", cloudStateUtilitity, "${GlobalVars.ALM_SERVICES_EXECUTE_IT_PRO}")
 }
 
 /**
@@ -393,24 +393,24 @@ def runRemoteITStep() {
 def redirectAllAervicesToNewMicroStep() {
     sendStageStartToGPL(pomXmlStructure, pipelineData, "600")
     try {
-        String icpArch = ""
-        if (pomXmlStructure.isArchProject()) icpArch = GlobalVars.ICP_APP_ARCH.toLowerCase()
-        else icpArch = GlobalVars.ICP_APP_APPS.toLowerCase()
-        printOpen("icpArch: ${icpArch}", EchoLevel.INFO)
+        String cloudArch = ""
+        if (pomXmlStructure.isArchProject()) cloudArch = GlobalVars.Cloud_APP_ARCH.toLowerCase()
+        else cloudArch = GlobalVars.Cloud_APP_APPS.toLowerCase()
+        printOpen("cloudArch: ${cloudArch}", EchoLevel.INFO)
 
         String aplicacion = MavenUtils.sanitizeArtifactName(pomXmlStructure.artifactName, pipelineData.garArtifactType)
-        def nameComponentInICP = aplicacion + pomXmlStructure.getArtifactMajorVersion()
-        printOpen("nameComponentInICP: ${nameComponentInICP}", EchoLevel.INFO)
+        def nameComponentInCloud = aplicacion + pomXmlStructure.getArtifactMajorVersion()
+        printOpen("nameComponentInCloud: ${nameComponentInCloud}", EchoLevel.INFO)
 
         //String newImage="pro-registry.pro.caas.project.com/containers/ab3cor/monitoring1:${version}"
-        String newImage = "${env.ICP_REGISTRY_URL}/${icpArch}/${nameComponentInICP.toLowerCase()}:${version}"
+        String newImage = "${env.Cloud_REGISTRY_URL}/${cloudArch}/${nameComponentInCloud.toLowerCase()}:${version}"
         printOpen("newImage: ${newImage}", EchoLevel.INFO)
         
-        icpStateUtilitity = redirectICPServices(pomXmlStructure, pipelineData, "NoTenemosID", newImage, icpStateUtilitity)
+        cloudStateUtilitity = redirectCloudServices(pomXmlStructure, pipelineData, "NoTenemosID", newImage, cloudStateUtilitity)
 
         sendStageEndToGPL(pomXmlStructure, pipelineData, "600")
     } catch (Exception e) {
-        sendEmail(" Resultado ejecucion app ${artifactApp} - ${pipelineData.getPipelineBuildName()}  KO - DEPLOY", env.ALM_SERVICES_EMAIL_ICP_DEPLOY_RESULT, "${artifactApp} rama ${pipelineData.getPipelineBuildName()}", "KO en el paso REDIRECT SERVICES")
+        sendEmail(" Resultado ejecucion app ${artifactApp} - ${pipelineData.getPipelineBuildName()}  KO - DEPLOY", env.ALM_SERVICES_EMAIL_Cloud_DEPLOY_RESULT, "${artifactApp} rama ${pipelineData.getPipelineBuildName()}", "KO en el paso REDIRECT SERVICES")
         printOpen("Error al intentar realizar el redireccionado al nuevo micro: ${e.getMessage()}", EchoLevel.ERROR)
         sendStageEndToGPL(pomXmlStructure, pipelineData, "600", null, null, "error")
         throw e
@@ -421,7 +421,7 @@ def redirectAllAervicesToNewMicroStep() {
  * Step cloneToOcpProStep
  */
 def cloneToOcpProStep() {
-    absisPipelineStageCloneToOcp(pomXmlStructure, pipelineData, user)
+    almPipelineStageCloneToOcp(pomXmlStructure, pipelineData, user)
 }
 
 /**
@@ -432,18 +432,18 @@ def verifyEndpointsStep() {
         sendStageStartToGPL(pomXmlStructure, pipelineData, "700")
         
         //Tenemos que validar la foto...Pending
-        echo checkEndpointsProICP(pomXmlStructure, pipelineData, pipelineData.distributionModePRO)
+        echo checkEndpointsProCloud(pomXmlStructure, pipelineData, pipelineData.distributionModePRO)
 
         //Deberemos detectar si tenemos ancient en cualquiera de los dos centros
         //Yo revisaria si estamos desplegando un centro o los dos
-        AppDeploymentStateICP center1StateI = getMultipleDeploymentsStateFromICP(pomXmlStructure,pipelineData,"AZ1")
-        AppDeploymentStateICP center2StateI = getMultipleDeploymentsStateFromICP(pomXmlStructure,pipelineData,"AZ2")
+        AppDeploymentStateCloud center1StateI = getMultipleDeploymentsStateFromCloud(pomXmlStructure,pipelineData,"AZ1")
+        AppDeploymentStateCloud center2StateI = getMultipleDeploymentsStateFromCloud(pomXmlStructure,pipelineData,"AZ2")
 
         printOpen("El resultado de las evaluaciones de los ancients es de ", EchoLevel.INFO)
         printOpen("ancientC1 ${center1StateI.getAncientApp()}", EchoLevel.INFO)
         printOpen("ancientC2 ${center2StateI.getAncientApp()}", EchoLevel.INFO)
 
-        hasAncientICP=center1StateI.getAncientApp() && center2StateI.getAncientApp()
+        hasAncientCloud=center1StateI.getAncientApp() && center2StateI.getAncientApp()
 
         AncientVersionInfo ancientC1=new AncientVersionInfo()
         AncientVersionInfo ancientC2=new AncientVersionInfo()
@@ -464,7 +464,7 @@ def verifyEndpointsStep() {
         }
         
         //Deploy To catalog
-        deployArtifactInCatMsv(null, pipelineData, pomXmlStructure, icpStateUtilitity, "BETA")
+        deployArtifactInCatMsv(null, pipelineData, pomXmlStructure, cloudStateUtilitity, "BETA")
         if (pipelineData.deployStructure.cannaryType == GlobalVars.CANARY_TYPE_CAMPAIGN) {
             //Tenemos que añadir el micro a la IOP
             printOpen("Vamos a registrar el micro en la campaña", EchoLevel.INFO)
@@ -523,7 +523,7 @@ def endPipelineSuccessStep() {
         printOpen("Modo test activado en fase de build", EchoLevel.INFO)
         invokeNextJob(pipelineData, pomXmlStructure)
         //Si estamos en rollout de centro 1 no tiene sentido invocar al cierre... aun queda centro 2
-    } else if (!fastPath && !hasAncientICP && pipelineData.distributionModePRO != DistributionModePRO.SINGLE_CENTER_ROLLOUT_CENTER_1) {
+    } else if (!fastPath && !hasAncientCloud && pipelineData.distributionModePRO != DistributionModePRO.SINGLE_CENTER_ROLLOUT_CENTER_1) {
         printOpen("No ancient detected in any center. END RELEASE is being fired automatically...", EchoLevel.INFO)
         pipelineData.prepareExecutionMode('COMPONENT_NEW_VERSION', targetAlmFolderParam);
         invokeNextJob(pipelineData, pomXmlStructure)

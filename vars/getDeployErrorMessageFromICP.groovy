@@ -1,23 +1,23 @@
 import com.project.alm.EchoLevel
-import com.project.alm.ICPApiResponse
+import com.project.alm.CloudApiResponse
 
-def call(ICPApiResponse responseFromICP) {
-	String icpErrorMessage=""
+def call(CloudApiResponse responseFromCloud) {
+	String cloudErrorMessage=""
 	try {
-		if (responseFromICP!=null && responseFromICP.body!=null) {
-			printOpen("Error calling ICP with status code ${responseFromICP.statusCode} and body:\n ${responseFromICP.body}", EchoLevel.ERROR)
-			//Tenemos un message error del API de ICP.... tenemos que reportar el error
-			icpErrorMessage="${responseFromICP.body}"
-			if (icpErrorMessage!=null) {
+		if (responseFromCloud!=null && responseFromCloud.body!=null) {
+			printOpen("Error calling Cloud with status code ${responseFromCloud.statusCode} and body:\n ${responseFromCloud.body}", EchoLevel.ERROR)
+			//Tenemos un message error del API de Cloud.... tenemos que reportar el error
+			cloudErrorMessage="${responseFromCloud.body}"
+			if (cloudErrorMessage!=null) {
 				//Reducimos la longitud del texto... puede ser enorme
-				if (icpErrorMessage.size()>2000) return icpErrorMessage.substring(0,2000) 
-				else return icpErrorMessage
+				if (cloudErrorMessage.size()>2000) return cloudErrorMessage.substring(0,2000) 
+				else return cloudErrorMessage
 			}			
 		} else {
-			printOpen("Error calling ICP", EchoLevel.ERROR)
+			printOpen("Error calling Cloud", EchoLevel.ERROR)
 		}
 	}catch(Exception e) {
-		printOpen("Ha dado error la recogida del mensaje de ICP", EchoLevel.ERROR)
+		printOpen("Ha dado error la recogida del mensaje de Cloud", EchoLevel.ERROR)
 	}
-    return icpErrorMessage
+    return cloudErrorMessage
 }

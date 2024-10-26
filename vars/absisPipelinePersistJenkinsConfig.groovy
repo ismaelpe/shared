@@ -9,7 +9,7 @@ import io.jenkins.plugins.casc.ConfigurationAsCode
 
 @Field ExportConfig exportConfig
 @Field GitRepositoryHandler gitConfig
-@Field GitRepositoryHandler gitIcp
+@Field GitRepositoryHandler gitCloud
 @Field String jcascPathYaml
 @Field String jcascPathValuesYaml
 @Field String jobParam
@@ -31,8 +31,8 @@ def call(Map pipelineParameters) {
         }
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
-            CIPHER_PASSWORD = credentials('icp-alm-cipher-password')
-            CIPHER_IV = credentials('icp-alm-cipher-iv')
+            CIPHER_PASSWORD = credentials('cloud-alm-cipher-password')
+            CIPHER_IV = credentials('cloud-alm-cipher-iv')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
@@ -97,7 +97,7 @@ def gitPullRepoStep() {
 
     printOpen("Pull $enviroment 'values.yaml' from $application", EchoLevel.INFO)
 
-    gitIcp = new GitRepositoryHandler(this, "https://git.svb.lacaixa.es/cbk/k8s/$application/$component", [gitProjectRelativePath: jcascPathValuesYaml])
+    gitCloud = new GitRepositoryHandler(this, "https://git.svb.lacaixa.es/cbk/k8s/$application/$component", [gitProjectRelativePath: jcascPathValuesYaml])
         .initialize()
         .cloneFromGit()
         .checkout("develop")
@@ -143,7 +143,7 @@ def jcascUpdateGitConfigStep() {
  */
 def gitPushRepoStep() {
     def jenkinsInfo = System.getProperty('jenkins.application') + " of " + System.getProperty('jenkins.environment')
-    gitIcp.add().commitAndPush("Update JCasc Config", [allowEmpty: true])
+    gitCloud.add().commitAndPush("Update JCasc Config", [allowEmpty: true])
     gitConfig.add().commitAndPush("Update config from Jenkins $jenkinsInfo", [allowEmpty: true])
 }
 

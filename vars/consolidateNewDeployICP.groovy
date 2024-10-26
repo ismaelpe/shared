@@ -6,13 +6,13 @@ import com.project.alm.PomXmlStructure
 import com.project.alm.PipelineData
 import com.project.alm.GlobalVars
 import com.project.alm.BmxUtilities
-import com.project.alm.ICPStateUtility
+import com.project.alm.CloudStateUtility
 import com.project.alm.GarAppType
-import com.project.alm.ICPApiResponse
-import com.project.alm.ICPWorkflowStates
+import com.project.alm.CloudApiResponse
+import com.project.alm.CloudWorkflowStates
 import hudson.Functions
 
-def call(PomXmlStructure pomXml, PipelineData pipeline, ICPStateUtility icpStateUtility) {
+def call(PomXmlStructure pomXml, PipelineData pipeline, CloudStateUtility cloudStateUtility) {
 
 
     long wholeCallDuration
@@ -22,23 +22,23 @@ def call(PomXmlStructure pomXml, PipelineData pipeline, ICPStateUtility icpState
         new KpiAlmEvent(
             pomXml, pipeline,
             KpiAlmEventStage.UNDEFINED,
-            KpiAlmEventOperation.ICP_CONSOLIDATE_NEW_DEPLOY)
+            KpiAlmEventOperation.Cloud_CONSOLIDATE_NEW_DEPLOY)
 
 	String returnUrlValue=""
 
-	if (pomXml.artifactMicro!="" && icpStateUtility!=null && icpStateUtility.icpAppState!=ICPWorkflowStates.END) {
+	if (pomXml.artifactMicro!="" && cloudStateUtility!=null && cloudStateUtility.cloudAppState!=CloudWorkflowStates.END) {
 		printOpen("Consolidating new deployment...", EchoLevel.INFO)
 
 		def body = [
 			az: "ALL",
 			buildBean: [
-				id: "${icpStateUtility.buildId}"
+				id: "${cloudStateUtility.buildId}"
 			],
-			environment: "${icpStateUtility.icpDeployStructure.envICP.toUpperCase()}",
-			values: "${icpStateUtility.icpDeployStructure.getEnvVariables(pipeline.garArtifactType.name,pomXml.getApp(GarAppType.valueOfType(pipeline.garArtifactType.name) ),pomXml.getMajorVersion(),pipeline.domain,pipeline.subDomain,pipeline.company)}${icpStateUtility.getChartValues()}"			]
+			environment: "${cloudStateUtility.cloudDeployStructure.envCloud.toUpperCase()}",
+			values: "${cloudStateUtility.cloudDeployStructure.getEnvVariables(pipeline.garArtifactType.name,pomXml.getApp(GarAppType.valueOfType(pipeline.garArtifactType.name) ),pomXml.getMajorVersion(),pipeline.domain,pipeline.subDomain,pipeline.company)}${cloudStateUtility.getChartValues()}"			]
 
-		ICPApiResponse response = sendRequestToICPApi("v1/application/PCLD/${pomXml.getICPAppName()}/component/${pipeline.componentId}/deploy",body,"POST","${pomXml.getICPAppName()}","v1/application/PCLD/${pomXml.getICPAppName()}/component/${pipeline.componentId}/deploy",true,true, pipeline, pomXml)
-        printOpen("0000 - [ICP-STATE] STATE OF THE ICP ${icpStateUtility.icpAppState.toString()} Status code ${response.statusCode}", EchoLevel.INFO)
+		CloudApiResponse response = sendRequestToCloudApi("v1/application/PCLD/${pomXml.getCloudAppName()}/component/${pipeline.componentId}/deploy",body,"POST","${pomXml.getCloudAppName()}","v1/application/PCLD/${pomXml.getCloudAppName()}/component/${pipeline.componentId}/deploy",true,true, pipeline, pomXml)
+        printOpen("0000 - [Cloud-STATE] STATE OF THE Cloud ${cloudStateUtility.cloudAppState.toString()} Status code ${response.statusCode}", EchoLevel.INFO)
 		
 		if (response.statusCode>300) {
 
@@ -49,21 +49,21 @@ def call(PomXmlStructure pomXml, PipelineData pipeline, ICPStateUtility icpState
 
             printOpen("(Consolidate new deploy - 1st iteration) POST /deploy failed:\n${response}", EchoLevel.ERROR)
 
-            createMaximoAndThrow.icpDeployException(pipeline, pomXml, response)
+            createMaximoAndThrow.cloudDeployException(pipeline, pomXml, response)
 
 		} else {
 			def isReady=false
 			
 			try {
 
-				isReady=waitICPDeploymentReady(pomXml,pipeline,icpStateUtility.icpDeployStructure,icpStateUtility.getNewColour())
+				isReady=waitCloudDeploymentReady(pomXml,pipeline,cloudStateUtility.cloudDeployStructure,cloudStateUtility.getNewColour())
 
 		   } catch(Exception e) {
 
 			   printOpen( Functions.printThrowable(e), EchoLevel.ERROR)
 			   if (e.getMessage()!=null && e.getMessage().contains("DEPLOY FALLIDO")) {
 
-                   response=sendRequestToICPApi("v1/application/PCLD/${pomXml.getICPAppName()}/component/${pipeline.componentId}/deploy",body,"POST","${pomXml.getICPAppName()}","v1/application/PCLD/${pomXml.getICPAppName()}/component/${pipeline.componentId}/deploy",true,true, pipeline, pomXml)
+                   response=sendRequestToCloudApi("v1/application/PCLD/${pomXml.getCloudAppName()}/component/${pipeline.componentId}/deploy",body,"POST","${pomXml.getCloudAppName()}","v1/application/PCLD/${pomXml.getCloudAppName()}/component/${pipeline.componentId}/deploy",true,true, pipeline, pomXml)
 			   
 				   if (response.statusCode>300) {
 
@@ -72,14 +72,14 @@ def call(PomXmlStructure pomXml, PipelineData pipeline, ICPStateUtility icpState
 
                        kpiLogger(kpiAlmEvent.callAlmFail(wholeCallDuration))
 
-                       printOpen("(Consolidate new deploy - 1st iteration) POST /deploy failed (after waitICPDeploymentReady threw exception):\n${response}", EchoLevel.ERROR)
+                       printOpen("(Consolidate new deploy - 1st iteration) POST /deploy failed (after waitCloudDeploymentReady threw exception):\n${response}", EchoLevel.ERROR)
 
-                       createMaximoAndThrow.icpDeployException(pipeline, pomXml, response)
+                       createMaximoAndThrow.cloudDeployException(pipeline, pomXml, response)
 
 				   }
 				   try {
 
-					   isReady=waitICPDeploymentReady(pomXml,pipeline,icpStateUtility.icpDeployStructure,icpStateUtility.getNewColour())
+					   isReady=waitCloudDeploymentReady(pomXml,pipeline,cloudStateUtility.cloudDeployStructure,cloudStateUtility.getNewColour())
 
 				   } catch(Exception e1) {
 
@@ -88,9 +88,9 @@ def call(PomXmlStructure pomXml, PipelineData pipeline, ICPStateUtility icpState
 
                        kpiLogger(kpiAlmEvent.callAppFail(wholeCallDuration))
 
-                       printOpen("(Consolidate new deploy - 1st iteration) sendRequestToICPApi threw exception two times:\n${response}", EchoLevel.ERROR)
+                       printOpen("(Consolidate new deploy - 1st iteration) sendRequestToCloudApi threw exception two times:\n${response}", EchoLevel.ERROR)
 
-					   throw new Exception("${GlobalVars.ICP_ERROR_DEPLOY_INSTANCE_REBOOTING}")
+					   throw new Exception("${GlobalVars.Cloud_ERROR_DEPLOY_INSTANCE_REBOOTING}")
 
 				   }
 
@@ -101,9 +101,9 @@ def call(PomXmlStructure pomXml, PipelineData pipeline, ICPStateUtility icpState
 
                    kpiLogger(kpiAlmEvent.callAppFail(wholeCallDuration))
 
-                   printOpen("(Consolidate new deploy - 1st iteration) sendRequestToICPApi threw exception:\n${response}", EchoLevel.ERROR)
+                   printOpen("(Consolidate new deploy - 1st iteration) sendRequestToCloudApi threw exception:\n${response}", EchoLevel.ERROR)
 
-				   throw new Exception("${GlobalVars.ICP_ERROR_DEPLOY_INSTANCE_REBOOTING}")
+				   throw new Exception("${GlobalVars.Cloud_ERROR_DEPLOY_INSTANCE_REBOOTING}")
 
 			   }
 		   }
@@ -115,28 +115,28 @@ def call(PomXmlStructure pomXml, PipelineData pipeline, ICPStateUtility icpState
 
                 kpiLogger(kpiAlmEvent.callAppFail(wholeCallDuration))
 
-                printOpen("(Consolidate new deploy - 1st iteration) sendRequestToICPApi did not throw exception but false was returned:\n${response}", EchoLevel.ERROR)
+                printOpen("(Consolidate new deploy - 1st iteration) sendRequestToCloudApi did not throw exception but false was returned:\n${response}", EchoLevel.ERROR)
 
-                throw new Exception("${GlobalVars.ICP_ERROR_DEPLOY_INSTANCE_REBOOTING}")
+                throw new Exception("${GlobalVars.Cloud_ERROR_DEPLOY_INSTANCE_REBOOTING}")
 
             }
 			
-			if (response!=null && response.body!=null)	icpStateUtility.deployId=response.body.id
-			else icpStateUtility.deployId=0
+			if (response!=null && response.body!=null)	cloudStateUtility.deployId=response.body.id
+			else cloudStateUtility.deployId=0
 					
-			icpStateUtility.icpAppState=icpStateUtility.getNextStateWorkflow()
+			cloudStateUtility.cloudAppState=cloudStateUtility.getNextStateWorkflow()
 			body = [
 				az: "ALL",
 				buildBean: [
-					id: "${icpStateUtility.buildId}"
+					id: "${cloudStateUtility.buildId}"
 				],
-				environment: "${icpStateUtility.icpDeployStructure.envICP.toUpperCase()}",
-				values: "${icpStateUtility.icpDeployStructure.getEnvVariables(pipeline.garArtifactType.name,pomXml.getApp(GarAppType.valueOfType(pipeline.garArtifactType.name) ),pomXml.getMajorVersion(),pipeline.domain,pipeline.subDomain,pipeline.company)}${icpStateUtility.getChartValues()}"
+				environment: "${cloudStateUtility.cloudDeployStructure.envCloud.toUpperCase()}",
+				values: "${cloudStateUtility.cloudDeployStructure.getEnvVariables(pipeline.garArtifactType.name,pomXml.getApp(GarAppType.valueOfType(pipeline.garArtifactType.name) ),pomXml.getMajorVersion(),pipeline.domain,pipeline.subDomain,pipeline.company)}${cloudStateUtility.getChartValues()}"
 			]
 
-            printOpen("000 - [ICP-STATE] STATE OF THE ICP ${icpStateUtility.icpAppState.toString()}", EchoLevel.INFO)
+            printOpen("000 - [Cloud-STATE] STATE OF THE Cloud ${cloudStateUtility.cloudAppState.toString()}", EchoLevel.INFO)
 			
-			response = sendRequestToICPApi("v1/application/PCLD/${pomXml.getICPAppName()}/component/${pipeline.componentId}/deploy",body,"POST","${pomXml.getICPAppName()}","v1/application/PCLD/${pomXml.getICPAppName()}/component/${pipeline.componentId}/deploy",true,true, pipeline, pomXml)
+			response = sendRequestToCloudApi("v1/application/PCLD/${pomXml.getCloudAppName()}/component/${pipeline.componentId}/deploy",body,"POST","${pomXml.getCloudAppName()}","v1/application/PCLD/${pomXml.getCloudAppName()}/component/${pipeline.componentId}/deploy",true,true, pipeline, pomXml)
 
             if (response.statusCode>300) {
 
@@ -147,19 +147,19 @@ def call(PomXmlStructure pomXml, PipelineData pipeline, ICPStateUtility icpState
 
                 printOpen("(Consolidate new deploy - 2nd iteration) POST /deploy failed:\n${response}", EchoLevel.ERROR)
 
-                createMaximoAndThrow.icpDeployException(pipeline, pomXml, response)
+                createMaximoAndThrow.cloudDeployException(pipeline, pomXml, response)
 
 			} else {
 				try {
 
-					isReady=waitICPDeploymentReady(pomXml,pipeline,icpStateUtility.icpDeployStructure,icpStateUtility.getNewColour())
+					isReady=waitCloudDeploymentReady(pomXml,pipeline,cloudStateUtility.cloudDeployStructure,cloudStateUtility.getNewColour())
 
 				} catch(Exception e) {
 
 				    printOpen( Functions.printThrowable(e), EchoLevel.ERROR)
 					if (e.getMessage()!=null && e.getMessage().contains("DEPLOY FALLIDO")) {
 
-					   response = sendRequestToICPApi("v1/application/PCLD/${pomXml.getICPAppName()}/component/${pipeline.componentId}/deploy",body,"POST","${pomXml.getICPAppName()}","v1/application/PCLD/${pomXml.getICPAppName()}/component/${pipeline.componentId}/deploy",true,true, pipeline, pomXml)
+					   response = sendRequestToCloudApi("v1/application/PCLD/${pomXml.getCloudAppName()}/component/${pipeline.componentId}/deploy",body,"POST","${pomXml.getCloudAppName()}","v1/application/PCLD/${pomXml.getCloudAppName()}/component/${pipeline.componentId}/deploy",true,true, pipeline, pomXml)
 				
 					   if (response.statusCode>300) {
 
@@ -168,14 +168,14 @@ def call(PomXmlStructure pomXml, PipelineData pipeline, ICPStateUtility icpState
 
                            kpiLogger(kpiAlmEvent.callAlmFail(wholeCallDuration))
 
-                           printOpen("(Consolidate new deploy - 2nd iteration) POST /deploy failed (after waitICPDeploymentReady threw exception):\n${response}", EchoLevel.ERROR)
+                           printOpen("(Consolidate new deploy - 2nd iteration) POST /deploy failed (after waitCloudDeploymentReady threw exception):\n${response}", EchoLevel.ERROR)
 
-                           createMaximoAndThrow.icpDeployException(pipeline, pomXml, response)
+                           createMaximoAndThrow.cloudDeployException(pipeline, pomXml, response)
 
 					   }
 					   try{
 
-						   isReady=waitICPDeploymentReady(pomXml,pipeline,icpStateUtility.icpDeployStructure,icpStateUtility.getNewColour())
+						   isReady=waitCloudDeploymentReady(pomXml,pipeline,cloudStateUtility.cloudDeployStructure,cloudStateUtility.getNewColour())
 
 					   } catch(Exception e1) {
 
@@ -184,9 +184,9 @@ def call(PomXmlStructure pomXml, PipelineData pipeline, ICPStateUtility icpState
 
                            kpiLogger(kpiAlmEvent.callAppFail(wholeCallDuration))
 
-                           printOpen("(Consolidate new deploy - 2nd iteration) sendRequestToICPApi threw exception two times:\n${response}", EchoLevel.ERROR)
+                           printOpen("(Consolidate new deploy - 2nd iteration) sendRequestToCloudApi threw exception two times:\n${response}", EchoLevel.ERROR)
 
-						   throw new Exception("${GlobalVars.ICP_ERROR_DEPLOY_INSTANCE_REBOOTING}")
+						   throw new Exception("${GlobalVars.Cloud_ERROR_DEPLOY_INSTANCE_REBOOTING}")
 
 					   }
 				    } else {
@@ -196,9 +196,9 @@ def call(PomXmlStructure pomXml, PipelineData pipeline, ICPStateUtility icpState
 
                         kpiLogger(kpiAlmEvent.callAppFail(wholeCallDuration))
 
-                        printOpen("(Consolidate new deploy - 2nd iteration) sendRequestToICPApi threw exception:\n${response}", EchoLevel.ERROR)
+                        printOpen("(Consolidate new deploy - 2nd iteration) sendRequestToCloudApi threw exception:\n${response}", EchoLevel.ERROR)
 
-						throw new Exception("${GlobalVars.ICP_ERROR_DEPLOY_INSTANCE_REBOOTING}")
+						throw new Exception("${GlobalVars.Cloud_ERROR_DEPLOY_INSTANCE_REBOOTING}")
 
 					}
 				}
@@ -210,30 +210,30 @@ def call(PomXmlStructure pomXml, PipelineData pipeline, ICPStateUtility icpState
 
                     kpiLogger(kpiAlmEvent.callAppFail(wholeCallDuration))
 
-                    printOpen("(Consolidate new deploy - 2nd iteration) sendRequestToICPApi did not throw exception but false was returned:\n${response}", EchoLevel.ERROR)
+                    printOpen("(Consolidate new deploy - 2nd iteration) sendRequestToCloudApi did not throw exception but false was returned:\n${response}", EchoLevel.ERROR)
 
-                    throw new Exception("${GlobalVars.ICP_ERROR_DEPLOY_INSTANCE_REBOOTING}")
+                    throw new Exception("${GlobalVars.Cloud_ERROR_DEPLOY_INSTANCE_REBOOTING}")
 
                 }
 
-				if (response!=null && response.body!=null)	icpStateUtility.deployId=response.body.id
-				else icpStateUtility.deployId=0
+				if (response!=null && response.body!=null)	cloudStateUtility.deployId=response.body.id
+				else cloudStateUtility.deployId=0
 
-				if (icpStateUtility.icpAppState!=ICPWorkflowStates.ELIMINATE_CURRENT_APP) {
+				if (cloudStateUtility.cloudAppState!=CloudWorkflowStates.ELIMINATE_CURRENT_APP) {
 				//No hemos terminado
-					icpStateUtility.icpAppState=icpStateUtility.getNextStateWorkflow()
-                    printOpen("00 - [ICP-STATE] STATE OF THE ICP ${icpStateUtility.icpAppState.toString()}", EchoLevel.INFO)
+					cloudStateUtility.cloudAppState=cloudStateUtility.getNextStateWorkflow()
+                    printOpen("00 - [Cloud-STATE] STATE OF THE Cloud ${cloudStateUtility.cloudAppState.toString()}", EchoLevel.INFO)
 					
 					body = [
 						az: "ALL",
 						buildBean: [
-							id: "${icpStateUtility.buildId}"
+							id: "${cloudStateUtility.buildId}"
 						],
-						environment: "${icpStateUtility.icpDeployStructure.envICP.toUpperCase()}",
-						values: "${icpStateUtility.icpDeployStructure.getEnvVariables(pipeline.garArtifactType.name,pomXml.getApp(GarAppType.valueOfType(pipeline.garArtifactType.name) ),pomXml.getMajorVersion(),pipeline.domain,pipeline.subDomain,pipeline.company)}${icpStateUtility.getChartValues()}"
+						environment: "${cloudStateUtility.cloudDeployStructure.envCloud.toUpperCase()}",
+						values: "${cloudStateUtility.cloudDeployStructure.getEnvVariables(pipeline.garArtifactType.name,pomXml.getApp(GarAppType.valueOfType(pipeline.garArtifactType.name) ),pomXml.getMajorVersion(),pipeline.domain,pipeline.subDomain,pipeline.company)}${cloudStateUtility.getChartValues()}"
 					]
 					
-					response=sendRequestToICPApi("v1/application/PCLD/${pomXml.getICPAppName()}/component/${pipeline.componentId}/deploy",body,"POST","${pomXml.getICPAppName()}","v1/application/PCLD/${pomXml.getICPAppName()}/component/${pipeline.componentId}/deploy",true,true, pipeline, pomXml)
+					response=sendRequestToCloudApi("v1/application/PCLD/${pomXml.getCloudAppName()}/component/${pipeline.componentId}/deploy",body,"POST","${pomXml.getCloudAppName()}","v1/application/PCLD/${pomXml.getCloudAppName()}/component/${pipeline.componentId}/deploy",true,true, pipeline, pomXml)
 
                     if (response.statusCode>300) {
 
@@ -244,15 +244,15 @@ def call(PomXmlStructure pomXml, PipelineData pipeline, ICPStateUtility icpState
 
                         printOpen("(Consolidate new deploy - 3rd iteration) POST /deploy failed:\n${response}", EchoLevel.ERROR)
 
-                        createMaximoAndThrow.icpDeployException(pipeline, pomXml, response)
+                        createMaximoAndThrow.cloudDeployException(pipeline, pomXml, response)
 
 					}
 				}				
                  	
 			}
 		}
-		String pathToMicro = BmxUtilities.calculatePathToMicro(pomXml,pipeline.branchStructure,icpStateUtility)
-		returnUrlValue = icpStateUtility.icpDeployStructure.getUrlPrefixApiGateway()+"/"+pathToMicro + "/actuator/info"
+		String pathToMicro = BmxUtilities.calculatePathToMicro(pomXml,pipeline.branchStructure,cloudStateUtility)
+		returnUrlValue = cloudStateUtility.cloudDeployStructure.getUrlPrefixApiGateway()+"/"+pathToMicro + "/actuator/info"
 		printOpen("The new deployment has been consolidated. Url: <a href='${returnUrlValue}'>${returnUrlValue}</a>", EchoLevel.INFO)
 			
 	} else if (pomXml.artifactSampleApp!=""){
@@ -262,12 +262,12 @@ def call(PomXmlStructure pomXml, PipelineData pipeline, ICPStateUtility icpState
 			//Es una sample APP.... vampos a hacer undeploy
 			def body = [
 				"az": "ALL",
-				"environment": "${icpStateUtility.icpDeployStructure.envICP.toUpperCase()}"
+				"environment": "${cloudStateUtility.cloudDeployStructure.envCloud.toUpperCase()}"
 			]
 			/**
 			curl -vvv -k -X DELETE "https://publisher-ssp-cldalm.pro.ap.intranet.cloud.lacaixa.es/api/publisher/v1/application/PCLD/AB3COR/component/2742/deploy"\
 			**/
-			ICPApiResponse response = sendRequestToICPApi("v1/application/PCLD/${pomXml.getICPAppName()}/component/${pipeline.componentId}/deploy",body,"DELETE","${pomXml.getICPAppName()}","",false,true, pipeline, pomXml)
+			CloudApiResponse response = sendRequestToCloudApi("v1/application/PCLD/${pomXml.getCloudAppName()}/component/${pipeline.componentId}/deploy",body,"DELETE","${pomXml.getCloudAppName()}","",false,true, pipeline, pomXml)
 
 			if (response.statusCode>300) {
 
@@ -278,7 +278,7 @@ def call(PomXmlStructure pomXml, PipelineData pipeline, ICPStateUtility icpState
 
 				printOpen("(Consolidate new deploy - 4th iteration) POST /deploy failed:\n${response}", EchoLevel.ERROR)
 
-				createMaximoAndThrow.icpDeployException(pipeline, pomXml, response)
+				createMaximoAndThrow.cloudDeployException(pipeline, pomXml, response)
 
 			}
 			printOpen("The sample app ${pomXml.artifactSampleApp} has been deleted", EchoLevel.INFO)

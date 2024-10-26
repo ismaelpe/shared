@@ -2,7 +2,7 @@ package com.project.alm
 
 import java.util.ArrayList
 
-class ICPk8sActualStatusInfo{
+class Cloudk8sActualStatusInfo{
 
 	
 	def currentColour
@@ -14,7 +14,7 @@ class ICPk8sActualStatusInfo{
 	def envVars
     def replicas
 	
-	ICPk8sActualStatusInfo() {
+	Cloudk8sActualStatusInfo() {
 		currentColour=null
 		currentImage=null
 		currentVersion=null

@@ -1,6 +1,6 @@
 import com.project.alm.*
 
-def call(ICPStateUtility icpStateUtility, PomXmlStructure pomXml, PipelineData pipeline, String icpDistCenter) {
+def call(CloudStateUtility cloudStateUtility, PomXmlStructure pomXml, PipelineData pipeline, String cloudDistCenter) {
 
     long wholeCallDuration
     long wholeCallStartMillis = new Date().getTime()
@@ -9,23 +9,23 @@ def call(ICPStateUtility icpStateUtility, PomXmlStructure pomXml, PipelineData p
         new KpiAlmEvent(
             pomXml, pipeline,
             KpiAlmEventStage.UNDEFINED,
-            KpiAlmEventOperation.ICP_DEPLOY_STATE)
+            KpiAlmEventOperation.Cloud_DEPLOY_STATE)
 
-	if (icpStateUtility.icpAppState != ICPWorkflowStates.END)
+	if (cloudStateUtility.cloudAppState != CloudWorkflowStates.END)
 	{
 		//Tenemos que eliminar el siguiente estado
-		printOpen("[ICP-STATE] STATE OF THE ICP ${icpStateUtility.icpAppState.toString()}", EchoLevel.ALL)
-		printOpen("[Kibana] filtro para buscar: kubernetes.labels.app_kubernetes_io/instance  ${icpStateUtility.nameComponentInICP}", EchoLevel.ALL)
+		printOpen("[Cloud-STATE] STATE OF THE Cloud ${cloudStateUtility.cloudAppState.toString()}", EchoLevel.ALL)
+		printOpen("[Kibana] filtro para buscar: kubernetes.labels.app_kubernetes_io/instance  ${cloudStateUtility.nameComponentInCloud}", EchoLevel.ALL)
 		
-		ICPDeployStructure deployStructure = pipeline.deployStructure
+		CloudDeployStructure deployStructure = pipeline.deployStructure
 		
 		body = [
-			az: "${icpDistCenter}",
-			environment: "${deployStructure.envICP.toUpperCase()}",
-			values: "${deployStructure.getEnvVariables(pipeline.garArtifactType.name,pomXml.getApp(GarAppType.valueOfType(pipeline.garArtifactType.name) ), pomXml.getMajorVersion() ,pipeline.domain,pipeline.subDomain,pipeline.company)}${icpStateUtility.getChartValues()}"
+			az: "${cloudDistCenter}",
+			environment: "${deployStructure.envCloud.toUpperCase()}",
+			values: "${deployStructure.getEnvVariables(pipeline.garArtifactType.name,pomXml.getApp(GarAppType.valueOfType(pipeline.garArtifactType.name) ), pomXml.getMajorVersion() ,pipeline.domain,pipeline.subDomain,pipeline.company)}${cloudStateUtility.getChartValues()}"
 		]
-		ICPApiResponse response
-		response=sendRequestToICPApi("v1/application/PCLD/${pomXml.getICPAppName()}/component/${pipeline.componentId}/deploy",body,"POST","${pomXml.getICPAppName()}","v1/application/PCLD/${pomXml.getICPAppName()}/component/${pipeline.componentId}/deploy",true,true, pipeline, pomXml)
+		CloudApiResponse response
+		response=sendRequestToCloudApi("v1/application/PCLD/${pomXml.getCloudAppName()}/component/${pipeline.componentId}/deploy",body,"POST","${pomXml.getCloudAppName()}","v1/application/PCLD/${pomXml.getCloudAppName()}/component/${pipeline.componentId}/deploy",true,true, pipeline, pomXml)
 		
 		if (response.statusCode>300) {
 
@@ -34,18 +34,18 @@ def call(ICPStateUtility icpStateUtility, PomXmlStructure pomXml, PipelineData p
 
             kpiLogger(kpiAlmEvent.callAlmFail(wholeCallDuration))
 
-            createMaximoAndThrow.icpDeployException(pipeline, pomXml, response)
+            createMaximoAndThrow.cloudDeployException(pipeline, pomXml, response)
 
 		} else {
 			boolean isReady = false
 			try {
 
-				 isReady=waitICPDeploymentReady(pomXml,pipeline,deployStructure,icpStateUtility.getNewColour(),icpDistCenter)
+				 isReady=waitCloudDeploymentReady(pomXml,pipeline,deployStructure,cloudStateUtility.getNewColour(),cloudDistCenter)
 
 			} catch(Exception e) {
 
                 if (e.getMessage()!=null && e.getMessage().contains("DEPLOY FALLIDO")) {
-				response=sendRequestToICPApi("v1/application/PCLD/${pomXml.getICPAppName()}/component/${pipeline.componentId}/deploy",body,"POST","${pomXml.getICPAppName()}","v1/application/PCLD/${pomXml.getICPAppName()}/component/${pipeline.componentId}/deploy",true,true, pipeline, pomXml)
+				response=sendRequestToCloudApi("v1/application/PCLD/${pomXml.getCloudAppName()}/component/${pipeline.componentId}/deploy",body,"POST","${pomXml.getCloudAppName()}","v1/application/PCLD/${pomXml.getCloudAppName()}/component/${pipeline.componentId}/deploy",true,true, pipeline, pomXml)
 								 
 				 if (response.statusCode>300) {
 
@@ -54,12 +54,12 @@ def call(ICPStateUtility icpStateUtility, PomXmlStructure pomXml, PipelineData p
 
                      kpiLogger(kpiAlmEvent.callAlmFail(wholeCallDuration))
 
-                     createMaximoAndThrow.icpDeployException(pipeline, pomXml, response)
+                     createMaximoAndThrow.cloudDeployException(pipeline, pomXml, response)
 
 				 }
 				 try {
 
-					 isReady=waitICPDeploymentReady(pomXml,pipeline,deployStructure,icpStateUtility.getNewColour(),icpDistCenter)
+					 isReady=waitCloudDeploymentReady(pomXml,pipeline,deployStructure,cloudStateUtility.getNewColour(),cloudDistCenter)
 
 				 } catch(Exception e1) {
 
@@ -68,7 +68,7 @@ def call(ICPStateUtility icpStateUtility, PomXmlStructure pomXml, PipelineData p
 
                      kpiLogger(kpiAlmEvent.callAppFail(wholeCallDuration))
 
-                     throw new Exception("${GlobalVars.ICP_ERROR_DEPLOY_INSTANCE_REBOOTING}")
+                     throw new Exception("${GlobalVars.Cloud_ERROR_DEPLOY_INSTANCE_REBOOTING}")
 
 				 }
 					 
@@ -79,14 +79,14 @@ def call(ICPStateUtility icpStateUtility, PomXmlStructure pomXml, PipelineData p
 
                     kpiLogger(kpiAlmEvent.callAppFail(wholeCallDuration))
 
-                    throw new Exception("${GlobalVars.ICP_ERROR_DEPLOY_INSTANCE_REBOOTING}")
+                    throw new Exception("${GlobalVars.Cloud_ERROR_DEPLOY_INSTANCE_REBOOTING}")
 
 				  }
 			}
 						 
 			if (response!=null && response.body!=null)
-				icpStateUtility.deployId=response.body.id
-			else icpStateUtility.deployId=0
+				cloudStateUtility.deployId=response.body.id
+			else cloudStateUtility.deployId=0
 
 			if (isReady==false) {
 
@@ -101,7 +101,7 @@ def call(ICPStateUtility icpStateUtility, PomXmlStructure pomXml, PipelineData p
 	
 		}
 	} else {
-		printOpen("El deploy ha finalizado el estado es ${icpStateUtility.icpAppState}", EchoLevel.ALL)
+		printOpen("El deploy ha finalizado el estado es ${cloudStateUtility.cloudAppState}", EchoLevel.ALL)
 	}
 
     long wholeCallEndMillis = new Date().getTime()

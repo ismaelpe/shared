@@ -90,7 +90,7 @@ def call(Map pipelineParameters) {
      *
      * */
     pipeline {		
-		agent {	node (absisJenkinsAgent(pipelineParams)) }
+		agent {	node (almJenkinsAgent(pipelineParams)) }
         options {
             buildDiscarder(logRotator(numToKeepStr: '10'))
 			timestamps()
@@ -99,8 +99,8 @@ def call(Map pipelineParameters) {
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
 			JNKMSV = credentials('JNKMSV-USER-TOKEN')			
-            ICP_CERT = credentials('icp-alm-pro-cert')
-            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
+            Cloud_CERT = credentials('cloud-alm-pro-cert')
+            Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
@@ -118,33 +118,33 @@ def call(Map pipelineParameters) {
                     coherenceValidationStep()
                 }
             }
-			stage('check-ICP-availiability'){
+			stage('check-Cloud-availiability'){
 				when {
-					expression { isICPEnabled(enviroment) && "false".equals(onlyConfig) }
+					expression { isCloudEnabled(enviroment) && "false".equals(onlyConfig) }
 				}
 				steps {
-                    checkICPAvailiabilityStep()
+                    checkCloudAvailiabilityStep()
 				}
 			}
 			stage('restore-configuration') {
 				when {
-					expression { isICPEnabled(enviroment) && versionToRollbackTo }
+					expression { isCloudEnabled(enviroment) && versionToRollbackTo }
 				}
 				steps {                    
                     restoreConfigurationStep()
 				}
 			}
-            stage('undeploy-artifact-from-icp') {
+            stage('undeploy-artifact-from-cloud') {
                 when {
-                    expression { isICPEnabled(enviroment) && "false".equals(onlyConfig)}
+                    expression { isCloudEnabled(enviroment) && "false".equals(onlyConfig)}
                 }
                 steps {
-                    undeployArtifactFromIcp()
+                    undeployArtifactFromCloud()
                 }
             }
 			stage('send-undeploy-to-catalog') {
 				when {
-					expression { isICPEnabled(enviroment) && "false".equals(onlyConfig) && "true".equals(deployFinished) }
+					expression { isCloudEnabled(enviroment) && "false".equals(onlyConfig) && "true".equals(deployFinished) }
 				}
 				steps {
                     sendUndeployToCatalogStep()
@@ -221,7 +221,7 @@ def coherenceValidationStep() {
     sendStageStartToGPL(pomXmlStructure, pipelineData, "105")
 
     pipelineData.deployFlag == true
-    //initICPDeploy(pomXmlStructure, pipelineData)	
+    //initCloudDeploy(pomXmlStructure, pipelineData)	
     def cannaryType = getCannaryType(pomXmlStructure,pipelineData)
     def cannaryCampaignValue = iopCampaignCatalogUtils.getCannaryCampaignValue(pomXmlStructure,pipelineData)
 
@@ -269,13 +269,13 @@ def coherenceValidationStep() {
 }	
 
 /** 
- * Step checkICPAvailiabilityStep
+ * Step checkCloudAvailiabilityStep
  */
-def checkICPAvailiabilityStep() {
+def checkCloudAvailiabilityStep() {
     printOpen("The artifact ${pomXmlStructure.artifactName}  from group ${pomXmlStructure.groupId} the micro to deploy is ${pomXmlStructure.artifactMicro}", EchoLevel.ALL)
     sendStageStartToGPL(pomXmlStructure, pipelineData, "110")
     try {
-        checkICPAvailability(pomXmlStructure,pipelineData,enviroment.toUpperCase(),"DEPLOY")
+        checkCloudAvailability(pomXmlStructure,pipelineData,enviroment.toUpperCase(),"DEPLOY")
         sendStageEndToGPL(pomXmlStructure, pipelineData, "110")
     } catch (Exception e) {
         sendStageEndToGPL(pomXmlStructure, pipelineData, "110", Strings.toHtml(e.getMessage()), null, "error")
@@ -295,12 +295,12 @@ def restoreConfigurationStep() {
 }
 
 /** 
- * Step undeployArtifactFromIcp
+ * Step undeployArtifactFromCloud
  */
-def undeployArtifactFromIcp() {
+def undeployArtifactFromCloud() {
     sendStageStartToGPL(pomXmlStructure, pipelineData, "210")
     printOpen("Haciendo undeploy y comprobando si se ha restaurado el ancient del componente", EchoLevel.ALL)
-    existAncient = undeployICP(pomXmlStructure, pipelineData, enviroment, ignoreExistingAncient, forceAllCenters)
+    existAncient = undeployCloud(pomXmlStructure, pipelineData, enviroment, ignoreExistingAncient, forceAllCenters)
     printOpen("Exist ancient? ${existAncient}", EchoLevel.ALL)
     sendStageEndToGPL(pomXmlStructure, pipelineData, "210")
 }
@@ -326,8 +326,8 @@ def sendAncientVersionRestoredToGPLStep() {
 
     //Obtenemos la version del ancient que acabamos de arrancar
     printOpen("Obtenemos la versión del ancient instalada", EchoLevel.ALL)
-    if (isICPEnabled(enviroment)) {
-        version = getInfoAppICP(pomXmlStructure, pipelineData, GlobalVars.ENDPOINT_INFO, enviroment).build.version
+    if (isCloudEnabled(enviroment)) {
+        version = getInfoAppCloud(pomXmlStructure, pipelineData, GlobalVars.ENDPOINT_INFO, enviroment).build.version
     }
     printOpen("Version obtenida del ancient: ${version}", EchoLevel.ALL)
     //Iniciamos el Pipeline de instalación del ancient de GPL (es unicamente informativo ya que unicamente crea un nuevo pipeline y lo finaliza para poder enviar la Trazabilidad = I)

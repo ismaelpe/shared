@@ -53,16 +53,16 @@ def call(Map pipelineParameters) {
 	
 	pipelineOS.withoutSCM(pipelineParams){
 		try {
-			k8sOrigin='icp'
+			k8sOrigin='cloud'
 			k8sDestination='ocp'
 			
-			if (k8sOrigink8sDestination!=null && "icp->ocp".equals(k8sOrigink8sDestination)) {
-				k8sOrigin='icp'
+			if (k8sOrigink8sDestination!=null && "cloud->ocp".equals(k8sOrigink8sDestination)) {
+				k8sOrigin='cloud'
 				k8sDestination='ocp'
 			}
-			if (k8sOrigink8sDestination!=null && "ocp->icp".equals(k8sOrigink8sDestination)) {
+			if (k8sOrigink8sDestination!=null && "ocp->cloud".equals(k8sOrigink8sDestination)) {
 				k8sOrigin='ocp'
-				k8sDestination='icp'
+				k8sDestination='cloud'
 			}
 			if (command==null) {
 				command='CLONE'
@@ -100,7 +100,7 @@ def call(Map pipelineParameters) {
 								if (type.equals('NA') || (!type.equals('NA') && type.equals(tuplaMicro.appType.toString()))) {
 									if (contador<numMaxMicros) {
 										try {
-											contadorClone=cloneToIcp(scriptsPath,environment, tuplaMicro.garApp.toString(), tuplaMicro.major.toString()+'.'+tuplaMicro.minor.toString()+'.'+tuplaMicro.fix.toString(), namespace, tuplaMicro.appType.toString(), buildCode, true, groupId, tuplaMicro.appName.toString(), 'false', ignoreStart, ignoreBuild,dontDeployAsync,'CLONE',k8sOrigin,k8sDestination)
+											contadorClone=cloneToCloud(scriptsPath,environment, tuplaMicro.garApp.toString(), tuplaMicro.major.toString()+'.'+tuplaMicro.minor.toString()+'.'+tuplaMicro.fix.toString(), namespace, tuplaMicro.appType.toString(), buildCode, true, groupId, tuplaMicro.appName.toString(), 'false', ignoreStart, ignoreBuild,dontDeployAsync,'CLONE',k8sOrigin,k8sDestination)
 											if (contadorClone==0) {
 												contador--
 												microsCloneKO+=tuplaMicro.garApp.toString()+"-"+tuplaMicro.major.toString()+'.'+tuplaMicro.minor.toString()+'.'+tuplaMicro.fix.toString()+"#"
@@ -133,7 +133,7 @@ def call(Map pipelineParameters) {
 						printOpen("Se solicita el duplicado de los siguientes micros ${multiplesMicros} ${environment} listMicros.length ${listMicros.length}",EchoLevel.INFO)
 						for (String tuplaMicro: listMicros) {
 							String[] listMicro=tuplaMicro.split(';')
-							cloneToIcp(scriptsPath,environment, listMicro[1], listMicro[2], namespace, listMicro[0], buildCode, true, groupId, listMicro[1], 'false', ignoreStart, ignoreBuild,dontDeployAsync,'CLONE',k8sOrigin,k8sDestination)
+							cloneToCloud(scriptsPath,environment, listMicro[1], listMicro[2], namespace, listMicro[0], buildCode, true, groupId, listMicro[1], 'false', ignoreStart, ignoreBuild,dontDeployAsync,'CLONE',k8sOrigin,k8sDestination)
 						}
 					}
 				}else {
@@ -146,7 +146,7 @@ def call(Map pipelineParameters) {
 						//Se tiene que parar el micro
 						stopMicro(scriptsPath,environment, micro, version, namespace, type, componentPom , k8sDestination)
 					}else {
-						cloneToIcp(scriptsPath,environment, micro, version, namespace, type, buildCode, true, groupId, componentPom, dontGenerateImages, ignoreStart, ignoreBuild, dontDeployAsync,command,k8sOrigin,k8sDestination)
+						cloneToCloud(scriptsPath,environment, micro, version, namespace, type, buildCode, true, groupId, componentPom, dontGenerateImages, ignoreStart, ignoreBuild, dontDeployAsync,command,k8sOrigin,k8sDestination)
 					}
 				}else {
 					printOpen("Los multiplesMicros ${multiplesMicros}",EchoLevel.INFO)
@@ -165,7 +165,7 @@ def stopMicro(String path, String environment, String micro, String version, Str
 	def buildCode=1000
 	def resultScript=null
 	String versionScript=version.replaceAll('\\.',':')
-	def componentId=cloneToIcp.getArtifactId(path,micro,namespace,versionScript,microType,componentPom,environment,buildCode,k8s)
+	def componentId=cloneToCloud.getArtifactId(path,micro,namespace,versionScript,microType,componentPom,environment,buildCode,k8s)
 
 	if('ocp'.equals(k8s)){
 		pcldDestination="PCLD_MIGRATED"
@@ -176,11 +176,11 @@ def stopMicro(String path, String environment, String micro, String version, Str
 	String nameMicro=micro.toUpperCase()+versionArray[0]
 	
 	if (componentId!=0) {
-		printOpen("${path}/getLastDeployment.sh -u '${GlobalVars.ICP_PRO}/api/publisher/v1/api/application/${pcldDestination}/${namespace}/component/${nameMicro}/deploy/current/environment/${environment}/az/ALL' "+
+		printOpen("${path}/getLastDeployment.sh -u '${GlobalVars.Cloud_PRO}/api/publisher/v1/api/application/${pcldDestination}/${namespace}/component/${nameMicro}/deploy/current/environment/${environment}/az/ALL' "+
 			" -l '${GlobalVars.URL_ALMMETRICS}' -A ${namespace} -V ${versionScript} -T ${microType} -C ${componentPom} -E ${environment} -B '${buildCode}' -M ${micro} ",EchoLevel.INFO)
 		
 		try {
-			resultScript = sh(returnStdout: true, script: "${path}/getLastDeployment.sh -u '${GlobalVars.ICP_PRO}/api/publisher/v1/api/application/${pcldDestination}/${namespace}/component/${nameMicro}/deploy/current/environment/${environment}/az/ALL' "+
+			resultScript = sh(returnStdout: true, script: "${path}/getLastDeployment.sh -u '${GlobalVars.Cloud_PRO}/api/publisher/v1/api/application/${pcldDestination}/${namespace}/component/${nameMicro}/deploy/current/environment/${environment}/az/ALL' "+
 			" -l '${GlobalVars.URL_ALMMETRICS}' -A ${namespace} -V ${versionScript} -T ${microType} -C ${componentPom} -E ${environment} -B '${buildCode}' -M ${micro} "
 				)
 		}catch(e) {
@@ -196,31 +196,31 @@ def stopMicro(String path, String environment, String micro, String version, Str
 		def lastDeployment=resultScriptYaml
 		
 		if (lastDeployment!=null) {
-			Map absis=lastDeployment["absis"]
-			Map absisApps=absis["apps"]
-			Map absisAppEnvQualifier=absisApps["envQualifier"]
+			Map alm=lastDeployment["alm"]
+			Map almApps=alm["apps"]
+			Map almAppEnvQualifier=almApps["envQualifier"]
 			
-			Map absisApp=absis["app"]
+			Map almApp=alm["app"]
 			
-			if (absisApp!=null && absisApp["replicas"]!=null) {
-				absisApp["replicas"]=0
+			if (almApp!=null && almApp["replicas"]!=null) {
+				almApp["replicas"]=0
 			}
 			
-			if (absisAppEnvQualifier!=null) {
-				if (absisAppEnvQualifier["stable"]!=null) {
-					def stable=absisAppEnvQualifier["stable"]
+			if (almAppEnvQualifier!=null) {
+				if (almAppEnvQualifier["stable"]!=null) {
+					def stable=almAppEnvQualifier["stable"]
 					stable["replicas"]=0
 				}
-				if (absisAppEnvQualifier["new"]!=null) {
-					def stable=absisAppEnvQualifier["nre"]
+				if (almAppEnvQualifier["new"]!=null) {
+					def stable=almAppEnvQualifier["nre"]
 					stable["replicas"]=0
 				}
 			}
 			
-			printOpen("${path}/deployArtifactICP.sh -h '${GlobalVars.ICP_PRO}' -M ${micro}"+
+			printOpen("${path}/deployArtifactCloud.sh -h '${GlobalVars.Cloud_PRO}' -M ${micro}"+
 				" -l '${GlobalVars.URL_ALMMETRICS}' -A ${namespace} -V ${versionScript} -T ${microType} -C ${componentPom} -E ${environment} -B '${buildCode}' -k ${k8s} "+
 				" -i '${objectsParseUtils.toYamlString(resultScriptYaml,true)}'  -c B -Z ${zoneDistribution} -w ${ignoreStart}",EchoLevel.INFO)
-			resultScript = sh( returnStdout: true, script: "${path}/deployArtifactICP.sh -h '${GlobalVars.ICP_PRO}' -M ${micro}"+
+			resultScript = sh( returnStdout: true, script: "${path}/deployArtifactCloud.sh -h '${GlobalVars.Cloud_PRO}' -M ${micro}"+
 				" -l '${GlobalVars.URL_ALMMETRICS}' -A ${namespace} -V ${versionScript} -T ${microType} -C ${componentPom} -E ${environment} -B '${buildCode}' -k ${k8s} "+
 				" -i '${objectsParseUtils.toYamlString(resultScriptYaml,true)}'  -c B -Z ${zoneDistribution} -w ${ignoreStart}")
 			

@@ -3,7 +3,7 @@ package com.project.alm
 import com.project.alm.GarAppType
 
 
-class ICPAppResources{
+class CloudAppResources{
 
 	/**
 	 * Datos del excel de capacity  

@@ -12,12 +12,12 @@ import com.project.alm.*
  * @param pipeline info de la pipeline
  * @return void
  */
-def call(PomXmlStructure pomXml, PipelineData pipeline, ICPStateUtility icpStateUtility) {
+def call(PomXmlStructure pomXml, PipelineData pipeline, CloudStateUtility cloudStateUtility) {
 
 	printOpen("before runRemoteIT,remoteITOk is : ${pipeline.pipelineStructure.resultPipelineData.remoteITOk}", EchoLevel.ALL)
-	printOpen("icpStateUtility : ${icpStateUtility}", EchoLevel.ALL)
+	printOpen("cloudStateUtility : ${cloudStateUtility}", EchoLevel.ALL)
 	
-	if (icpStateUtility!=null && icpStateUtility.icpDeployStructure!=null) {
+	if (cloudStateUtility!=null && cloudStateUtility.cloudDeployStructure!=null) {
 		//String artifactId = BmxUtilities.calculateRoute(pomXml, pipeline.branchStructure)
 		String artifactId = BmxUtilities.calculateArtifactId(pomXml,pipeline.branchStructure)
 	
@@ -26,59 +26,59 @@ def call(PomXmlStructure pomXml, PipelineData pipeline, ICPStateUtility icpState
 		//Si es feature tenemos que poner la ruta calculada
 		//Se arch tenems que poner la ruta delante
 		
-		String pathToMicro=icpStateUtility.icpDeployStructure.getSuffixedComponentName().replace("<componentName>", artifactId)
+		String pathToMicro=cloudStateUtility.cloudDeployStructure.getSuffixedComponentName().replace("<componentName>", artifactId)
 		
 		if (pipeline.branchStructure.branchType == BranchType.FEATURE) {
-			pathToMicro=icpStateUtility.pathFeature
+			pathToMicro=cloudStateUtility.pathFeature
 		}else {
-			if (icpStateUtility.sampleAppFlag) pathToMicro=BmxUtilities.calculateArtifactId(pomXml,pipeline.branchStructure,true).toLowerCase()
+			if (cloudStateUtility.sampleAppFlag) pathToMicro=BmxUtilities.calculateArtifactId(pomXml,pipeline.branchStructure,true).toLowerCase()
 		}
 		
 		if (pomXml.isArchProject()) {
 			pathToMicro="arch-service/"+pathToMicro
 		}
 		
-		String icpDistCenter="ALL"
+		String cloudDistCenter="ALL"
 		if (pipeline.distributionModePRO == DistributionModePRO.SINGLE_CENTER_ROLLOUT_CENTER_1) {
-			icpDistCenter="AZ1"
+			cloudDistCenter="AZ1"
         } else if (pipeline.distributionModePRO == DistributionModePRO.SINGLE_CENTER_ROLLOUT_CENTER_2) {
-			icpDistCenter="AZ2"
+			cloudDistCenter="AZ2"
         }
         
         // Start: Check Centers Avaiability
-        def az1IsUp = validateMicroIsUp(icpStateUtility.icpDeployStructure.getUrlActuatorPrefixTesting() + icpStateUtility.icpDeployStructure.getUrlSuffixTesting("AZ1"))
-        def az2IsUp = validateMicroIsUp(icpStateUtility.icpDeployStructure.getUrlActuatorPrefixTesting() + icpStateUtility.icpDeployStructure.getUrlSuffixTesting("AZ2"))
+        def az1IsUp = validateMicroIsUp(cloudStateUtility.cloudDeployStructure.getUrlActuatorPrefixTesting() + cloudStateUtility.cloudDeployStructure.getUrlSuffixTesting("AZ1"))
+        def az2IsUp = validateMicroIsUp(cloudStateUtility.cloudDeployStructure.getUrlActuatorPrefixTesting() + cloudStateUtility.cloudDeployStructure.getUrlSuffixTesting("AZ2"))
         
-        def icpDistCenterForTest = icpDistCenter
-        if (icpDistCenter == "ALL") {
+        def cloudDistCenterForTest = cloudDistCenter
+        if (cloudDistCenter == "ALL") {
             if (az1IsUp) {
                 printOpen("We're going to run the integration tests against cluster 1", EchoLevel.INFO)
-                icpDistCenter = "AZ1"
+                cloudDistCenter = "AZ1"
             } else {
                 if (az2IsUp) {
                     printOpen("We're going to run the integration tests against cluster 2", EchoLevel.INFO)
-                    icpDistCenter = "AZ2"
+                    cloudDistCenter = "AZ2"
                 } else {
-                    throwExceptionAndOpenMaximoIfApplicable(new Exception("${GlobalVars.ICP_ERROR_DEPLOY_KUBERNETES_DISABLED}"), pipeline, pomXml, [:])
+                    throwExceptionAndOpenMaximoIfApplicable(new Exception("${GlobalVars.Cloud_ERROR_DEPLOY_KUBERNETES_DISABLED}"), pipeline, pomXml, [:])
                 }
             }
-        } else if (icpDistCenter == "AZ1" && !az1IsUp) {
-            throwExceptionAndOpenMaximoIfApplicable(new Exception("${GlobalVars.ICP_ERROR_DEPLOY_ON_MITIGATED_CENTER}"), pipeline, pomXml, [:])
-        } else if (icpDistCenter == "AZ2" && !az2IsUp) {
-            throwExceptionAndOpenMaximoIfApplicable(new Exception("${GlobalVars.ICP_ERROR_DEPLOY_ON_MITIGATED_CENTER}"), pipeline, pomXml, [:])
+        } else if (cloudDistCenter == "AZ1" && !az1IsUp) {
+            throwExceptionAndOpenMaximoIfApplicable(new Exception("${GlobalVars.Cloud_ERROR_DEPLOY_ON_MITIGATED_CENTER}"), pipeline, pomXml, [:])
+        } else if (cloudDistCenter == "AZ2" && !az2IsUp) {
+            throwExceptionAndOpenMaximoIfApplicable(new Exception("${GlobalVars.Cloud_ERROR_DEPLOY_ON_MITIGATED_CENTER}"), pipeline, pomXml, [:])
         }
         
         if("pre".equals(pipeline.deployStructure.env.toLowerCase()) || "pro".equals(pipeline.deployStructure.env.toLowerCase())) {
-			String microUrlGatewayForRefresh = icpStateUtility.icpDeployStructure.getUrlActuatorPrefixTesting() + icpStateUtility.icpDeployStructure.getUrlSuffixTesting(icpDistCenter) + "/" + pathToMicro
+			String microUrlGatewayForRefresh = cloudStateUtility.cloudDeployStructure.getUrlActuatorPrefixTesting() + cloudStateUtility.cloudDeployStructure.getUrlSuffixTesting(cloudDistCenter) + "/" + pathToMicro
 			runActuatorRefresh("${microUrlGatewayForRefresh}", pomXml, pipeline)
 		}
 
         def microUrlGatewayForTesting
         if("pro".equals(pipeline.deployStructure.env.toLowerCase())) {
-            def hasAffinity = validateMicroIsUp(icpStateUtility.icpDeployStructure.getUrlPrefixTesting())
-            microUrlGatewayForTesting = icpStateUtility.icpDeployStructure.getUrlPrefixTesting(hasAffinity) + icpStateUtility.icpDeployStructure.getUrlSuffixIntegrationTesting(icpDistCenter, hasAffinity) + "/" + pathToMicro
+            def hasAffinity = validateMicroIsUp(cloudStateUtility.cloudDeployStructure.getUrlPrefixTesting())
+            microUrlGatewayForTesting = cloudStateUtility.cloudDeployStructure.getUrlPrefixTesting(hasAffinity) + cloudStateUtility.cloudDeployStructure.getUrlSuffixIntegrationTesting(cloudDistCenter, hasAffinity) + "/" + pathToMicro
   		} else {
-            microUrlGatewayForTesting = icpStateUtility.icpDeployStructure.getUrlPrefixTesting() + icpStateUtility.icpDeployStructure.getUrlSuffixIntegrationTesting(icpDistCenter) + "/" + pathToMicro
+            microUrlGatewayForTesting = cloudStateUtility.cloudDeployStructure.getUrlPrefixTesting() + cloudStateUtility.cloudDeployStructure.getUrlSuffixIntegrationTesting(cloudDistCenter) + "/" + pathToMicro
         }
 		printOpen("Running integration tests against ${microUrlGatewayForTesting}", EchoLevel.INFO)
         // End: Check Centers Avaiability
@@ -89,14 +89,14 @@ def call(PomXmlStructure pomXml, PipelineData pipeline, ICPStateUtility icpState
         }
 		
 		if(pipeline.onlyProductionTests) {
-			withCredentials([string(credentialsId: "ALM_TOKEN_${icpStateUtility.icpDeployStructure.envICP.toUpperCase()}_V2", variable: 'tokenAbsis3')]) {
+			withCredentials([string(credentialsId: "ALM_TOKEN_${cloudStateUtility.cloudDeployStructure.envCloud.toUpperCase()}_V2", variable: 'tokenAlm3')]) {
 			
 				additionalParameters += "-P it-pro "
 				additionalParameters += "-Dskip-it=true "
-				additionalParameters += "-Dauthorization-token=${tokenAbsis3} "
+				additionalParameters += "-Dauthorization-token=${tokenAlm3} "
 
-                //def cmd = "mvn <Default_Maven_Settings> -Dhttps.proxyHost=${env.proxyHost} -Dhttps.proxyPort=${env.proxyPort} -Dhttp.proxyHost=${env.proxyHost} -Dhttp.proxyPort=${env.proxyPort} verify -Dmicro-url=${microUrlGatewayForTesting} -Dskip-ut=true ${additionalParameters} -Denvironment=${icpStateUtility.environment}"
-				def cmd = "mvn <Default_Maven_Settings>  verify -Dmicro-url=${microUrlGatewayForTesting} -Dskip-ut=true ${additionalParameters} -Denvironment=${icpStateUtility.environment}"
+                //def cmd = "mvn <Default_Maven_Settings> -Dhttps.proxyHost=${env.proxyHost} -Dhttps.proxyPort=${env.proxyPort} -Dhttp.proxyHost=${env.proxyHost} -Dhttp.proxyPort=${env.proxyPort} verify -Dmicro-url=${microUrlGatewayForTesting} -Dskip-ut=true ${additionalParameters} -Denvironment=${cloudStateUtility.environment}"
+				def cmd = "mvn <Default_Maven_Settings>  verify -Dmicro-url=${microUrlGatewayForTesting} -Dskip-ut=true ${additionalParameters} -Denvironment=${cloudStateUtility.environment}"
                 boolean weHaveToGenerateOpenApiClasses =
                     WorkspaceUtils.isThereASwaggerContract(this, pomXml) &&
                         ! WorkspaceUtils.areSwaggerContractClassesGenerated(this, pomXml)
@@ -124,8 +124,8 @@ def call(PomXmlStructure pomXml, PipelineData pipeline, ICPStateUtility icpState
 		} else {
 
             additionalParameters += "-Dskip-it=${pipeline.getExecutionMode().skipIntegrationTest()} "
-			//def cmd = "mvn <Default_Maven_Settings> -Dhttps.proxyHost=${env.proxyHost} -Dhttps.proxyPort=${env.proxyPort} -Dhttp.proxyHost=${env.proxyHost} -Dhttp.proxyPort=${env.proxyPort} verify -Dmicro-url=${microUrlGatewayForTesting} -Dskip-ut=true ${additionalParameters} -Denvironment=${icpStateUtility.environment}"
-			def cmd = "mvn <Default_Maven_Settings>  verify -Dmicro-url=${microUrlGatewayForTesting} -Dskip-ut=true ${additionalParameters} -Denvironment=${icpStateUtility.environment}"
+			//def cmd = "mvn <Default_Maven_Settings> -Dhttps.proxyHost=${env.proxyHost} -Dhttps.proxyPort=${env.proxyPort} -Dhttp.proxyHost=${env.proxyHost} -Dhttp.proxyPort=${env.proxyPort} verify -Dmicro-url=${microUrlGatewayForTesting} -Dskip-ut=true ${additionalParameters} -Denvironment=${cloudStateUtility.environment}"
+			def cmd = "mvn <Default_Maven_Settings>  verify -Dmicro-url=${microUrlGatewayForTesting} -Dskip-ut=true ${additionalParameters} -Denvironment=${cloudStateUtility.environment}"
             boolean weHaveToGenerateOpenApiClasses =
                 WorkspaceUtils.isThereASwaggerContract(this, pomXml) &&
                     ! WorkspaceUtils.areSwaggerContractClassesGenerated(this, pomXml)
@@ -166,7 +166,7 @@ private void throwExceptionAndOpenMaximoIfApplicable(MavenGoalExecutionException
 
     MavenGoalExecutionFailureError mavenError = exception.mavenError
 
-    if (MavenGoalExecutionFailureErrorConditionals.isAnICPSSLEventualErrorOnITTest(exception) ||
+    if (MavenGoalExecutionFailureErrorConditionals.isAnCloudSSLEventualErrorOnITTest(exception) ||
         MavenGoalExecutionFailureErrorConditionals.isAContractServerSSLEventualErrorOnOpenApiGeneration(exception)) {
 
         createMaximoAndThrow.sslEventualErrorWhileDoingITTest(pipelineData, pomXml, mavenError, parameters['micro-url'])

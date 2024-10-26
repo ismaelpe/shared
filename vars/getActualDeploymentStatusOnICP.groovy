@@ -1,25 +1,25 @@
 import com.project.alm.*
-import com.project.alm.ICPk8sComponentDeploymentInfo
+import com.project.alm.Cloudk8sComponentDeploymentInfo
 import com.project.alm.BmxUtilities
-import com.project.alm.ICPk8sComponentInfo
-import com.project.alm.ICPk8sComponentServiceInfo
-import com.project.alm.ICPDeployStructure
-import com.project.alm.ICPk8sActualStatusInfo
+import com.project.alm.Cloudk8sComponentInfo
+import com.project.alm.Cloudk8sComponentServiceInfo
+import com.project.alm.CloudDeployStructure
+import com.project.alm.Cloudk8sActualStatusInfo
 import com.project.alm.BranchType
-import com.project.alm.ICPApiResponse
+import com.project.alm.CloudApiResponse
 import com.project.alm.GlobalVars
 
 
 
-def getICPStatus(PomXmlStructure pomXml, PipelineData pipeline,ICPDeployStructure deployStructure, String distributionCenter) {
-	ICPApiResponse response=sendRequestToICPApi("v1/application/PCLD/${pomXml.getICPAppName()}/component/${pipeline.componentId}/environment/${deployStructure.envICP.toUpperCase()}/availabilityzone/${distributionCenter}/status",null,"GET","${pomXml.getICPAppName()}","",false,false, pipeline, pomXml)
+def getCloudStatus(PomXmlStructure pomXml, PipelineData pipeline,CloudDeployStructure deployStructure, String distributionCenter) {
+	CloudApiResponse response=sendRequestToCloudApi("v1/application/PCLD/${pomXml.getCloudAppName()}/component/${pipeline.componentId}/environment/${deployStructure.envCloud.toUpperCase()}/availabilityzone/${distributionCenter}/status",null,"GET","${pomXml.getCloudAppName()}","",false,false, pipeline, pomXml)
     printOpen("The status API of the app is ${response.body}", EchoLevel.DEBUG)
 		
 	if (response.statusCode>=200 && response.statusCode<300) {
 
         printOpen("Vamos a analizar el body", EchoLevel.DEBUG)
 		
-        ICPk8sComponentInfoMult k8sComponentInfo = generateActualDeploymentOnICP(response.body)
+        Cloudk8sComponentInfoMult k8sComponentInfo = generateActualDeploymentOnCloud(response.body)
 
         printOpen("result ${k8sComponentInfo.toString()}", EchoLevel.DEBUG)
 
@@ -37,24 +37,24 @@ def getICPStatus(PomXmlStructure pomXml, PipelineData pipeline,ICPDeployStructur
  * @param deployStructure Informacion del deploy
  * @return
  */
-def call(PomXmlStructure pomXml, PipelineData pipeline,ICPDeployStructure deployStructure) {
+def call(PomXmlStructure pomXml, PipelineData pipeline,CloudDeployStructure deployStructure) {
 	
-	return getICPStatus(pomXml, pipeline, deployStructure, "ALL")
+	return getCloudStatus(pomXml, pipeline, deployStructure, "ALL")
 
 }
 
-def call(PomXmlStructure pomXml, PipelineData pipeline,ICPDeployStructure deployStructure, String distributionCenter) {
+def call(PomXmlStructure pomXml, PipelineData pipeline,CloudDeployStructure deployStructure, String distributionCenter) {
 	
-	return getICPStatus(pomXml, pipeline, deployStructure, distributionCenter)
+	return getCloudStatus(pomXml, pipeline, deployStructure, distributionCenter)
 
 }
 
-def call(PomXmlStructure pomXml, PipelineData pipeline,ICPDeployStructure deployStructure, boolean stableMap) {
-	return getActualDeploymentStatusOnICP(pomXml,pipeline,deployStructure,stableMap,"ALL")
+def call(PomXmlStructure pomXml, PipelineData pipeline,CloudDeployStructure deployStructure, boolean stableMap) {
+	return getActualDeploymentStatusOnCloud(pomXml,pipeline,deployStructure,stableMap,"ALL")
 }
 
-def call(PomXmlStructure pomXml, PipelineData pipeline,ICPDeployStructure deployStructure, boolean stableMap, String distributionCenter) {
-	return getActualDeploymentStatusOnICP(pomXml,pipeline,deployStructure,stableMap,distributionCenter,false)
+def call(PomXmlStructure pomXml, PipelineData pipeline,CloudDeployStructure deployStructure, boolean stableMap, String distributionCenter) {
+	return getActualDeploymentStatusOnCloud(pomXml,pipeline,deployStructure,stableMap,distributionCenter,false)
 }
 
 /**
@@ -65,22 +65,22 @@ def call(PomXmlStructure pomXml, PipelineData pipeline,ICPDeployStructure deploy
  * @param stableMap indica que tenemos el valor a devolver
  * @return
  */
-def call(PomXmlStructure pomXml, PipelineData pipeline,ICPDeployStructure deployStructure, boolean stableMap, String distributionCenter,boolean searchForStable) {
+def call(PomXmlStructure pomXml, PipelineData pipeline,CloudDeployStructure deployStructure, boolean stableMap, String distributionCenter,boolean searchForStable) {
 	
 	 //Si es feature no nos interesa el estado actual, lo vamos a fundir otra vez
 	
 	
 	
-	 ICPk8sActualStatusInfo icpActualStatusInfo=new ICPk8sActualStatusInfo()
+	 Cloudk8sActualStatusInfo cloudActualStatusInfo=new Cloudk8sActualStatusInfo()
 	 
 	 //Validar primero si existe el ultimo deploy
-	 ICPApiResponse response=sendRequestToICPApi("v1/application/PCLD/${pomXml.getICPAppName()}/component/${pipeline.componentId}/environment/${deployStructure.envICP.toUpperCase()}/availabilityzone/${distributionCenter}/status",null,"GET","${pomXml.getICPAppName()}","",false,false, pipeline, pomXml)
+	 CloudApiResponse response=sendRequestToCloudApi("v1/application/PCLD/${pomXml.getCloudAppName()}/component/${pipeline.componentId}/environment/${deployStructure.envCloud.toUpperCase()}/availabilityzone/${distributionCenter}/status",null,"GET","${pomXml.getCloudAppName()}","",false,false, pipeline, pomXml)
 	
 	  if (response.statusCode>=200 && response.statusCode<300) {
 		  
 		 if (response.body==null) {
              printOpen("Application doesn't exist. This is a first deploy.", EchoLevel.INFO)
-			 return icpActualStatusInfo
+			 return cloudActualStatusInfo
 		 }
 		 
 		 if (distributionCenter!="ALL") {
@@ -89,7 +89,7 @@ def call(PomXmlStructure pomXml, PipelineData pipeline,ICPDeployStructure deploy
                  printOpen("Current config: ${response.body.getAt(0).items}", EchoLevel.DEBUG)
 			 }else {
                  printOpen("Application doesn't exist. This is a first deploy.", EchoLevel.INFO)
-				 return icpActualStatusInfo
+				 return cloudActualStatusInfo
 			 }
 		 }
 		 if (distributionCenter=="ALL") {
@@ -98,25 +98,25 @@ def call(PomXmlStructure pomXml, PipelineData pipeline,ICPDeployStructure deploy
                  printOpen("Current config: ${response.body.getAt(0).items}", EchoLevel.DEBUG)
 			 }else {
                  printOpen("Application doesn't exist. This is a first deploy.", EchoLevel.INFO)
-				 return icpActualStatusInfo
+				 return cloudActualStatusInfo
 			 }
 		 }
 	 }
 	 
 		 
-	 Map lastDeployedValuesYaml=generateValuesYamlLastICPDeployment(pomXml,pipeline,deployStructure.envICP,distributionCenter)
+	 Map lastDeployedValuesYaml=generateValuesYamlLastCloudDeployment(pomXml,pipeline,deployStructure.envCloud,distributionCenter)
 	 
-	 if (lastDeployedValuesYaml==null) return icpActualStatusInfo
+	 if (lastDeployedValuesYaml==null) return cloudActualStatusInfo
 	 
-	 Map absis=lastDeployedValuesYaml["absis"]
-	 Map absisApp=absis["apps"]
-	 Map absisAppEnvQualifier=absisApp["envQualifier"]
+	 Map alm=lastDeployedValuesYaml["alm"]
+	 Map almApp=alm["apps"]
+	 Map almAppEnvQualifier=almApp["envQualifier"]
 	 //Este map es el que contiene la info del micro desplegado
 	 Map stable=null
 	 
-	 if (absisAppEnvQualifier["new"]!=null && searchForStable==false) {
-		 stable=absisAppEnvQualifier["new"]
-	 }else stable=absisAppEnvQualifier["stable"]
+	 if (almAppEnvQualifier["new"]!=null && searchForStable==false) {
+		 stable=almAppEnvQualifier["new"]
+	 }else stable=almAppEnvQualifier["stable"]
 	 
 	 if (stable!=null) {
 		 //Vamos a coger los datos que nos interesan de este map ya que van a ser la version stable de la nueva promocion
@@ -126,18 +126,18 @@ def call(PomXmlStructure pomXml, PipelineData pipeline,ICPDeployStructure deploy
 		 //readinessProbePath
 		 //livenessProbePath
          //replicas
-		 icpActualStatusInfo.currentColour=stable["colour"]
-		 icpActualStatusInfo.currentVersion=stable["version"]
-		 icpActualStatusInfo.currentImage=stable["image"]
-		 icpActualStatusInfo.readinessProbePath=stable["readinessProbePath"]
-		 icpActualStatusInfo.livenessProbePath=stable["livenessProbePath"]
-		 icpActualStatusInfo.envVars=getEnvVars(stable["envVars"], lastDeployedValuesYaml["local"]["app"]["envVars"])
-         icpActualStatusInfo.replicas=stable["replicas"]
+		 cloudActualStatusInfo.currentColour=stable["colour"]
+		 cloudActualStatusInfo.currentVersion=stable["version"]
+		 cloudActualStatusInfo.currentImage=stable["image"]
+		 cloudActualStatusInfo.readinessProbePath=stable["readinessProbePath"]
+		 cloudActualStatusInfo.livenessProbePath=stable["livenessProbePath"]
+		 cloudActualStatusInfo.envVars=getEnvVars(stable["envVars"], lastDeployedValuesYaml["local"]["app"]["envVars"])
+         cloudActualStatusInfo.replicas=stable["replicas"]
 	 }
 
     printOpen("Stable ${stable}", EchoLevel.DEBUG)
 		
-	 return icpActualStatusInfo
+	 return cloudActualStatusInfo
 }
 
 //Funcion para mover las variables genericas a variables de un deployment en particular en caso de usar la version 0.0.15 del chart de helm

@@ -65,7 +65,7 @@ def call() {
      * 1. Recoger el artifact
      */
     pipeline {
-        agent { node (absisJenkinsAgent(agent)) }
+        agent { node (almJenkinsAgent(agent)) }
         options {
             gitLabConnection('gitlab')
             buildDiscarder(logRotator(numToKeepStr: '40'))
@@ -75,8 +75,8 @@ def call() {
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
             JNKMSV = credentials('JNKMSV-USER-TOKEN')
-            ICP_CERT = credentials('icp-alm-pro-cert')
-            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
+            Cloud_CERT = credentials('cloud-alm-pro-cert')
+            Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
@@ -208,17 +208,17 @@ def checkMicroVersionStep() {
         // Get the JSON with app-id and info
         String namespace = pomXmlStructure.isArchProject() ? "ARCH" : "APP"
         String environment = pipelineData.bmxStructure.environment
-        ICPDeployStructure deployStructure = new ICPDeployStructure('cxb-ab3cor','cxb-ab3app', environment)
+        CloudDeployStructure deployStructure = new CloudDeployStructure('cxb-ab3cor','cxb-ab3app', environment)
         
-        def icpAppNameAndInstance = calculateIcpAppAndInstanceName()
-        def serviceIdICP = getServiceForComponent(icpAppNameAndInstance, deployStructure.envICP, namespace)
+        def cloudAppNameAndInstance = calculateCloudAppAndInstanceName()
+        def serviceIdCloud = getServiceForComponent(cloudAppNameAndInstance, deployStructure.envCloud, namespace)
 
-        if (serviceIdICP) {
+        if (serviceIdCloud) {
             if (pomXmlStructure.isArchProject()) {
-                serviceIdICP = "arch-service/" + serviceIdICP
+                serviceIdCloud = "arch-service/" + serviceIdCloud
             }
 
-            microUrlGatewayForTesting = deployStructure.getUrlPrefixTesting() + deployStructure.getUrlSuffixIntegrationTesting("ALL") + "/" + serviceIdICP
+            microUrlGatewayForTesting = deployStructure.getUrlPrefixTesting() + deployStructure.getUrlSuffixIntegrationTesting("ALL") + "/" + serviceIdCloud
 
             printOpen("La URL de la aplicación en cloud es  URL es: $microUrlGatewayForTesting", EchoLevel.DEBUG)
         } else {
@@ -261,14 +261,14 @@ def buildAndTestStep() {
  * Stage 'sonar-scan'
  */
 def sonarScanStep() {
-    absisPipelineStageSonarScan(pomXmlStructure, pipelineData, "300")
+    almPipelineStageSonarScan(pomXmlStructure, pipelineData, "300")
 }
 
 /**
  * Stage 'sonar-quality-gate'
  */
 def sonarQualityGateStep() {
-    absisPipelineStageSonarQualityGate(pomXmlStructure, pipelineData, "400")
+    almPipelineStageSonarQualityGate(pomXmlStructure, pipelineData, "400")
 }
 
 /**
@@ -426,44 +426,44 @@ def getDeployedAppVersion() {
 }
 
 /**
- *  Calculate ICP APP NAME
+ *  Calculate Cloud APP NAME
  */
-def calculateIcpAppAndInstanceName() {
+def calculateCloudAppAndInstanceName() {
     def majorVersionPom = pomXmlStructure.getArtifactMajorVersion()
     def garApp = pomXmlStructure.getApp(GarAppType.valueOfType(pipelineData.garArtifactType.name))
     def garAppName = garApp.toUpperCase()
 
-    def icpAppName = "$garAppName$majorVersionPom"
-    def icpInstanceName = "$garAppName$majorVersionPom"
+    def cloudAppName = "$garAppName$majorVersionPom"
+    def cloudInstanceName = "$garAppName$majorVersionPom"
 
     if (pipelineData.branchStructure.featureNumber) {
         printOpen("It's a feature with this number id '$pipelineData.branchStructure.featureNumber'", EchoLevel.DEBUG)
         
         // Añadimo el nombre de la feature
-        icpInstanceName += pipelineData.branchStructure.featureNumber
+        cloudInstanceName += pipelineData.branchStructure.featureNumber
         
-        if(icpInstanceName.length() > GlobalVars.LIMIT_LENGTH_FOR_PODNAME_WITHOUT_K8_SUFFIX) {
-            icpInstanceName = icpInstanceName.substring(0, GlobalVars.LIMIT_LENGTH_FOR_PODNAME_WITHOUT_K8_SUFFIX)
+        if(cloudInstanceName.length() > GlobalVars.LIMIT_LENGTH_FOR_PODNAME_WITHOUT_K8_SUFFIX) {
+            cloudInstanceName = cloudInstanceName.substring(0, GlobalVars.LIMIT_LENGTH_FOR_PODNAME_WITHOUT_K8_SUFFIX)
         }
 
         if (pomXmlStructure.itContainsSampleApp()) {
             printOpen("Contains a sample app", EchoLevel.DEBUG)
-            icpAppName += "S"
-            icpInstanceName += "S"
+            cloudAppName += "S"
+            cloudInstanceName += "S"
         }
 
-        icpAppName += ".*[0-9]{8}E"
+        cloudAppName += ".*[0-9]{8}E"
     } else {
         if (pomXmlStructure.itContainsSampleApp()) {
             printOpen("Contains a sample app", EchoLevel.DEBUG)
-            icpAppName += "S"
-            icpInstanceName += "S"
+            cloudAppName += "S"
+            cloudInstanceName += "S"
         }
     }
 
     return [
-        icpAppName: icpAppName.toLowerCase(),
-        icpInstanceName: icpInstanceName.toLowerCase()
+        cloudAppName: cloudAppName.toLowerCase(),
+        cloudInstanceName: cloudInstanceName.toLowerCase()
     ]
 }
 
@@ -478,26 +478,26 @@ def hasSampleApp(typeStr, subTypeStr) {
 }
 
 /**
- * Obtiene el servicio de ICP para formar correctamente la url del micro
+ * Obtiene el servicio de Cloud para formar correctamente la url del micro
  */
-def getServiceForComponent(Map icpAppNameAndInstance, String environment, String namespace) {
+def getServiceForComponent(Map cloudAppNameAndInstance, String environment, String namespace) {
 	def service = null
-	def appICPId = GlobalVars.ICP_APP_ID_APPS
-	def appICP = GlobalVars.ICP_APP_APPS
+	def appCloudId = GlobalVars.Cloud_APP_ID_APPS
+	def appCloud = GlobalVars.Cloud_APP_APPS
 	
-	//Vamos a recuperar la info de la app en ICP
+	//Vamos a recuperar la info de la app en Cloud
 	if ("ARCH" == namespace) {
-		 appICP = GlobalVars.ICP_APP_ARCH
-		 appICPId = GlobalVars.ICP_APP_ID_ARCH
+		 appCloud = GlobalVars.Cloud_APP_ARCH
+		 appCloudId = GlobalVars.Cloud_APP_ID_ARCH
 	}
 
-    ICPApiResponse response = sendRequestToICPApi("v1/application/$appICPId/component", null, "GET", appICP, "", false, false)
+    CloudApiResponse response = sendRequestToCloudApi("v1/application/$appCloudId/component", null, "GET", appCloud, "", false, false)
 
 	if (response.statusCode >= 200 && response.statusCode < 300 && response.body != null && response.body.size() >= 1) {
-	    printOpen("Query ICP Component was succefull $appICPId, $appICP", EchoLevel.ALL)
-        printOpen("Use $icpAppNameAndInstance.icpAppName query to filter response ", EchoLevel.ALL)
+	    printOpen("Query Cloud Component was succefull $appCloudId, $appCloud", EchoLevel.ALL)
+        printOpen("Use $cloudAppNameAndInstance.cloudAppName query to filter response ", EchoLevel.ALL)
         
-        def componentResultIds = sh(script: "jq '.[] | select(.name | match(\"^(?i)$icpAppNameAndInstance.icpAppName\$\")) | .id' $env.WORKSPACE@tmp/outputCommand.json | jq -s", returnStdout: true)
+        def componentResultIds = sh(script: "jq '.[] | select(.name | match(\"^(?i)$cloudAppNameAndInstance.cloudAppName\$\")) | .id' $env.WORKSPACE@tmp/outputCommand.json | jq -s", returnStdout: true)
         def componentIds = new JsonSlurper().parseText(componentResultIds)
         printOpen("ComponentID to Check: $componentIds", EchoLevel.ALL)
 
@@ -507,17 +507,17 @@ def getServiceForComponent(Map icpAppNameAndInstance, String environment, String
             Yaml yaml= new Yaml(opts)
             
             for(def componentId in componentIds) { 
-                printOpen("Get Deployment for component '$appICP'", EchoLevel.ALL)
+                printOpen("Get Deployment for component '$appCloud'", EchoLevel.ALL)
                 
-                ICPApiResponse deploymentResponse = sendRequestToICPApi("v1/application/PCLD/$appICP/component/$componentId/deploy/current/environment/${environment.toUpperCase()}/az/ALL", null, "GET", appICP, "", false, false)
+                CloudApiResponse deploymentResponse = sendRequestToCloudApi("v1/application/PCLD/$appCloud/component/$componentId/deploy/current/environment/${environment.toUpperCase()}/az/ALL", null, "GET", appCloud, "", false, false)
 
                 if (deploymentResponse.statusCode >= 200 && deploymentResponse.statusCode < 300 && deploymentResponse.body != null && deploymentResponse.body.size() >= 1) {
                     def deployment = yaml.load(deploymentResponse.body.values)
                     printOpen("Deployment $deployment", EchoLevel.ALL)
-                    printOpen("Check deployment instance '${deployment?.absis?.app?.instance?.toLowerCase()}' - Calculated '$icpAppNameAndInstance.icpInstanceName'", EchoLevel.ALL)
-                    if (icpAppNameAndInstance.icpInstanceName == deployment?.absis?.app?.instance?.toLowerCase()) {
-                        service = deployment?.absis?.services?.envQualifier?.stable?.id
-                        printOpen("Match find for this instanceId '$icpAppNameAndInstance.icpInstanceName' with componentId '$componentId' using filter '$icpAppNameAndInstance.icpAppName", EchoLevel.ALL)
+                    printOpen("Check deployment instance '${deployment?.alm?.app?.instance?.toLowerCase()}' - Calculated '$cloudAppNameAndInstance.cloudInstanceName'", EchoLevel.ALL)
+                    if (cloudAppNameAndInstance.cloudInstanceName == deployment?.alm?.app?.instance?.toLowerCase()) {
+                        service = deployment?.alm?.services?.envQualifier?.stable?.id
+                        printOpen("Match find for this instanceId '$cloudAppNameAndInstance.cloudInstanceName' with componentId '$componentId' using filter '$cloudAppNameAndInstance.cloudAppName", EchoLevel.ALL)
                         break;
                     }
                 } else {
@@ -532,7 +532,7 @@ def getServiceForComponent(Map icpAppNameAndInstance, String environment, String
             printOpen("APP NOT FOUND - List of componentIds was empty!!")
         }
     } else {
-        printOpen("APP NOT FOUND - Query ICP has '$response.statusCode'!!")
+        printOpen("APP NOT FOUND - Query Cloud has '$response.statusCode'!!")
     }
 
 	return service	

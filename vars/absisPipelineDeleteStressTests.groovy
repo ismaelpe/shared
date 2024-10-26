@@ -9,7 +9,7 @@ def call(Map pipelineParams) {
     boolean successPipeline = true
 
     pipeline {
-        agent { node (absisJenkinsAgent(pipelineParams)) }
+        agent { node (almJenkinsAgent(pipelineParams)) }
         options {
             buildDiscarder(logRotator(numToKeepStr: '10'))
             timestamps()
@@ -19,8 +19,8 @@ def call(Map pipelineParams) {
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
             JNKMSV = credentials('JNKMSV-USER-TOKEN')
-            ICP_CERT = credentials('icp-alm-pro-cert')
-            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
+            Cloud_CERT = credentials('cloud-alm-pro-cert')
+            Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
@@ -36,10 +36,10 @@ def call(Map pipelineParams) {
                         Date today = new Date().clearTime()
 						Date priorDate = today - Integer.parseInt(params.cleanStressDays)
 						
-						currentBuild.displayName = "Cleaning ICP stress pods before ${priorDate}" 
+						currentBuild.displayName = "Cleaning Cloud stress pods before ${priorDate}" 
 						
-                        printOpen("Cleaning ICP with parameters ", EchoLevel.INFO)
-                        printOpen("Clean ICP: ${params.cleanStressDays}", EchoLevel.INFO)
+                        printOpen("Cleaning Cloud with parameters ", EchoLevel.INFO)
+                        printOpen("Clean Cloud: ${params.cleanStressDays}", EchoLevel.INFO)
                         printOpen("Clean Stress days before: ${priorDate}", EchoLevel.INFO)
 
                         undeployWiremockServerFromKubernetes(params.cleanStress, Integer.valueOf(params.cleanStressDays))

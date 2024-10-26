@@ -29,7 +29,7 @@ class ManualDeployPipelineStructure extends PipelineStructure {
                 ],
 				[id       : pipelineId + "105",
 				estado   : "inactive",
-				nombre   : "105-check-icp-availability",
+				nombre   : "105-check-cloud-availability",
 				resultado: "",
 				orden    : 0
 			    ],

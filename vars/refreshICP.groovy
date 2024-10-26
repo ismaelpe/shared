@@ -3,7 +3,7 @@ import com.project.alm.*
 def call(PomXmlStructure pomXml, PipelineData pipeline, String endPoint, boolean suffixedComponentName) {
 
 	String artifactId = BmxUtilities.calculateArtifactId(pomXml,pipeline.branchStructure,true).toLowerCase()
-	ICPDeployStructure deployStructure=new ICPDeployStructure('cxb-ab3cor','cxb-ab3app',pipeline.bmxStructure.environment)
+	CloudDeployStructure deployStructure=new CloudDeployStructure('cxb-ab3cor','cxb-ab3app',pipeline.bmxStructure.environment)
 
 	printOpen("The artifactd is ${artifactId}", EchoLevel.ALL)
 	
@@ -24,7 +24,7 @@ def call(PomXmlStructure pomXml, PipelineData pipeline, String endPoint, boolean
 
 def getActuatorRefreshUri(String center, boolean isArchProject, String artifactId, String endPoint) {
 
-    String urlPrefix = "https://k8sgateway.pro.icp-${center}.absis.cloud.lacaixa.es"
+    String urlPrefix = "https://k8sgateway.pro.cloud-${center}.alm.cloud.lacaixa.es"
     if (isArchProject)  urlPrefix += "/arch-service"
     String actuatorRefreshUrl = "${urlPrefix}/${artifactId}/${endPoint}"
 

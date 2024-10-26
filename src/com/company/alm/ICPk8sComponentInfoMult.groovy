@@ -1,14 +1,14 @@
 package com.project.alm
 
 import java.util.ArrayList
-import com.project.alm.ICPk8sInstancesApp
+import com.project.alm.Cloudk8sInstancesApp
 
-class ICPk8sComponentInfoMult{
+class Cloudk8sComponentInfoMult{
 
 	
 	def clusters
 	
-	ICPk8sComponentInfoMult() {
+	Cloudk8sComponentInfoMult() {
 		clusters=new ArrayList()		
 	}
 	
@@ -86,10 +86,10 @@ class ICPk8sComponentInfoMult{
 	
 	def areAllTheInstanciesAvailable() {
 		
-		ICPk8sInstancesApp totalInstances=new ICPk8sInstancesApp()
+		Cloudk8sInstancesApp totalInstances=new Cloudk8sInstancesApp()
 		
 		clusters.each {
-			ICPk8sInstancesApp partialInstances=it.areAllTheInstanciesAvailable()
+			Cloudk8sInstancesApp partialInstances=it.areAllTheInstanciesAvailable()
 			if (partialInstances!=null)	totalInstances.increment(partialInstances)
 			
 		}
@@ -100,10 +100,10 @@ class ICPk8sComponentInfoMult{
 	
 	def areAllTheInstanciesAvailable(String colour) {
 		
-		ICPk8sInstancesApp totalInstances=new ICPk8sInstancesApp()
+		Cloudk8sInstancesApp totalInstances=new Cloudk8sInstancesApp()
 		
 		clusters.each {
-			ICPk8sInstancesApp partialInstances=it.areAllTheInstanciesAvailable(colour)
+			Cloudk8sInstancesApp partialInstances=it.areAllTheInstanciesAvailable(colour)
 			if (partialInstances!=null)	totalInstances.increment(partialInstances)
 			
 		}

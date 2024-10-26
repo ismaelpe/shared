@@ -4,7 +4,7 @@ class ApiManagerTechnicalServicesInput {
 
     String distributionId                                       // p.e. 20201218.121940-13
     String distributionTimestamp = System.currentTimeMillis()   // Epoch time
-    BigDecimal distributionType = 1                             // 0-Absis2, 1-Absis3, 2-Other
+    BigDecimal distributionType = 1                             // 0-Alm2, 1-Alm3, 2-Other
     BigDecimal environmentId                                    // 1-DEV, 2-TST, 3-PRE, 4-PRO
     List<ApiManagerTechnicalServiceInput> technicalServices = new ArrayList<ApiManagerTechnicalServiceInput>()
 

@@ -1,6 +1,6 @@
 import groovy.transform.Field
 import com.project.alm.*
-import com.project.alm.ICPStateUtility
+import com.project.alm.CloudStateUtility
 import com.project.alm.ArtifactType
 
 @Field Map pipelineParams
@@ -12,15 +12,15 @@ import com.project.alm.ArtifactType
 @Field String gitLabActionType
 @Field boolean initGpl
 @Field boolean successPipeline
-@Field String deployICPPhases
-@Field String resultDeployICP
+@Field String deployCloudPhases
+@Field String resultDeployCloud
 
 @Field PomXmlStructure pomXmlStructure
 @Field PipelineData pipelineData
 
 @Field BranchStructure branchStructure
 @Field PipelineBehavior pipelineBehaviour
-@Field ICPStateUtility icpStateUtilitity
+@Field CloudStateUtility cloudStateUtilitity
 @Field boolean sendToGitLab
 @Field boolean ifProceed
 
@@ -40,16 +40,16 @@ def call(Map pipelineParameters) {
     gitLabActionType
     initGpl = false
     successPipeline = false
-    deployICPPhases = "01-pre-deploy"
-    resultDeployICP = "OK"
+    deployCloudPhases = "01-pre-deploy"
+    resultDeployCloud = "OK"
 
     pipelineBehaviour = PipelineBehavior.LIKE_ALWAYS
-    icpStateUtilitity = null
+    cloudStateUtilitity = null
     sendToGitLab = true
 	ifProceed = true
     
     pipeline {		
-		agent {	node (absisJenkinsAgent(pipelineParams)) }
+		agent {	node (almJenkinsAgent(pipelineParams)) }
         //Environment sobre el qual se ejecuta este tipo de job
         options {
             gitLabConnection('gitlab')
@@ -59,8 +59,8 @@ def call(Map pipelineParameters) {
         }
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
-            ICP_CERT = credentials('icp-alm-pro-cert')
-            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
+            Cloud_CERT = credentials('cloud-alm-pro-cert')
+            Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
@@ -68,9 +68,9 @@ def call(Map pipelineParameters) {
             executionProfile = "${pipelineParams ? pipelineParams.get('executionProfile', 'DEFAULT') : 'DEFAULT'}"
         }        
         stages {
-            stage('test-icp-api') {
+            stage('test-cloud-api') {
                 steps {
-                    testIcpApiStep()  
+                    testCloudApiStep()  
                 }
             }
             stage('git-pull-repo') {
@@ -113,12 +113,12 @@ def call(Map pipelineParameters) {
 \* ************************************************************************************************************************************** */
 
 /**
- * Stage 'testIcpApiStep'
+ * Stage 'testCloudApiStep'
  */
-def testIcpApiStep() {
+def testCloudApiStep() {
     initGlobalVars(pipelineParams)
-    configFileProvider([configFile(fileId: 'absis-icp-cert-pro', variable: 'CERTIFICATE')]) {
-        withCredentials([string(credentialsId: 'ICP_CERT_PASSWD_PRE', variable: 'PASSWORD')])  {
+    configFileProvider([configFile(fileId: 'alm-cloud-cert-pro', variable: 'CERTIFICATE')]) {
+        withCredentials([string(credentialsId: 'Cloud_CERT_PASSWD_PRE', variable: 'PASSWORD')])  {
             
             def command = "curl -k --write-out %{http_code} -o temp -s -X GET https://publisher-ssp-cldalm.pro.ap.intranet.cloud.lacaixa.es/api/publisher/features/environment/DEV/az/ALL/name/deploy --cert .$CERTIFICATE:$PASSWORD -H  accept:*/* -H  application_active:demoarqalm2-micro -H  Content-Type:application/json "
         
@@ -128,7 +128,7 @@ def testIcpApiStep() {
 }
 
 /**
- * Stage 'testIcpApiStep'
+ * Stage 'testCloudApiStep'
  */
 def gitPullRepoStep() {                   
     printOpen("The git Repo is ${gitRepoUrl}", EchoLevel.ALL)

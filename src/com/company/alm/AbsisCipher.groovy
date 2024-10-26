@@ -14,14 +14,14 @@ import com.cloudbees.groovy.cps.NonCPS
 /**
  * Cipher utility to encrypt / decript data 
  */
-class AbsisCipher implements Serializable {
+class AlmCipher implements Serializable {
     private String algorithm = "AES/CBC/PKCS5Padding"
     private String cipherAlg = "PBKDF2WithHmacSHA256"
     private String password
     private String salt
     private String ivString 
 
-    AbsisCipher(password_salt_vector, iv_vector) {
+    AlmCipher(password_salt_vector, iv_vector) {
         this.password = password_salt_vector[0]
         this.salt = password_salt_vector[1]
         this.ivString = iv_vector

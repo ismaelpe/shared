@@ -55,7 +55,7 @@ def call(Map pipelineParameters) {
     initCallStartMillis = new Date().getTime()
 
     pipeline {
-        agent {    node(absisJenkinsAgent(pipelineParams)) }
+        agent {    node(almJenkinsAgent(pipelineParams)) }
         //Environment sobre el cual se ejecuta este tipo de job
         options {
             gitLabConnection('gitlab')
@@ -66,8 +66,8 @@ def call(Map pipelineParameters) {
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
             JNKMSV = credentials('JNKMSV-USER-TOKEN')
-            ICP_CERT = credentials('icp-alm-pro-cert')
-            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
+            Cloud_CERT = credentials('cloud-alm-pro-cert')
+            Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"

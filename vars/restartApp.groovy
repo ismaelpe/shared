@@ -4,8 +4,8 @@ import com.project.alm.PipelineData
 import com.project.alm.GlobalVars
 import com.project.alm.DeployStructure
 import com.project.alm.BmxUtilities
-import com.project.alm.ICPDeployStructure
-import com.project.alm.ICPApiResponse
+import com.project.alm.CloudDeployStructure
+import com.project.alm.CloudApiResponse
 
 import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.DumperOptions
@@ -18,17 +18,17 @@ def call(Map valuesDeployed, String app, String center, String namespace, String
 	def deployIdCenter = 0
 	def deployIdAll = 0
 	
-	String appICPId=GlobalVars.ICP_APP_ID_APPS
-	String appICP=GlobalVars.ICP_APP_APPS
+	String appCloudId=GlobalVars.Cloud_APP_ID_APPS
+	String appCloud=GlobalVars.Cloud_APP_APPS
 	
 	String componentId="0"
-	//Vamos a recuperar la info de la app en ICP
+	//Vamos a recuperar la info de la app en Cloud
 	if (namespace=="ARCH") {
-		 appICP=GlobalVars.ICP_APP_ARCH
-		 appICPId=GlobalVars.ICP_APP_ID_ARCH
+		 appCloud=GlobalVars.Cloud_APP_ARCH
+		 appCloudId=GlobalVars.Cloud_APP_ID_ARCH
 	}
 	
-	ICPApiResponse response=sendRequestToICPApi("v1/application/${appICPId}/component",null,"GET","${appICP}","",false,false)
+	CloudApiResponse response=sendRequestToCloudApi("v1/application/${appCloudId}/component",null,"GET","${appCloud}","",false,false)
 	
 	if (response.statusCode>=200 && response.statusCode<300 && valuesDeployed!=null) {
 		
@@ -43,7 +43,7 @@ def call(Map valuesDeployed, String app, String center, String namespace, String
 			
 			printOpen("component ${componentId} ${valuesDeployed}", EchoLevel.ALL)
 			
-			response=sendRequestToICPApi("v1/application/PCLD/${appICP}/component/${componentId}/environment/${environment.toUpperCase()}/availabilityzone/${center}/status",null,"GET","${appICP}","",false,false)
+			response=sendRequestToCloudApi("v1/application/PCLD/${appCloud}/component/${componentId}/environment/${environment.toUpperCase()}/availabilityzone/${center}/status",null,"GET","${appCloud}","",false,false)
 			
 			if (response.statusCode>=200 && response.statusCode<300) {
 				
@@ -114,7 +114,7 @@ def call(Map valuesDeployed, String app, String center, String namespace, String
 				values: "${toJson(valuesDeployed)}"
 			]
 			
-			response=sendRequestToICPApi("v1/application/PCLD/${appICP}/component/${componentId}/deploy",body,"POST","${appICP}","v1/application/PCLD/${appICP}/component/${componentId}/deploy",true,true)
+			response=sendRequestToCloudApi("v1/application/PCLD/${appCloud}/component/${componentId}/deploy",body,"POST","${appCloud}","v1/application/PCLD/${appCloud}/component/${componentId}/deploy",true,true)
 			
 		}
 		

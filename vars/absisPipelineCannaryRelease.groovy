@@ -97,7 +97,7 @@ def call(Map pipelineParameters) {
     initCallStartMillis = new Date().getTime()
     
     pipeline {        
-        agent {    node (absisJenkinsAgent(pipelineParams)) }
+        agent {    node (almJenkinsAgent(pipelineParams)) }
         options {
             buildDiscarder(logRotator(numToKeepStr: '30'))
             timestamps()
@@ -106,8 +106,8 @@ def call(Map pipelineParameters) {
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
             JNKMSV = credentials('JNKMSV-USER-TOKEN')
-            ICP_CERT = credentials('icp-alm-pro-cert')
-            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
+            Cloud_CERT = credentials('cloud-alm-pro-cert')
+            Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
@@ -288,9 +288,9 @@ def refreshAppStep() {
     sendStageStartToGPL(pomXmlStructure, pipelineData, "300");
 
     pipelineData.deployFlag == true // FIXME: ¿?
-    initICPDeploy(pomXmlStructure, pipelineData)
+    initCloudDeploy(pomXmlStructure, pipelineData)
 
-    if (pipelineData.deployOnIcp) refreshConfigurationViaRefreshBus(pomXmlStructure, pipelineData)
+    if (pipelineData.deployOnCloud) refreshConfigurationViaRefreshBus(pomXmlStructure, pipelineData)
 
     sendStageEndToGPL(pomXmlStructure, pipelineData, "300")
     sendPipelineUpdateToGPL(initGpl, pomXmlStructure, pipelineData, '')
@@ -302,14 +302,14 @@ def refreshAppStep() {
 def refreshAppParallelStep(){
     sendStageStartToGPL(pomXmlStructure, pipelineData, "300");
     pipelineData.deployFlag == true
-    initICPDeploy(pomXmlStructure, pipelineData)
+    initCloudDeploy(pomXmlStructure, pipelineData)
 
-    if (pipelineData.deployOnIcp) {
+    if (pipelineData.deployOnCloud) {
         printOpen("Refresh starting...", EchoLevel.INFO)
 
         try {
             start = new Date().getTime()
-            refreshICP(pomXmlStructure, pipelineData, GlobalVars.ENDPOINT_REFRESH, true)
+            refreshCloud(pomXmlStructure, pipelineData, GlobalVars.ENDPOINT_REFRESH, true)
             end = new Date().getTime()
 
             refreshFailed = (end - start) >= 60000
@@ -334,7 +334,7 @@ def refreshAppParallelStep(){
 def threaddumpCenter1Step() {
     printOpen("Threaddumps starting...", EchoLevel.DEBUG)
     def threadDumps = []
-    String urlThreadDump = refreshICP.getActuatorRefreshUri(GlobalVars.BMX_CD1, pomXmlStructure.isArchProject(), microNameAndMajor+'-beta', GlobalVars.ENDPOINT_THREADDUMP)
+    String urlThreadDump = refreshCloud.getActuatorRefreshUri(GlobalVars.BMX_CD1, pomXmlStructure.isArchProject(), microNameAndMajor+'-beta', GlobalVars.ENDPOINT_THREADDUMP)
 
     try {
         timeout(time: 30, unit: 'MINUTES') {
@@ -376,7 +376,7 @@ def threaddumpCenter1Step() {
 def threaddumpCenter2Step() {
     printOpen("Threaddumps starting...", EchoLevel.DEBUG)
     def threadDumps = []
-    String urlThreadDump = refreshICP.getActuatorRefreshUri(GlobalVars.BMX_CD2, pomXmlStructure.isArchProject(), microNameAndMajor+'-beta', GlobalVars.ENDPOINT_THREADDUMP)
+    String urlThreadDump = refreshCloud.getActuatorRefreshUri(GlobalVars.BMX_CD2, pomXmlStructure.isArchProject(), microNameAndMajor+'-beta', GlobalVars.ENDPOINT_THREADDUMP)
 
     try {
         timeout(time: 30, unit: 'MINUTES') {

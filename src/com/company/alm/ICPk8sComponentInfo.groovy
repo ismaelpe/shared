@@ -2,17 +2,17 @@ package com.project.alm
 
 import java.util.ArrayList
 
-import com.project.alm.ICPk8sInstancesApp
+import com.project.alm.Cloudk8sInstancesApp
 
 
-class ICPk8sComponentInfo{
+class Cloudk8sComponentInfo{
 
 	
 	def deployments
 	def services
 	def pods
 	
-	ICPk8sComponentInfo() {
+	Cloudk8sComponentInfo() {
 		deployments=new ArrayList()
 		services=new ArrayList()
 		pods=new ArrayList()
@@ -71,10 +71,10 @@ class ICPk8sComponentInfo{
 	
 	def areAllTheInstanciesAvailable() {
 		
-		ICPk8sInstancesApp totalInstances=new ICPk8sInstancesApp()
+		Cloudk8sInstancesApp totalInstances=new Cloudk8sInstancesApp()
 		
 		deployments.each {
-			ICPk8sInstancesApp partialInstances=it.areAllTheInstanciesAvailable()			
+			Cloudk8sInstancesApp partialInstances=it.areAllTheInstanciesAvailable()			
 			if (partialInstances!=null) totalInstances.increment(partialInstances)			
 		}
 		
@@ -84,10 +84,10 @@ class ICPk8sComponentInfo{
 	
 	def areAllTheInstanciesAvailable(String colour) {
 		
-		ICPk8sInstancesApp totalInstances=new ICPk8sInstancesApp()
+		Cloudk8sInstancesApp totalInstances=new Cloudk8sInstancesApp()
 		
 		deployments.each {
-			ICPk8sInstancesApp partialInstances=it.areAllTheInstanciesAvailable(colour)
+			Cloudk8sInstancesApp partialInstances=it.areAllTheInstanciesAvailable(colour)
 			if (partialInstances!=null) totalInstances.increment(partialInstances)
 		}
 		

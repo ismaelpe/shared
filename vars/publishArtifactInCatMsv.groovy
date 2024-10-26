@@ -8,8 +8,8 @@ import java.util.ArrayList
 
 /**
  *
-{"absisSecurity":"resource.test","nombreMetodo":"contratosFindById","type":"GET","url":"/api/clientes/{clienteId}/contratos/{id}"},
-{"absisSecurity":"resource.test","nombreMetodo":"contratosCreate","type":"POST","url":"/api/clientes/{clienteId}/contratos"},
+{"almSecurity":"resource.test","nombreMetodo":"contratosFindById","type":"GET","url":"/api/clientes/{clienteId}/contratos/{id}"},
+{"almSecurity":"resource.test","nombreMetodo":"contratosCreate","type":"POST","url":"/api/clientes/{clienteId}/contratos"},
  */
 def convertEndpoints(def endpoints) {
 	if (endpoints!=null) {
@@ -17,8 +17,8 @@ def convertEndpoints(def endpoints) {
 		endpoints.each {
 			it ->
 			    def listAttributes = []
-			    if (it.absisSecurity) {
-					listAttributes = [[name: 'absisSecurity', value: "${it.absisSecurity}"]]
+			    if (it.almSecurity) {
+					listAttributes = [[name: 'almSecurity', value: "${it.almSecurity}"]]
 				}
 				def endpoint = [
 					verb: it.type,
@@ -59,19 +59,19 @@ def convertFeatures(def feature, def environment) {
 }
 /**
  *
-{"tipo":"ARQ.LIB","application":"absisarchcompensation","componente":"absis-arch-compensation-starter","version":"1.16.0-SNAPSHOT"}
+{"tipo":"ARQ.LIB","application":"almarchcompensation","componente":"alm-arch-compensation-starter","version":"1.16.0-SNAPSHOT"}
  */
 def convertDependencies(def dependencies) {
 	if (dependencies!=null) {
 		def catMsvDependencies = new ArrayList()
 		dependencies.each {
 			it ->
-				def depenAbsis3 = [
+				def depenAlm3 = [
 					artifactId: it.componente,
 					groupId:"NoLoSabemos",
 					version:it.version
 				]
-				catMsvDependencies.add(depenAbsis3)
+				catMsvDependencies.add(depenAlm3)
 		}
 		return catMsvDependencies
 	}else {
@@ -81,20 +81,20 @@ def convertDependencies(def dependencies) {
 
 /**
  *
-{"tipo":"ARQ.LIB","application":"absisarchcompensation","componente":"absis-arch-compensation-starter","version":"1.16.0-SNAPSHOT"}
+{"tipo":"ARQ.LIB","application":"almarchcompensation","componente":"alm-arch-compensation-starter","version":"1.16.0-SNAPSHOT"}
  */
 def convertRetroDependencies(def dependencies) {
 	if (dependencies!=null) {
 		def catMsvDependencies = new ArrayList()
 		dependencies.each {
 			it ->
-				def depenAbsis3 = [
+				def depenAlm3 = [
 					tipo: it.tipo,
 					application: it.application,
 					name: it.componente,					
 					version:it.version
 				]
-				catMsvDependencies.add(depenAbsis3)
+				catMsvDependencies.add(depenAlm3)
 		}
 		return catMsvDependencies
 	}else {
@@ -133,7 +133,7 @@ def getAppForUpdate(def body) {
 	]
 }
 
-def call(def body, PipelineData pipelineData, PomXmlStructure pomXml, ICPStateUtility icpStateUtilitity, boolean updateBuildPath = false) {
+def call(def body, PipelineData pipelineData, PomXmlStructure pomXml, CloudStateUtility cloudStateUtilitity, boolean updateBuildPath = false) {
 	def response = null
 	//definimos la version de arquitectura... esto solo aplica a los artefactos
 	//generados automaticamente... ADS, SE 
@@ -193,7 +193,7 @@ def call(def body, PipelineData pipelineData, PomXmlStructure pomXml, ICPStateUt
 					pipelineData.garArtifactType!=GarAppType.LIBRARY &&
 					pipelineData.garArtifactType!=GarAppType.SRV_CONFIG &&
 					pipelineData.garArtifactType!=GarAppType.ARCH_CONFIG) {
-					deployArtifactInCatMsv(body,pipelineData,pomXml,icpStateUtilitity)
+					deployArtifactInCatMsv(body,pipelineData,pomXml,cloudStateUtilitity)
 				}
 
 			} catch(Exception ex) {
@@ -216,7 +216,7 @@ def call(def body, PipelineData pipelineData, PomXmlStructure pomXml, ICPStateUt
 
 def createOrUpdateAppInCatalog(def body, PipelineData pipelineData, PomXmlStructure pomXml) {
 	printOpen("$body", EchoLevel.INFO)
-	return sendRequestToAbsis3MS(
+	return sendRequestToAlm3MS(
 		'PUT',
 		"$GlobalVars.URL_CATALOGO_ALM_PRO/app",
 		body,
@@ -232,7 +232,7 @@ def createOrUpdateAppInCatalog(def body, PipelineData pipelineData, PomXmlStruct
 
 def updateVersionAppInCatalog(def body, def type, def application, PipelineData pipelineData, PomXmlStructure pomXml) {
 	printOpen("$body", EchoLevel.INFO)
-	return sendRequestToAbsis3MS(
+	return sendRequestToAlm3MS(
 		'PUT',
 		"$GlobalVars.URL_CATALOGO_ALM_PRO/app/$type/$application/version",
 		body,

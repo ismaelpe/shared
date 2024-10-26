@@ -1,5 +1,5 @@
 import com.project.alm.GlobalVars
-import com.project.alm.ICPDeployStructure
+import com.project.alm.CloudDeployStructure
 import com.project.alm.KpiAlmEvent
 import com.project.alm.KpiAlmEventOperation
 import com.project.alm.KpiAlmEventStage
@@ -9,7 +9,7 @@ import com.project.alm.EchoLevel
 
 def validate(List secrets, String env, PomXmlStructure pomXml, PipelineData pipelineData) {
 
-    String appName = pomXml.getICPAppName()
+    String appName = pomXml.getCloudAppName()
 
     long singleCallDuration
     long wholeCallDuration
@@ -21,7 +21,7 @@ def validate(List secrets, String env, PomXmlStructure pomXml, PipelineData pipe
         new KpiAlmEvent(
             pomXml, pipelineData,
             KpiAlmEventStage.UNDEFINED,
-            KpiAlmEventOperation.ICP_SECRETS_VALIDATION)
+            KpiAlmEventOperation.Cloud_SECRETS_VALIDATION)
 
     if (secrets!=null && secrets.size()>0) {
         printOpen("Validating secrets...", EchoLevel.INFO)
@@ -30,8 +30,8 @@ def validate(List secrets, String env, PomXmlStructure pomXml, PipelineData pipe
 
             String secret=secrets.get(i)
 
-            //Validar los secrets uno a uno contra ICP... necesitamos el namespace del micro
-			int numRetry = GlobalVars.ICP_SECRET_VERIFICATION_MAX_RETRIES
+            //Validar los secrets uno a uno contra Cloud... necesitamos el namespace del micro
+			int numRetry = GlobalVars.Cloud_SECRET_VERIFICATION_MAX_RETRIES
 			def response = null			
 
             //Se deben recorrer todos los secrets
@@ -40,13 +40,13 @@ def validate(List secrets, String env, PomXmlStructure pomXml, PipelineData pipe
                 singleCallStartMillis = new Date().getTime()
 
                 def requestURL = "v2/api/application/PCLD/${appName}/environment/${env.toUpperCase()}/availabilityzone/ALL/credentials/${secret}"
-                response = sendRequestToICPApi(
+                response = sendRequestToCloudApi(
                     requestURL, null, "GET", "${appName}", "", false, false, null, null,
                     [
                         kpiAlmEvent: new KpiAlmEvent(
                             pomXml, pipelineData,
-                            KpiAlmEventStage.ICP_SECRETS_VALIDATION,
-                            KpiAlmEventOperation.ICPAPI_HTTP_CALL)
+                            KpiAlmEventStage.Cloud_SECRETS_VALIDATION,
+                            KpiAlmEventOperation.CloudAPI_HTTP_CALL)
                     ])
 
                 long singleCallEndMillis = new Date().getTime()
@@ -66,7 +66,7 @@ def validate(List secrets, String env, PomXmlStructure pomXml, PipelineData pipe
 
                     kpiLogger(kpiAlmEvent.callAppFail(wholeCallDuration))
 
-                    throw new Exception("${GlobalVars.ICP_ERROR_DEPLOY_NO_INSTANCE_AVAILABLE}    ${secret}")
+                    throw new Exception("${GlobalVars.Cloud_ERROR_DEPLOY_NO_INSTANCE_AVAILABLE}    ${secret}")
 
                 } else if (numRetry-- == 0) {
 
@@ -77,8 +77,8 @@ def validate(List secrets, String env, PomXmlStructure pomXml, PipelineData pipe
 
                     kpiLogger(kpiAlmEvent.callAlmFail(wholeCallDuration))
 
-                    def url = "${GlobalVars.ICP_PRO}/api/publisher/${requestURL}"
-                    createMaximoAndThrow.icpSecretsVerificationFailed(pipelineData, pomXml, secret, env, url, response)
+                    def url = "${GlobalVars.Cloud_PRO}/api/publisher/${requestURL}"
+                    createMaximoAndThrow.cloudSecretsVerificationFailed(pipelineData, pomXml, secret, env, url, response)
 
                 }
 
@@ -100,9 +100,9 @@ def call(List secrets, String env, PomXmlStructure pomXml, PipelineData pipeline
 
 }
 
-def call(ICPDeployStructure icpDeployStructure, PomXmlStructure pomXml, PipelineData pipelineData) {
+def call(CloudDeployStructure cloudDeployStructure, PomXmlStructure pomXml, PipelineData pipelineData) {
 
-	validate(icpDeployStructure.secrets, icpDeployStructure.envICP, pomXml, pipelineData)
-	validate(icpDeployStructure.volumeSecrets, icpDeployStructure.envICP, pomXml, pipelineData)
+	validate(cloudDeployStructure.secrets, cloudDeployStructure.envCloud, pomXml, pipelineData)
+	validate(cloudDeployStructure.volumeSecrets, cloudDeployStructure.envCloud, pomXml, pipelineData)
 	
 }

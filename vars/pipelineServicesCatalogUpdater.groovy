@@ -10,7 +10,7 @@ def call(Map pipelineParameters) {
     pipelineParams = pipelineParameters
 
     pipeline {
-        agent {	node (absisJenkinsAgent("light")) }
+        agent {	node (almJenkinsAgent("light")) }
         options {
             buildDiscarder(logRotator(numToKeepStr: '20'))
             disableConcurrentBuilds()
@@ -19,8 +19,8 @@ def call(Map pipelineParameters) {
         }
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
-            ICP_CERT = credentials('icp-alm-pro-cert')
-            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
+            Cloud_CERT = credentials('cloud-alm-pro-cert')
+            Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"

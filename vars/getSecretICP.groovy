@@ -16,23 +16,23 @@ def call(String environment, String secret, String namespace) {
 		//Tenemos que validar primero ante todos si existe
 		
 		if (secret!=null)
-			response=sendRequestToICPApi("v2/api/application/PCLD/AB3APP/environment/${environment.toUpperCase()}/availabilityzone/ALL/credentials/${secret}",null,"GET","AB3APP","",false,false)
+			response=sendRequestToCloudApi("v2/api/application/PCLD/AB3APP/environment/${environment.toUpperCase()}/availabilityzone/ALL/credentials/${secret}",null,"GET","AB3APP","",false,false)
 		else 
-			response=sendRequestToICPApi("v2/api/application/PCLD/AB3APP/environment/${environment.toUpperCase()}/availabilityzone/ALL/credentials",null,"GET","AB3APP","",false,false)
+			response=sendRequestToCloudApi("v2/api/application/PCLD/AB3APP/environment/${environment.toUpperCase()}/availabilityzone/ALL/credentials",null,"GET","AB3APP","",false,false)
 			
 		if (response.statusCode==200) {
 			def outputS=null
 			response.body.each{
 				outputS=JsonOutput.prettyPrint(JsonOutput.toJson(it))
-				printOpen("ICP: The secrets ${outputS}", EchoLevel.INFO)
+				printOpen("Cloud: The secrets ${outputS}", EchoLevel.INFO)
 			}			
 		} else {
-			printOpen("ICP: The secrets ${secret} on NOT Found ${namespace} on ${environment.toUpperCase()}", EchoLevel.INFO)
+			printOpen("Cloud: The secrets ${secret} on NOT Found ${namespace} on ${environment.toUpperCase()}", EchoLevel.INFO)
 		}	
 		if (secret!=null)
-			response=sendRequestToICPApi("v2/api/application/PCLD_MIGRATED/AB3APP/environment/${environment.toUpperCase()}/availabilityzone/ALL/credentials/${secret}",null,"GET","AB3APP","",false,false)
+			response=sendRequestToCloudApi("v2/api/application/PCLD_MIGRATED/AB3APP/environment/${environment.toUpperCase()}/availabilityzone/ALL/credentials/${secret}",null,"GET","AB3APP","",false,false)
 		else
-			response=sendRequestToICPApi("v2/api/application/PCLD_MIGRATED/AB3APP/environment/${environment.toUpperCase()}/availabilityzone/ALL/credentials",null,"GET","AB3APP","",false,false)
+			response=sendRequestToCloudApi("v2/api/application/PCLD_MIGRATED/AB3APP/environment/${environment.toUpperCase()}/availabilityzone/ALL/credentials",null,"GET","AB3APP","",false,false)
 			
 		if (response.statusCode==200) {
 			def outputS=null
@@ -47,23 +47,23 @@ def call(String environment, String secret, String namespace) {
 	}
 	if (namespace=="ARCH" || namespace=="BOTH") {
 		if (secret!=null)
-			response=sendRequestToICPApi("v2/api/application/PCLD/AB3COR/environment/${environment.toUpperCase()}/availabilityzone/ALL/credentials/${secret}",null,"GET","AB3COR","",false,false)
+			response=sendRequestToCloudApi("v2/api/application/PCLD/AB3COR/environment/${environment.toUpperCase()}/availabilityzone/ALL/credentials/${secret}",null,"GET","AB3COR","",false,false)
 		else 
-			response=sendRequestToICPApi("v2/api/application/PCLD/AB3COR/environment/${environment.toUpperCase()}/availabilityzone/ALL/credentials",null,"GET","AB3COR","",false,false)
+			response=sendRequestToCloudApi("v2/api/application/PCLD/AB3COR/environment/${environment.toUpperCase()}/availabilityzone/ALL/credentials",null,"GET","AB3COR","",false,false)
 			
 		if (response.statusCode==200) {
 			def outputS=null
 			response.body.each{
 				outputS=JsonOutput.prettyPrint(JsonOutput.toJson(it))
-				printOpen("The secrets ${outputS} ICP", EchoLevel.INFO)
+				printOpen("The secrets ${outputS} Cloud", EchoLevel.INFO)
 			}
 		} else {
-			printOpen("ICP: The secrets ${secret} on NOT Found ${namespace} on ${environment.toUpperCase()}", EchoLevel.INFO)
+			printOpen("Cloud: The secrets ${secret} on NOT Found ${namespace} on ${environment.toUpperCase()}", EchoLevel.INFO)
 		}
 		if (secret!=null)
-			response=sendRequestToICPApi("v2/api/application/PCLD_MIGRATED/AB3COR/environment/${environment.toUpperCase()}/availabilityzone/ALL/credentials/${secret}",null,"GET","AB3COR","",false,false)
+			response=sendRequestToCloudApi("v2/api/application/PCLD_MIGRATED/AB3COR/environment/${environment.toUpperCase()}/availabilityzone/ALL/credentials/${secret}",null,"GET","AB3COR","",false,false)
 		else
-			response=sendRequestToICPApi("v2/api/application/PCLD_MIGRATED/AB3COR/environment/${environment.toUpperCase()}/availabilityzone/ALL/credentials",null,"GET","AB3COR","",false,false)
+			response=sendRequestToCloudApi("v2/api/application/PCLD_MIGRATED/AB3COR/environment/${environment.toUpperCase()}/availabilityzone/ALL/credentials",null,"GET","AB3COR","",false,false)
 			
 		if (response.statusCode==200) {
 			def outputS=null

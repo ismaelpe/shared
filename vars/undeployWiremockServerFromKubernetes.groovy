@@ -1,7 +1,7 @@
 import com.project.alm.EchoLevel
-import com.project.alm.ICPUtils
+import com.project.alm.CloudUtils
 import com.project.alm.GlobalVars
-import com.project.alm.ICPApiResponse
+import com.project.alm.CloudApiResponse
 
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -10,22 +10,22 @@ def call(boolean cleanStress, int beforeDays) {
 
     printOpen("Vamos a recuperar los componentes para AB3APP", EchoLevel.INFO)
 
-    ICPApiResponse responseApp = sendRequestToICPApi("v1/api/application/PCLD/${GlobalVars.ICP_APP_APPS}/component",null,"GET","${GlobalVars.ICP_APP_APPS}","",false,false)
+    CloudApiResponse responseApp = sendRequestToCloudApi("v1/api/application/PCLD/${GlobalVars.Cloud_APP_APPS}/component",null,"GET","${GlobalVars.Cloud_APP_APPS}","",false,false)
     def stressAppsMap = checkStressApps(responseApp)
-	deleteAndUndeployWiremockServers(responseApp,GlobalVars.ICP_APP_ID_APPS,GlobalVars.ICP_APP_APPS,beforeDays,cleanStress, stressAppsMap)
+	deleteAndUndeployWiremockServers(responseApp,GlobalVars.Cloud_APP_ID_APPS,GlobalVars.Cloud_APP_APPS,beforeDays,cleanStress, stressAppsMap)
 
     printOpen("Vamos a recuperar los componentes para AB3COR", EchoLevel.INFO)
 
-    ICPApiResponse responseArch = sendRequestToICPApi("v1/api/application/PCLD/${GlobalVars.ICP_APP_ARCH}/component",null,"GET","${GlobalVars.ICP_APP_ARCH}","",false,false)
+    CloudApiResponse responseArch = sendRequestToCloudApi("v1/api/application/PCLD/${GlobalVars.Cloud_APP_ARCH}/component",null,"GET","${GlobalVars.Cloud_APP_ARCH}","",false,false)
 	def stressArchMap = checkStressApps(responseArch)
-	deleteAndUndeployWiremockServers(responseArch,GlobalVars.ICP_APP_ID_ARCH,GlobalVars.ICP_APP_ARCH,beforeDays,cleanStress,stressArchMap)
+	deleteAndUndeployWiremockServers(responseArch,GlobalVars.Cloud_APP_ID_ARCH,GlobalVars.Cloud_APP_ARCH,beforeDays,cleanStress,stressArchMap)
 
 }
 
 
 def deleteEvent(def id) {
     printOpen("Intentamos eliminar el evento ${id}", EchoLevel.DEBUG)
-	def response = sendRequestToAbsis3MS(
+	def response = sendRequestToAlm3MS(
 		'DELETE',
 		"${GlobalVars.URL_CATALOGO_ALM_PRO}/audit/${id}",
 		null,
@@ -40,7 +40,7 @@ def deleteEvent(def id) {
 
 def getEvents(def componentName) {
     printOpen("Intentamos obtener el evento de la app ${componentName}", EchoLevel.DEBUG)
-	def response = sendRequestToAbsis3MS(
+	def response = sendRequestToAlm3MS(
 		'GET',
 		"${GlobalVars.URL_CATALOGO_ALM_PRO}/audit/WIR/${componentName}",
 		null,
@@ -58,7 +58,7 @@ def getEvents(def componentName) {
 }
 
 
-def deleteAndUndeployWiremockServers(ICPApiResponse response, String icpAppId, String icpAppName, int beforeDays, boolean cleanStress, Map parameters = [:]) {
+def deleteAndUndeployWiremockServers(CloudApiResponse response, String cloudAppId, String cloudAppName, int beforeDays, boolean cleanStress, Map parameters = [:]) {
 	
 	printOpen("Revisamos los servidores wiremocks", EchoLevel.INFO)
 	if (response.body!=null && response.body.size()>=1) {
@@ -68,7 +68,7 @@ def deleteAndUndeployWiremockServers(ICPApiResponse response, String icpAppId, S
             printOpen("Evaluating the app ${it}", EchoLevel.ALL)
 
 			//Skipping Service Manager stress pod
-            if (ICPUtils.isWiremockServer(it.name) && !it.name.startsWith("SERVICEMANAGER")) { 
+            if (CloudUtils.isWiremockServer(it.name) && !it.name.startsWith("SERVICEMANAGER")) { 
                 printOpen("${it} is a wiremock server", EchoLevel.INFO)
 
                 def wiremockEvents = getEvents(it.name) 
@@ -94,11 +94,11 @@ def deleteAndUndeployWiremockServers(ICPApiResponse response, String icpAppId, S
 										printOpen("Stress name: ${stressName}, id: ${stressId}", EchoLevel.DEBUG)
 
 										printOpen("Eliminamos la app de stress ${stressName}", EchoLevel.INFO)
-										deleteAppICP(stressName, stressId, icpAppId, icpAppName, val.description.toUpperCase(), 'ALL', true)
+										deleteAppCloud(stressName, stressId, cloudAppId, cloudAppName, val.description.toUpperCase(), 'ALL', true)
 									}
 
 									printOpen("Eliminamos el servidor wiremock ${it.name} y el evento asociado", EchoLevel.INFO)
-									deleteAppICP(it.name, it.id, icpAppId, icpAppName, val.description.toUpperCase(), 'ALL', true)
+									deleteAppCloud(it.name, it.id, cloudAppId, cloudAppName, val.description.toUpperCase(), 'ALL', true)
 									deleteEvent(val.id)
 
 								} else {
@@ -112,7 +112,7 @@ def deleteAndUndeployWiremockServers(ICPApiResponse response, String icpAppId, S
     }
 }
 
-def checkStressApps(ICPApiResponse response) {
+def checkStressApps(CloudApiResponse response) {
 
 	printOpen("Revisamos los pods de stress", EchoLevel.INFO)
 	def map = [:]
@@ -124,7 +124,7 @@ def checkStressApps(ICPApiResponse response) {
             printOpen("Evaluating the app ${it}", EchoLevel.ALL)
 
 			//Skipping Service Manager stress pod
-            if (ICPUtils.isStressApp(it.name) && !it.name.startsWith("SERVICEMANAGER")) {
+            if (CloudUtils.isStressApp(it.name) && !it.name.startsWith("SERVICEMANAGER")) {
                 printOpen("${it} is a stress app", EchoLevel.INFO)
 
 				printOpen("name : ${it.name}, id: ${it.id}", EchoLevel.DEBUG)

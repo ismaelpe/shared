@@ -11,11 +11,11 @@ import com.project.alm.GarAppType
 import com.project.alm.GlobalVars
 import groovy.transform.Field
 import com.project.alm.PipelineStructureType
-import com.project.alm.ICPStateUtility
-import com.project.alm.ICPDeployStructure
-import com.project.alm.ICPWorkflowStates
+import com.project.alm.CloudStateUtility
+import com.project.alm.CloudDeployStructure
+import com.project.alm.CloudWorkflowStates
 
-import com.project.alm.ICPVarPipelineCopyType
+import com.project.alm.CloudVarPipelineCopyType
 
 import com.project.alm.DevBmxStructure
 import com.project.alm.TstBmxStructure
@@ -48,7 +48,7 @@ def call(Map pipelineParameters) {
     * 1- Crear Repo
     * */
     pipeline {		
-		agent {	node (absisJenkinsAgent(pipelineParams)) }
+		agent {	node (almJenkinsAgent(pipelineParams)) }
         options{ 
             buildDiscarder(logRotator(numToKeepStr: '50'))
             timestamps()
@@ -56,8 +56,8 @@ def call(Map pipelineParameters) {
         }
     	environment {
 	    	GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
-            ICP_CERT = credentials('icp-alm-pro-cert')
-            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
+            Cloud_CERT = credentials('cloud-alm-pro-cert')
+            Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
 			https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
@@ -86,7 +86,7 @@ def call(Map pipelineParameters) {
  * Stage 'reloadStep'
  */
 def reloadStep() {
-    //https://k8sgateway.dev.icp-1.absis.cloud.lacaixa.es/arch-service/adsconnector-micro-server-1-dev 
+    //https://k8sgateway.dev.cloud-1.alm.cloud.lacaixa.es/arch-service/adsconnector-micro-server-1-dev 
     //http://adsconnector-micro-server-1-dev.tst1.int.srv.project.com
     String fileOut="responseApi.json"
     
@@ -96,7 +96,7 @@ def reloadStep() {
     String arch=""
     if (isArchService) arch="arch-service/"
 
-    route="k8sgateway."+environmentDest+".icp-1.absis.cloud.lacaixa.es/${arch}"+artifact+"/" + GlobalVars.ENDPOINT_REFRESH
+    route="k8sgateway."+environmentDest+".cloud-1.alm.cloud.lacaixa.es/${arch}"+artifact+"/" + GlobalVars.ENDPOINT_REFRESH
 
     responseStatusCode=sh(script: "curl --write-out '%{http_code}' -o ${fileOut} -k -X POST -x http://${env.proxyHost}:${env.proxyPort} https://${route} --connect-timeout ${GlobalVars.ACTUATOR_REFRESH_TIMEOUT}",returnStdout: true)
 
@@ -105,7 +105,7 @@ def reloadStep() {
     String contentResponse= sh(script: "cat ${fileOut}", returnStdout:true )
     printOpen("Status Code ${responseStatusCode} body ${contentResponse}", EchoLevel.ALL)
 
-    route="k8sgateway."+environmentDest+".icp-2.absis.cloud.lacaixa.es/${arch}"+artifact+"/" + GlobalVars.ENDPOINT_REFRESH
+    route="k8sgateway."+environmentDest+".cloud-2.alm.cloud.lacaixa.es/${arch}"+artifact+"/" + GlobalVars.ENDPOINT_REFRESH
     responseStatusCode=sh(script: "curl --write-out '%{http_code}' -o ${fileOut} -k -X POST -x http://${env.proxyHost}:${env.proxyPort} https://${route} --connect-timeout ${GlobalVars.ACTUATOR_REFRESH_TIMEOUT}",returnStdout: true)
     if (responseStatusCode!="200") throw new Exception("Error ${responseStatusCode}")
     contentResponse= sh(script: "cat ${fileOut}", returnStdout:true )

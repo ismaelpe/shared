@@ -19,18 +19,18 @@ class StressEnviromentConfiguration implements Serializable {
 		StressComponent component;
 		contentInJson?.archComponents?.each { it ->
 			component = new StressComponent(it)
-			archComponents.put(component.icpName, component);
+			archComponents.put(component.cloudName, component);
 		}
 		contentInJson?.appComponents?.each { it ->
 			component = new StressComponent(it)
-			appComponents.put(component.icpName, component);
+			appComponents.put(component.cloudName, component);
 		}
 	}
 	
 	List getArchComponentNameList() {
 		List archComponentName = new ArrayList<String>()
 		archComponents?.each { it ->
-			archComponentName.add(it.value.icpName)
+			archComponentName.add(it.value.cloudName)
 		}
 		return archComponentName;
 	}
@@ -38,17 +38,17 @@ class StressEnviromentConfiguration implements Serializable {
 	List getAppComponentNameList() {
 		List appComponentsName = new ArrayList<String>()
 		appComponents?.each { it ->
-			appComponentsName.add(it.value.icpName)
+			appComponentsName.add(it.value.cloudName)
 		}
 		return appComponentsName;
 	}
 	
-	StressComponent getArchStressComponentByIcpName(String icpName) {
-		return archComponents.get(icpName)
+	StressComponent getArchStressComponentByIcpName(String cloudName) {
+		return archComponents.get(cloudName)
 	}
 	
-	StressComponent getAppStressComponentByIcpName(String icpName) {
-		return appComponents.get(icpName)
+	StressComponent getAppStressComponentByIcpName(String cloudName) {
+		return appComponents.get(cloudName)
 	}
 }
 

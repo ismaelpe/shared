@@ -1,6 +1,6 @@
 import com.project.alm.EchoLevel
 import com.project.alm.GarAppType
-import com.project.alm.ICPStateUtility
+import com.project.alm.CloudStateUtility
 import com.project.alm.PipelineData
 import com.project.alm.PomXmlStructure
 import com.project.alm.Strings
@@ -9,10 +9,10 @@ import hudson.Functions
 
 
 def call(PomXmlStructure pomXmlStructure, PipelineData pipelineData, String userId='NA', String dontGenerateImagesParam='false', String dontBuildImage='false', String command='CLONE') {
-	absisPipelineStageCloneToOcp(pomXmlStructure.artifactVersion, 
+	almPipelineStageCloneToOcp(pomXmlStructure.artifactVersion, 
 		                         pomXmlStructure.artifactMicro, 
 								 pomXmlStructure.getApp(pipelineData.garArtifactType),
-								 pomXmlStructure.getICPAppName(), 
+								 pomXmlStructure.getCloudAppName(), 
 								 pipelineData.bmxStructure.environment.toUpperCase(), 
 								 pipelineData.pushUser,
 								 pipelineData.getGarArtifactType().getGarName(),

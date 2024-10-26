@@ -22,11 +22,11 @@ def updateChartAndDockerVersionsOrShowEligibleForUpdate(def apps, String namespa
 
                 String appName = it.name
                 it.technology = null    // This is required as it's related to the chart and docker combination
-                String url = getICPManagementPath(namespace, appName)
+                String url = getCloudManagementPath(namespace, appName)
                 String body = JsonOutput.prettyPrint(JsonOutput.toJson(it))
 
                 if (updateVersion) {
-                    sendRequestToICPApi(url, it, "PUT", namespace, "", false, false)
+                    sendRequestToCloudApi(url, it, "PUT", namespace, "", false, false)
 
                 } else {
 
@@ -56,10 +56,10 @@ def dumpAppsMetadataToLog(def apps, String name = '') {
 
 }
 
-def getICPAppInfo(String namespace) {
+def getCloudAppInfo(String namespace) {
 
-    String url = getICPManagementPath(namespace)
-    return sendRequestToICPApi(url, null, "GET", namespace,"", false, false)
+    String url = getCloudManagementPath(namespace)
+    return sendRequestToCloudApi(url, null, "GET", namespace,"", false, false)
 
 }
 
@@ -79,7 +79,7 @@ def filterApps(def apps, def whiteList, def dockerVersionBlacklist) {
     return filteredApps
 }
 
-def getICPManagementPath(String namespace, String appName = '') {
+def getCloudManagementPath(String namespace, String appName = '') {
 
     return "v1/api/application/PCLD/${namespace}/component${appName ? '/'+appName : ''}"
 

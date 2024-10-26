@@ -9,7 +9,7 @@ def call (PomXmlStructure pomXml, PipelineData pipeline){
 	String artifactName=pomXml.artifactName
 	
 	if (pomXml.artifactType==ArtifactType.AGREGADOR && pomXml.artifactMicro!="") {
-		//Si hemos hecho deploy en ICP ahora no tenemos que hacer deploy ya que lo hemos hecho antes
+		//Si hemos hecho deploy en Cloud ahora no tenemos que hacer deploy ya que lo hemos hecho antes
 		artifactName = pomXml.artifactMicro
 	}	
 	if (pomXml.artifactType==ArtifactType.AGREGADOR && pomXml.artifactSampleApp != "") {

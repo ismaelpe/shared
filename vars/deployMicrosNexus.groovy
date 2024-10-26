@@ -17,7 +17,7 @@ def call(PomXmlStructure pomXml, PipelineData pipeline) {
     if (((pomXml.artifactSampleApp!=null && pomXml.artifactSampleApp!="") ||
 		 (pomXml.artifactMicro!=null && pomXml.artifactMicro!="")) && 
 		  pipeline.deployFlag == true && 
-		 ((pipeline.branchStructure.branchType == BranchType.FEATURE && pipeline.deployOnIcp) || 
+		 ((pipeline.branchStructure.branchType == BranchType.FEATURE && pipeline.deployOnCloud) || 
 		  pipeline.branchStructure.branchType == BranchType.HOTFIX || pipeline.branchStructure.branchType == BranchType.MASTER || pipeline.branchStructure.branchType == BranchType.RELEASE)) {
         //Se aplicara el true en caso de deploy
         printOpen("Deploying micro to Artifactory...", EchoLevel.INFO)
@@ -70,7 +70,7 @@ def call(PomXmlStructure pomXml, PipelineData pipeline) {
                 KpiAlmEventOperation.MVN_DEPLOY_MICROS_NEXUS)
         ])
 
-		if (pipeline.deployOnIcp) {
+		if (pipeline.deployOnCloud) {
 			printOpen("Se procede a recoger el build code", EchoLevel.ALL)
 			
 			def artifactDeployedOnNexus = NexusUtils.extractArtifactsFromLog(commitLog)

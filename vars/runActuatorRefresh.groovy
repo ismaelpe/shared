@@ -43,7 +43,7 @@ def call(String microurl, PomXmlStructure pomXml, PipelineData pipelineData) {
         def response = sendRequestToService('POST', url, null, null,
             [
                 consoleLogResponseBody: true,
-                maxRetries: GlobalVars.ICP_RUN_ACTUATOR_REFRESH_MAX_RETRIES,
+                maxRetries: GlobalVars.Cloud_RUN_ACTUATOR_REFRESH_MAX_RETRIES,
                 timeout: GlobalVars.ACTUATOR_REFRESH_TIMEOUT,
                 retryLoopTimeout: GlobalVars.ACTUATOR_REFRESH_RETRY_LOOP_TIMEOUT,
                 validResponseCodes: "100:299",

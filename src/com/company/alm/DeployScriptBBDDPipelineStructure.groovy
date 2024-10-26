@@ -29,7 +29,7 @@ class DeployScriptBBDDPipelineStructure extends PipelineStructure {
                 ],
 				[id       : pipelineId + "110",
 				 estado   : "inactive",
-				 nombre   : "110-check-icp-availability",
+				 nombre   : "110-check-cloud-availability",
 				 resultado: "",
 				 orden    : 0
 				],

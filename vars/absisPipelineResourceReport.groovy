@@ -16,10 +16,10 @@ def call(Map pipelineParameters) {
     compile = params.compile.toString().toBoolean()
     execute = params.execute.toString().toBoolean()
 
-    resourcesReportArtifactoryUrl = "https://artifacts.cloud.project.com/artifactory/arq-openservices-maven-releases/com/project/absis/arch/management/resources-report/1.0.0/resources-report-1.0.0.jar"
+    resourcesReportArtifactoryUrl = "https://artifacts.cloud.project.com/artifactory/arq-openservices-maven-releases/com/project/alm/arch/management/resources-report/1.0.0/resources-report-1.0.0.jar"
 
     pipeline {		
-        agent {	node (absisJenkinsAgent('standard')) }
+        agent {	node (almJenkinsAgent('standard')) }
         
         //Environment sobre el qual se ejecuta este tipo de job
         options {

@@ -24,7 +24,7 @@ import com.project.alm.KpiAlmEventOperation
 @Field String executionProfileParam
 @Field String targetAlmFolderParam
 @Field String commandLiquibase
-@Field String envICP
+@Field String envCloud
 
 @Field String artifactType
 @Field String artifactSubType
@@ -59,7 +59,7 @@ def call(Map pipelineParameters) {
     executionProfileParam = params.executionProfileParam
     targetAlmFolderParam = params.targetAlmFolderParam
     commandLiquibase = params.commandLiquibaseParam
-    envICP = params.envParam.toLowerCase()
+    envCloud = params.envParam.toLowerCase()
     artifactType = params.artifactTypeParam
     artifactSubType = params.artifactSubTypeParam
     commitId = params.commitIdParam
@@ -71,7 +71,7 @@ def call(Map pipelineParameters) {
     initCallStartMillis = new Date().getTime()
 
     pipeline {
-        agent {    node(absisJenkinsAgent(pipelineParams)) }
+        agent {    node(almJenkinsAgent(pipelineParams)) }
         options {
             buildDiscarder(logRotator(numToKeepStr: '30'))
             timestamps()
@@ -80,8 +80,8 @@ def call(Map pipelineParameters) {
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
             JNKMSV = credentials('JNKMSV-USER-TOKEN')
-            ICP_CERT = credentials('icp-alm-pro-cert')
-            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
+            Cloud_CERT = credentials('cloud-alm-pro-cert')
+            Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
@@ -140,7 +140,7 @@ def getGitRepoStep() {
 def initCommandStep() {
     currentBuild.displayName = "${commandLiquibase}_ReportBBDD_${pomXmlStructure.artifactVersion} of ${pomXmlStructure.artifactName}"
     pipelineData = new PipelineData(PipelineStructureType.BBDD_LIQUIBASE_STATUS, "${env.BUILD_TAG}", env.JOB_NAME, params)
-    pipelineData.initVoidActions(pathToRepo, "${GlobalVars.RELEASE_BRANCH}/v${pomXmlStructure.getArtifactVersionWithoutQualifier()}", ArtifactSubType.valueOfSubType(artifactSubType), repoName, "${envICP}")
+    pipelineData.initVoidActions(pathToRepo, "${GlobalVars.RELEASE_BRANCH}/v${pomXmlStructure.getArtifactVersionWithoutQualifier()}", ArtifactSubType.valueOfSubType(artifactSubType), repoName, "${envCloud}")
     pipelineData.commitId = commitId
     pipelineData.pushUser = user
     pipelineData.commitLog = commandLiquibase

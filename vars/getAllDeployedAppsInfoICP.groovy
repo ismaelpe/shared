@@ -4,8 +4,8 @@ import com.project.alm.PipelineData
 import com.project.alm.GlobalVars
 import com.project.alm.DeployStructure
 import com.project.alm.BmxUtilities
-import com.project.alm.ICPDeployStructure
-import com.project.alm.ICPApiResponse
+import com.project.alm.CloudDeployStructure
+import com.project.alm.CloudApiResponse
 
 import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.DumperOptions
@@ -18,15 +18,15 @@ def call(String environment, String namespace, String center) {
 	def deployIdCenter = 0
 	def deployIdAll = 0
 	
-	String appICPId=GlobalVars.ICP_APP_ID_APPS
-	String appICP=GlobalVars.ICP_APP_APPS
+	String appCloudId=GlobalVars.Cloud_APP_ID_APPS
+	String appCloud=GlobalVars.Cloud_APP_APPS
 	
 	if (namespace=="ARCH") {
-		 appICP=GlobalVars.ICP_APP_ARCH
-		 appICPId=GlobalVars.ICP_APP_ID_ARCH
+		 appCloud=GlobalVars.Cloud_APP_ARCH
+		 appCloudId=GlobalVars.Cloud_APP_ID_ARCH
 	}
 	
-	ICPApiResponse response=sendRequestToICPApi("v1/application/${appICPId}/component",null,"GET","${appICP}","",false,false)
+	CloudApiResponse response=sendRequestToCloudApi("v1/application/${appCloudId}/component",null,"GET","${appCloud}","",false,false)
 	
 	if (response.statusCode>=200 && response.statusCode<300) {
 		
@@ -35,7 +35,7 @@ def call(String environment, String namespace, String center) {
 				String componentId=it.id
 			
 				if (center != null) {
-					response=sendRequestToICPApi("v1/application/PCLD/${appICP}/component/${componentId}/deploy/current/environment/${environment.toUpperCase()}/az/${center}",null,"GET","${appICP}","",false,false)
+					response=sendRequestToCloudApi("v1/application/PCLD/${appCloud}/component/${componentId}/deploy/current/environment/${environment.toUpperCase()}/az/${center}",null,"GET","${appCloud}","",false,false)
 					if (response.statusCode>=200 && response.statusCode<300 && response.body.values != null) {
 						//Ya tenemos la respuesta
 						def opts = new DumperOptions()
@@ -45,7 +45,7 @@ def call(String environment, String namespace, String center) {
 						valuesDeployed.put(it.name, (Map)yaml.load( response.body.values))
 					}
 				} else {
-					response=sendRequestToICPApi("v1/application/PCLD/${appICP}/component/${componentId}/deploy/current/environment/${environment.toUpperCase()}/az/ALL",null,"GET","${appICP}","",false,false)
+					response=sendRequestToCloudApi("v1/application/PCLD/${appCloud}/component/${componentId}/deploy/current/environment/${environment.toUpperCase()}/az/ALL",null,"GET","${appCloud}","",false,false)
 					if (response.statusCode>=200 && response.statusCode<300) {
 						//Ya tenemos la respuesta
 						def opts = new DumperOptions()

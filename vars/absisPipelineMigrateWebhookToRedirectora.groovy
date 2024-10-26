@@ -50,16 +50,16 @@ def call(Map pipelineParameters) {
             stageOS('init-pipeline') {
                 initGlobalVars()
                 //De momento esto funciona
-                def csvAbsis3 = null
+                def csvAlm3 = null
                 def fileOutput = null
 
                 if ('true'.equals(getInfoFromLocal)) {
                     fileOutput = CopyGlobalLibraryScript('GAR_APL_ALM.csv')
                     printOpen("El fichero es de ${fileOutput}", EchoLevel.INFO)
                 }else {
-                    csvAbsis3 = 'https://eideswasp.svb.lacaixa.es/apw61/idegar/api/interfaz/v1/descargaFichero/00001/GAR_APL_ALM.csv'
-                    fileOutput = CopyGlobalLibraryScript('', null, 'garAplAbsis3.csv', EchoLevel.INFO)
-                    sh(script: "curl ${csvAbsis3} -X GET --output ${fileOutput} ", returnStdout:true)
+                    csvAlm3 = 'https://eideswasp.svb.lacaixa.es/apw61/idegar/api/interfaz/v1/descargaFichero/00001/GAR_APL_ALM.csv'
+                    fileOutput = CopyGlobalLibraryScript('', null, 'garAplAlm3.csv', EchoLevel.INFO)
+                    sh(script: "curl ${csvAlm3} -X GET --output ${fileOutput} ", returnStdout:true)
                 }
 
                 def records = readCSV file: fileOutput , format: CSVFormat.DEFAULT.withDelimiter(';' as char)

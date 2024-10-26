@@ -1,6 +1,6 @@
 package com.project.alm
 
-class ICPUtils {
+class CloudUtils {
 		
 	static boolean isEdenApp(String name) {
 		def matcher = (name =~ /.{0,}\d{8}E\b/)
@@ -25,66 +25,66 @@ class ICPUtils {
 	}
 	
 	
-	static ICPAppResources generateICPResources(String memory, String environment, boolean isArchProject ) {
-		ICPAppResources icpResources=new ICPAppResources()
-		icpResources.environment=environment
-		icpResources.isArchProject=isArchProject
+	static CloudAppResources generateCloudResources(String memory, String environment, boolean isArchProject ) {
+		CloudAppResources cloudResources=new CloudAppResources()
+		cloudResources.environment=environment
+		cloudResources.isArchProject=isArchProject
 		
 		if (memory==null || memory=="") memory="768"
 		
-		icpResources.limitsMemory=memory+"Mi"
+		cloudResources.limitsMemory=memory+"Mi"
 		
-		return icpResources
+		return cloudResources
 	}
 
-    static calculateICPComponentName(PipelineData pipeline, PomXmlStructure pomXml, def parameters = [:]) {
+    static calculateCloudComponentName(PipelineData pipeline, PomXmlStructure pomXml, def parameters = [:]) {
 
         boolean isBBDD = parameters.isBBDD
 		boolean isWiremock = parameters.isWiremock
 		boolean isStressMicro = parameters.isStressMicro
         String aplicacion = MavenUtils.sanitizeArtifactName(pomXml.artifactName, pipeline.garArtifactType)
 
-        def nameComponentInICP=aplicacion
+        def nameComponentInCloud=aplicacion
 
-        if (!isBBDD)  nameComponentInICP = nameComponentInICP+pomXml.getArtifactMajorVersion()
+        if (!isBBDD)  nameComponentInCloud = nameComponentInCloud+pomXml.getArtifactMajorVersion()
 
 		if (pipeline.branchStructure.branchType == BranchType.PROTOTYPE) {
 			
 			//si es prototype lleva postfijo
-			nameComponentInICP=nameComponentInICP+"prototype"
+			nameComponentInCloud=nameComponentInCloud+"prototype"
 			
 			   //El elemento sera volatil es decir va a ser borrado en dos dias
 		}else if (pipeline.branchStructure.branchType == BranchType.FEATURE && !isBBDD) {  
-            String suffixComponent= normalizeICPArtifactName(pipeline.branchStructure.featureNumber)
+            String suffixComponent= normalizeCloudArtifactName(pipeline.branchStructure.featureNumber)
             if (pomXml.artifactSubType!=ArtifactSubType.MICRO_APP && pomXml.artifactSubType!=ArtifactSubType.MICRO_ARCH) {
                 //Es una sample app
-                nameComponentInICP=nameComponentInICP+"S"
+                nameComponentInCloud=nameComponentInCloud+"S"
             }
-            if ((nameComponentInICP.length() + suffixComponent.length())>33) {
-                suffixComponent=suffixComponent.reverse().take(33-nameComponentInICP.length()).reverse()
+            if ((nameComponentInCloud.length() + suffixComponent.length())>33) {
+                suffixComponent=suffixComponent.reverse().take(33-nameComponentInCloud.length()).reverse()
             }
-            nameComponentInICP=nameComponentInICP + suffixComponent + Utilities.getActualDate("yyyyMMdd")+'E' //Esto nos sirve para indicar que este elemento es del EDEN
+            nameComponentInCloud=nameComponentInCloud + suffixComponent + Utilities.getActualDate("yyyyMMdd")+'E' //Esto nos sirve para indicar que este elemento es del EDEN
         }else {
             if (pomXml.artifactSubType!=ArtifactSubType.MICRO_APP && pomXml.artifactSubType!=ArtifactSubType.MICRO_ARCH) {
                 //Es una sample app
-                nameComponentInICP=nameComponentInICP+"S"
+                nameComponentInCloud=nameComponentInCloud+"S"
             }
-            if (isBBDD==true) nameComponentInICP=nameComponentInICP+"bbdd"
+            if (isBBDD==true) nameComponentInCloud=nameComponentInCloud+"bbdd"
 			if (isWiremock) {
-				nameComponentInICP=nameComponentInICP+"wiremock"
+				nameComponentInCloud=nameComponentInCloud+"wiremock"
 				aplicacion=aplicacion+"wiremock"
 			}
 			if (isStressMicro) {
-				nameComponentInICP=nameComponentInICP+"stress"
+				nameComponentInCloud=nameComponentInCloud+"stress"
 				aplicacion=aplicacion+"stress"
 			}
         }
 
-        return [aplicacion: aplicacion, icpComponentName: nameComponentInICP]
+        return [aplicacion: aplicacion, cloudComponentName: nameComponentInCloud]
 
     }
 
-    static String normalizeICPArtifactName(String suffixComponent) {
+    static String normalizeCloudArtifactName(String suffixComponent) {
         if (suffixComponent!=null) {
             suffixComponent=suffixComponent.toLowerCase()
             suffixComponent=suffixComponent.replace('-','')

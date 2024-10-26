@@ -30,7 +30,7 @@ def call(Map pipelineParameters) {
     logmessageReport = new StringBuilder()
 
     pipeline {
-        agent { node(absisJenkinsAgent(pipelineParams)) }
+        agent { node(almJenkinsAgent(pipelineParams)) }
         options {
             buildDiscarder(logRotator(numToKeepStr: '10'))
             timestamps()
@@ -38,8 +38,8 @@ def call(Map pipelineParameters) {
         }
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
-            ICP_CERT = credentials('icp-alm-pro-cert')
-            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
+            Cloud_CERT = credentials('cloud-alm-pro-cert')
+            Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
@@ -177,8 +177,8 @@ def stageTestAliveStep() {
 
     //the goal in this 'for' is discard all endpoints that we cannot test : item.resultOK = false
     for (SyntheticTestStructure item : appsList) {
-        printOpen("HTTP URL ${item.urlIcp}", EchoLevel.INFO)
-        def url = item.urlIcp + '/actuator/info'
+        printOpen("HTTP URL ${item.urlCloud}", EchoLevel.INFO)
+        def url = item.urlCloud + '/actuator/info'
         def response = null
 
         try {
@@ -229,24 +229,24 @@ def stageExecuteTestsStep() {
             loggerTest.append('**** EXECUTE INTEGRATION TEST FOR:\n')
             loggerTest.append("- artifactId:${item.pomArtifactId}\n")
             loggerTest.append("- version:${item.pomVersion}\n")
-            loggerTest.append("- enpoint:${item.urlIcp}\n")
+            loggerTest.append("- enpoint:${item.urlCloud}\n")
             printOpen(loggerTest.toString(), EchoLevel.DEBUG)
 
             //se vuelve a generar el pom en el disco porque fue machacado por el for del stage anterior
             generateSyntheticTestPom(item)
 
             String pathToSyntheticTestPom = item.pathToSyntheticTestPom
-            String url = item.urlIcp
+            String url = item.urlCloud
             String goal = 'verify'
 
             try {
                 configFileProvider([configFile(fileId: 'alm-maven-settings-with-singulares', variable: 'MAVEN_SETTINGS')]) {
-                    //ICP
+                    //Cloud
                     def cmd = ''
                     if (item.isArchMicro) {
-                        cmd = "mvn -Dhttp.proxyHost=${env.proxyHost} -Dhttp.proxyPort=${env.proxyPort} -Dhttps.proxyHost=${env.proxyHost} -Dhttps.proxyPort=${env.proxyPort}  -s $MAVEN_SETTINGS ${GlobalVars.GLOBAL_MVN_PARAMS} -f ${pathToSyntheticTestPom}  clean ${goal} -Dmicro-url=${item.urlIcp} -Dskip-it=false -Dskip-ut=true"
+                        cmd = "mvn -Dhttp.proxyHost=${env.proxyHost} -Dhttp.proxyPort=${env.proxyPort} -Dhttps.proxyHost=${env.proxyHost} -Dhttps.proxyPort=${env.proxyPort}  -s $MAVEN_SETTINGS ${GlobalVars.GLOBAL_MVN_PARAMS} -f ${pathToSyntheticTestPom}  clean ${goal} -Dmicro-url=${item.urlCloud} -Dskip-it=false -Dskip-ut=true"
                     } else {
-                        cmd = "mvn -Dhttp.proxyHost=${env.proxyHost} -Dhttp.proxyPort=${env.proxyPort} -Dhttps.proxyHost=${env.proxyHost} -Dhttps.proxyPort=${env.proxyPort}  -s $MAVEN_SETTINGS ${GlobalVars.GLOBAL_MVN_PARAMS} -f ${pathToSyntheticTestPom}  clean ${goal} -Dmicro-url=${item.urlIcp} -Dskip-it=false -Dskip-ut=true -P micro-app"
+                        cmd = "mvn -Dhttp.proxyHost=${env.proxyHost} -Dhttp.proxyPort=${env.proxyPort} -Dhttps.proxyHost=${env.proxyHost} -Dhttps.proxyPort=${env.proxyPort}  -s $MAVEN_SETTINGS ${GlobalVars.GLOBAL_MVN_PARAMS} -f ${pathToSyntheticTestPom}  clean ${goal} -Dmicro-url=${item.urlCloud} -Dskip-it=false -Dskip-ut=true -P micro-app"
                     }
 
                     runMavenCommand(cmd)
@@ -281,7 +281,7 @@ def stageReportStep() {
         logmessageReport.append("test.pomArtifactId= ${item.pomArtifactId}\n")
         logmessageReport.append("test.pomVersion=     ${item.pomVersion}\n")
         logmessageReport.append("test.pomGroup=      ${item.pomGroup}\n")
-        logmessageReport.append("test.urlIcp=          ${item.urlIcp}\n")
+        logmessageReport.append("test.urlCloud=          ${item.urlCloud}\n")
         logmessageReport.append("test.errorMessage=  ${item.errorMessage}\n")
         logmessageReport.append(' -------------- \n')
     }
@@ -324,7 +324,7 @@ def endiPipelineAlwaysStep() {
                             , from: "${GlobalVars.EMAIL_FROM_ALM}"
                             , recipientProviders: [[$class: 'DevelopersRecipientProvider']]
                             , to: "${env.ALM_SERVICES_EMAIL_SYNTHETIC_TEST_DISTRIBUTION_LIST}"
-                            , subject: "[Absis3] Resultado Jenkins Test Sintéticos - enviroment:${enviromentParam} - dataCenter:${dataCenterParam} - ${appNameParam} - build:${env.BUILD_NUMBER}")
+                            , subject: "[Alm3] Resultado Jenkins Test Sintéticos - enviroment:${enviromentParam} - dataCenter:${dataCenterParam} - ${appNameParam} - build:${env.BUILD_NUMBER}")
     }
 
     cleanWorkspace()

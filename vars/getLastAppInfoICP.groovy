@@ -4,8 +4,8 @@ import com.project.alm.PipelineData
 import com.project.alm.GlobalVars
 import com.project.alm.DeployStructure
 import com.project.alm.BmxUtilities
-import com.project.alm.ICPDeployStructure
-import com.project.alm.ICPApiResponse
+import com.project.alm.CloudDeployStructure
+import com.project.alm.CloudApiResponse
 
 import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.DumperOptions
@@ -19,20 +19,20 @@ def call(String environment, String app, String namespace, String center) {
 	def deployIdCenter = 0
 	def deployIdAll = 0
 	
-	String appICPId=GlobalVars.ICP_APP_ID_APPS
-	String appICP=GlobalVars.ICP_APP_APPS
+	String appCloudId=GlobalVars.Cloud_APP_ID_APPS
+	String appCloud=GlobalVars.Cloud_APP_APPS
 	
 	String componentId=""
-	//Vamos a recuperar la info de la app en ICP
+	//Vamos a recuperar la info de la app en Cloud
 	if (namespace=="ARCH") {
-		 appICP=GlobalVars.ICP_APP_ARCH
-		 appICPId=GlobalVars.ICP_APP_ID_ARCH
+		 appCloud=GlobalVars.Cloud_APP_ARCH
+		 appCloudId=GlobalVars.Cloud_APP_ID_ARCH
 	}
 
 
-	printOpen("The id of the appOn ICP is ${app}", EchoLevel.ALL)
+	printOpen("The id of the appOn Cloud is ${app}", EchoLevel.ALL)
 
-    ICPApiResponse response = sendRequestToICPApi("v1/application/${appICPId}/component",null,"GET","${appICP}","",false,false)
+    CloudApiResponse response = sendRequestToCloudApi("v1/application/${appCloudId}/component",null,"GET","${appCloud}","",false,false)
 
 	if (response.statusCode>=200 && response.statusCode<300) {
 		
@@ -43,8 +43,8 @@ def call(String environment, String app, String namespace, String center) {
 				printOpen("The id of the componentIs is ${componentId}", EchoLevel.INFO)
 			
 				//Tenemos el ID de la aplicacion
-				//response=sendRequestToICPApi("v1/application/PCLD/${appICPId}/component/${componentId}/environment/${environment.toUpperCase()}/availabilityzone/${center}/status",null,"GET","${appICP}","",false,false)
-				response=sendRequestToICPApi("v1/application/PCLD/${appICP}/component/${componentId}/deploy/current/environment/${environment.toUpperCase()}/az/${center}",null,"GET","${appICP}","",false,false)
+				//response=sendRequestToCloudApi("v1/application/PCLD/${appCloudId}/component/${componentId}/environment/${environment.toUpperCase()}/availabilityzone/${center}/status",null,"GET","${appCloud}","",false,false)
+				response=sendRequestToCloudApi("v1/application/PCLD/${appCloud}/component/${componentId}/deploy/current/environment/${environment.toUpperCase()}/az/${center}",null,"GET","${appCloud}","",false,false)
 				if (response.statusCode>=200 && response.statusCode<300) {
 					//Ya tenemos la respuesta
 					def opts = new DumperOptions()
@@ -56,7 +56,7 @@ def call(String environment, String app, String namespace, String center) {
 					deployIdCenter="${response.body.id}".toInteger()
 				}	
 				
-				response=sendRequestToICPApi("v1/application/PCLD/${appICP}/component/${componentId}/deploy/current/environment/${environment.toUpperCase()}/az/ALL",null,"GET","${appICP}","",false,false)
+				response=sendRequestToCloudApi("v1/application/PCLD/${appCloud}/component/${componentId}/deploy/current/environment/${environment.toUpperCase()}/az/ALL",null,"GET","${appCloud}","",false,false)
 
 				if (response.statusCode>=200 && response.statusCode<300) {
 					//Ya tenemos la respuesta
@@ -86,24 +86,24 @@ def call(String environment, String app, String namespace, String center) {
 
 def call(String environment, List appList, String namespace, String center) {
 
-	String appICPId=GlobalVars.ICP_APP_ID_APPS
-	String appICP=GlobalVars.ICP_APP_APPS
+	String appCloudId=GlobalVars.Cloud_APP_ID_APPS
+	String appCloud=GlobalVars.Cloud_APP_APPS
 	
 	
-	//Vamos a recuperar la info de la app en ICP
+	//Vamos a recuperar la info de la app en Cloud
 	if (namespace=="ARCH") {
-		 appICP=GlobalVars.ICP_APP_ARCH
-		 appICPId=GlobalVars.ICP_APP_ID_ARCH
+		 appCloud=GlobalVars.Cloud_APP_ARCH
+		 appCloudId=GlobalVars.Cloud_APP_ID_ARCH
 	}
 	
 	
 	Map valuesAllAppDeployed = [:]
 	def outputCommandResponseDeployment = "outputCommandResponseDeployment.json"
-	ICPApiResponse responseGlobal=sendRequestToICPApi("v1/application/${appICPId}/component",null,"GET","${appICP}","",false,false, null, null, [:], outputCommandResponseDeployment)
+	CloudApiResponse responseGlobal=sendRequestToCloudApi("v1/application/${appCloudId}/component",null,"GET","${appCloud}","",false,false, null, null, [:], outputCommandResponseDeployment)
 	
 	if (responseGlobal.statusCode>=200 && responseGlobal.statusCode<300) {
 		appList.each { app ->
-			printOpen("The id of the app on ICP is ${app}", EchoLevel.ALL)
+			printOpen("The id of the app on Cloud is ${app}", EchoLevel.ALL)
 			String componentId=""
 			Map valuesDeployedCenter=null
 			Map valuesDeployedAll=null
@@ -118,8 +118,8 @@ def call(String environment, List appList, String namespace, String center) {
 					printOpen("The id of the component is ${componentId}", EchoLevel.DEBUG)
 				
 					//Tenemos el ID de la aplicacion
-					//response=sendRequestToICPApi("v1/application/PCLD/${appICPId}/component/${componentId}/environment/${environment.toUpperCase()}/availabilityzone/${center}/status",null,"GET","${appICP}","",false,false)
-					ICPApiResponse response=sendRequestToICPApi("v1/application/PCLD/${appICP}/component/${componentId}/deploy/current/environment/${environment.toUpperCase()}/az/${center}",null,"GET","${appICP}","",false,false)
+					//response=sendRequestToCloudApi("v1/application/PCLD/${appCloudId}/component/${componentId}/environment/${environment.toUpperCase()}/availabilityzone/${center}/status",null,"GET","${appCloud}","",false,false)
+					CloudApiResponse response=sendRequestToCloudApi("v1/application/PCLD/${appCloud}/component/${componentId}/deploy/current/environment/${environment.toUpperCase()}/az/${center}",null,"GET","${appCloud}","",false,false)
 					if (response.statusCode>=200 && response.statusCode<300) {
 						//Ya tenemos la respuesta
 						def opts = new DumperOptions()
@@ -131,7 +131,7 @@ def call(String environment, List appList, String namespace, String center) {
 						deployIdCenter="${response.body.id}".toInteger()
 					}
 					
-					response=sendRequestToICPApi("v1/application/PCLD/${appICP}/component/${componentId}/deploy/current/environment/${environment.toUpperCase()}/az/ALL",null,"GET","${appICP}","",false,false)
+					response=sendRequestToCloudApi("v1/application/PCLD/${appCloud}/component/${componentId}/deploy/current/environment/${environment.toUpperCase()}/az/ALL",null,"GET","${appCloud}","",false,false)
 					if (response.statusCode>=200 && response.statusCode<300) {
 						//Ya tenemos la respuesta
 						def opts = new DumperOptions()

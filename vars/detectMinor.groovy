@@ -39,8 +39,8 @@ def call(DeployStructure deployStructure, PomXmlStructure artifactPom, BranchStr
 
             if (artifactAncient != '') {
                 ancientVersionInfo.hasAncient = true
-                String commandLineDetectAbsisBlue = "cf env ${artifactAncient} | grep -m 1 'ALM_BLUE' | awk '{ print \$2}'"
-                String isBlue = sh(returnStdout: true, script: commandLineDetectAbsisBlue)
+                String commandLineDetectAlmBlue = "cf env ${artifactAncient} | grep -m 1 'ALM_BLUE' | awk '{ print \$2}'"
+                String isBlue = sh(returnStdout: true, script: commandLineDetectAlmBlue)
 
                 if (isBlue != null && isBlue != '') {
                     ancientVersionInfo.isBlue = true
@@ -88,8 +88,8 @@ def call(DeployStructure deployStructure, PomXmlStructure artifactPom, BranchStr
             } else if (existsAncient != '') {//BUG NO TIENE PORQUE SER UN ANCIENT ESTO, SINO COINCIDE
                 printOpen("Tenemos ancient pero no tenemos el artefacto. Esto es raro....!!!!", EchoLevel.ALL)
                 ancientVersionInfo.hasAncient = true
-                String commandLineDetectAbsisBlue = "cf env ${existsAncient} | grep -m 1 'ALM_BLUE' | awk '{ print \$2}'"
-                String isBlue = sh(returnStdout: true, script: commandLineDetectAbsisBlue)
+                String commandLineDetectAlmBlue = "cf env ${existsAncient} | grep -m 1 'ALM_BLUE' | awk '{ print \$2}'"
+                String isBlue = sh(returnStdout: true, script: commandLineDetectAlmBlue)
 
 
                 if (isBlue != null && isBlue != '') {

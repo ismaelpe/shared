@@ -15,7 +15,7 @@ class CicsVars {
     static String APP_TYPE = 'SIMPLE'
     static String APP_SUBTYPE = 'APP_LIB'
 
-    static String STARTER_GROUPID = "com.project.absis.apps.cicsclient"
+    static String STARTER_GROUPID = "com.project.alm.apps.cicsclient"
 
 
     //Variables fijas. Seguramente esto finalmente se tendr� que indicar por configuracion global

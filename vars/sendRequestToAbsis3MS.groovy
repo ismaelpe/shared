@@ -1,17 +1,17 @@
 import com.project.alm.GlobalVars
 
 def call(String method, String url, def body, String environment, Map parameters = [:]) {
-	return sendRequestToAbsis3MS(method,url,body, environment, 404, parameters)
+	return sendRequestToAlm3MS(method,url,body, environment, 404, parameters)
 }
 
 def call(String method, String url, def body, String environment, int maxStatusCodeAllowed, Map parameters = [:]) {
 
     String environ = environment == 'eden' ? 'DEV' : environment
 
-    withCredentials([string(credentialsId: "ALM_TOKEN_${environ.toUpperCase()}_V2 ", variable: 'tokenAbsis3')]) {
+    withCredentials([string(credentialsId: "ALM_TOKEN_${environ.toUpperCase()}_V2 ", variable: 'tokenAlm3')]) {
 
         def customHeaders = parameters?.customHeaders ? parameters?.customHeaders : []
-        customHeaders += [name: 'Authorization', value: "Bearer ${tokenAbsis3}"]
+        customHeaders += [name: 'Authorization', value: "Bearer ${tokenAlm3}"]
 
         parameters += [
             retryLoopTimeout: GlobalVars.DEFAULT_ALM_MS_REQUEST_RETRIES_TIMEOUT,

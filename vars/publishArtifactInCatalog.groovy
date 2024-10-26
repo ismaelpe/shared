@@ -18,7 +18,7 @@ def call(PipelineData pipelineData, PomXmlStructure pomXml) {
 }
 
 
-def call(PipelineData pipelineData, PomXmlStructure pomXml, ICPStateUtility icpStateUtilitity, boolean updateBuildPath = false) {
+def call(PipelineData pipelineData, PomXmlStructure pomXml, CloudStateUtility cloudStateUtilitity, boolean updateBuildPath = false) {
 
     printOpen("Preparing data to publish in catalog", EchoLevel.INFO)
 
@@ -175,7 +175,7 @@ def call(PipelineData pipelineData, PomXmlStructure pomXml, ICPStateUtility icpS
                         KpiAlmEventOperation.CATALOG_HTTP_CALL)
                 ])
 
- 	    publishArtifactInCatMsv (body,pipelineData,pomXml,icpStateUtilitity,updateBuildPath)
+ 	    publishArtifactInCatMsv (body,pipelineData,pomXml,cloudStateUtilitity,updateBuildPath)
 
         } catch (Exception e) {
             printOpen(Utilities.prettyException(e), EchoLevel.ERROR)

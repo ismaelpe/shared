@@ -14,7 +14,7 @@ def getUrlApi(String fileOut,String method, String url, String aplicacionGAR) {
  * @param url Contiene la url que de la peticion 
  * @param method Metodo de la peticion curl
  * @return Enum con los valores para resolver el tratamiento para la respuesta al metodo
- * 0 Devolver el ICPResponse con un id null para continuar con las peticiones
+ * 0 Devolver el CloudResponse con un id null para continuar con las peticiones
  * 1 Tenemos que devolver una excepcion, intentaremos un retry
  * 2 Este no es recuperable tenemos un error imposible de recuperar
  */
@@ -44,32 +44,32 @@ def validateTimeout(def timeStart) {
 	def timeEnd = new Date()
 	TimeDuration duration = TimeCategory.minus(timeEnd, timeStart)
 
-    printOpen("${duration} Llevamos  ${duration.getMinutes()} minutos ${duration.getSeconds()} segundos esperando a ICP", EchoLevel.DEBUG)
+    printOpen("${duration} Llevamos  ${duration.getMinutes()} minutos ${duration.getSeconds()} segundos esperando a Cloud", EchoLevel.DEBUG)
 
-	if (duration.getMinutes()>GlobalVars.TIMEOUT_ICP) {
+	if (duration.getMinutes()>GlobalVars.TIMEOUT_Cloud) {
         printOpen("TimeOut superado, parece que el timeout de jenkins no ha funcionado. Vamos a abortar", EchoLevel.ERROR)
-		throw new Exception("Timeout superado ${GlobalVars.TIMEOUT_ICP}")
+		throw new Exception("Timeout superado ${GlobalVars.TIMEOUT_Cloud}")
 	}
 }
 
 /**
- * Se llama a la API de ICP indicada por la requestURL y se valida contra el endpoint mediante la pollingRequestUrl en caso que aplique mediante el supportsPolling
- * @param requestURL endpoint del API de ICP para ejecutar la accion
+ * Se llama a la API de Cloud indicada por la requestURL y se valida contra el endpoint mediante la pollingRequestUrl en caso que aplique mediante el supportsPolling
+ * @param requestURL endpoint del API de Cloud para ejecutar la accion
  * @param body objeto con el body para poder ejecutar el POST o PUT
  * @param method con el metodo Http para poder ejecutar contra la API
  * @param aplicacionGAR indicador con la aplicacion GAR asociada al componente a desplegar
- * @param pollingRequestUrl enpoint del API de ICP para poder validar que el endpoint asincrono ha sido ejecutado correctamente
+ * @param pollingRequestUrl enpoint del API de Cloud para poder validar que el endpoint asincrono ha sido ejecutado correctamente
  * @param supportsPolling indica que se tiene que ejecutar la validacion del endpoint para dar por OK el proceso
  * @param statusProcessValidate indica que atributo tienes que validar para validar conntra la url de polling el resultado del estado del proceso
  * @param pipelineData Utilizado para crear máximos. Si es nulo no se intentará crear máximo
  * @param pomXml Utilizado para crear máximos. Si es nulo no se intentará crear máximo
- * @return IcpApiResponse con el resultado del la peticion 
+ * @return CloudApiResponse con el resultado del la peticion 
  */
 def call(String requestURL, def body, String method, String aplicacionGAR, String pollingRequestUrl,
          boolean supportsPolling, boolean statusProcessValidate,
          PipelineData pipelineData = null, PomXmlStructure pomXml = null, Map parameters = [:], String outputCommand = "outputCommand.json") {
 	String fileCommand=""
-	ICPApiResponse responseIcp= new ICPApiResponse()	
+	CloudApiResponse responseCloud= new CloudApiResponse()	
 	String id=""
     String command=""
     String contentResponse=""
@@ -81,7 +81,7 @@ def call(String requestURL, def body, String method, String aplicacionGAR, Strin
             new KpiAlmEvent(
                 pomXml, pipelineData,
                 KpiAlmEventStage.UNDEFINED,
-                KpiAlmEventOperation.ICPAPI_HTTP_CALL)
+                KpiAlmEventOperation.CloudAPI_HTTP_CALL)
 
     long singleCallDuration
     long wholeCallDuration
@@ -104,7 +104,7 @@ def call(String requestURL, def body, String method, String aplicacionGAR, Strin
 		String fileOutput=CopyGlobalLibraryScript('',null,outputCommand)
 		int statusCode=0
 			
-        command=getUrlApi(fileOutput, method, "${GlobalVars.ICP_PRO}/api/publisher/${requestURL}", aplicacionGAR) + " --cert $env.ICP_CERT:$env.ICP_PASS "+" --noproxy '*' "
+        command=getUrlApi(fileOutput, method, "${GlobalVars.Cloud_PRO}/api/publisher/${requestURL}", aplicacionGAR) + " --cert $env.Cloud_CERT:$env.Cloud_PASS "+" --noproxy '*' "
     
   
         if (body != null) {
@@ -156,14 +156,14 @@ def call(String requestURL, def body, String method, String aplicacionGAR, Strin
                     def bodyStatus56 = [
                         id: 0
                     ]
-                    responseIcp.statusCode=200
-                    responseIcp.body=bodyStatus56
+                    responseCloud.statusCode=200
+                    responseCloud.body=bodyStatus56
                     //Es un POST y ha ejecutado la peticion
-                    printOpen("Returning the error in ICP ${toJson(bodyStatus56)}", EchoLevel.DEBUG)
+                    printOpen("Returning the error in Cloud ${toJson(bodyStatus56)}", EchoLevel.DEBUG)
 
                     returnResponse=true
 
-                    return responseIcp
+                    return responseCloud
 
                 } else if (abortRetry=="1") {
 
@@ -189,14 +189,14 @@ def call(String requestURL, def body, String method, String aplicacionGAR, Strin
             kpiLogger(kpiAlmEvent.requestFail(singleCallDuration))
             kpiLogger(kpiAlmEvent.callFail(wholeCallDuration))
 
-            return responseIcp
+            return responseCloud
         }
 
         if (abortExecution) throw errorAbortExecution 		
         statusCode = responseStatusCode as Integer
 
 
-		responseIcp.statusCode=statusCode
+		responseCloud.statusCode=statusCode
 		contentResponse= sh(script: "cat ${fileOutput}", returnStdout:true )
 		
 		if (statusCode>=200 && statusCode<300) {
@@ -209,25 +209,25 @@ def call(String requestURL, def body, String method, String aplicacionGAR, Strin
                 kpiLogger(kpiAlmEvent.requestSuccess(singleCallDuration))
                 kpiLogger(kpiAlmEvent.callSuccess(wholeCallDuration))
 
-                printOpen("ICP API Request result:\nStatus Code ${statusCode}\nbody:\n${printResponse ? contentResponse : 'printResponse is false. Log will not be shown'}", EchoLevel.DEBUG)
+                printOpen("Cloud API Request result:\nStatus Code ${statusCode}\nbody:\n${printResponse ? contentResponse : 'printResponse is false. Log will not be shown'}", EchoLevel.DEBUG)
 
 				def json=readJSON file: fileOutput
-				responseIcp.body=json
-				id=responseIcp.body.id				
+				responseCloud.body=json
+				id=responseCloud.body.id				
 				//Hacemos setting a null para que no tenga que serializar si se hace resuming
 				json=null
-				if (supportsPolling) responseIcp.body=null
+				if (supportsPolling) responseCloud.body=null
 
 			}
 
             // Call and Poll are considered as different operations
-            kpiAlmEvent.operation(KpiAlmEventOperation.ICPAPI_HTTP_POLL)
+            kpiAlmEvent.operation(KpiAlmEventOperation.CloudAPI_HTTP_POLL)
 
 			if (supportsPolling) {
 
 				def timeStart = new Date()
 
-				timeout(GlobalVars.TIMEOUT_MAX_ICP) {
+				timeout(GlobalVars.TIMEOUT_MAX_Cloud) {
 					waitUntil(initialRecurrencePeriod: 15000) {
 						
 						//Controlarem el timeout que sembla que de vegades no funciona
@@ -235,7 +235,7 @@ def call(String requestURL, def body, String method, String aplicacionGAR, Strin
 						validateTimeout(timeStart)
 						//Validar que la duration en minutos no supere el timeout + 1
 
-                        command=getUrlApi(fileOutput,'GET',"${GlobalVars.ICP_PRO}/api/publisher/${pollingRequestUrl}/${id}",aplicacionGAR)+" --cert $env.ICP_CERT:$env.ICP_PASS "
+                        command=getUrlApi(fileOutput,'GET',"${GlobalVars.Cloud_PRO}/api/publisher/${pollingRequestUrl}/${id}",aplicacionGAR)+" --cert $env.Cloud_CERT:$env.Cloud_PASS "
 
                         wholeCallStartMillis = new Date().getTime()
 
@@ -280,7 +280,7 @@ def call(String requestURL, def body, String method, String aplicacionGAR, Strin
                             kpiLogger(kpiAlmEvent.requestSuccess(singleCallDuration))
                             kpiLogger(kpiAlmEvent.callSuccess(wholeCallDuration))
 
-                            printOpen("ICP API Polling result:\nStatus Code ${statusCode}\nProcess status ${statusProcessValidate}\nbody:\n${printResponse ? contentResponse : 'printResponse is false. Log will not be shown'}", EchoLevel.DEBUG)
+                            printOpen("Cloud API Polling result:\nStatus Code ${statusCode}\nProcess status ${statusProcessValidate}\nbody:\n${printResponse ? contentResponse : 'printResponse is false. Log will not be shown'}", EchoLevel.DEBUG)
 
 							String resultProcessStatus=null
 	
@@ -290,10 +290,10 @@ def call(String requestURL, def body, String method, String aplicacionGAR, Strin
                             //Dado que la API ha respondido, consideramos las NOK como SUCCESS también
 							if (resultProcessStatus=='OK' || resultProcessStatus=='NOK') {
 
-                                responseIcp.body=json1
+                                responseCloud.body=json1
 								 
-								 if (resultProcessStatus=='NOK') responseIcp.statusCode=500
-								 else responseIcp.statusCode=200
+								 if (resultProcessStatus=='NOK') responseCloud.statusCode=500
+								 else responseCloud.statusCode=200
 								 
 								 return true
 
@@ -305,13 +305,13 @@ def call(String requestURL, def body, String method, String aplicacionGAR, Strin
 
 						} else {
 
-                            printOpen("ICP API Polling result:\nStatus Code ${statusCode}\nProcess status ${statusProcessValidate}\nbody:\n${contentResponse}", EchoLevel.DEBUG)
+                            printOpen("Cloud API Polling result:\nStatus Code ${statusCode}\nProcess status ${statusProcessValidate}\nbody:\n${contentResponse}", EchoLevel.DEBUG)
 
-							responseIcp.statusCode=statusCode
+							responseCloud.statusCode=statusCode
 							
 							if (contentResponse!=null) {
 								def json1=readJSON text: contentResponse
-								responseIcp.body=json1
+								responseCloud.body=json1
 							}
 							
 							kpiLogger(kpiAlmEvent.requestFail(singleCallDuration))
@@ -324,7 +324,7 @@ def call(String requestURL, def body, String method, String aplicacionGAR, Strin
 				}
 
 			} else {
-				return responseIcp
+				return responseCloud
 			}			
 		} else {
 
@@ -333,14 +333,14 @@ def call(String requestURL, def body, String method, String aplicacionGAR, Strin
 
 			if (contentResponse!=null && contentResponse!="") {
 
-                printOpen("ICP API Request result:\nStatus Code ${statusCode}\nbody:\n${contentResponse}", EchoLevel.DEBUG)
+                printOpen("Cloud API Request result:\nStatus Code ${statusCode}\nbody:\n${contentResponse}", EchoLevel.DEBUG)
 
 				def json=readJSON text: contentResponse
-				return new ICPApiResponse(statusCode,json)
+				return new CloudApiResponse(statusCode,json)
 
 			} else {
 
-				return new ICPApiResponse(statusCode,null)
+				return new CloudApiResponse(statusCode,null)
 
 			}
 
@@ -369,17 +369,17 @@ def call(String requestURL, def body, String method, String aplicacionGAR, Strin
         kpiLogger(kpiAlmEvent.requestFail(singleCallDuration))
         kpiLogger(kpiAlmEvent.callFail(wholeCallDuration, KpiAlmEventErrorCode.TIMEOUT_BLOCK_EXPIRED))
 
-        String logCommand = command.replaceAll("${env.ICP_CERT}","*****").replaceAll("${env.ICP_PASS}","*****")
+        String logCommand = command.replaceAll("${env.Cloud_CERT}","*****").replaceAll("${env.Cloud_PASS}","*****")
 
         Exception ex = new RuntimeException(
             "La pipeline se ha interrumpido porque se ha alcanzado el timeout sin que se haya podido confirmar que la operación solicitada ha tenido éxito.\n" +
                 "El último comando lanzado fue:\n\n${logCommand}\n\n" +
                 "La última respuesta recibida del servicio fue:\n\n${contentResponse}", fie)
 
-        printOpen("Error en el sendToICP:\\n${Functions.printThrowable(ex)}", EchoLevel.ERROR)
+        printOpen("Error en el sendToCloud:\\n${Functions.printThrowable(ex)}", EchoLevel.ERROR)
 
         if (pipelineData == null || pomXml == null) { throw ex }
-        createMaximoAndThrow.icpDeployException(pipelineData, pomXml, ex)
+        createMaximoAndThrow.cloudDeployException(pipelineData, pomXml, ex)
 
     } catch(Exception e) {
 
@@ -391,13 +391,13 @@ def call(String requestURL, def body, String method, String aplicacionGAR, Strin
         kpiLogger(kpiAlmEvent.requestFail(singleCallDuration))
         kpiLogger(kpiAlmEvent.callFail(wholeCallDuration))
 
-        printOpen("Error en el sendToICP:\n${Functions.printThrowable(e)}", EchoLevel.ERROR)
+        printOpen("Error en el sendToCloud:\n${Functions.printThrowable(e)}", EchoLevel.ERROR)
 
         if (pipelineData == null || pomXml == null) { throw e }
-        createMaximoAndThrow.icpDeployException(pipelineData, pomXml, e)
+        createMaximoAndThrow.cloudDeployException(pipelineData, pomXml, e)
 
 	}
 
-	return responseIcp
+	return responseCloud
 }
 

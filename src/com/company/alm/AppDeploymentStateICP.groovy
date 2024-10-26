@@ -2,7 +2,7 @@ package com.project.alm
 import java.util.Map
 import com.project.alm.AppDeploymentState
 
-class AppDeploymentStateICP extends AppDeploymentState{
+class AppDeploymentStateCloud extends AppDeploymentState{
 
 	
 	
@@ -12,22 +12,22 @@ class AppDeploymentStateICP extends AppDeploymentState{
 	Map apps
 	boolean isDeployed
 
-    AppDeploymentStateICP(Map deploymentValues, String appName) {
+    AppDeploymentStateCloud(Map deploymentValues, String appName) {
         this.deploymentValues=deploymentValues
 		this.appName=appName
 		
 		isDeployed=true
 
-		if (deploymentValues==null || deploymentValues["absis"]==null) {
+		if (deploymentValues==null || deploymentValues["alm"]==null) {
 			isDeployed=false
 		}else {
-			Map deployment=deploymentValues["absis"]
+			Map deployment=deploymentValues["alm"]
 
-			Map absisApp=deployment["apps"]
-			if (absisApp==null || (absisApp!=null && absisApp["envQualifier"]==null)) {
+			Map almApp=deployment["apps"]
+			if (almApp==null || (almApp!=null && almApp["envQualifier"]==null)) {
 				isDeployed=false
 			}else {
-				apps=absisApp["envQualifier"]
+				apps=almApp["envQualifier"]
 
 				Map preServices=deployment['services']
 				if (preServices==null || (preServices!=null && preServices['envQualifier']==null)) {

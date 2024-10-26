@@ -173,7 +173,7 @@ def call(String repoGit) {
 				    , from: "${GlobalVars.EMAIL_FROM_ALM}"
                     , recipientProviders: [[$class: 'DevelopersRecipientProvider']]
                     , to: "${env.ALM_SERVICES_EMAIL_DISTRIBUTION_LIST}"
-                    , subject: "[Absis3 PRO] Branch Report ${repoGit} ${datePart} ")
+                    , subject: "[Alm3 PRO] Branch Report ${repoGit} ${datePart} ")
         }
 
     }

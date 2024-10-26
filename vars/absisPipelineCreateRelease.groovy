@@ -30,9 +30,9 @@ import com.project.alm.KpiAlmEventOperation
 
 @Field String[] mvnAdditionalParameters
 
-@Field String deployICPPhases
-@Field String resultDeployICP
-@Field ICPStateUtility icpStateUtilitity
+@Field String deployCloudPhases
+@Field String resultDeployCloud
+@Field CloudStateUtility cloudStateUtilitity
 
 @Field KpiAlmEvent almEvent
 @Field long initCallStartMillis
@@ -78,9 +78,9 @@ def call(Map pipelineParameters) {
     agentParam = params.agent
     mvnAdditionalParameters = params.mvnAdditionalParametersParam?.split(",")
 
-    deployICPPhases = "01-pre-deploy"
-    resultDeployICP = "OK"
-    icpStateUtilitity = null
+    deployCloudPhases = "01-pre-deploy"
+    resultDeployCloud = "OK"
+    cloudStateUtilitity = null
 	
 	almEvent = null
 	initCallStartMillis = new Date().getTime()
@@ -96,7 +96,7 @@ def call(Map pipelineParameters) {
      * 3. Push GIT + etiqueta
      */
     pipeline {      
-		agent {	node (absisJenkinsAgent(agentParam)) }
+		agent {	node (almJenkinsAgent(agentParam)) }
         options {
             buildDiscarder(logRotator(numToKeepStr: '50'))
 			timestamps()
@@ -105,8 +105,8 @@ def call(Map pipelineParameters) {
         environment {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
 			JNKMSV = credentials('JNKMSV-USER-TOKEN')
-            ICP_CERT = credentials('icp-alm-pro-cert')
-            ICP_PASS = credentials('icp-alm-pro-cert-passwd')
+            Cloud_CERT = credentials('cloud-alm-pro-cert')
+            Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyCaixa}"
             https_proxy = "${GlobalVars.proxyCaixa}"
             proxyHost = "${GlobalVars.proxyCaixaHost}"
@@ -121,12 +121,12 @@ def call(Map pipelineParameters) {
                    getGitRepoStep()
                 }
             }
-			stage('check-ICP-availiability'){
+			stage('check-Cloud-availiability'){
 				when {
-					expression { pipelineData.deployFlag && pipelineData.deployOnIcp }
+					expression { pipelineData.deployFlag && pipelineData.deployOnCloud }
 				}
 				steps {
-					checkICPAvailiabilityStep()
+					checkCloudAvailiabilityStep()
 				}
 			}
             stage('prepare-Release') {
@@ -188,25 +188,25 @@ def call(Map pipelineParameters) {
                    copyConfigFiles()
                 }
             }
-            stage('deploy-micro-artifactory-icp') {
+            stage('deploy-micro-artifactory-cloud') {
                 when {
-                    expression { !pipelineData.isPushCI() && pipelineData.deployOnIcp }
+                    expression { !pipelineData.isPushCI() && pipelineData.deployOnCloud }
                 }
                 steps {
-                    deployMicroArtifactoryICPStep()
+                    deployMicroArtifactoryCloudStep()
                 }
             }
-            stage("deploy-to-cloud-icp") {
+            stage("deploy-to-cloud-cloud") {
                 when {
-                    expression { pipelineData.deployFlag && pipelineData.deployOnIcp }
+                    expression { pipelineData.deployFlag && pipelineData.deployOnCloud }
                 }
                 steps {
-                    deployToCloudICPStep()
+                    deployToCloudCloudStep()
                 }
             }
             stage("run-remote-it") {
                 when {
-                    expression { pipelineData.deployFlag && pipelineData.deployOnIcp }
+                    expression { pipelineData.deployFlag && pipelineData.deployOnCloud }
                 }
                 steps {
                     runRemoteITStep()
@@ -214,7 +214,7 @@ def call(Map pipelineParameters) {
             }
 			stage("run-remote-it-on-old-version") {
 				when {
-					expression { pipelineData.deployFlag && pipelineData.deployOnIcp && pipelineData.pipelineStructure.resultPipelineData!=null &&
+					expression { pipelineData.deployFlag && pipelineData.deployOnCloud && pipelineData.pipelineStructure.resultPipelineData!=null &&
 						!pomXmlStructure.isLibrary() && 
 						pipelineData.pipelineStructure.resultPipelineData.oldVersionInCurrentEnvironment!=null && 
 						pipelineData.pipelineStructure.resultPipelineData.oldVersionInCurrentEnvironment!=""}
@@ -223,17 +223,17 @@ def call(Map pipelineParameters) {
 					runRemoteItOnOldVersionStep()
 				}
 			}
-            stage('consolidate-cloud-icp') {
+            stage('consolidate-cloud-cloud') {
                 when {
-                    expression { pipelineData.deployFlag && pipelineData.deployOnIcp }
+                    expression { pipelineData.deployFlag && pipelineData.deployOnCloud }
                 }
                 steps {
-                    consolidateCloudICPStep()
+                    consolidateCloudCloudStep()
                 }
             }
 			stage('clone-to-ocp-pre') {
 				when{					
-					expression { pipelineData.deployFlag && pipelineData.deployOnIcp }
+					expression { pipelineData.deployFlag && pipelineData.deployOnCloud }
 				}
 				steps {
 					cloneToOcpPreStep()
@@ -255,26 +255,26 @@ def call(Map pipelineParameters) {
                   apiManagerTechnicalServiceRegistrationStep()
                 }
             }
-            stage('copy-config-files-to-tst-icp') {
+            stage('copy-config-files-to-tst-cloud') {
                 when {
-                    expression { deployToTst && pipelineData.deployFlag && pipelineData.deployOnIcp && resultDeployICP == "OK" }
+                    expression { deployToTst && pipelineData.deployFlag && pipelineData.deployOnCloud && resultDeployCloud == "OK" }
                 }
                 steps {
-                    copyConfigFilesToTstICPStep()                    
+                    copyConfigFilesToTstCloudStep()                    
                 }
             }
 
-            stage('deploy-to-tst-icp') {
+            stage('deploy-to-tst-cloud') {
                 when {
-                    expression { deployToTst && pipelineData.deployFlag && pipelineData.deployOnIcp && resultDeployICP == "OK" }
+                    expression { deployToTst && pipelineData.deployFlag && pipelineData.deployOnCloud && resultDeployCloud == "OK" }
                 }
                 steps {
-                    deployToCloudTstICPStep()                    
+                    deployToCloudTstCloudStep()                    
                 }
             }
             stage('apimanager-technicalservices-registration-tst') {
                 when {
-                    expression { ifApiManagerTechnicalServiceRegistrationApplies(pipelineData, pomXmlStructure) && deployToTst && resultDeployICP == "OK" }
+                    expression { ifApiManagerTechnicalServiceRegistrationApplies(pipelineData, pomXmlStructure) && deployToTst && resultDeployCloud == "OK" }
                 }
                 steps {
                     apimanagerTechnicalServicesRegistrationTstStep()                   
@@ -417,7 +417,7 @@ def getGitRepoStep() {
     debugInfo(pipelineParams, pomXmlStructure, pipelineData)
 
     //INIT AND DEPLOY
-    initICPDeploy(pomXmlStructure, pipelineData)
+    initCloudDeploy(pomXmlStructure, pipelineData)
 
     sendStageEndToGPL(pomXmlStructure, pipelineData, "100")
 
@@ -429,19 +429,19 @@ def getGitRepoStep() {
     }
 
 /** 
- * Step checkICPAvailiabilityStep
+ * Step checkCloudAvailiabilityStep
  */    
-def checkICPAvailiabilityStep() {
+def checkCloudAvailiabilityStep() {
     printOpen("The artifact ${pomXmlStructure.artifactName} from group ${pomXmlStructure.groupId} the micro to deploy is ${pomXmlStructure.artifactMicro}", EchoLevel.DEBUG)
     sendStageStartToGPL(pomXmlStructure, pipelineData, "110")
     try {
-        checkICPAvailability(pomXmlStructure,pipelineData,"PRE","BOTH")
+        checkCloudAvailability(pomXmlStructure,pipelineData,"PRE","BOTH")
         if (deployToTst) {
-            checkICPAvailability(pomXmlStructure,pipelineData,"TST","DEPLOY")
+            checkCloudAvailability(pomXmlStructure,pipelineData,"TST","DEPLOY")
         }
         sendStageEndToGPL(pomXmlStructure, pipelineData, "110")
     } catch (Exception e) {
-        printOpen("Error checking ICP availability: ${e.getMessage()}", EchoLevel.ERROR)
+        printOpen("Error checking Cloud availability: ${e.getMessage()}", EchoLevel.ERROR)
         sendStageEndToGPL(pomXmlStructure, pipelineData, "110", null, null, "error")
         throw e
     }
@@ -473,14 +473,14 @@ def prepareReleaseStep() {
  * Step validateDependenciesVersionStep
  */    
 def validateDependenciesVersionStep() { 
-    absisPipelineStageValidateDependenciesVersion(pomXmlStructure, pipelineData, "210")
+    almPipelineStageValidateDependenciesVersion(pomXmlStructure, pipelineData, "210")
 }
 
 /** 
  * Step validateVersionStep
  */    
 def validateVersionStep() {
-    absisPipelineStageValidateVersion(pomXmlStructure, pipelineData, "300")
+    almPipelineStageValidateVersion(pomXmlStructure, pipelineData, "300")
 }		
 
 /** 
@@ -527,7 +527,7 @@ def buildStep() {
 
     sendStageEndToGPL(pomXmlStructure, pipelineData, "400")
     kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.BUILD_FINISHED, KpiLifeCycleStatus.OK)
-    absisPipelineStageValidateDependencyRestrictions(pomXmlStructure, pipelineData, "400")
+    almPipelineStageValidateDependencyRestrictions(pomXmlStructure, pipelineData, "400")
 }
 
 /** 
@@ -583,9 +583,9 @@ def copyConfigFiles() {
 }
 
 /** 
- * Step deployMicroArtifactoryICPStep
+ * Step deployMicroArtifactoryCloudStep
  */    
-def deployMicroArtifactoryICPStep() {
+def deployMicroArtifactoryCloudStep() {
     sendStageStartToGPL(pomXmlStructure, pipelineData, "415")
     
     if (existsArtifactDeployed(pomXmlStructure,pipelineData)) {
@@ -598,17 +598,17 @@ def deployMicroArtifactoryICPStep() {
 }
 
 /** 
- * Step deployToCloudICPStep
+ * Step deployToCloudCloudStep
  */ 
-def deployToCloudICPStep() { 
-    icpStateUtilitity = absisPipelineStageDeployToCloud(pomXmlStructure, pipelineData, "501", "01-<phase>-deploy")
+def deployToCloudCloudStep() { 
+    cloudStateUtilitity = almPipelineStageDeployToCloud(pomXmlStructure, pipelineData, "501", "01-<phase>-deploy")
 }
 
 /** 
  * Step runRemoteITStep
  */    
 def runRemoteITStep() { 
-    absisPipelineStageRunRemoteIT(pomXmlStructure, pipelineData, "503", "03-<phase>-runRemoteIT-pre-consolidateNew", icpStateUtilitity)
+    almPipelineStageRunRemoteIT(pomXmlStructure, pipelineData, "503", "03-<phase>-runRemoteIT-pre-consolidateNew", cloudStateUtilitity)
 }
 
 /** 
@@ -635,17 +635,17 @@ def runRemoteItOnOldVersionStep() {
 }
 
 /** 
- * Step consolidateCloudICPStep
+ * Step consolidateCloudCloudStep
  */                    	
-def consolidateCloudICPStep() { 
-    absisPipelineStageConsolidateNewDeploy(pomXmlStructure, pipelineData, "505", "04-<phase>-consolidateNew", icpStateUtilitity)
+def consolidateCloudCloudStep() { 
+    almPipelineStageConsolidateNewDeploy(pomXmlStructure, pipelineData, "505", "04-<phase>-consolidateNew", cloudStateUtilitity)
 }
 
 /** 
  * Step cloneToOcpPreStep
  */    
 def cloneToOcpPreStep() { 
-    absisPipelineStageCloneToOcp(pomXmlStructure, pipelineData, user)
+    almPipelineStageCloneToOcp(pomXmlStructure, pipelineData, user)
 }
 
 /** 
@@ -689,9 +689,9 @@ def apiManagerTechnicalServiceRegistrationStep() {
 }
 
 /** 
- * Step copyConfigFilesAndDeployToCloudTstICPStep
+ * Step copyConfigFilesAndDeployToCloudTstCloudStep
  */    
-def copyConfigFilesToTstICPStep() {
+def copyConfigFilesToTstCloudStep() {
     try {
         sendStageStartToGPL(pomXmlStructure, pipelineData, "521")
 
@@ -713,30 +713,30 @@ def copyConfigFilesToTstICPStep() {
         String artifactAppAbort = pomXmlStructure.getApp(GarAppType.valueOfType(pipelineData.garArtifactType.name))
         printOpen("En al copiar los ficheros de configuracion a tst ${e}", EchoLevel.DEBUG)
         kpiLogger(pomXmlStructure, pipelineData,KpiLifeCycleStage.DEPLOY_FINISHED, "KO")
-        abortPipelineICP(pomXmlStructure, pipelineData, " Resultado ejecucion app ${artifactAppAbort} - ${pipelineData.getPipelineBuildName()}  KO - ${deployICPPhases} - eror al copiar los ficheros de configuración")
+        abortPipelineCloud(pomXmlStructure, pipelineData, " Resultado ejecucion app ${artifactAppAbort} - ${pipelineData.getPipelineBuildName()}  KO - ${deployCloudPhases} - eror al copiar los ficheros de configuración")
     } finally {
         sendStageEndToGPL(pomXmlStructure, pipelineData, "521")
     }
 }
 
 /** 
- * Step copyConfigFilesAndDeployToCloudTstICPStep
+ * Step copyConfigFilesAndDeployToCloudTstCloudStep
  */    
-def deployToCloudTstICPStep() {
+def deployToCloudTstCloudStep() {
     try {
         sendStageStartToGPL(pomXmlStructure, pipelineData, "522")
 
-        printOpen("The icpStateUtility tst ${icpStateUtilitity}", EchoLevel.DEBUG)
+        printOpen("The cloudStateUtility tst ${cloudStateUtilitity}", EchoLevel.DEBUG)
 
         kpiLogger(pomXmlStructure, pipelineData,KpiLifeCycleStage.DEPLOY_STARTED, KpiLifeCycleStatus.OK)
                                     
-        icpStateUtilitity = deployICP(pomXmlStructure, pipelineData, icpStateUtilitity.buildId, icpStateUtilitity.newImage)
-        deployICPPhases = "03-pre-runRemoteIT-pre-consolidateNew"
-        runRemoteITICP(pomXmlStructure, pipelineData, icpStateUtilitity)
-        deployICPPhases = "03-post-runRemoteIT-pre-consolidateNew"
-        deployICPPhases = "04-pre-consolidateNew"
-        consolidateNewDeployICP(pomXmlStructure, pipelineData, icpStateUtilitity)
-        deployICPPhases = "04-post-consolidateNew"
+        cloudStateUtilitity = deployCloud(pomXmlStructure, pipelineData, cloudStateUtilitity.buildId, cloudStateUtilitity.newImage)
+        deployCloudPhases = "03-pre-runRemoteIT-pre-consolidateNew"
+        runRemoteITCloud(pomXmlStructure, pipelineData, cloudStateUtilitity)
+        deployCloudPhases = "03-post-runRemoteIT-pre-consolidateNew"
+        deployCloudPhases = "04-pre-consolidateNew"
+        consolidateNewDeployCloud(pomXmlStructure, pipelineData, cloudStateUtilitity)
+        deployCloudPhases = "04-post-consolidateNew"
         
         kpiLogger(pomXmlStructure, pipelineData,KpiLifeCycleStage.DEPLOY_FINISHED, KpiLifeCycleStatus.OK)
 
@@ -749,12 +749,12 @@ def deployToCloudTstICPStep() {
     } catch (Exception e) {
         String artifactAppAbort = pomXmlStructure.getApp(GarAppType.valueOfType(pipelineData.garArtifactType.name))
         
-        resultDeployICP = "KO"
-        printOpen("Error en el deploy a ICP, de momento nos comemos el error hasta que esto sea estable ${e}", EchoLevel.DEBUG)
-        sendEmail(" Resultado ejecucion app ${artifactAppAbort} - ${pipelineData.getPipelineBuildName()}  KO - ${deployICPPhases}", env.ALM_SERVICES_EMAIL_ICP_DEPLOY_RESULT, "${artifactAppAbort} rama ${pipelineData.getPipelineBuildName()}", "KO en el paso ${deployICPPhases}")
-        kpiLogger(pomXmlStructure, pipelineData,KpiLifeCycleStage.DEPLOY_FINISHED, resultDeployICP)
+        resultDeployCloud = "KO"
+        printOpen("Error en el deploy a Cloud, de momento nos comemos el error hasta que esto sea estable ${e}", EchoLevel.DEBUG)
+        sendEmail(" Resultado ejecucion app ${artifactAppAbort} - ${pipelineData.getPipelineBuildName()}  KO - ${deployCloudPhases}", env.ALM_SERVICES_EMAIL_Cloud_DEPLOY_RESULT, "${artifactAppAbort} rama ${pipelineData.getPipelineBuildName()}", "KO en el paso ${deployCloudPhases}")
+        kpiLogger(pomXmlStructure, pipelineData,KpiLifeCycleStage.DEPLOY_FINISHED, resultDeployCloud)
         
-        abortPipelineICP(pomXmlStructure, pipelineData, " Resultado ejecucion app ${artifactAppAbort} - ${pipelineData.getPipelineBuildName()}  KO - ${deployICPPhases}")
+        abortPipelineCloud(pomXmlStructure, pipelineData, " Resultado ejecucion app ${artifactAppAbort} - ${pipelineData.getPipelineBuildName()}  KO - ${deployCloudPhases}")
         
         sendStageEndToGPL(pomXmlStructure, pipelineData, "522", null, pipelineData.bmxStructure.environment, "error") 
     }
@@ -845,13 +845,13 @@ def publishArtifactCatalogStep() {
 
     //Cuidado que aqui tenemos que tener en cuenta que va a hacer deploy a TST y PRE
     if (pipelineData!=null && pipelineData.deployStructure!=null) {
-        pipelineData.deployStructure.envICP=GlobalVars.PRE_ENVIRONMENT
+        pipelineData.deployStructure.envCloud=GlobalVars.PRE_ENVIRONMENT
     }
-    publishArtifactInCatalog(pipelineData, pomXmlStructure,icpStateUtilitity) 
+    publishArtifactInCatalog(pipelineData, pomXmlStructure,cloudStateUtilitity) 
     if (deployToTst) {
         BmxStructure bmxStructure = new TstBmxStructure()
         printOpen("Se ha desplegado la Release a  TST. Procedemos al deploy en el catalogo", EchoLevel.DEBUG)
-        deployArtifactInCatMsv(null,pipelineData,pomXmlStructure,icpStateUtilitity,bmxStructure.environment)
+        deployArtifactInCatMsv(null,pipelineData,pomXmlStructure,cloudStateUtilitity,bmxStructure.environment)
     
     }
     sendStageEndToGPL(pomXmlStructure, pipelineData, "910")

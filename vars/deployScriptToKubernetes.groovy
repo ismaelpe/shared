@@ -101,7 +101,7 @@ def validateMicroIsUpAnReturnError(String url,PomXmlStructure pomXml,int numberO
 			return true
 		}
 
-    }else throw new Exception("${GlobalVars.ICP_ERROR_DEPLOY_INSTANCE_REBOOTING}")
+    }else throw new Exception("${GlobalVars.Cloud_ERROR_DEPLOY_INSTANCE_REBOOTING}")
 
 
     printOpen("El micro esta UP/DOWN ${microIsUp}", EchoLevel.ALL)
@@ -109,21 +109,21 @@ def validateMicroIsUpAnReturnError(String url,PomXmlStructure pomXml,int numberO
     return microIsUp
 }
 
-def generateICPResources(String environment, boolean isArchProject, String artifactId ) {
-	ICPAppResources icpResources=new ICPAppResources()
-	icpResources.environment=environment
-	icpResources.isArchProject=isArchProject	
+def generateCloudResources(String environment, boolean isArchProject, String artifactId ) {
+	CloudAppResources cloudResources=new CloudAppResources()
+	cloudResources.environment=environment
+	cloudResources.isArchProject=isArchProject	
 		
-	icpResources.replicasSize="S"	
-	icpResources.memSize="S"		
-	icpResources.cpuSize="S"
+	cloudResources.replicasSize="S"	
+	cloudResources.memSize="S"		
+	cloudResources.cpuSize="S"
 	
-	return icpResources
+	return cloudResources
 }
 
 private boolean isDatasourceMultitenant(Map datasourceMap) {
-	if (datasourceMap.containsKey('absis')) {
-		Map dataosourceMap1=datasourceMap.get('absis')
+	if (datasourceMap.containsKey('alm')) {
+		Map dataosourceMap1=datasourceMap.get('alm')
 		return (dataosourceMap1.containsKey('datasource') && dataosourceMap1.get('datasource').containsKey('enable'));
 	}
 	
@@ -133,7 +133,7 @@ private boolean isDatasourceMultitenant(Map datasourceMap) {
 
 private Map getDataSourceUrlMultiTenant(def map) {
 /**
-absis:
+alm:
   datasource:
     enable: true
     connections:
@@ -180,7 +180,7 @@ def readYamlFromSystem() {
 		def multi=isDatasourceMultitenant(fileApp)
 		printOpen("es multi data source ${multi}", EchoLevel.ALL)
 		if (multi) {
-			return getDataSourceUrlMultiTenant(fileApp.get('absis'))
+			return getDataSourceUrlMultiTenant(fileApp.get('alm'))
 		}else {
 			return getDataSourceUrlNonMultiTenant(fileApp)
 		}
@@ -238,25 +238,25 @@ def call(PomXmlStructure artifactPom, PipelineData pipeline, String group, Strin
         new KpiAlmEvent(
             artifactPom, pipeline,
             KpiAlmEventStage.UNDEFINED,
-            KpiAlmEventOperation.ICP_DEPLOY_SCRIPT)
+            KpiAlmEventOperation.Cloud_DEPLOY_SCRIPT)
 	
 	def messageDeploy=""
 	String environmentDest=pipeline.bmxStructure.environment
-	ICPDeployStructure deployStructure=new ICPDeployStructure('cxb-ab3cor','cxb-ab3app',environmentDest)
+	CloudDeployStructure deployStructure=new CloudDeployStructure('cxb-ab3cor','cxb-ab3app',environmentDest)
 	
 	if (pipeline.deployStructure==null) {
 		pipeline.deployStructure=deployStructure
 	}
 	
 	String componentName=artifactPom.getApp(GarAppType.valueOfType(pipeline.garArtifactType.name))+"bbdd"
-	String componentId=generateArtifactInICP(artifactPom, pipeline, generateICPResources(environmentDest,false,componentName),true )
+	String componentId=generateArtifactInCloud(artifactPom, pipeline, generateCloudResources(environmentDest,false,componentName),true )
 	//Pasamos a minusculas el nombre del componente
 	componentName=componentName.toLowerCase()
 	
-	checkICPAvailability(artifactPom,pipeline,deployStructure.envICP,"DEPLOY")
+	checkCloudAvailability(artifactPom,pipeline,deployStructure.envCloud,"DEPLOY")
 	
 	String newManifest = ''//Por ejemplo le pasamos centro 1
-	//FIXME: Porque usamos un deployStructure de BMX en ICP?
+	//FIXME: Porque usamos un deployStructure de BMX en Cloud?
     if (pipeline.garArtifactType == GarAppType.DATA_SERVICE)  generateDataSourceFile(artifactPom,pipeline)
 	newManifest = generateManifest(artifactPom, pipeline.bmxStructure.getDeployStructure(GlobalVars.BMX_CD1),pipeline,true)
 	
@@ -280,10 +280,10 @@ def call(PomXmlStructure artifactPom, PipelineData pipeline, String group, Strin
 	
 	printOpen("Siempre vamos a desbloquear... es obligatorio, no podemos tener dos pods de la misma app a la vez", EchoLevel.ALL)
 	//Build Image
-	ICPApiResponse response=null
+	CloudApiResponse response=null
 	
-	String imageIcp=GlobalVars.ICP_LIQUIBASE_IMAGE
-	String version_Image=GlobalVars.ICP_LIQUIBASE_IMAGE_VERSION
+	String imageCloud=GlobalVars.Cloud_LIQUIBASE_IMAGE
+	String version_Image=GlobalVars.Cloud_LIQUIBASE_IMAGE_VERSION
 
 
 	String actualDateString = Utilities.getActualDate("yyyyMMddHH24mmss")
@@ -315,28 +315,28 @@ def call(PomXmlStructure artifactPom, PipelineData pipeline, String group, Strin
 				printOpen("La variable de entorno es ${env_secret_pool_owner}", EchoLevel.ALL)
 				pipeline.componentId=componentId
 				
-				String centroLiquibase=getICPActiveSite(deployStructure.envICP)
+				String centroLiquibase=getCloudActiveSite(deployStructure.envCloud)
 				
 				//Deploy Image
 				def bodyDeploy=[
 					az: "AZ${centroLiquibase}",
-					environment: "${deployStructure.envICP.toUpperCase()}",
-					values: "deployment:\n  readinessProbe:\n    periodSeconds: 60\n    timeoutSeconds: 50\n    failureThreshold: 5\n  livenessProbe:\n    periodSeconds: 60\n    timeoutSeconds: 50\n    failureThreshold: 5\nlocal:\n  app:\n    ingress:\n      defineBodySize: true\n      maxBodySize: 30m\n      enabled: false\n      deploymentArea: absis\n      absis:\n        enabled: false\n      mtls:\n        enabled: true\n        needsSystemRoute: true\n        needsSpecialVerifyDepth: false\n    envVars:\n      - name: ALM_ICP_ENVIRONMENT\n        value: ${environmentDest.toLowerCase()}\n      - name: ALM_APP_ID\n        value: arqrunbbdd\n      - name: ALM_CENTER_ID\n        value: 1\n      - name: RELEASE_LIQUIBASE\n        value: ${isReleaseLiquibase}\n      - name: HISTORY_LIQUIBASE\n        value: ${isHistory}\n      - name: GENERATE_CHANGELOG_LIQUIBASE\n        value: ${isGenerateChangeLog}\n      - name: ALM_ENVIRONMENT\n        value: ${environmentDest.toUpperCase()}\n      - name: JAVA_OPTS\n        value: '-Dspring.cloud.config.failFast=false'\n      - name: nonProxyHosts\n        value: '*.cxb-pasdev-tst|*.cxb-ab3app-${environmentDest.toLowerCase()}|*.cxb-ab3cor-${environmentDest.toLowerCase()}'\n      - name: http.additionalNonProxyHosts\n        value: 'cxb-pasdev-${environmentDest.toLowerCase()},cxb-ab3app-dev,cxb-ab3cor-${environmentDest.toLowerCase()}'\n      - name: NO_PROXY\n        value: cxb-ab3cor-${environmentDest.toLowerCase()}\n      - name: ACTUAL_DATE\n        value: ${actualDateString}\n      - name: ARTIFACT_ID\n        value: ${artifact}\n${env_secret_pool_owner}      - name: VERSION_ARTIFACT\n        value: ${version}\n      - name: GROUP_ID\n        value: ${group}\n      - name: SPRING_PROFILES_ACTIVE\n        value: cloud,${environmentDest.toLowerCase()},icp\n    secrets:\n      - name: ${x}\n      - name: ${x}-owner\n    secrets_alias:\n${secret_pool_owner}      - name: ${x}-owner\n        alias: pool-owner-database\nabsis:\n  app:\n    loggingElkStack: alm0\n    replicas: 1\n    instance: ${componentName}\n    name: ${componentName}\n  resources:\n    requests:\n      memory: 1024Mi\n      cpu: 50m\n    limits:\n       memory: 2048Mi\n       cpu: 500m\n  apps:\n    envQualifier:\n      new:\n        id: ${componentName}-b\n        colour: G\n        image: ${imageIcp}:${version_Image}\n        version: ${version}\n        stable: false\n        new: false\n        replicas: 1\n        requests_memory: 2500Mi\n        requests_cpu: 25m\n        limits_memory: 2500Mi\n        limits_cpu: 500m\n  services:\n    envQualifier:\n      stable:\n        id: ${componentName}\n        targetColour: G\n"
+					environment: "${deployStructure.envCloud.toUpperCase()}",
+					values: "deployment:\n  readinessProbe:\n    periodSeconds: 60\n    timeoutSeconds: 50\n    failureThreshold: 5\n  livenessProbe:\n    periodSeconds: 60\n    timeoutSeconds: 50\n    failureThreshold: 5\nlocal:\n  app:\n    ingress:\n      defineBodySize: true\n      maxBodySize: 30m\n      enabled: false\n      deploymentArea: alm\n      alm:\n        enabled: false\n      mtls:\n        enabled: true\n        needsSystemRoute: true\n        needsSpecialVerifyDepth: false\n    envVars:\n      - name: ALM_Cloud_ENVIRONMENT\n        value: ${environmentDest.toLowerCase()}\n      - name: ALM_APP_ID\n        value: arqrunbbdd\n      - name: ALM_CENTER_ID\n        value: 1\n      - name: RELEASE_LIQUIBASE\n        value: ${isReleaseLiquibase}\n      - name: HISTORY_LIQUIBASE\n        value: ${isHistory}\n      - name: GENERATE_CHANGELOG_LIQUIBASE\n        value: ${isGenerateChangeLog}\n      - name: ALM_ENVIRONMENT\n        value: ${environmentDest.toUpperCase()}\n      - name: JAVA_OPTS\n        value: '-Dspring.cloud.config.failFast=false'\n      - name: nonProxyHosts\n        value: '*.cxb-pasdev-tst|*.cxb-ab3app-${environmentDest.toLowerCase()}|*.cxb-ab3cor-${environmentDest.toLowerCase()}'\n      - name: http.additionalNonProxyHosts\n        value: 'cxb-pasdev-${environmentDest.toLowerCase()},cxb-ab3app-dev,cxb-ab3cor-${environmentDest.toLowerCase()}'\n      - name: NO_PROXY\n        value: cxb-ab3cor-${environmentDest.toLowerCase()}\n      - name: ACTUAL_DATE\n        value: ${actualDateString}\n      - name: ARTIFACT_ID\n        value: ${artifact}\n${env_secret_pool_owner}      - name: VERSION_ARTIFACT\n        value: ${version}\n      - name: GROUP_ID\n        value: ${group}\n      - name: SPRING_PROFILES_ACTIVE\n        value: cloud,${environmentDest.toLowerCase()},cloud\n    secrets:\n      - name: ${x}\n      - name: ${x}-owner\n    secrets_alias:\n${secret_pool_owner}      - name: ${x}-owner\n        alias: pool-owner-database\nalm:\n  app:\n    loggingElkStack: alm0\n    replicas: 1\n    instance: ${componentName}\n    name: ${componentName}\n  resources:\n    requests:\n      memory: 1024Mi\n      cpu: 50m\n    limits:\n       memory: 2048Mi\n       cpu: 500m\n  apps:\n    envQualifier:\n      new:\n        id: ${componentName}-b\n        colour: G\n        image: ${imageCloud}:${version_Image}\n        version: ${version}\n        stable: false\n        new: false\n        replicas: 1\n        requests_memory: 2500Mi\n        requests_cpu: 25m\n        limits_memory: 2500Mi\n        limits_cpu: 500m\n  services:\n    envQualifier:\n      stable:\n        id: ${componentName}\n        targetColour: G\n"
 				]
 				
-				validateSecrets([x,"${x}-owner"], deployStructure.envICP.toUpperCase(), artifactPom, pipeline)
+				validateSecrets([x,"${x}-owner"], deployStructure.envCloud.toUpperCase(), artifactPom, pipeline)
 				printOpen("Procedemos a validar estado para saber si tenemos que eliminar o no el micro actual", EchoLevel.ALL)
 				//Deberiamos validar primero si existe, no?
-				ICPk8sComponentInfoMult icpActualStatusInfo=getActualDeploymentStatusOnICP(artifactPom,pipeline,deployStructure,"AZ${centroLiquibase}")
-				printOpen("El estado es ${icpActualStatusInfo.toString()}", EchoLevel.ALL)
-				if (icpActualStatusInfo.getPodList()!=null && icpActualStatusInfo.getPodList().size()>0) {
+				Cloudk8sComponentInfoMult cloudActualStatusInfo=getActualDeploymentStatusOnCloud(artifactPom,pipeline,deployStructure,"AZ${centroLiquibase}")
+				printOpen("El estado es ${cloudActualStatusInfo.toString()}", EchoLevel.ALL)
+				if (cloudActualStatusInfo.getPodList()!=null && cloudActualStatusInfo.getPodList().size()>0) {
 					printOpen("Deleting the element", EchoLevel.ALL)
-					response=sendRequestToICPApi("v1/application/PCLD/${artifactPom.getICPAppName()}/component/${componentId}/deploy",bodyDeploy,"DELETE","${artifactPom.getICPAppName()}","v1/application/PCLD/${artifactPom.getICPAppName()}/component/${componentId}/deploy",false,true, pipeline, artifactPom)
+					response=sendRequestToCloudApi("v1/application/PCLD/${artifactPom.getCloudAppName()}/component/${componentId}/deploy",bodyDeploy,"DELETE","${artifactPom.getCloudAppName()}","v1/application/PCLD/${artifactPom.getCloudAppName()}/component/${componentId}/deploy",false,true, pipeline, artifactPom)
 				}else{
 					printOpen("No hay micro a borrar", EchoLevel.ALL)
 				}
 				
-				response=sendRequestToICPApi("v1/application/PCLD/${artifactPom.getICPAppName()}/component/${componentId}/deploy",bodyDeploy,"POST","${artifactPom.getICPAppName()}","v1/application/PCLD/${artifactPom.getICPAppName()}/component/${componentId}/deploy",true,true, pipeline, artifactPom)
+				response=sendRequestToCloudApi("v1/application/PCLD/${artifactPom.getCloudAppName()}/component/${componentId}/deploy",bodyDeploy,"POST","${artifactPom.getCloudAppName()}","v1/application/PCLD/${artifactPom.getCloudAppName()}/component/${componentId}/deploy",true,true, pipeline, artifactPom)
 			
 				if (response.statusCode<200 || response.statusCode>300) {
 
@@ -345,24 +345,24 @@ def call(PomXmlStructure artifactPom, PipelineData pipeline, String group, Strin
 
                     kpiLogger(kpiAlmEvent.callAlmFail(wholeCallDuration))
 
-                    createMaximoAndThrow.icpDeployException(pipeline, artifactPom, response)
+                    createMaximoAndThrow.cloudDeployException(pipeline, artifactPom, response)
 
 				}
 								
-				boolean isReady=waitICPDeploymentReady(artifactPom,pipeline,deployStructure,'B',"AZ${centroLiquibase}")
+				boolean isReady=waitCloudDeploymentReady(artifactPom,pipeline,deployStructure,'B',"AZ${centroLiquibase}")
 				
 				printOpen("Esta ready el micro? ${isReady}", EchoLevel.ALL)
 				
 				if (!isReady) {
 
-				    response=sendRequestToICPApi("v1/application/PCLD/${artifactPom.getICPAppName()}/component/${componentId}/deploy",bodyDeploy,"DELETE","${artifactPom.getICPAppName()}","v1/application/PCLD/${artifactPom.getICPAppName()}/component/${componentId}/deploy",false,true, pipeline, artifactPom)
+				    response=sendRequestToCloudApi("v1/application/PCLD/${artifactPom.getCloudAppName()}/component/${componentId}/deploy",bodyDeploy,"DELETE","${artifactPom.getCloudAppName()}","v1/application/PCLD/${artifactPom.getCloudAppName()}/component/${componentId}/deploy",false,true, pipeline, artifactPom)
 
                     long wholeCallEndMillis = new Date().getTime()
                     wholeCallDuration = wholeCallEndMillis - wholeCallStartMillis
 
                     kpiLogger(kpiAlmEvent.callAppFail(wholeCallDuration))
 
-                    throw new Exception("${GlobalVars.ICP_ERROR_DEPLOY_INSTANCE_REBOOTING}")
+                    throw new Exception("${GlobalVars.Cloud_ERROR_DEPLOY_INSTANCE_REBOOTING}")
 
 				} else {
 					//MicroIsUp
@@ -381,7 +381,7 @@ def call(PomXmlStructure artifactPom, PipelineData pipeline, String group, Strin
 					}catch(Exception e) {
 						printOpen("El micro no esta correcto ${microIsUpAndOk}", EchoLevel.ALL)
 						printOpen("Se debe borrar el pod.. no tiene sentido que exista", EchoLevel.ALL)
-						response=sendRequestToICPApi("v1/application/PCLD/${artifactPom.getICPAppName()}/component/${componentId}/deploy",bodyDeploy,"DELETE","${artifactPom.getICPAppName()}","v1/application/PCLD/${artifactPom.getICPAppName()}/component/${componentId}/deploy",false,true, pipeline, artifactPom)
+						response=sendRequestToCloudApi("v1/application/PCLD/${artifactPom.getCloudAppName()}/component/${componentId}/deploy",bodyDeploy,"DELETE","${artifactPom.getCloudAppName()}","v1/application/PCLD/${artifactPom.getCloudAppName()}/component/${componentId}/deploy",false,true, pipeline, artifactPom)
 						if (response.statusCode<200 || response.statusCode>300) {
 							printOpen("Pod NO eliminado hemos tenido algun tipo de problema", EchoLevel.ALL)
 						}else {
@@ -409,7 +409,7 @@ def call(PomXmlStructure artifactPom, PipelineData pipeline, String group, Strin
 							printOpen("El resultado es de la ejecucion es de  ${messageDeploy}", EchoLevel.ALL)
 							printOpen("Se debe borrar el pod.. no tiene sentido que exista", EchoLevel.ALL)
 							
-							response=sendRequestToICPApi("v1/application/PCLD/${artifactPom.getICPAppName()}/component/${componentId}/deploy",bodyDeploy,"DELETE","${artifactPom.getICPAppName()}","v1/application/PCLD/${artifactPom.getICPAppName()}/component/${componentId}/deploy",false,true, pipeline, artifactPom)
+							response=sendRequestToCloudApi("v1/application/PCLD/${artifactPom.getCloudAppName()}/component/${componentId}/deploy",bodyDeploy,"DELETE","${artifactPom.getCloudAppName()}","v1/application/PCLD/${artifactPom.getCloudAppName()}/component/${componentId}/deploy",false,true, pipeline, artifactPom)
 							 
 							if (response.statusCode<200 || response.statusCode>300) {
 								printOpen("Pod NO eliminado hemos tenido algun tipo de problema", EchoLevel.ALL)
@@ -426,7 +426,7 @@ def call(PomXmlStructure artifactPom, PipelineData pipeline, String group, Strin
 
                         kpiLogger(kpiAlmEvent.callAppFail(wholeCallDuration))
 
-						throw new Exception("${GlobalVars.ICP_ERROR_DEPLOY_INSTANCE_REBOOTING}")
+						throw new Exception("${GlobalVars.Cloud_ERROR_DEPLOY_INSTANCE_REBOOTING}")
 
 					}
 					
