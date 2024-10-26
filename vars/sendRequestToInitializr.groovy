@@ -210,7 +210,7 @@ def call(String empresa,String nameApp,String typeApp,String domain,String zipFi
 					response = httpRequest consoleLogResponseBody: false,
 						httpMode: "GET",
 						url: url ,
-						httpProxy: "http://proxyserv.svb.lacaixa.es:8080",
+						httpProxy: "http://proxyserv.svb.digitalscale.es:8080",
 						outputFile: "${zipFileName}.zip"
 
 						printOpen("Template de proyecto '${nameApp}' descargado desde el initializr", EchoLevel.ALL)

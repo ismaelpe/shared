@@ -36,16 +36,16 @@ def call(Map appsRoutes, String envCloud, String namespace, String center) {
 }
 
 public String getK8sGatewayURL(String envCloud, String center = "AZ1") {
-	//new-democonnecta2-micro-2.dev.ap.intranet.cloud.lacaixa.es
-	if (center=="AZ1"|| center=="ALL") return "https://k8sgateway."+envCloud.toLowerCase()+".cloud-1.alm.cloud.lacaixa.es"
-	else return "https://k8sgateway."+envCloud.toLowerCase()+".cloud-2.alm.cloud.lacaixa.es"
+	//new-democonnecta2-micro-2.dev.ap.intranet.cloud.digitalscale.es
+	if (center=="AZ1"|| center=="ALL") return "https://k8sgateway."+envCloud.toLowerCase()+".cloud-1.alm.cloud.digitalscale.es"
+	else return "https://k8sgateway."+envCloud.toLowerCase()+".cloud-2.alm.cloud.digitalscale.es"
 }
 
 
 def sendRequest(String url,String httpMethod) {
 
 	def	response = httpRequest url: "${url}",
-								httpProxy: "proxyserv.svb.lacaixa.es:8080",
+								httpProxy: "proxyserv.svb.digitalscale.es:8080",
 								consoleLogResponseBody: true,
 								contentType: 'APPLICATION_JSON',
 								httpMode: "${httpMethod}",

@@ -47,10 +47,10 @@ def call(PomXmlStructure pomXmlStructure, PipelineData pipelineData, Distributio
         uris.add("https://k8sgateway.${deployStructureCd1.url_int}${suffix}/${artifactRoute}/actuator/info")
 
         if (DistributionModePRO.CANARY_ON_ALL_CENTERS == distributionMode || DistributionModePRO.SINGLE_CENTER_ROLLOUT_CENTER_1 == distributionMode) {
-            uris.add("https://k8sgateway.pro.cloud-1.alm.cloud.lacaixa.es${suffix}/${artifactRoute}/actuator/info")
+            uris.add("https://k8sgateway.pro.cloud-1.alm.cloud.digitalscale.es${suffix}/${artifactRoute}/actuator/info")
         }
         if (DistributionModePRO.CANARY_ON_ALL_CENTERS == distributionMode || DistributionModePRO.SINGLE_CENTER_ROLLOUT_CENTER_2 == distributionMode) {
-            uris.add("https://k8sgateway.pro.cloud-2.alm.cloud.lacaixa.es${suffix}/${artifactRoute}/actuator/info")
+            uris.add("https://k8sgateway.pro.cloud-2.alm.cloud.digitalscale.es${suffix}/${artifactRoute}/actuator/info")
         }
 
     }
@@ -64,10 +64,10 @@ def call(PomXmlStructure pomXmlStructure, PipelineData pipelineData, Distributio
 	
 	
 	    if (DistributionModePRO.CANARY_ON_ALL_CENTERS == distributionMode || DistributionModePRO.SINGLE_CENTER_ROLLOUT_CENTER_1 == distributionMode) {
-			uris.add("https://k8sgateway.pro.cloud-1.alm.cloud.lacaixa.es${suffix}/${GlobalVars.BETA_COMPONENT_SUFFIX.replace("<componentName>", artifactRoute)}/actuator/info")        
+			uris.add("https://k8sgateway.pro.cloud-1.alm.cloud.digitalscale.es${suffix}/${GlobalVars.BETA_COMPONENT_SUFFIX.replace("<componentName>", artifactRoute)}/actuator/info")        
 	    }
 	    if (DistributionModePRO.CANARY_ON_ALL_CENTERS == distributionMode || DistributionModePRO.SINGLE_CENTER_ROLLOUT_CENTER_2 == distributionMode) {
-			uris.add("https://k8sgateway.pro.cloud-2.alm.cloud.lacaixa.es${suffix}/${GlobalVars.BETA_COMPONENT_SUFFIX.replace("<componentName>", artifactRoute)}/actuator/info")        
+			uris.add("https://k8sgateway.pro.cloud-2.alm.cloud.digitalscale.es${suffix}/${GlobalVars.BETA_COMPONENT_SUFFIX.replace("<componentName>", artifactRoute)}/actuator/info")        
 	    }
 	}
 

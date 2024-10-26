@@ -58,10 +58,10 @@ def call(Map pipelineParameters) {
 	    	GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
-            http_proxy = "${GlobalVars.proxyCaixa}"
-			https_proxy = "${GlobalVars.proxyCaixa}"
-            proxyHost = "${GlobalVars.proxyCaixaHost}"
-            proxyPort = "${GlobalVars.proxyCaixaPort}"
+            http_proxy = "${GlobalVars.proxyDigitalscale}"
+			https_proxy = "${GlobalVars.proxyDigitalscale}"
+            proxyHost = "${GlobalVars.proxyDigitalscaleHost}"
+            proxyPort = "${GlobalVars.proxyDigitalscalePort}"
 		}		
 		stages {			
 			stage('reload'){
@@ -86,7 +86,7 @@ def call(Map pipelineParameters) {
  * Stage 'reloadStep'
  */
 def reloadStep() {
-    //https://k8sgateway.dev.cloud-1.alm.cloud.lacaixa.es/arch-service/adsconnector-micro-server-1-dev 
+    //https://k8sgateway.dev.cloud-1.alm.cloud.digitalscale.es/arch-service/adsconnector-micro-server-1-dev 
     //http://adsconnector-micro-server-1-dev.tst1.int.srv.project.com
     String fileOut="responseApi.json"
     
@@ -96,7 +96,7 @@ def reloadStep() {
     String arch=""
     if (isArchService) arch="arch-service/"
 
-    route="k8sgateway."+environmentDest+".cloud-1.alm.cloud.lacaixa.es/${arch}"+artifact+"/" + GlobalVars.ENDPOINT_REFRESH
+    route="k8sgateway."+environmentDest+".cloud-1.alm.cloud.digitalscale.es/${arch}"+artifact+"/" + GlobalVars.ENDPOINT_REFRESH
 
     responseStatusCode=sh(script: "curl --write-out '%{http_code}' -o ${fileOut} -k -X POST -x http://${env.proxyHost}:${env.proxyPort} https://${route} --connect-timeout ${GlobalVars.ACTUATOR_REFRESH_TIMEOUT}",returnStdout: true)
 
@@ -105,7 +105,7 @@ def reloadStep() {
     String contentResponse= sh(script: "cat ${fileOut}", returnStdout:true )
     printOpen("Status Code ${responseStatusCode} body ${contentResponse}", EchoLevel.ALL)
 
-    route="k8sgateway."+environmentDest+".cloud-2.alm.cloud.lacaixa.es/${arch}"+artifact+"/" + GlobalVars.ENDPOINT_REFRESH
+    route="k8sgateway."+environmentDest+".cloud-2.alm.cloud.digitalscale.es/${arch}"+artifact+"/" + GlobalVars.ENDPOINT_REFRESH
     responseStatusCode=sh(script: "curl --write-out '%{http_code}' -o ${fileOut} -k -X POST -x http://${env.proxyHost}:${env.proxyPort} https://${route} --connect-timeout ${GlobalVars.ACTUATOR_REFRESH_TIMEOUT}",returnStdout: true)
     if (responseStatusCode!="200") throw new Exception("Error ${responseStatusCode}")
     contentResponse= sh(script: "cat ${fileOut}", returnStdout:true )

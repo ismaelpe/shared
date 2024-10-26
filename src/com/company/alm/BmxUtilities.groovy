@@ -158,10 +158,10 @@ class BmxUtilities {
 			SyntheticTestStructure syntheticTestStructure = new SyntheticTestStructure()
 			syntheticTestStructure.appName = item
 			if (isArchMicro) {
-				syntheticTestStructure.urlIcp = "https://k8sgateway.${enviromentParam.toLowerCase()}.cloud-${dataCenterParam}.alm.cloud.lacaixa.es/arch-service/${syntheticTestStructure.appName}"
+				syntheticTestStructure.urlCloud = "https://k8sgateway.${enviromentParam.toLowerCase()}.cloud-${dataCenterParam}.alm.cloud.digitalscale.es/arch-service/${syntheticTestStructure.appName}"
                 syntheticTestStructure.isArchMicro = true
 			}else {
-				syntheticTestStructure.urlIcp = "https://k8sgateway.${enviromentParam.toLowerCase()}.cloud-${dataCenterParam}.alm.cloud.lacaixa.es/${syntheticTestStructure.appName}"
+				syntheticTestStructure.urlCloud = "https://k8sgateway.${enviromentParam.toLowerCase()}.cloud-${dataCenterParam}.alm.cloud.digitalscale.es/${syntheticTestStructure.appName}"
                 syntheticTestStructure.isArchMicro = false
 			}
 			syntheticTestStructure.resultOK = true

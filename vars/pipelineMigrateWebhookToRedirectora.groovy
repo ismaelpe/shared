@@ -57,7 +57,7 @@ def call(Map pipelineParameters) {
                     fileOutput = CopyGlobalLibraryScript('GAR_APL_ALM.csv')
                     printOpen("El fichero es de ${fileOutput}", EchoLevel.INFO)
                 }else {
-                    csvAlm3 = 'https://eideswasp.svb.lacaixa.es/apw61/idegar/api/interfaz/v1/descargaFichero/00001/GAR_APL_ALM.csv'
+                    csvAlm3 = 'https://eideswasp.svb.digitalscale.es/apw61/idegar/api/interfaz/v1/descargaFichero/00001/GAR_APL_ALM.csv'
                     fileOutput = CopyGlobalLibraryScript('', null, 'garAplAlm3.csv', EchoLevel.INFO)
                     sh(script: "curl ${csvAlm3} -X GET --output ${fileOutput} ", returnStdout:true)
                 }
@@ -166,7 +166,7 @@ def call(Map pipelineParameters) {
                                                 ignoreSslErrors: true,
                                                 customHeaders: [[name: 'Private-Token', value: "${GITLAB_API_TOKEN}"], [name: 'Accept', value: 'application/json']],
                                                 url: "${GlobalVars.gitlabApiDomain}${projectPathUrlEncoded}",
-                                                httpProxy: 'http://proxyserv.svb.lacaixa.es:8080',
+                                                httpProxy: 'http://proxyserv.svb.digitalscale.es:8080',
                                                 validResponseCodes: '200:300'
 
                                             def json = new JsonSlurperClassic().parseText(projectInfo.content)

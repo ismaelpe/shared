@@ -248,8 +248,8 @@ def containsRestrictedElements(String scriptSql, boolean isValidation) {
 	}
 	
 	if (resultado!="") {
-		//def circuitoValidacion = URLEncoder.encode("https://confluence.cloud.lacaixa.es/confluence/pages/viewpage.action?pageId=213801742", "UTF-8")
-		def circuitoValidacion = "https://confluence.cloud.lacaixa.es/confluence/pages/viewpage.action?pageId=213801742"
+		//def circuitoValidacion = URLEncoder.encode("https://confluence.cloud.digitalscale.es/confluence/pages/viewpage.action?pageId=213801742", "UTF-8")
+		def circuitoValidacion = "https://confluence.cloud.digitalscale.es/confluence/pages/viewpage.action?pageId=213801742"
 	    if (isValidation) {
 			resultado = "<p><pre> Este script contiene <b>elementos restringidos</b>.\n Cuando seleccione la opción de Validate And Generate SQL scripts no se podrá promocionar automáticamente sino que deberá requerir acción manual por parte de terceros.\n Valore si los elementos restingidos son necesarios. </pre></p>"
 	    }else{

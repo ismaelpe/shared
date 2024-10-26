@@ -60,10 +60,10 @@ def call() {
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
             SONAR_TOKEN = credentials('sonartoken')
-            http_proxy = "${GlobalVars.proxyCaixa}"
-            https_proxy = "${GlobalVars.proxyCaixa}"
-            proxyHost = "${GlobalVars.proxyCaixaHost}"
-            proxyPort = "${GlobalVars.proxyCaixaPort}"
+            http_proxy = "${GlobalVars.proxyDigitalscale}"
+            https_proxy = "${GlobalVars.proxyDigitalscale}"
+            proxyHost = "${GlobalVars.proxyDigitalscaleHost}"
+            proxyPort = "${GlobalVars.proxyDigitalscalePort}"
             executionProfile = "${pipelineParams ? pipelineParams.get('executionProfile', 'DEFAULT') : 'DEFAULT'}"         
             logsReport = true
             sendLogsToGpl = true

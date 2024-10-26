@@ -1,7 +1,7 @@
 /**
  * Pipeline para la documentacion de arquitectura canal SPA
  *
- * Se encuentra documentado aqui https://git.svb.lacaixa.es/alm2cloud/canal/blob/master/arquitectura/20-elementos-arquitectura/30-application-lifecycle-management-arq/continuous-integration/pipelines/documentacion-canal.md
+ * Se encuentra documentado aqui https://git.svb.digitalscale.es/alm2cloud/canal/blob/master/arquitectura/20-elementos-arquitectura/30-application-lifecycle-management-arq/continuous-integration/pipelines/documentacion-canal.md
  */
 
 import com.project.alm.EchoLevel
@@ -39,10 +39,10 @@ def call(domain) {
                     Cloud_CERT = credentials('cloud-alm-pro-cert')
                     Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')                    
                     BLUEMIX_CREDENTIALS = credentials('BLUEMIX_CREDENTIALS')
-                    http_proxy = "${GlobalVars.proxyCaixa}"
-                    https_proxy = "${GlobalVars.proxyCaixa}"
-                    proxyHost = "${GlobalVars.proxyCaixaHost}"
-                    proxyPort = "${GlobalVars.proxyCaixaPort}"
+                    http_proxy = "${GlobalVars.proxyDigitalscale}"
+                    https_proxy = "${GlobalVars.proxyDigitalscale}"
+                    proxyHost = "${GlobalVars.proxyDigitalscaleHost}"
+                    proxyPort = "${GlobalVars.proxyDigitalscalePort}"
                 }
 
                 steps {

@@ -12,9 +12,9 @@ def call(PomXmlStructure pomXml, PipelineData pipeline, def result) {
 	syntheticTestStructure.appName = pomXml.artifactName
 	
 	if (pomXml.isArchProject()) {
-		syntheticTestStructure.urlCloud = "https://k8sgateway.${pipeline.deployStructure.env.toLowerCase()}.cloud-1.alm.cloud.lacaixa.es/arch-service/${pomXml.getBmxAppId()}"
+		syntheticTestStructure.urlCloud = "https://k8sgateway.${pipeline.deployStructure.env.toLowerCase()}.cloud-1.alm.cloud.digitalscale.es/arch-service/${pomXml.getBmxAppId()}"
 	}else {
-		syntheticTestStructure.urlCloud = "https://k8sgateway.${pipeline.deployStructure.env.toLowerCase()}.cloud-1.alm.cloud.lacaixa.es/${pomXml.getBmxAppId()}"
+		syntheticTestStructure.urlCloud = "https://k8sgateway.${pipeline.deployStructure.env.toLowerCase()}.cloud-1.alm.cloud.digitalscale.es/${pomXml.getBmxAppId()}"
 	}
     if (pomXml.artifactSubType == ArtifactSubType.MICRO_APP){
         syntheticTestStructure.isArchMicro = true

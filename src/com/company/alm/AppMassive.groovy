@@ -35,11 +35,11 @@ class AppMassive {
         this.state = estado
     }
 
-    String getIcpNamespaceId() {
+    String getCloudNamespaceId() {
         return cloudNamespaceId
     }
     
-    void setIcpNamespaceId(String cloudNamespaceId) {
+    void setCloudNamespaceId(String cloudNamespaceId) {
         this.cloudNamespaceId = cloudNamespaceId
     }
     
@@ -51,11 +51,11 @@ class AppMassive {
         this.isArchProject = isArchProject
     }
     
-    String getIcpNamespace() {
+    String getCloudNamespace() {
         return cloudNamespace
     }
     
-    void setIcpNamespace(String cloudNamespace) {
+    void setCloudNamespace(String cloudNamespace) {
         this.cloudNamespace = cloudNamespace
     }
     

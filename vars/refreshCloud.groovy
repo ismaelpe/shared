@@ -24,7 +24,7 @@ def call(PomXmlStructure pomXml, PipelineData pipeline, String endPoint, boolean
 
 def getActuatorRefreshUri(String center, boolean isArchProject, String artifactId, String endPoint) {
 
-    String urlPrefix = "https://k8sgateway.pro.cloud-${center}.alm.cloud.lacaixa.es"
+    String urlPrefix = "https://k8sgateway.pro.cloud-${center}.alm.cloud.digitalscale.es"
     if (isArchProject)  urlPrefix += "/arch-service"
     String actuatorRefreshUrl = "${urlPrefix}/${artifactId}/${endPoint}"
 

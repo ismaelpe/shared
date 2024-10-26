@@ -102,14 +102,14 @@ class CloudDeployStructure extends DeployStructure{
 	}
 	
 	public String getUrlSuffixTesting(String center = "ALL") {
-		//new-democonnecta2-micro-2.dev.ap.intranet.cloud.lacaixa.es
+		//new-democonnecta2-micro-2.dev.ap.intranet.cloud.digitalscale.es
 		if (center=="ALL") {
 			return "."+envCloud.toLowerCase()+".int.srv.project.com"
 		}else {
 			if (center=="AZ1") {
-				return "."+envCloud.toLowerCase()+".cloud-1.alm.cloud.lacaixa.es"
+				return "."+envCloud.toLowerCase()+".cloud-1.alm.cloud.digitalscale.es"
 			} else {
-				return "."+envCloud.toLowerCase()+".cloud-2.alm.cloud.lacaixa.es"
+				return "."+envCloud.toLowerCase()+".cloud-2.alm.cloud.digitalscale.es"
 			}
 		}
 	}
@@ -120,9 +120,9 @@ class CloudDeployStructure extends DeployStructure{
 			return "https://api-gateway-1." + envCloud.toLowerCase() +".int.srv.project.com"
 		}else {
 			if (center=="AZ1") {
-				return "https://api-gateway-1." + envCloud.toLowerCase() +".cloud-1.alm.cloud.lacaixa.es"
+				return "https://api-gateway-1." + envCloud.toLowerCase() +".cloud-1.alm.cloud.digitalscale.es"
 			} else {
-				return "https://api-gateway-1." + envCloud.toLowerCase() +".cloud-2.alm.cloud.lacaixa.es"
+				return "https://api-gateway-1." + envCloud.toLowerCase() +".cloud-2.alm.cloud.digitalscale.es"
 			}
 		}
 	}
@@ -170,7 +170,7 @@ class CloudDeployStructure extends DeployStructure{
 	public String getEnvVariables(String garAppType, String appName,String appMajorVersion,String domain,String subDomain,String company) {
 		String ALM_BlueGreen="'\n    ALM_BLUE_GREEN: G'"
 		
-		String additionalNonProxyHosts = "gelogasr01.lacaixa.es,"+this.url_int+","+this.url_ext+","+GlobalVars.HTTP_ADDITIONAL_NON_PROXY_HOSTS;
+		String additionalNonProxyHosts = "gelogasr01.digitalscale.es,"+this.url_int+","+this.url_ext+","+GlobalVars.HTTP_ADDITIONAL_NON_PROXY_HOSTS;
 		if (this.env.equalsIgnoreCase("eden") || this.env.equalsIgnoreCase("dev")) {
 		    additionalNonProxyHosts += ",cxb-ab3cor-tst"
 		} else if (this.env.equalsIgnoreCase("tst")) {

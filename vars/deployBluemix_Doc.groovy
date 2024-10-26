@@ -75,7 +75,7 @@ def call(body) {
     // - name: REPO_NAME
     //   memory: 48M
     //   disk_quota: 64M
-    //   buildpack: https://gitlab-ci-token:gy2Mzz5PovhjgdxeqJy2@git.svb.lacaixa.es/cbk/cf/alm/nginx-buildpack.git
+    //   buildpack: https://gitlab-ci-token:gy2Mzz5PovhjgdxeqJy2@git.svb.digitalscale.es/cbk/cf/alm/nginx-buildpack.git
     //   path: build
     //   routes:
     //   - route: container.tst.ca.project.com/repo_name

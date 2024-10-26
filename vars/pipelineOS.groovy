@@ -18,10 +18,10 @@ def call(pipelineParams = [:], body) {
 	 		 node( almJenkinsAgentInfo ){
 				 
 				 def executionProfile="executionProfile=${pipelineParams ? pipelineParams.get('executionProfile', 'DEFAULT') : 'DEFAULT'}"
-				 def proxyHost="proxyHost=${GlobalVars.proxyCaixaHost}"
-				 def proxyPort="proxyPort=${GlobalVars.proxyCaixaPort}"
-				 def https_proxy="https_proxy=${GlobalVars.proxyCaixa}"
-				 def http_proxy="http_proxy =${GlobalVars.proxyCaixa}"
+				 def proxyHost="proxyHost=${GlobalVars.proxyDigitalscaleHost}"
+				 def proxyPort="proxyPort=${GlobalVars.proxyDigitalscalePort}"
+				 def https_proxy="https_proxy=${GlobalVars.proxyDigitalscale}"
+				 def http_proxy="http_proxy =${GlobalVars.proxyDigitalscale}"
 				 
 				 withCredentials([usernamePassword(credentialsId: 'ALM_LOGCOLLECTOR_CREDENTIALS', passwordVariable: 'ALM_LOGCOLLECTOR_PASSWORD', usernameVariable: 'ALM_LOGCOLLECTOR_USERNAME')]) {
 					 
@@ -94,10 +94,10 @@ def call(pipelineParams = [:], body) {
 			 node( almJenkinsAgentInfo ){
 				 
 				 def executionProfile="executionProfile=${pipelineParams ? pipelineParams.get('executionProfile', 'DEFAULT') : 'DEFAULT'}"
-				 def proxyHost="proxyHost=${GlobalVars.proxyCaixaHost}"
-				 def proxyPort="proxyPort=${GlobalVars.proxyCaixaPort}"
-				 def https_proxy="https_proxy=${GlobalVars.proxyCaixa}"
-				 def http_proxy="http_proxy =${GlobalVars.proxyCaixa}"
+				 def proxyHost="proxyHost=${GlobalVars.proxyDigitalscaleHost}"
+				 def proxyPort="proxyPort=${GlobalVars.proxyDigitalscalePort}"
+				 def https_proxy="https_proxy=${GlobalVars.proxyDigitalscale}"
+				 def http_proxy="http_proxy =${GlobalVars.proxyDigitalscale}"
 				 
 				 withCredentials([string(credentialsId: 'cloud-alm-pro-cert-passwd', variable: 'Cloud_PASS_CRED'),
 								  file(credentialsId: 'cloud-alm-pro-cert', variable: 'Cloud_CERT_CRED'),

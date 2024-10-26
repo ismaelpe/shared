@@ -44,10 +44,10 @@ def call(Map pipelineParameters) {
 			GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
-			http_proxy = "${GlobalVars.proxyCaixa}"
-			https_proxy = "${GlobalVars.proxyCaixa}"
-			proxyHost = "${GlobalVars.proxyCaixaHost}"
-			proxyPort = "${GlobalVars.proxyCaixaPort}"
+			http_proxy = "${GlobalVars.proxyDigitalscale}"
+			https_proxy = "${GlobalVars.proxyDigitalscale}"
+			proxyHost = "${GlobalVars.proxyDigitalscaleHost}"
+			proxyPort = "${GlobalVars.proxyDigitalscalePort}"
 		}
 		stages {
 			stage('init') {
@@ -122,7 +122,7 @@ def deployStep() {
  */
 def collectDataStep() {
 	printOpen("Collecting data when finish", EchoLevel.ALL)
-	String url = "https://jmeter-micro-1." + "${cloudEnv.toLowerCase()}" + ".cloud-" + "${cloudCenter}"+".alm.cloud.lacaixa.es"
+	String url = "https://jmeter-micro-1." + "${cloudEnv.toLowerCase()}" + ".cloud-" + "${cloudCenter}"+".alm.cloud.digitalscale.es"
 	validateStressTestIsFinish(url)
 	//Download csv and target.zip
 	String fileOutput= CopyGlobalLibraryScript('','.','resultsMetrics.csv')

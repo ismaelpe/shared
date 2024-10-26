@@ -48,10 +48,10 @@ def call(Map pipelineParameters) {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
-            http_proxy = "${GlobalVars.proxyCaixa}"
-            https_proxy = "${GlobalVars.proxyCaixa}"
-            proxyHost = "${GlobalVars.proxyCaixaHost}"
-            proxyPort = "${GlobalVars.proxyCaixaPort}"
+            http_proxy = "${GlobalVars.proxyDigitalscale}"
+            https_proxy = "${GlobalVars.proxyDigitalscale}"
+            proxyHost = "${GlobalVars.proxyDigitalscaleHost}"
+            proxyPort = "${GlobalVars.proxyDigitalscalePort}"
         }
         stages {
             stage('get-git-repo') {
@@ -203,7 +203,7 @@ def call(Map pipelineParameters) {
                                     response = httpRequest(consoleLogResponseBody: false,
                                         httpMode: "GET",
                                         url: GlobalVars.URL_ZIP_INITIALIZR_DEV + params,
-                                        httpProxy: "http://proxyserv.svb.lacaixa.es:8080",
+                                        httpProxy: "http://proxyserv.svb.digitalscale.es:8080",
                                         outputFile: "${Utilities.getNameOfProjectFromProjectPath(value.trim())}.zip"
                                     )
                                     printOpen("Template de proyecto '${Utilities.getNameOfProjectFromProjectPath(value.trim())}' descargado desde el initializr", EchoLevel.INFO)

@@ -61,10 +61,10 @@ def call(Map pipelineParameters) {
             JNKMSV = credentials('JNKMSV-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
-            http_proxy = "${GlobalVars.proxyCaixa}"
-            https_proxy = "${GlobalVars.proxyCaixa}"
-            proxyHost = "${GlobalVars.proxyCaixaHost}"
-            proxyPort = "${GlobalVars.proxyCaixaPort}"
+            http_proxy = "${GlobalVars.proxyDigitalscale}"
+            https_proxy = "${GlobalVars.proxyDigitalscale}"
+            proxyHost = "${GlobalVars.proxyDigitalscaleHost}"
+            proxyPort = "${GlobalVars.proxyDigitalscalePort}"
             executionProfile = "${executionProfileParam ? executionProfileParam : 'DEFAULT'}"
             logsReport = true
             sendLogsToGpl = true
@@ -189,7 +189,7 @@ def stageExecuteActuatorEnvStep() {
                     String auth = microBasicCredentials.bytes.encodeBase64().toString()
 
                     def customHeaders = "Authorization: Basic ${auth}"
-                    def command="curl -k --write-out '%{http_code}' -o ${fileOutput} -s -X GET ${url} --proxy ${GlobalVars.proxyCaixa} --connect-timeout ${GlobalVars.ALM_MS_TIMEOUT} -H  'Content-Type: application/json' -H \"${customHeaders}\""
+                    def command="curl -k --write-out '%{http_code}' -o ${fileOutput} -s -X GET ${url} --proxy ${GlobalVars.proxyDigitalscale} --connect-timeout ${GlobalVars.ALM_MS_TIMEOUT} -H  'Content-Type: application/json' -H \"${customHeaders}\""
 
                     printOpen("Invoking url ['GET'] ${url}", EchoLevel.DEBUG)
                     

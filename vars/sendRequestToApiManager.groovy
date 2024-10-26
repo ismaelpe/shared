@@ -22,7 +22,7 @@ def call(ApiManagerTechnicalServicesRequest request) {
 
                 def curlCall =
                     "curl --location --request POST -s -w \"%{http_code}\" \"${request.apiManagerUri}\" \\\n" +
-                        "--proxy ${GlobalVars.proxyCaixa} \\\n" +
+                        "--proxy ${GlobalVars.proxyDigitalscale} \\\n" +
                         "--insecure \\\n" +
                         "--connect-timeout ${request.timeout} \\\n" +
                         "-H \"Content-Type: multipart/form-data\" \\\n" +

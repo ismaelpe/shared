@@ -81,10 +81,10 @@ def call(Map pipelineParameters) {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
-            http_proxy = "${GlobalVars.proxyCaixa}"
-            https_proxy = "${GlobalVars.proxyCaixa}"
-            proxyHost = "${GlobalVars.proxyCaixaHost}"
-            proxyPort = "${GlobalVars.proxyCaixaPort}"
+            http_proxy = "${GlobalVars.proxyDigitalscale}"
+            https_proxy = "${GlobalVars.proxyDigitalscale}"
+            proxyHost = "${GlobalVars.proxyDigitalscaleHost}"
+            proxyPort = "${GlobalVars.proxyDigitalscalePort}"
 		}		
 		stages {			
 			stage('init'){
@@ -126,7 +126,7 @@ def call(Map pipelineParameters) {
 def initStep() {
 	initGlobalVars(pipelineParams)
 
-	pathToRepo = "https://git.svb.lacaixa.es/cbk/alm/services/arch/tool/${microservice}.git"
+	pathToRepo = "https://git.svb.digitalscale.es/cbk/alm/services/arch/tool/${microservice}.git"
 	repoName = microservice - "micro"
 	cloudApplicationId = "27587"
 	if (microservice == "k8sapigateway-micro") {
@@ -286,8 +286,8 @@ def deployCloudImage() {
 	boolean isReady=waitCloudDeploymentReady(pomXmlStructure,pipelineData,deployStructure,"G")
 	//Wait
 	String microUrl = microservice == "almlogcollector-micro" ?
-		"https://k8sgateway.${environmentDest.toLowerCase()}.cloud-1.alm.cloud.lacaixa.es/arch-service/${variableKubernetesInstance}" :
-		"https://k8sgateway.${environmentDest.toLowerCase()}.cloud-1.alm.cloud.lacaixa.es"
+		"https://k8sgateway.${environmentDest.toLowerCase()}.cloud-1.alm.cloud.digitalscale.es/arch-service/${variableKubernetesInstance}" :
+		"https://k8sgateway.${environmentDest.toLowerCase()}.cloud-1.alm.cloud.digitalscale.es"
 	
 	if (isReady) 
 		validateMicroIsUp(microUrl)

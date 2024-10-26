@@ -3,7 +3,7 @@ package com.project.alm
 class SyntheticTestStructure {
 
     String appName
-	String urlIcp
+	String urlCloud
 
     String pomVersion = ''
     String pomArtifactId = ''

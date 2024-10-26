@@ -34,7 +34,7 @@ def call(String method, String path, String environment,String datacenter) {
                     String microHttpBasicCredentials = "${CONFIGSERVER_USERNAME}:${CONFIGSERVER_PASSWORD}"
                     String auth = microHttpBasicCredentials.bytes.encodeBase64().toString()
 
-                    response = httpRequest consoleLogResponseBody: true, contentType: 'APPLICATION_JSON', httpMode: method, url: url, httpProxy: "http://proxyserv.svb.lacaixa.es:8080", validResponseCodes: "${GlobalVars.ALM_MS_VALID_RESPONSE_STATUS}", timeout: GlobalVars.ALM_MS_TIMEOUT, customHeaders: [[name: 'Authorization', value: "Basic ${auth}"]]
+                    response = httpRequest consoleLogResponseBody: true, contentType: 'APPLICATION_JSON', httpMode: method, url: url, httpProxy: "http://proxyserv.svb.digitalscale.es:8080", validResponseCodes: "${GlobalVars.ALM_MS_VALID_RESPONSE_STATUS}", timeout: GlobalVars.ALM_MS_TIMEOUT, customHeaders: [[name: 'Authorization', value: "Basic ${auth}"]]
                     printOpen("Invoking url [${method}] ${url}", EchoLevel.ALL)
                 }
 

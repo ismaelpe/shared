@@ -79,10 +79,10 @@ def call(Map pipelineParameters) {
             JNKMSV = credentials('JNKMSV-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
-            http_proxy = "${GlobalVars.proxyCaixa}"
-            https_proxy = "${GlobalVars.proxyCaixa}"
-            proxyHost = "${GlobalVars.proxyCaixaHost}"
-            proxyPort = "${GlobalVars.proxyCaixaPort}"
+            http_proxy = "${GlobalVars.proxyDigitalscale}"
+            https_proxy = "${GlobalVars.proxyDigitalscale}"
+            proxyHost = "${GlobalVars.proxyDigitalscaleHost}"
+            proxyPort = "${GlobalVars.proxyDigitalscalePort}"
         }
         //Atencion que en el caso que estemos en un MergeRequest... quizas solo debamos validar la issue
         stages {
@@ -285,7 +285,7 @@ def getLastCommittedCGSFileStep() {
             count++
         } else if (filePath.toUpperCase().contains('VCABXMLP') || filePath.toUpperCase().contains('VINXMLP') || filePath.toUpperCase().contains('VOUTXMLP')) {
             printOpen('XML not supported for NOWI transactions', EchoLevel.ALL)
-            throw new RuntimeException('XML not supported. Check the following documentation to make the necessary changes: https://confluence.cloud.lacaixa.es/confluence/display/serArqMcrsvcs/CGS+Provisioning#CGSProvisioning-ProcedimientoparalastransaccionesNOWI')
+            throw new RuntimeException('XML not supported. Check the following documentation to make the necessary changes: https://confluence.cloud.digitalscale.es/confluence/display/serArqMcrsvcs/CGS+Provisioning#CGSProvisioning-ProcedimientoparalastransaccionesNOWI')
         } else {
             printOpen('Skip File: ', EchoLevel.ALL)
         }

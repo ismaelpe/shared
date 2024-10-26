@@ -16,10 +16,10 @@ def call(String repoGit) {
          name:release/v1.5.0,
          commit:[author_name:jenkins.pipeline.CI,
          authored_date:2019-08-21T11:34:51.000+02:00,
-         committer_email:jenkins.pipeline.CI@lacaixa.es,
+         committer_email:jenkins.pipeline.CI@digitalscale.es,
          committed_date:2019-08-21T11:34:51.000+02:00,
          created_at:2019-08-21T11:34:51.000+02:00,
-         author_email:jenkins.pipeline.CI@lacaixa.es,
+         author_email:jenkins.pipeline.CI@digitalscale.es,
          id:27dae10de1dd5afbf2361c59b2aa9f214e31ca14,
          short_id:27dae10d, parent_ids:null,
          title:<CI_Pipeline>:  New Release generated  1.5.0,
@@ -43,7 +43,7 @@ def call(String repoGit) {
                 ignoreSslErrors: true,
                 customHeaders: [[name: 'Private-Token', value: "${GITLAB_API_TOKEN}"], [name: 'Accept', value: "application/json"]],
                 url: "${GlobalVars.gitlabApiDomain}${projectPathUrlEncoded}",
-                httpProxy: "http://proxyserv.svb.lacaixa.es:8080",
+                httpProxy: "http://proxyserv.svb.digitalscale.es:8080",
                 validResponseCodes: '200:300'
 
         def json = new JsonSlurperClassic().parseText(projectInfo.content)
@@ -59,7 +59,7 @@ def call(String repoGit) {
                 ignoreSslErrors: true,
                 customHeaders: [[name: 'Private-Token', value: "${GITLAB_API_TOKEN}"], [name: 'Accept', value: "application/json"]],
                 url: "${GlobalVars.gitlabApiDomain}${projectId}/repository/branches?page=1&per_page=400",
-                httpProxy: "http://proxyserv.svb.lacaixa.es:8080",
+                httpProxy: "http://proxyserv.svb.digitalscale.es:8080",
                 validResponseCodes: '200:300'
 
         printOpen("Done", EchoLevel.ALL)
@@ -79,10 +79,10 @@ def call(String repoGit) {
                      [{"id":51165,"iid":35,"project_id":6203,"title":"feature/us20202_soporte_n4__decplugin into master",
                      "description":"soporte n4 decplugin","state":"closed","created_at":"2019-05-29T12:07:40.860+02:00","updated_at":"2019-05-29T15:45:37.144+02:00","merged_by":null,
                      "merged_at":null,
-                     "closed_by":{"id":1376,"name":"LEONARDO TORRES ALTEZ","username":"U0185731","state":"active","avatar_url":"https://secure.gravatar.com/avatar/765ac6b99497bf42f6c3c32b77733784?s=80\u0026d=identicon","web_url":"https://git.svb.lacaixa.es/U0185731"},
+                     "closed_by":{"id":1376,"name":"LEONARDO TORRES ALTEZ","username":"U0185731","state":"active","avatar_url":"https://secure.gravatar.com/avatar/765ac6b99497bf42f6c3c32b77733784?s=80\u0026d=identicon","web_url":"https://git.svb.digitalscale.es/U0185731"},
                      "closed_at":"2019-05-29T13:45:37.161Z","target_branch":"master","source_branch":"feature/us20202_soporte_n4__decplugin","user_notes_count":3,"upvotes":0,"downvotes":0,"assignee":null,
-                     "author":{"id":1376,"name":"LEONARDO TORRES ALTEZ","username":"U0185731","state":"active","avatar_url":"https://secure.gravatar.com/avatar/765ac6b99497bf42f6c3c32b77733784?s=80\u0026d=identicon","web_url":"https://git.svb.lacaixa.es/U0185731"},
-                     "assignees":[],"source_project_id":6203,"target_project_id":6203,"labels":["MR ALM SERVICIOS"],"work_in_progress":false,"milestone":null,"merge_when_pipeline_succeeds":false,"merge_status":"can_be_merged","sha":"712968d470a6192dfd3c43039ca24e2f6f259bc8","merge_commit_sha":null,"discussion_locked":null,"should_remove_source_branch":null,"force_remove_source_branch":false,"reference":"!35","web_url":"https://git.svb.lacaixa.es/cbk/alm
+                     "author":{"id":1376,"name":"LEONARDO TORRES ALTEZ","username":"U0185731","state":"active","avatar_url":"https://secure.gravatar.com/avatar/765ac6b99497bf42f6c3c32b77733784?s=80\u0026d=identicon","web_url":"https://git.svb.digitalscale.es/U0185731"},
+                     "assignees":[],"source_project_id":6203,"target_project_id":6203,"labels":["MR ALM SERVICIOS"],"work_in_progress":false,"milestone":null,"merge_when_pipeline_succeeds":false,"merge_status":"can_be_merged","sha":"712968d470a6192dfd3c43039ca24e2f6f259bc8","merge_commit_sha":null,"discussion_locked":null,"should_remove_source_branch":null,"force_remove_source_branch":false,"reference":"!35","web_url":"https://git.svb.digitalscale.es/cbk/alm
                      */
                     //Tiene una MR abierta?
 
@@ -106,7 +106,7 @@ def call(String repoGit) {
                             ignoreSslErrors: true,
                             customHeaders: [[name: 'Private-Token', value: "${GITLAB_API_TOKEN}"], [name: 'Accept', value: "application/json"]],
                             url: "${GlobalVars.gitlabApiDomain}${projectId}/merge_requests?source_branch=${branchActual.branchName}",
-                            httpProxy: "http://proxyserv.svb.lacaixa.es:8080",
+                            httpProxy: "http://proxyserv.svb.digitalscale.es:8080",
                             validResponseCodes: '200:300'
 
                     def jsonMR = new JsonSlurperClassic().parseText(mergeRequests.content)

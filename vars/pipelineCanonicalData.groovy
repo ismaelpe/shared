@@ -22,7 +22,7 @@ import com.project.alm.*
 def call(Map pipelineParameters) {
     pipelineParams = pipelineParameters
 
-    gitURL = 'https://git.svb.lacaixa.es/'
+    gitURL = 'https://git.svb.digitalscale.es/'
     gitCredentials = 'GITLAB_CREDENTIALS'
     jenkinsPath = 'alm/services'
     originBranch = params.gitlabBranch
@@ -45,10 +45,10 @@ def call(Map pipelineParameters) {
             JNKMSV = credentials('JNKMSV-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
-            http_proxy = "${GlobalVars.proxyCaixa}"
-            https_proxy = "${GlobalVars.proxyCaixa}"
-            proxyHost = "${GlobalVars.proxyCaixaHost}"
-            proxyPort = "${GlobalVars.proxyCaixaPort}"
+            http_proxy = "${GlobalVars.proxyDigitalscale}"
+            https_proxy = "${GlobalVars.proxyDigitalscale}"
+            proxyHost = "${GlobalVars.proxyDigitalscaleHost}"
+            proxyPort = "${GlobalVars.proxyDigitalscalePort}"
         }
         stages {
             stage('get-git-repo') {

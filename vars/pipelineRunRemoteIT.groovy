@@ -28,7 +28,7 @@ import com.project.alm.DistributionModePRO
 def call(Map pipelineParameters) {
     pipelineParams = pipelineParameters
 
-    gitURL = 'https://git.svb.lacaixa.es/'
+    gitURL = 'https://git.svb.digitalscale.es/'
     gitCredentials = 'GITLAB_CREDENTIALS'
     jenkinsPath = 'alm/services'
 
@@ -59,10 +59,10 @@ def call(Map pipelineParameters) {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
-            http_proxy = "${GlobalVars.proxyCaixa}"
-            https_proxy = "${GlobalVars.proxyCaixa}"
-            proxyHost = "${GlobalVars.proxyCaixaHost}"
-            proxyPort = "${GlobalVars.proxyCaixaPort}"
+            http_proxy = "${GlobalVars.proxyDigitalscale}"
+            https_proxy = "${GlobalVars.proxyDigitalscale}"
+            proxyHost = "${GlobalVars.proxyDigitalscaleHost}"
+            proxyPort = "${GlobalVars.proxyDigitalscalePort}"
         }
         //Atencion que en el caso que estemos en un MergeRequest... quizas solo debamos validar la issue
         stages {
@@ -117,9 +117,9 @@ def runRemoteItStep() {
         }
     }else {
         if (pomXmlStructure.isArchProject()) {
-            url = "https://k8sgateway.${cloudEnv.toLowerCase()}.cloud-${center}.alm.cloud.lacaixa.es/arch-service/${pomXmlStructure.getBmxAppId()}"
+            url = "https://k8sgateway.${cloudEnv.toLowerCase()}.cloud-${center}.alm.cloud.digitalscale.es/arch-service/${pomXmlStructure.getBmxAppId()}"
         }else {
-            url = "https://k8sgateway.${cloudEnv.toLowerCase()}.cloud-${center}.alm.cloud.lacaixa.es/${pomXmlStructure.getBmxAppId()}"
+            url = "https://k8sgateway.${cloudEnv.toLowerCase()}.cloud-${center}.alm.cloud.digitalscale.es/${pomXmlStructure.getBmxAppId()}"
         }
     }
     printOpen("Ejecutamos los tests de integracion contra el micro, cuya url es ${url}", EchoLevel.ALL)

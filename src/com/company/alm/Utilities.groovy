@@ -352,7 +352,7 @@ class Utilities {
         
         def proxyOption = ""
         if (useproxy) {
-            proxyOption = "--proxy $GlobalVars.proxyCaixa"
+            proxyOption = "--proxy $GlobalVars.proxyDigitalscale"
         }
 
         def startTime = System.currentTimeMillis()

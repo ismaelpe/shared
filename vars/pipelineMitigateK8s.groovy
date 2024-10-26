@@ -35,10 +35,10 @@ def call(Map pipelineParameters) {
         environment {
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
-            http_proxy = "${GlobalVars.proxyCaixa}"
-            https_proxy = "${GlobalVars.proxyCaixa}"
-            proxyHost = "${GlobalVars.proxyCaixaHost}"
-            proxyPort = "${GlobalVars.proxyCaixaPort}"
+            http_proxy = "${GlobalVars.proxyDigitalscale}"
+            https_proxy = "${GlobalVars.proxyDigitalscale}"
+            proxyHost = "${GlobalVars.proxyDigitalscaleHost}"
+            proxyPort = "${GlobalVars.proxyDigitalscalePort}"
         }
         stages {
 			stage("init"){
@@ -124,7 +124,7 @@ def enableDisableAliveOcp(def environment, def center, def action) {
 			
 	def	response = null
 	printOpen("El body para el deploy es el siguiente ${body}",EchoLevel.INFO)
-	//https://publisher-ssp-cldalm.pro.ap.intranet.cloud.lacaixa.es/api/publisher/v1/api/application/PCLD_MIGRATED/AB3APP/component/ALIVE/deploy
+	//https://publisher-ssp-cldalm.pro.ap.intranet.cloud.digitalscale.es/api/publisher/v1/api/application/PCLD_MIGRATED/AB3APP/component/ALIVE/deploy
 	response = sendRequestToCloudApi("v1/api/application/PCLD_MIGRATED/AB3APP/component/ALIVE/deploy",body,"POST","AB3APP","v1/api/application/PCLD_MIGRATED/AB3APP/component/ALIVE/deploy",true,true)
 	if (response.statusCode < 300) {
 		printOpen("Stop/Start correcto del micro",EchoLevel.INFO)

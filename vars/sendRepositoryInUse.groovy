@@ -19,7 +19,7 @@ def call(String name, Boolean marked) {
             if (++attemptNum > 1) {
                 sleep(time: 30000, unit: "MILLISECONDS")
             }
-            def response = httpRequest consoleLogResponseBody: true, contentType: 'APPLICATION_JSON', httpMode: 'POST', requestBody: bodyJson, url: url, httpProxy: "http://proxyserv.svb.lacaixa.es:8080", validResponseCodes: '200'
+            def response = httpRequest consoleLogResponseBody: true, contentType: 'APPLICATION_JSON', httpMode: 'POST', requestBody: bodyJson, url: url, httpProxy: "http://proxyserv.svb.digitalscale.es:8080", validResponseCodes: '200'
             println("Response: " + response)
         }
     }*/

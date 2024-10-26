@@ -230,7 +230,7 @@ def getEmailFromFirstResponsibleOnGarIfAvailable(String artifactGarAppName, Stri
 
 private boolean thisUserEmailCanHandleMaximos(String email) {
 
-    return email && email != "jenkins.pipeline.CI@lacaixa.es"
+    return email && email != "jenkins.pipeline.CI@digitalscale.es"
 
 }
 

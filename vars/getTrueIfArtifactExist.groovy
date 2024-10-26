@@ -13,7 +13,7 @@ def call(String enviroment, String groupId, String artifactId, String version, S
 
     try {
         response = httpRequest url: "${url}", 
-							   httpProxy: "http://proxyserv.svb.lacaixa.es:8080"
+							   httpProxy: "http://proxyserv.svb.digitalscale.es:8080"
     } catch (Exception e) {
         printOpen(e.getMessage(), EchoLevel.ERROR)
         result = false

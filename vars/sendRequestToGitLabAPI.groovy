@@ -42,7 +42,7 @@ def call(PipelineData pipelineData, PomXmlStructure pomXml, Map parameters = [:]
                                 validResponseCodes: '100:599',
                                 requestBody: "${parameters.requestBody}",
                                 url: "${parameters.url}",
-                                httpProxy: "http://proxyserv.svb.lacaixa.es:8080"*/
+                                httpProxy: "http://proxyserv.svb.digitalscale.es:8080"*/
 								
 							def urlParameters=[:]
 								urlParameters.needsProxy=true
@@ -68,7 +68,7 @@ def call(PipelineData pipelineData, PomXmlStructure pomXml, Map parameters = [:]
                                 customHeaders: [[name: 'Private-Token', value: "${GITLAB_API_TOKEN}"], [name: 'Accept', value: "application/json"]],
                                 validResponseCodes: '100:599',
                                 url: "${parameters.url}",
-                                httpProxy: "http://proxyserv.svb.lacaixa.es:8080"
+                                httpProxy: "http://proxyserv.svb.digitalscale.es:8080"
 								*/
 							def urlParameters=[:]
 								urlParameters.needsProxy=true

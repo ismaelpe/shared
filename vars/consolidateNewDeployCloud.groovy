@@ -265,7 +265,7 @@ def call(PomXmlStructure pomXml, PipelineData pipeline, CloudStateUtility cloudS
 				"environment": "${cloudStateUtility.cloudDeployStructure.envCloud.toUpperCase()}"
 			]
 			/**
-			curl -vvv -k -X DELETE "https://publisher-ssp-cldalm.pro.ap.intranet.cloud.lacaixa.es/api/publisher/v1/application/PCLD/AB3COR/component/2742/deploy"\
+			curl -vvv -k -X DELETE "https://publisher-ssp-cldalm.pro.ap.intranet.cloud.digitalscale.es/api/publisher/v1/application/PCLD/AB3COR/component/2742/deploy"\
 			**/
 			CloudApiResponse response = sendRequestToCloudApi("v1/application/PCLD/${pomXml.getCloudAppName()}/component/${pipeline.componentId}/deploy",body,"DELETE","${pomXml.getCloudAppName()}","",false,true, pipeline, pomXml)
 

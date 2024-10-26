@@ -26,8 +26,8 @@ def call(Map pipelineParameters) {
             timeout(time: 3, unit: 'HOURS')
         }
         environment {	
-            proxyHost = "${GlobalVars.proxyCaixaHost}"
-            proxyPort = "${GlobalVars.proxyCaixaPort}"
+            proxyHost = "${GlobalVars.proxyDigitalscaleHost}"
+            proxyPort = "${GlobalVars.proxyDigitalscalePort}"
         }
         stages {	   
             stage('deploy-artifactory-morning-check') {

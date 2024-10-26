@@ -61,10 +61,10 @@ def call(Map pipelineParameters) {
             GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
-            http_proxy = "${GlobalVars.proxyCaixa}"
-            https_proxy = "${GlobalVars.proxyCaixa}"
-            proxyHost = "${GlobalVars.proxyCaixaHost}"
-            proxyPort = "${GlobalVars.proxyCaixaPort}"
+            http_proxy = "${GlobalVars.proxyDigitalscale}"
+            https_proxy = "${GlobalVars.proxyDigitalscale}"
+            proxyHost = "${GlobalVars.proxyDigitalscaleHost}"
+            proxyPort = "${GlobalVars.proxyDigitalscalePort}"
             executionProfile = "${pipelineParams ? pipelineParams.get('executionProfile', 'DEFAULT') : 'DEFAULT'}"
         }        
         stages {
@@ -120,7 +120,7 @@ def testCloudApiStep() {
     configFileProvider([configFile(fileId: 'alm-cloud-cert-pro', variable: 'CERTIFICATE')]) {
         withCredentials([string(credentialsId: 'Cloud_CERT_PASSWD_PRE', variable: 'PASSWORD')])  {
             
-            def command = "curl -k --write-out %{http_code} -o temp -s -X GET https://publisher-ssp-cldalm.pro.ap.intranet.cloud.lacaixa.es/api/publisher/features/environment/DEV/az/ALL/name/deploy --cert .$CERTIFICATE:$PASSWORD -H  accept:*/* -H  application_active:demoarqalm2-micro -H  Content-Type:application/json "
+            def command = "curl -k --write-out %{http_code} -o temp -s -X GET https://publisher-ssp-cldalm.pro.ap.intranet.cloud.digitalscale.es/api/publisher/features/environment/DEV/az/ALL/name/deploy --cert .$CERTIFICATE:$PASSWORD -H  accept:*/* -H  application_active:demoarqalm2-micro -H  Content-Type:application/json "
         
             echo sh(script: command, returnStdout: true)
         }

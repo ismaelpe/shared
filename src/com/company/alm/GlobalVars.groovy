@@ -2,7 +2,7 @@ package com.project.alm
 
 class GlobalVars {
 	
-	static String URL_API_PORTAL = "https://l.tf7.lacaixa.es/alm/developerportal/ADPFrontend/services"
+	static String URL_API_PORTAL = "https://l.tf7.digitalscale.es/alm/developerportal/ADPFrontend/services"
 	static String URL_REDIRECTORA_JENKINS = "https://jnkmsv.pro.int.srv.project.com/jenkins/"
 	static String PROFILES_SPRING="SPRING_PROFILES_ACTIVE"
 	
@@ -222,7 +222,7 @@ class GlobalVars {
     static String PLATAFORMA_GPL = "alm"
     static String GPL_STATE_RUNNING = "running"
 
-    static String INTERNAL_BUILDPACK = "git.svb.lacaixa.es/cbk/cf/alm/java-buildpack.git/#"
+    static String INTERNAL_BUILDPACK = "git.svb.digitalscale.es/cbk/cf/alm/java-buildpack.git/#"
     static String INTERNAL_BUILDPACK_JAVA8 = GlobalVars.INTERNAL_BUILDPACK + "v4.8_Alm_1.0"
     static String INTERNAL_BUILDPACK_JAVA11 = GlobalVars.INTERNAL_BUILDPACK + "v4.20_Alm_1.2"
 
@@ -234,11 +234,11 @@ class GlobalVars {
     static String domainPre = "pre.int.srv.project.com"
     static String domainPro = "pro.int.srv.project.com"
 
-    static String nexusDownloadRepository = "http://eibcmasp03.lacaixa.es:8081/nexus/repository/npm-group/"
+    static String nexusDownloadRepository = "http://eibcmasp03.digitalscale.es:8081/nexus/repository/npm-group/"
 
     static String bpGeneric = "staticfile_buildpack"
     static String bpApps = "staticfile_buildpack"
-    static String bpStatic = "https://apiclasp-b3.svb.lacaixa.es:2443/buildpacks-cbk/staticfile-buildpack.git"
+    static String bpStatic = "https://apiclasp-b3.svb.digitalscale.es:2443/buildpacks-cbk/staticfile-buildpack.git"
     static String containerAppName = "alm"
 
     static String GIT_REPO_APP_DATA_SERVICE = "/data-service/"
@@ -249,7 +249,7 @@ class GlobalVars {
     static String GIT_REPO_DEFINITIONS = "alm/services/definitions"
     static String GIT_REPO_APP_CONF_LIBRARY = "/conf/"
 
-    static String blueMixUrl = "https://api.intra1.lacaixa.bluemix.net"
+    static String blueMixUrl = "https://api.intra1.digitalscale.bluemix.net"
 
     static String NEXUS_URL_BASE = "artifacts.cloud.project.com"
     static String NEXUS_URL = "https://$NEXUS_URL_BASE/"
@@ -271,14 +271,14 @@ class GlobalVars {
 
     static String CONTRACT_MICRO_URL = "https://contractserver-micro-server-1.pro.int.srv.project.com"
 
-    static String blueMixUrl_CD1_TST = "https://api.intra1.lacaixa.bluemix.net"
-    static String blueMixUrl_CD2_TST = "https://api.intra2.lacaixa.bluemix.net"
+    static String blueMixUrl_CD1_TST = "https://api.intra1.digitalscale.bluemix.net"
+    static String blueMixUrl_CD2_TST = "https://api.intra2.digitalscale.bluemix.net"
 
-    static String blueMixUrl_CD1_PRE = "https://api.intra1.lacaixa.bluemix.net"
-    static String blueMixUrl_CD2_PRE = "https://api.intra2.lacaixa.bluemix.net"
+    static String blueMixUrl_CD1_PRE = "https://api.intra1.digitalscale.bluemix.net"
+    static String blueMixUrl_CD2_PRE = "https://api.intra2.digitalscale.bluemix.net"
 
-    static String blueMixUrl_CD1_PRO = "https://api.intra1.lacaixa.bluemix.net"
-    static String blueMixUrl_CD2_PRO = "https://api.intra2.lacaixa.bluemix.net"
+    static String blueMixUrl_CD1_PRO = "https://api.intra1.digitalscale.bluemix.net"
+    static String blueMixUrl_CD2_PRO = "https://api.intra2.digitalscale.bluemix.net"
 
     static String FEATURE_BRANCH = "feature"
     static String RELEASE_BRANCH = "release"
@@ -342,7 +342,7 @@ class GlobalVars {
     static String FEATURE_DESC_SEPARATOR = "_"
 
     static String GIT_USER_NAME = "jenkins.pipeline.CI"
-    static String GIT_USER_EMAIL = "jenkins.pipeline.CI@lacaixa.es"
+    static String GIT_USER_EMAIL = "jenkins.pipeline.CI@digitalscale.es"
 
     static String GIT_TAG_CR_PUSH = "<CreateRelease_Pipeline>:"
     static String GIT_TAG_CI_PUSH = "<CI_Pipeline>:"
@@ -369,16 +369,16 @@ class GlobalVars {
     static int CF_LOGIN_MAX_RETRIES = 3
 
     static String GLOBAL_MVN_PARAMS = " --no-transfer-progress --update-snapshots "
-	static String gitlabDomainNonHttps = "git.svb.lacaixa.es"
-    static String gitlabDomain = "https://git.svb.lacaixa.es/"
-    static String gitlabApiDomain = "https://git.svb.lacaixa.es/api/v4/projects/"
-    static String gitlabApiDomainRaw = "https://git.svb.lacaixa.es/api/v4/"
-    static String proxyCaixaHost = "proxyserv.svb.lacaixa.es"
-    static String proxyCaixaPort = "8080"
-    static String proxyCaixa = "http://${GlobalVars.proxyCaixaHost}:${GlobalVars.proxyCaixaPort}"
+	static String gitlabDomainNonHttps = "git.svb.digitalscale.es"
+    static String gitlabDomain = "https://git.svb.digitalscale.es/"
+    static String gitlabApiDomain = "https://git.svb.digitalscale.es/api/v4/projects/"
+    static String gitlabApiDomainRaw = "https://git.svb.digitalscale.es/api/v4/"
+    static String proxyDigitalscaleHost = "proxyserv.svb.digitalscale.es"
+    static String proxyDigitalscalePort = "8080"
+    static String proxyDigitalscale = "http://${GlobalVars.proxyDigitalscaleHost}:${GlobalVars.proxyDigitalscalePort}"
 
     //List separated by commas
-    static String HTTP_ADDITIONAL_NON_PROXY_HOSTS = "pro.k8i-singulars.intranet.cloud.lacaixa.es,pre.k8i-singulars.intranet.cloud.lacaixa.es,tst.k8i-singulars.intranet.cloud.lacaixa.es,api.tst.internal.cer.project.com,api.pre.internal.cer.project.com,api.pro.internal.cer.project.com,apigwi.pre.serveis.almcloud.lacaixa.es,apigwi.pro.serveis.almcloud.lacaixa.es"
+    static String HTTP_ADDITIONAL_NON_PROXY_HOSTS = "pro.k8i-singulars.intranet.cloud.digitalscale.es,pre.k8i-singulars.intranet.cloud.digitalscale.es,tst.k8i-singulars.intranet.cloud.digitalscale.es,api.tst.internal.cer.project.com,api.pre.internal.cer.project.com,api.pro.internal.cer.project.com,apigwi.pre.serveis.almcloud.digitalscale.es,apigwi.pro.serveis.almcloud.digitalscale.es"
 
     static String URL_ZIP_INITIALIZR_DEV = "https://k8sgateway.dev.int.srv.project.com/arch-service/alminitializr-micro-1/alm/starter.zip"
 	static String URL_ZIP_INITIALIZR_PRO = "https://alminitializr-micro-1.pro.int.srv.project.com/alm/starter.zip"
@@ -386,7 +386,7 @@ class GlobalVars {
 	static String INITITALIZR_DEFAULT_BOOT_VERSION = "2.3.4.RELEASE"
 
     static String K8S_URL = "https://k8sgateway.{environment}.int.srv.project.com"
-    static String K8S_CENTER_URL = "https://k8sgateway.{environment}.cloud-{datacenter}.alm.cloud.lacaixa.es"
+    static String K8S_CENTER_URL = "https://k8sgateway.{environment}.cloud-{datacenter}.alm.cloud.digitalscale.es"
 
 
     static String urlZipInitializrTST = "https://k8sgateway.tst.int.srv.project.com/arch-service/alminitializr-micro-1/alm/starter.zip"
@@ -415,21 +415,21 @@ class GlobalVars {
 
     static String CONTRACT_VERSION_PROP = "contract.version"
 	
-	static String GIT_DEMO_PROTOTYPE_REPO_URL = "https://git.svb.lacaixa.es/cbk/alm/services/arch/cloud/demo-prototype.git"
+	static String GIT_DEMO_PROTOTYPE_REPO_URL = "https://git.svb.digitalscale.es/cbk/alm/services/arch/cloud/demo-prototype.git"
 	
-    static String GIT_CONFIG_REPO_URL_TST = "https://git.svb.lacaixa.es/cbk/alm/config/repository-tst.git"
-    static String GIT_CONFIG_REPO_URL_PRE = "https://git.svb.lacaixa.es/cbk/alm/config/repository-pre.git"
-    static String GIT_CONFIG_REPO_URL_PRO = "https://git.svb.lacaixa.es/cbk/alm/config/repository-pro.git"
+    static String GIT_CONFIG_REPO_URL_TST = "https://git.svb.digitalscale.es/cbk/alm/config/repository-tst.git"
+    static String GIT_CONFIG_REPO_URL_PRE = "https://git.svb.digitalscale.es/cbk/alm/config/repository-pre.git"
+    static String GIT_CONFIG_REPO_URL_PRO = "https://git.svb.digitalscale.es/cbk/alm/config/repository-pro.git"
 
-    static String GIT_CERTS_REPO_URL_TST = "https://git.svb.lacaixa.es/cbk/alm/config/certs-tst.git"
-    static String GIT_CERTS_REPO_URL_PRE = "https://git.svb.lacaixa.es/cbk/alm/config/certs-pre.git"
-    static String GIT_CERTS_REPO_URL_PRO = "https://git.svb.lacaixa.es/cbk/alm/config/certs-pro.git"
+    static String GIT_CERTS_REPO_URL_TST = "https://git.svb.digitalscale.es/cbk/alm/config/certs-tst.git"
+    static String GIT_CERTS_REPO_URL_PRE = "https://git.svb.digitalscale.es/cbk/alm/config/certs-pre.git"
+    static String GIT_CERTS_REPO_URL_PRO = "https://git.svb.digitalscale.es/cbk/alm/config/certs-pro.git"
 
-    static String GIT_CONFIG_REPO_TTSS_URL_TST = "https://git.svb.lacaixa.es/cbk/alm/services/config-sys/repository-tst.git"
-    static String GIT_CONFIG_REPO_TTSS_URL_PRE = "https://git.svb.lacaixa.es/cbk/alm/services/config-sys/repository-pre.git"
-    static String GIT_CONFIG_REPO_TTSS_URL_PRO = "https://git.svb.lacaixa.es/cbk/alm/services/config-sys/repository-pro.git"
+    static String GIT_CONFIG_REPO_TTSS_URL_TST = "https://git.svb.digitalscale.es/cbk/alm/services/config-sys/repository-tst.git"
+    static String GIT_CONFIG_REPO_TTSS_URL_PRE = "https://git.svb.digitalscale.es/cbk/alm/services/config-sys/repository-pre.git"
+    static String GIT_CONFIG_REPO_TTSS_URL_PRO = "https://git.svb.digitalscale.es/cbk/alm/services/config-sys/repository-pro.git"
 	
-	static String CONFIG_SERVER_URL = "https://k8sgateway.{environment}.cloud-{datacenter}.alm.cloud.lacaixa.es/arch-service/config-server-1"
+	static String CONFIG_SERVER_URL = "https://k8sgateway.{environment}.cloud-{datacenter}.alm.cloud.digitalscale.es/arch-service/config-server-1"
 	
     static int INCREMENT_CANNARY_PERCENTATGE = 25
     static int MAXIMUM_PERCENTATGE = 100
@@ -490,8 +490,8 @@ class GlobalVars {
     /**
      * GPL
      */
-    static String URL_GPL = "https://idegpl.pro.almcloud.lacaixa.es"
-    static String URL_GPL_PRE = "https://idegpl.pre.almcloud.lacaixa.es"
+    static String URL_GPL = "https://idegpl.pro.almcloud.digitalscale.es"
+    static String URL_GPL_PRE = "https://idegpl.pre.almcloud.digitalscale.es"
 
     static String PATH_GPL_PIPELINE = "/api/v1/pipeline"
     static String PATH_GPL_STAGE = "/api/v1/stage"
@@ -502,17 +502,17 @@ class GlobalVars {
 	/**
 	 * GAR
 	 */
-	static String URL_GAR = "https://eideswasp.svb.lacaixa.es/apw61/idegar"
-	static String URL_GAR_PRE = "https://eideswasp.svb.lacaixa.es/apw61/idegar"
-	static String PATH_GAR_RESPONSIBLES = "/api/aplicacion/v1/responsiblesFromApp/00001" //FIXME 0001 means only caixa?
+	static String URL_GAR = "https://eideswasp.svb.digitalscale.es/apw61/idegar"
+	static String URL_GAR_PRE = "https://eideswasp.svb.digitalscale.es/apw61/idegar"
+	static String PATH_GAR_RESPONSIBLES = "/api/aplicacion/v1/responsiblesFromApp/00001" //FIXME 0001 means only digitalscale?
 	static String PATH_GAR_APP = "/api/aplicacion/v1/info/00001"
     static String PATH_GAR_USUARIOS = "/api/recurso/v1"
 
     /**
      * GSA
      */
-    static String CATALOG_URL = "https://idegsa.pro.almcloud.lacaixa.es"
-    static String CATALOG_URL_PRE = "https://idegsa.pre.almcloud.lacaixa.es"
+    static String CATALOG_URL = "https://idegsa.pro.almcloud.digitalscale.es"
+    static String CATALOG_URL_PRE = "https://idegsa.pre.almcloud.digitalscale.es"
     static String PATH_CATALOG_PIPELINE = "/api/v1/alm/insertComponenteALM"
 	static String GSA_ACTUAL_INSTALLATION_PATH = "/api/v1/alm/actualInstallationALM/{garType}/{application}/{component}"
 	
@@ -522,7 +522,7 @@ class GlobalVars {
 
     static boolean SEND_TO_CATALOG = true
 
-    static String JOB_DISPLAY_CONFLUENCE = "https://confluence.cloud.lacaixa.es/confluence/display/serArqMcrsvcs/ALM+-+Log+tracing"
+    static String JOB_DISPLAY_CONFLUENCE = "https://confluence.cloud.digitalscale.es/confluence/display/serArqMcrsvcs/ALM+-+Log+tracing"
 
     /**
      * Dataservices pipelines
@@ -532,10 +532,10 @@ class GlobalVars {
 	/**
 	 *ERROR_MANAGEMENT
 	 *//*
-	static String URL_ERRORMGNT_DEV = "https://k8sgateway.dev.cloud-1.alm.cloud.lacaixa.es/arch-service/errormanagement-micro-server-1"
-	static String URL_ERRORMGNT_TST = "https://k8sgateway.dev.cloud-1.alm.cloud.lacaixa.es/arch-service/errormanagement-micro-server-1"
-	static String URL_ERRORMGNT_PRE = "https://k8sgateway.dev.cloud-1.alm.cloud.lacaixa.es/arch-service/errormanagement-micro-server-1"
-	static String URL_ERRORMGNT_PRO = "https://k8sgateway.dev.cloud-1.alm.cloud.lacaixa.es/arch-service/errormanagement-micro-server-1"
+	static String URL_ERRORMGNT_DEV = "https://k8sgateway.dev.cloud-1.alm.cloud.digitalscale.es/arch-service/errormanagement-micro-server-1"
+	static String URL_ERRORMGNT_TST = "https://k8sgateway.dev.cloud-1.alm.cloud.digitalscale.es/arch-service/errormanagement-micro-server-1"
+	static String URL_ERRORMGNT_PRE = "https://k8sgateway.dev.cloud-1.alm.cloud.digitalscale.es/arch-service/errormanagement-micro-server-1"
+	static String URL_ERRORMGNT_PRO = "https://k8sgateway.dev.cloud-1.alm.cloud.digitalscale.es/arch-service/errormanagement-micro-server-1"
 	*/
 	//DEV debe apuntar a TST	
 	static String URL_ERRORMGNT_DEV = "https://api.tst.internal.project.com/apps/almarq/error-management"
@@ -543,9 +543,9 @@ class GlobalVars {
 	static String URL_ERRORMGNT_PRE = "https://api.pre.internal.project.com/apps/almarq/error-management"
 	static String URL_ERRORMGNT_PRO = "https://api.pro.internal.project.com/apps/almarq/error-management"
 	/*
-	static String URL_CATALOGO_ALM_TST = "https://k8sgateway.dev.cloud-1.alm.cloud.lacaixa.es/arch-service/catmsv-micro-server-1"
-	static String URL_CATALOGO_ALM_PRE = "https://k8sgateway.dev.cloud-1.alm.cloud.lacaixa.es/arch-service/catmsv-micro-server-1"
-	static String URL_CATALOGO_ALM_PRO = "https://k8sgateway.dev.cloud-1.alm.cloud.lacaixa.es/arch-service/catmsv-micro-server-1"
+	static String URL_CATALOGO_ALM_TST = "https://k8sgateway.dev.cloud-1.alm.cloud.digitalscale.es/arch-service/catmsv-micro-server-1"
+	static String URL_CATALOGO_ALM_PRE = "https://k8sgateway.dev.cloud-1.alm.cloud.digitalscale.es/arch-service/catmsv-micro-server-1"
+	static String URL_CATALOGO_ALM_PRO = "https://k8sgateway.dev.cloud-1.alm.cloud.digitalscale.es/arch-service/catmsv-micro-server-1"
     */
 	static String CATALOGO_ALM_ENV = "PRO"
 	//static String URL_CATALOGO_ALM_TST = "https://api.tst.internal.project.com/dev/tech/catmsv/1"
@@ -583,12 +583,12 @@ class GlobalVars {
     static String Cloud_APP_ID_APPS = "1766"
 
 
-    static String Cloud_PRE = "https://publisher-ssp-cldalm.pre.ap.intranet.cloud.lacaixa.es"
-    static String Cloud_PRO = "https://publisher-ssp-cldalm.pro.ap.intranet.cloud.lacaixa.es"
+    static String Cloud_PRE = "https://publisher-ssp-cldalm.pre.ap.intranet.cloud.digitalscale.es"
+    static String Cloud_PRO = "https://publisher-ssp-cldalm.pro.ap.intranet.cloud.digitalscale.es"
 
     static String Cloud_ERROR_DEPLOY_NO_INSTANCE_AVAILABLE = "El micro no esta correctamente configurado, pueden faltar secrets. Abrid foro indicando problema de configuracion del micro Cloud_DEPLOY_CONFIGURATION_ERROR Secret: "
-	static String Cloud_ERROR_DEPLOY_INSTANCE_REBOOTING = "The application is not starting. Check Kibana's logs to find the reason...\n(Doc: https://confluence.cloud.lacaixa.es/confluence/display/serArqMcrsvcs/Kibana+-+Log+tracing#Kibana-Logtracing-Consultalogsdearranque)"
-	static String Cloud_ERROR_DEPLOY_ON_MITIGATED_CENTER = "No se puede acceder al micro mediante la VIPA de un centro mitigado. (https://confluence.cloud.lacaixa.es/confluence/display/serArqMcrsvcs/Kibana+-+Log+tracing#Kibana-Logtracing-Consultalogsdearranque)  para asegurar que el problema no sea aplicativo antes de abrir un foro"
+	static String Cloud_ERROR_DEPLOY_INSTANCE_REBOOTING = "The application is not starting. Check Kibana's logs to find the reason...\n(Doc: https://confluence.cloud.digitalscale.es/confluence/display/serArqMcrsvcs/Kibana+-+Log+tracing#Kibana-Logtracing-Consultalogsdearranque)"
+	static String Cloud_ERROR_DEPLOY_ON_MITIGATED_CENTER = "No se puede acceder al micro mediante la VIPA de un centro mitigado. (https://confluence.cloud.digitalscale.es/confluence/display/serArqMcrsvcs/Kibana+-+Log+tracing#Kibana-Logtracing-Consultalogsdearranque)  para asegurar que el problema no sea aplicativo antes de abrir un foro"
     static String Cloud_ERROR_DEPLOY_KUBERNETES_DISABLED = " deshabilitado en Cloud debido a una intervención programada del equipo de Cloud. Intente la operación más tarde. En caso de considerarlo un incidente (p.e. perder una ventana de despliegue en PRO), puede abrir maximo contra Servicio TI: APLICACION \\ NO PROCEDE \\ CLDALM.PCLD Grupo resolutor: C-CXB-ES-ET-OTCAAS indicando el problema, recordando indicar la hora del error."
 
     static int Cloud_SECRET_VERIFICATION_MAX_RETRIES = 5
@@ -600,10 +600,10 @@ class GlobalVars {
 	/**
 	 * CHECKMARX VARIABLES
 	 */
-	static String URL_CHECKMARX_SERVER = "https://checkmarx.lacaixa.es/CxWebClient"
+	static String URL_CHECKMARX_SERVER = "https://checkmarx.digitalscale.es/CxWebClient"
 	static String JENKINS_CREDENTIALS_ID_CHECKMARX = "almmscheckmarx"
 	static String GROUP_TEAM_ID_CHECKMARX = "563e3977-6832-451d-bcae-e31f33171c3f"
-	static String TEAM_PATH_CHECKMARX = "CxServer\\Ackcent\\Caixabank\\ALMSRV"
+	static String TEAM_PATH_CHECKMARX = "CxServer\\Ackcent\\Digitalscalebank\\ALMSRV"
 	static String ALM_PRESET_CHECKMARX = "100026" // ALM preset in Checkmarx
 	static String FROM_SECURITY_EMAIL_CHECKMARX = "noreply@alm.project.com"
 	static String ENV_CHECKMARX="PRO"
@@ -616,8 +616,8 @@ class GlobalVars {
     /**
      * KPI VARIABLES
      */   
-    static String URL_KPI = "https://internal-reca3i-reca3i.pro.intranet.cloud.lacaixa.es/api/elk/logs"
-    //static String URL_ALMMETRICS = "https://k8sgateway.pre.cloud-1.alm.cloud.lacaixa.es/arch-service/almlogcollector-micro-1/api/elk/logs"
+    static String URL_KPI = "https://internal-reca3i-reca3i.pro.intranet.cloud.digitalscale.es/api/elk/logs"
+    //static String URL_ALMMETRICS = "https://k8sgateway.pre.cloud-1.alm.cloud.digitalscale.es/arch-service/almlogcollector-micro-1/api/elk/logs"
 	static String URL_ALMMETRICS = "https://almlogcollector.pro.int.srv.project.com/api/elk/logs"
     static String ALMENV_ALMMETRICS = "pro"
 	//static String ALMENV_ALMMETRICS = "dev"

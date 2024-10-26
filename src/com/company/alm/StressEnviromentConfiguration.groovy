@@ -43,11 +43,11 @@ class StressEnviromentConfiguration implements Serializable {
 		return appComponentsName;
 	}
 	
-	StressComponent getArchStressComponentByIcpName(String cloudName) {
+	StressComponent getArchStressComponentByCloudName(String cloudName) {
 		return archComponents.get(cloudName)
 	}
 	
-	StressComponent getAppStressComponentByIcpName(String cloudName) {
+	StressComponent getAppStressComponentByCloudName(String cloudName) {
 		return appComponents.get(cloudName)
 	}
 }

@@ -598,27 +598,27 @@ def call(String path, String environment, String micro, String version, String n
 			
 			if ("AZ2".equals(zoneDistribution)) {
 				if ("ocp".equals(k8sOrigin)) {
-					microUrlCloud="https://k8sgateway.${environment.toLowerCase()}.ocp-2.ocp-priv.alm.cloud.lacaixa.es"
-					microUrl="https://k8sgateway.${environment.toLowerCase()}.cloud-2.alm.cloud.lacaixa.es"
+					microUrlCloud="https://k8sgateway.${environment.toLowerCase()}.ocp-2.ocp-priv.alm.cloud.digitalscale.es"
+					microUrl="https://k8sgateway.${environment.toLowerCase()}.cloud-2.alm.cloud.digitalscale.es"
 				} else {
-					microUrl="https://k8sgateway.${environment.toLowerCase()}.ocp-2.ocp-priv.alm.cloud.lacaixa.es"
-					microUrlCloud="https://k8sgateway.${environment.toLowerCase()}.cloud-2.alm.cloud.lacaixa.es"
+					microUrl="https://k8sgateway.${environment.toLowerCase()}.ocp-2.ocp-priv.alm.cloud.digitalscale.es"
+					microUrlCloud="https://k8sgateway.${environment.toLowerCase()}.cloud-2.alm.cloud.digitalscale.es"
 				}
 			}else if ("AZ1".equals(zoneDistribution)) {
 				if ("ocp".equals(k8sOrigin)) {
-					microUrlCloud="https://k8sgateway.${environment.toLowerCase()}.ocp-1.ocp-priv.alm.cloud.lacaixa.es"
-					microUrl="https://k8sgateway.${environment.toLowerCase()}.cloud-1.alm.cloud.lacaixa.es"
+					microUrlCloud="https://k8sgateway.${environment.toLowerCase()}.ocp-1.ocp-priv.alm.cloud.digitalscale.es"
+					microUrl="https://k8sgateway.${environment.toLowerCase()}.cloud-1.alm.cloud.digitalscale.es"
 				} else {
-					microUrl="https://k8sgateway.${environment.toLowerCase()}.ocp-1.ocp-priv.alm.cloud.lacaixa.es"
-					microUrlCloud="https://k8sgateway.${environment.toLowerCase()}.cloud-1.alm.cloud.lacaixa.es"
+					microUrl="https://k8sgateway.${environment.toLowerCase()}.ocp-1.ocp-priv.alm.cloud.digitalscale.es"
+					microUrlCloud="https://k8sgateway.${environment.toLowerCase()}.cloud-1.alm.cloud.digitalscale.es"
 				}
 			}else {
 				if ("ocp".equals(k8sOrigin)) {
-					microUrlCloud="https://k8sgateway.${environment.toLowerCase()}.ocp-priv.alm.cloud.lacaixa.es"
-					microUrl="https://k8sgateway.${environment.toLowerCase()}.alm.cloud.lacaixa.es"
+					microUrlCloud="https://k8sgateway.${environment.toLowerCase()}.ocp-priv.alm.cloud.digitalscale.es"
+					microUrl="https://k8sgateway.${environment.toLowerCase()}.alm.cloud.digitalscale.es"
 				} else {
-					microUrl="https://k8sgateway.${environment.toLowerCase()}.ocp-priv.alm.cloud.lacaixa.es"
-					microUrlCloud="https://k8sgateway.${environment.toLowerCase()}.alm.cloud.lacaixa.es"
+					microUrl="https://k8sgateway.${environment.toLowerCase()}.ocp-priv.alm.cloud.digitalscale.es"
+					microUrlCloud="https://k8sgateway.${environment.toLowerCase()}.alm.cloud.digitalscale.es"
 				}
 			}
 			
@@ -707,9 +707,9 @@ def call(String path, String environment, String micro, String version, String n
 							}
 							//Añadimos las urls de kafka
 							if ("PRO".equals(environment.toUpperCase())) {
-								it.value=it.value+'|'+'schema-registry-fastdata.svb.lacaixa.es'
+								it.value=it.value+'|'+'schema-registry-fastdata.svb.digitalscale.es'
 							}else{
-								it.value=it.value+'|'+'schema-registry-pre-fastdata.svb.lacaixa.es'
+								it.value=it.value+'|'+'schema-registry-pre-fastdata.svb.digitalscale.es'
 							}
 						}
 						if (GlobalVars.additionalNonProxyHosts_EnvVar.equals(it.name)) {
@@ -718,9 +718,9 @@ def call(String path, String environment, String micro, String version, String n
 							}
 							//Añadimos las urls de kafka
 							if ("PRO".equals(environment.toUpperCase())) {
-								it.value=it.value+','+'schema-registry-fastdata.svb.lacaixa.es'
+								it.value=it.value+','+'schema-registry-fastdata.svb.digitalscale.es'
 							}else{
-								it.value=it.value+','+'schema-registry-pre-fastdata.svb.lacaixa.es'
+								it.value=it.value+','+'schema-registry-pre-fastdata.svb.digitalscale.es'
 							}
 						}
 					}

@@ -44,7 +44,7 @@ def resolveApiManagerUri(Environment env, Gateway gateway) {
 
     } else if (Environment.PRE == env && Gateway.INTERNAL == gateway) {
 
-        return "https://k8sgateway.pre.cloud-1.alm.cloud.lacaixa.es/adpbdd-micro-4/portal/technicalServices"
+        return "https://k8sgateway.pre.cloud-1.alm.cloud.digitalscale.es/adpbdd-micro-4/portal/technicalServices"
 
     } else {
 

@@ -154,7 +154,7 @@ class ExportConfig implements Serializable {
         def jenkinsYml = yml.load(("$workSpace/$yamlFileName" as File).text)
 
         // Templarize config
-        jenkinsYml.get("unclassified").get("location").put('url', 'https://jenkins-<%=component%>-<%=application%>.<%=environment%>.ap.intranet.cloud.lacaixa.es/') 
+        jenkinsYml.get("unclassified").get("location").put('url', 'https://jenkins-<%=component%>-<%=application%>.<%=environment%>.ap.intranet.cloud.digitalscale.es/') 
         jenkinsYml.get("jenkins").get('clouds').get(0).get('kubernetes').put('jenkinsTunnel', 'jaas-agent.cxb-<%=application%>-<%=environment%>:50000')
         jenkinsYml.get("jenkins").get('clouds').get(0).get('kubernetes').put('jenkinsUrl', 'http://jaas.cxb-<%=application%>-<%=environment%>:8080')
         jenkinsYml.get("jenkins").get('clouds').get(0).get('kubernetes').put('namespace', 'cxb-<%=application%>-<%=environment%>')

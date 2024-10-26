@@ -59,7 +59,7 @@ class PipelineData {
     String company = ""
     String executionProfileName
 
-    boolean deployOnIcp = false
+    boolean deployOnCloud = false
     boolean isDataserviceWithH2InMemoryDatabase = false
 
     //vcapsservices ids
