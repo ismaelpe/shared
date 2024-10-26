@@ -6,9 +6,9 @@ enum KpiAlmEventOperation {
     /**
      * HTTP requests
      */
-    GPL_HTTP_CALL("GPL_HTTP_CALL"),
+    AppPortal_HTTP_CALL("AppPortal_HTTP_CALL"),
     CATALOG_HTTP_CALL("CATALOG_HTTP_CALL"),
-    CATMSV_HTTP_CALL("CATMSV_HTTP_CALL"),
+    CATALOG_HTTP_CALL("CATALOG_HTTP_CALL"),
     CloudAPI_HTTP_CALL("CloudAPI_HTTP_CALL"),
     CloudAPI_HTTP_POLL("CloudAPI_HTTP_POLL"),
     CloudAPI_HTTP_CURL("CloudAPI_HTTP_CURL"),

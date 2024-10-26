@@ -3,7 +3,7 @@ import com.project.alm.*
 
 @Field Map pipelineParams
 
-//Mantener estos parametros/variables por si se deben generar estructuras de datos para enviar a GPL
+//Mantener estos parametros/variables por si se deben generar estructuras de datos para enviar a AppPortal
 @Field String gitURL
 @Field String gitCredentials
 @Field String jenkinsPath
@@ -45,7 +45,7 @@ import com.project.alm.*
 def call(Map pipelineParameters) {
     pipelineParams = pipelineParameters
 
-    //Mantener estos parametros/variables por si se deben generar estructuras de datos para enviar a GPL
+    //Mantener estos parametros/variables por si se deben generar estructuras de datos para enviar a AppPortal
     gitURL = "https://git.svb.digitalscale.es/"
     gitCredentials = "GITLAB_CREDENTIALS"
     jenkinsPath = "alm/services"
@@ -97,7 +97,7 @@ def call(Map pipelineParameters) {
 			timeout(time: 2, unit: 'HOURS')
         }
         environment {
-            GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
+            AppPortal = credentials('IDECUA-JENKINS-USER-TOKEN')
 			JNKMSV = credentials('JNKMSV-USER-TOKEN')			
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
@@ -150,12 +150,12 @@ def call(Map pipelineParameters) {
                     sendUndeployToCatalogStep()
 				}
 			}
-            stage('send-ancient-version-restored-to-GPL') {
+            stage('send-ancient-version-restored-to-AppPortal') {
                 when {
                     expression { existAncient && "false".equals(onlyConfig) && "true".equals(deployFinished) }
                 }
                 steps {
-                    sendAncientVersionRestoredToGPLStep()
+                    sendAncientVersionRestoredToAppPortalStep()
                 }
             }
             stage('apimanager-technicalservices-registration') {
@@ -193,7 +193,7 @@ def initPipelineStep() {
 
     initGlobalVars([loggerLevel: loggerLevel])  // pipelineParams arrive as null
 
-    // Analizamos el pom del master para obtener el nombre del artefecto, no deberia de cambiar y es el que se usa para la conexcion con GPL
+    // Analizamos el pom del master para obtener el nombre del artefecto, no deberia de cambiar y es el que se usa para la conexcion con AppPortal
     PomXmlStructure pomXmlStructureAux = getGitRepo(pathToRepo, "master", repoName, false, ArtifactType.valueOfType(artifactType), ArtifactSubType.valueOfSubType(artifactSubType), '', false)
 
     pipelineData = new PipelineData(PipelineStructureType.ROLLBACK, "${env.BUILD_TAG}", env.JOB_NAME, params)
@@ -206,19 +206,19 @@ def initPipelineStep() {
     calculateBuildCode(pomXmlStructure, pipelineData)
 
     kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.PIPELINE_STARTED, KpiLifeCycleStatus.OK)
-    sendPipelineStartToGPL(pomXmlStructure, pipelineData, pipelineOrigenId)
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "100");
+    sendPipelineStartToAppPortal(pomXmlStructure, pipelineData, pipelineOrigenId)
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "100");
     currentBuild.displayName = "Rollback_${pomXmlStructure.artifactVersion} of ${pomXmlStructure.artifactName}"
-    initGpl = true
+    initAppPortal = true
     pipelineData.prepareResultData(pomXmlStructure.artifactVersion, pomXmlStructure.artifactMicro, pomXmlStructure.artifactName)
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "100")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "100")
 }
 
 /** 
  * Step getGitRcoherenceValidationStepepoStep
  */
 def coherenceValidationStep() {
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "105")
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "105")
 
     pipelineData.deployFlag == true
     //initCloudDeploy(pomXmlStructure, pipelineData)	
@@ -241,11 +241,11 @@ def coherenceValidationStep() {
             }catch(Exception exception) {
                 printOpen("Se añade de nuevo el micro en la campaña en el catálogo.", EchoLevel.ALL)
                 iopCampaignCatalogUtils.addMicroToCampaign(pomXmlStructure,pipelineData)                                    
-                sendStageEndToGPL(pomXmlStructure, pipelineData, "105", Strings.toHtml(exception.getMessage()), null, "error")
+                sendStageEndToAppPortal(pomXmlStructure, pipelineData, "105", Strings.toHtml(exception.getMessage()), null, "error")
                 throw exception
             }
         }
-        sendStageEndToGPL(pomXmlStructure, pipelineData, "105")
+        sendStageEndToAppPortal(pomXmlStructure, pipelineData, "105")
     } else {
         //Tenemos que validar el micro
         def typeVersion=""
@@ -260,9 +260,9 @@ def coherenceValidationStep() {
         }
         try {
             iopDevopsCatalogUtils.validateCoherence(pipelineData.getGarArtifactType().getGarName(),pomXmlStructure.getApp(pipelineData.garArtifactType),pomXmlStructure.artifactMajorVersion,pomXmlStructure.artifactMinorVersion,pomXmlStructure.artifactFixVersion,typeVersion, enviroment)
-            sendStageEndToGPL(pomXmlStructure, pipelineData, "105")
+            sendStageEndToAppPortal(pomXmlStructure, pipelineData, "105")
         } catch (Exception e) {
-            sendStageEndToGPL(pomXmlStructure, pipelineData, "105", e.getMessage(), null, "warning")
+            sendStageEndToAppPortal(pomXmlStructure, pipelineData, "105", e.getMessage(), null, "warning")
         }
     }
     
@@ -273,12 +273,12 @@ def coherenceValidationStep() {
  */
 def checkCloudAvailiabilityStep() {
     printOpen("The artifact ${pomXmlStructure.artifactName}  from group ${pomXmlStructure.groupId} the micro to deploy is ${pomXmlStructure.artifactMicro}", EchoLevel.ALL)
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "110")
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "110")
     try {
         checkCloudAvailability(pomXmlStructure,pipelineData,enviroment.toUpperCase(),"DEPLOY")
-        sendStageEndToGPL(pomXmlStructure, pipelineData, "110")
+        sendStageEndToAppPortal(pomXmlStructure, pipelineData, "110")
     } catch (Exception e) {
-        sendStageEndToGPL(pomXmlStructure, pipelineData, "110", Strings.toHtml(e.getMessage()), null, "error")
+        sendStageEndToAppPortal(pomXmlStructure, pipelineData, "110", Strings.toHtml(e.getMessage()), null, "error")
         throw e
     }
 }
@@ -287,42 +287,42 @@ def checkCloudAvailiabilityStep() {
  * Step restoreConfigurationStep
  */
 def restoreConfigurationStep() {           
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "150")
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "150")
     getGitRepo(pathToRepo, '', repoName, false, ArtifactType.valueOfType(artifactType), ArtifactSubType.valueOfSubType(artifactSubType), versionToRollbackTo, true, false)
     sh "git config http.sslVerify false"
     pushConfigFiles(pomXmlStructure, pipelineData, false, true)
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "150")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "150")
 }
 
 /** 
  * Step undeployArtifactFromCloud
  */
 def undeployArtifactFromCloud() {
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "210")
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "210")
     printOpen("Haciendo undeploy y comprobando si se ha restaurado el ancient del componente", EchoLevel.ALL)
     existAncient = undeployCloud(pomXmlStructure, pipelineData, enviroment, ignoreExistingAncient, forceAllCenters)
     printOpen("Exist ancient? ${existAncient}", EchoLevel.ALL)
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "210")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "210")
 }
 
 /** 
  * Step getGitsendUndeployToCatalogStepRepoStep
  */
 def sendUndeployToCatalogStep() {
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "220")
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "220")
     printOpen("Hacemos undeploy en el catalog", EchoLevel.ALL)
-    undeployArtifactInCatMsv(pipelineData,pomXmlStructure,enviroment,true)
+    undeployArtifactInCatalog(pipelineData,pomXmlStructure,enviroment,true)
     printOpen("Fin Hacemos undeploy en el catalog", EchoLevel.ALL)
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "220")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "220")
 }
 
 /** 
- * Step sendAncientVersionRestoredToGPLStep
+ * Step sendAncientVersionRestoredToAppPortalStep
  */
-def sendAncientVersionRestoredToGPLStep() {
-    //Finalizamos el Pipeline de GPL de Rollback
-    sendPipelineEndedToGPL(initGpl, pomXmlStructure, pipelineData, true)
-    sendPipelineResultadoToGPL(initGpl, pomXmlStructure, pipelineData, true)
+def sendAncientVersionRestoredToAppPortalStep() {
+    //Finalizamos el Pipeline de AppPortal de Rollback
+    sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, pipelineData, true)
+    sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, pipelineData, true)
 
     //Obtenemos la version del ancient que acabamos de arrancar
     printOpen("Obtenemos la versión del ancient instalada", EchoLevel.ALL)
@@ -330,29 +330,29 @@ def sendAncientVersionRestoredToGPLStep() {
         version = getInfoAppCloud(pomXmlStructure, pipelineData, GlobalVars.ENDPOINT_INFO, enviroment).build.version
     }
     printOpen("Version obtenida del ancient: ${version}", EchoLevel.ALL)
-    //Iniciamos el Pipeline de instalación del ancient de GPL (es unicamente informativo ya que unicamente crea un nuevo pipeline y lo finaliza para poder enviar la Trazabilidad = I)
+    //Iniciamos el Pipeline de instalación del ancient de AppPortal (es unicamente informativo ya que unicamente crea un nuevo pipeline y lo finaliza para poder enviar la Trazabilidad = I)
     pipelineData = new PipelineData(PipelineStructureType.ROLLBACK_FINISH, "${env.BUILD_TAG}", env.JOB_NAME, params)
     pipelineData.initFromNonGit(enviroment, pathToRepo, originBranch, ArtifactType.valueOfType(artifactType), ArtifactSubType.valueOfSubType(artifactSubType), repoName)
     pomXmlStructure = new PomXmlStructure(ArtifactType.valueOfType(artifactType), ArtifactSubType.valueOfSubType(artifactSubType), artifact, version, repoName)
     pipelineData.pushUser = user
 
-    //Cambiamos el Id del pipeline para que no se machaque en GPL
+    //Cambiamos el Id del pipeline para que no se machaque en AppPortal
     pipelineData.pipelineStructure.pipelineId = pipelineData.pipelineStructure.pipelineId + "-2"
-    sendPipelineStartToGPL(pomXmlStructure, pipelineData, pipelineData.pipelineStructure.pipelineId)
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "100");
+    sendPipelineStartToAppPortal(pomXmlStructure, pipelineData, pipelineData.pipelineStructure.pipelineId)
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "100");
     currentBuild.displayName = "Rollback_Finish_${version} of ${pomXmlStructure.artifactName}"
-    initGpl = true
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "100")
+    initAppPortal = true
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "100")
 }
 
 /** 
  * Step apimanagerTechnicalservicesRegistrationStep
  */
 def apimanagerTechnicalservicesRegistrationStep() {
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "200")
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "200")
     printOpen("Publishing swagger contract to API Manager (adpbdd-micro)", EchoLevel.ALL)
     publishSwaggerContract2ApiManager(pipelineData, pomXmlStructure)
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "200")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "200")
 }
 
 /** 
@@ -370,8 +370,8 @@ def endPipelineSuccessStep() {
     printOpen("Se success el pipeline ${successPipeline}", EchoLevel.INFO)
 
     successPipeline = true
-    sendPipelineResultadoToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
-    sendPipelineEndedToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
 
     kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.PIPELINE_FINISHED, KpiLifeCycleStatus.OK)
 }
@@ -383,8 +383,8 @@ def endPipelineFailureStep() {
     printOpen("Se failure el pipeline ${successPipeline}", EchoLevel.ERROR)
 
     successPipeline = false
-    sendPipelineResultadoToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
-    sendPipelineEndedToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
 
     kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.PIPELINE_FINISHED, KpiLifeCycleStatus.KO)
 }

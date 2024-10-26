@@ -26,7 +26,7 @@ def call(text, logger = null) {
             if ((logger.level() & consoleLogger.level()) == logger.level()) {
                 steps.echo("[$logger] - $text".toString())
                 if(env.logsReport) GlobalVars.PIPELINE_LOGS += "[$logger] - $text\n"
-                if(env.sendLogsToGpl && (logger == EchoLevel.INFO || logger == EchoLevel.ERROR)) {
+                if(env.sendLogsToAppPortal && (logger == EchoLevel.INFO || logger == EchoLevel.ERROR)) {
                     String htmlLog = "[${new Date().format("yyyy-MM-dd'T'HH:mm:ss")}][$logger] - $text"
                     GlobalVars.STAGE_LOGS += htmlLog+"\n"
                 }

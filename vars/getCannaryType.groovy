@@ -22,7 +22,7 @@ def call(PomXmlStructure pomXml, PipelineData pipeline) {
                     kpiAlmEvent: new KpiAlmEvent(
                         pomXml, pipeline,
                         KpiAlmEventStage.UNDEFINED,
-                        KpiAlmEventOperation.CATMSV_HTTP_CALL)
+                        KpiAlmEventOperation.CATALOG_HTTP_CALL)
                 ])
 
             //SRV.MS/demoarqcbk

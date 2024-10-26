@@ -2,9 +2,9 @@ import com.project.alm.*
 
 def call(PomXmlStructure pomXml, PipelineData pipelineData, String pipelineOrigId) {
 
-    if (notificationToGplApplies()) {
+    if (notificationToAppPortalApplies()) {
 
-        printOpen("Sending to GPL a Pipeline Start operation", EchoLevel.DEBUG)
+        printOpen("Sending to AppPortal a Pipeline Start operation", EchoLevel.DEBUG)
 
         def url = idecuaRoutingUtils.pipelineUrl();
         String commitId = ''
@@ -29,7 +29,7 @@ def call(PomXmlStructure pomXml, PipelineData pipelineData, String pipelineOrigI
             commit            : "${commitId}",
             branch            : "${pipelineData.branchStructure.branchName}",
             nombre            : pipelineData.pipelineStructure.nombre,
-            estado            : "${GlobalVars.GPL_STATE_RUNNING}",
+            estado            : "${GlobalVars.AppPortal_STATE_RUNNING}",
             fechaCreacion     : new Date(),
             anteriorPipelineId: "${pipelineOrigId}",
             stages            : pipelineData.pipelineStructure.getStages(),
@@ -38,31 +38,31 @@ def call(PomXmlStructure pomXml, PipelineData pipelineData, String pipelineOrigI
             //serverUrl         : "${env.JENKINS_URL}",
             //serverUrl         : "https://jnkmsv.pro.int.srv.project.com/jenkins",
             serverUrl         : "${env.JNKMSV_DEVPORTAL_URL}",
-            //jenkinsUserId     : "${GPL_USR}",
-            //jenkinsUserToken  : "${GPL_PSW}"
+            //jenkinsUserId     : "${AppPortal_USR}",
+            //jenkinsUserToken  : "${AppPortal_PSW}"
             jenkinsUserId     : "${JNKMSV_USR}",
             jenkinsUserToken  : "${JNKMSV_PSW}"
         ]
 
-        def response = sendRequestToGpl('POST', url, "", body, pipelineData, pomXml)
+        def response = sendRequestToAppPortal('POST', url, "", body, pipelineData, pomXml)
 
         return response
     }
 }
 
 /**
- * New version of sendPipelineStartToGPL, do not depend on PomXmlStructure, send minimun parameters
+ * New version of sendPipelineStartToAppPortal, do not depend on PomXmlStructure, send minimun parameters
  * @param pipelineData
  * @param pipelineParams
  * @return
  */
 def call(PipelineData pipelineData, Map pipelineParams) {
 
-    if (notificationToGplApplies()) {
+    if (notificationToAppPortalApplies()) {
 
-        printOpen("Sending to GPL a Pipeline Start operation", EchoLevel.DEBUG)
+        printOpen("Sending to AppPortal a Pipeline Start operation", EchoLevel.DEBUG)
 
-        def url = GlobalVars.URL_GPL + GlobalVars.PATH_GPL_PIPELINE
+        def url = GlobalVars.URL_AppPortal + GlobalVars.PATH_AppPortal_PIPELINE
 
         ArtifactSubType artifactSubType = ArtifactSubType.valueOfSubType(pipelineParams.subType)
         GarAppType garAppType = PipelineData.initFromGitUrlGarApp(pipelineData.gitUrl, artifactSubType)
@@ -76,21 +76,21 @@ def call(PipelineData pipelineData, Map pipelineParams) {
             userId          : "${pipelineData.pushUser}",
             commit          : "${pipelineData.commitId}",
             nombre          : "${pipelineData.pipelineStructure.nombre}",
-            estado          : "${GlobalVars.GPL_STATE_RUNNING}",
+            estado          : "${GlobalVars.AppPortal_STATE_RUNNING}",
             fechaCreacion   : new Date(),
             stages          : pipelineData.pipelineStructure.getStages(),
             path            : "${env.JOB_NAME}",
             runId           : "${env.BUILD_NUMBER}",
             //serverUrl       : "${env.JENKINS_URL}",
             serverUrl         : "${env.JNKMSV_DEVPORTAL_URL}",
-            //jenkinsUserId   : "${GPL_USR}",
-            //jenkinsUserToken: "${GPL_PSW}"
+            //jenkinsUserId   : "${AppPortal_USR}",
+            //jenkinsUserToken: "${AppPortal_PSW}"
             jenkinsUserId     : "${JNKMSV_USR}",
             jenkinsUserToken  : "${JNKMSV_PSW}"
 
         ]
 
-        def response = sendRequestToGpl('POST', url, "", body, aplicacion, garAppType.getGarName())
+        def response = sendRequestToAppPortal('POST', url, "", body, aplicacion, garAppType.getGarName())
 
         return response
     }
@@ -98,14 +98,14 @@ def call(PipelineData pipelineData, Map pipelineParams) {
 
 
 /**
- * New version of sendPipelineStartToGPL, do not depend on PomXmlStructure, send minimun parameters
+ * New version of sendPipelineStartToAppPortal, do not depend on PomXmlStructure, send minimun parameters
  * @param pipelineData
  * @param pipelineParams
  * @return
  */
 def call(PipelineData pipelineData, String garAppType, String garAppName, String major, String environment, String userId) {
 
-    if (notificationToGplApplies()) {
+    if (notificationToAppPortalApplies()) {
 
         def response = sendRequestToAlm3MS(
             'GET',
@@ -116,7 +116,7 @@ def call(PipelineData pipelineData, String garAppType, String garAppName, String
                 kpiAlmEvent: new KpiAlmEvent(
                     null, null,
                     KpiAlmEventStage.UNDEFINED,
-                    KpiAlmEventOperation.CATMSV_HTTP_CALL)
+                    KpiAlmEventOperation.CATALOG_HTTP_CALL)
             ])
 
         if (response.status == 200) {
@@ -135,14 +135,14 @@ def call(PipelineData pipelineData, String garAppType, String garAppName, String
                     kpiAlmEvent: new KpiAlmEvent(
                         null, null,
                         KpiAlmEventStage.UNDEFINED,
-                        KpiAlmEventOperation.CATMSV_HTTP_CALL)
+                        KpiAlmEventOperation.CATALOG_HTTP_CALL)
                 ])
 
             if (response.status == 200) {
                 printOpen("Recuperado los datos ${json}", EchoLevel.ALL)
                 json = response.content
 
-                def url = GlobalVars.URL_GPL + GlobalVars.PATH_GPL_PIPELINE
+                def url = GlobalVars.URL_AppPortal + GlobalVars.PATH_AppPortal_PIPELINE
 
                 def body = [
                     id              : "${pipelineData.pipelineStructure.pipelineId}",
@@ -159,21 +159,21 @@ def call(PipelineData pipelineData, String garAppType, String garAppName, String
                     userId          : "${userId}",
                     commit          : "N/A",
                     nombre          : "${pipelineData.pipelineStructure.nombre}",
-                    estado          : "${GlobalVars.GPL_STATE_RUNNING}",
+                    estado          : "${GlobalVars.AppPortal_STATE_RUNNING}",
                     fechaCreacion   : new Date(),
                     stages          : pipelineData.pipelineStructure.getStages(),
                     path            : "${env.JOB_NAME}",
                     runId           : "${env.BUILD_NUMBER}",
                     //serverUrl       : "${env.JENKINS_URL}",
                     serverUrl       : "${env.JNKMSV_DEVPORTAL_URL}",
-                    //jenkinsUserId   : "${GPL_USR}",
-                    //jenkinsUserToken: "${GPL_PSW}"
+                    //jenkinsUserId   : "${AppPortal_USR}",
+                    //jenkinsUserToken: "${AppPortal_PSW}"
                     jenkinsUserId   : "${JNKMSV_USR}",
                     jenkinsUserToken: "${JNKMSV_PSW}"
 
                 ]
 
-                response = sendRequestToGpl('POST', url, "", body, garAppName, garAppType)
+                response = sendRequestToAppPortal('POST', url, "", body, garAppName, garAppType)
 
                 return response
 
@@ -190,9 +190,9 @@ def call(PipelineData pipelineData, String garAppType, String garAppName, String
 
 def call(IClientInfo clientInfo, PipelineData pipelineData, String pipelineOrigId) {
 
-    if (notificationToGplApplies()) {
+    if (notificationToAppPortalApplies()) {
 
-        printOpen("Sending to GPL a Pipeline Start operation", EchoLevel.DEBUG)
+        printOpen("Sending to AppPortal a Pipeline Start operation", EchoLevel.DEBUG)
 
         def url = idecuaRoutingUtils.pipelineUrl();
 
@@ -218,7 +218,7 @@ def call(IClientInfo clientInfo, PipelineData pipelineData, String pipelineOrigI
             commit            : "${commitId}",
             branch            : "${pipelineData.branchStructure?.branchName}",
             nombre            : pipelineData.pipelineStructure.nombre,
-            estado            : "${GlobalVars.GPL_STATE_RUNNING}",
+            estado            : "${GlobalVars.AppPortal_STATE_RUNNING}",
             fechaCreacion     : new Date(),
             anteriorPipelineId: "${pipelineOrigId}",
             stages            : pipelineData.pipelineStructure.getStages(),
@@ -226,13 +226,13 @@ def call(IClientInfo clientInfo, PipelineData pipelineData, String pipelineOrigI
             runId             : "${env.BUILD_NUMBER}",
             //serverUrl         : "${env.JENKINS_URL}",
             serverUrl         : "${env.JNKMSV_DEVPORTAL_URL}",
-            //jenkinsUserId     : "${GPL_USR}",
-            //jenkinsUserToken  : "${GPL_PSW}"
+            //jenkinsUserId     : "${AppPortal_USR}",
+            //jenkinsUserToken  : "${AppPortal_PSW}"
             jenkinsUserId     : "${JNKMSV_USR}",
             jenkinsUserToken  : "${JNKMSV_PSW}"
         ]
 
-        def response = sendRequestToGpl('POST', url, "", body, pipelineData, clientInfo)
+        def response = sendRequestToAppPortal('POST', url, "", body, pipelineData, clientInfo)
 
         return response
     }

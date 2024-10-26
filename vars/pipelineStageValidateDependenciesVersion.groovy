@@ -6,7 +6,7 @@ import com.project.alm.ArtifactSubType
 
 def call(PomXmlStructure pomXmlStructure, PipelineData pipelineData, String stageId) {
 
-    sendStageStartToGPL(pomXmlStructure, pipelineData, stageId)
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, stageId)
 	
 	def status=""
 	def warning=""
@@ -34,14 +34,14 @@ def call(PomXmlStructure pomXmlStructure, PipelineData pipelineData, String stag
 
     } catch (Exception e) {
 		printOpen("Error validating dependencies version: ${e.getMessage()}", EchoLevel.ERROR)
-		sendStageEndToGPL(pomXmlStructure, pipelineData, stageId, null, null, "error")
+		sendStageEndToAppPortal(pomXmlStructure, pipelineData, stageId, null, null, "error")
         throw e
 
     }
     if (warning=="") {
-		sendStageEndToGPL(pomXmlStructure, pipelineData, stageId)
+		sendStageEndToAppPortal(pomXmlStructure, pipelineData, stageId)
 	}else {
-		sendStageEndToGPL(pomXmlStructure, pipelineData, stageId, warning, null, 'warning')
+		sendStageEndToAppPortal(pomXmlStructure, pipelineData, stageId, warning, null, 'warning')
     }
     
 

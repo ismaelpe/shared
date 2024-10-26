@@ -6,7 +6,7 @@ import com.project.alm.*
 @Field String gitURL
 @Field String gitCredentials
 @Field String jenkinsPath
-@Field boolean initGpl
+@Field boolean initAppPortal
 
 @Field String originBranch
 @Field String pathToRepo
@@ -46,11 +46,11 @@ import com.project.alm.*
 def call(Map pipelineParameters) {
     pipelineParams = pipelineParameters
 
-    //Mantener estos parametros/variables por si se deben generar estructuras de datos para enviar a GPL
+    //Mantener estos parametros/variables por si se deben generar estructuras de datos para enviar a AppPortal
     gitURL = "https://git.svb.digitalscale.es/"
     gitCredentials = "GITLAB_CREDENTIALS"
     jenkinsPath = "alm/services"
-    initGpl = false
+    initAppPortal = false
 
     originBranch = params.originBranchParam
     pathToRepo = params.pathToRepoParam
@@ -87,7 +87,7 @@ def call(Map pipelineParameters) {
 			timeout(time: 2, unit: 'HOURS')
         }
         environment {
-            GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
+            AppPortal = credentials('IDECUA-JENKINS-USER-TOKEN')
 			JNKMSV = credentials('JNKMSV-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
@@ -148,8 +148,8 @@ def initPipelineStep() {
     pipelineData.buildCode = pomXmlStructure.artifactVersion
     printOpen("Branch Type: ${pipelineData.branchStructure.branchType}", EchoLevel.INFO)
 
-    sendPipelineStartToGPL(pomXmlStructure, pipelineData, pipelineOrigenId)
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "100");
+    sendPipelineStartToAppPortal(pomXmlStructure, pipelineData, pipelineOrigenId)
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "100");
     
     kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.PIPELINE_STARTED, KpiLifeCycleStatus.OK)
     kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.CLOSE_STARTED, KpiLifeCycleStatus.OK)
@@ -157,15 +157,15 @@ def initPipelineStep() {
     
     pipelineData.prepareResultData(pomXmlStructure.artifactVersion, pomXmlStructure.artifactMicro, pomXmlStructure.artifactName, pomXmlStructure.artifactType, pomXmlStructure.artifactSubType, originBranch)
     
-    initGpl = true
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "100")
+    initAppPortal = true
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "100")
 }
 
 /**
  * Stage createMRStep
  */
 def createMRStep(){
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "600")
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "600")
     if (!(pipelineData.getExecutionMode().invokeNextActionAuto() && ObtainNextJobOptionsUtils.hasNextJob(pipelineData.getExecutionMode().actionFlag(), pipelineData.pipelineStructure.resultPipelineData.getAcciones(true)))) {
         mergeRequestToMaster(pipelineData, pomXmlStructure, 'master')
     }
@@ -175,7 +175,7 @@ def createMRStep(){
     }else {
         printOpen("Another thing", EchoLevel.DEBUG)
     }
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "600")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "600")
 }
 
 /**
@@ -192,8 +192,8 @@ def endPipelineAlwaysStep() {
 def endPipelineSuccessStep() {
     successPipeline = true
     printOpen("SUCCESS", EchoLevel.INFO)
-    sendPipelineResultadoToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
-    sendPipelineEndedToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
     kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.DEPLOY_FINISHED, KpiLifeCycleStatus.OK, "PRO")
     kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.CLOSE_FINISHED, KpiLifeCycleStatus.OK)
     kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.PIPELINE_FINISHED, KpiLifeCycleStatus.OK)
@@ -210,8 +210,8 @@ def endPipelineSuccessStep() {
 def endPipelineFailureStep() { 
     successPipeline = false
     printOpen("FAILURE", EchoLevel.ERROR)
-    sendPipelineResultadoToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
-    sendPipelineEndedToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
     kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.DEPLOY_FINISHED, KpiLifeCycleStatus.KO, "PRO")
     kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.CLOSE_FINISHED, KpiLifeCycleStatus.KO)
     kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.PIPELINE_FINISHED, KpiLifeCycleStatus.KO)

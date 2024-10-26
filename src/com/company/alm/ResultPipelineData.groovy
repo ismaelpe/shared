@@ -200,7 +200,7 @@ abstract class ResultPipelineData {
         ]
     }
 
-    def retry(def additionalParameters = [:]) { // Acción que se envia a GPL para reintentar un pipeline fallido
+    def retry(def additionalParameters = [:]) { // Acción que se envia a AppPortal para reintentar un pipeline fallido
         Map dictionary = [
             nombre       : "Reintentar",
             tipoAccion   : "LANZAR_JOB",

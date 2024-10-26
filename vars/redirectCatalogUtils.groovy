@@ -261,7 +261,7 @@ def deployRedirectAndZeroPods(def micro,def newChar, def newDocker) {
 	}
 }
 
-def deployRedirectedCatMsv(def micro) {
+def deployRedirectedCatalog(def micro) {
 	def deployParams = [
 		replicas: 0,
 		memoryLimits: ""+micro.deployedMemoryLimits-'Mi',
@@ -356,7 +356,7 @@ def redirectAndNotify(def microsOnDev, def microsOnTst, def maxMicrosRedirected,
 							  if (weHaveToContinue) {
 								  weHaveToContinue=deployRedirectAndZeroPods(val,newVersionChar,newVersionDocker)
 								  if (weHaveToContinue==true){
-									  weHaveToContinue=deployRedirectedCatMsv(val)
+									  weHaveToContinue=deployRedirectedCatalog(val)
 									  if (weHaveToContinue) {
 										  notifyToAppTeam(val)
 										  numMicrosRedirected=numMicrosRedirected+1

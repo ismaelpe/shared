@@ -8,7 +8,7 @@ import com.project.alm.*
 @Field String artifactSubType
 @Field String targetBranch
 @Field String gitLabActionType
-@Field boolean initGpl
+@Field boolean initAppPortal
 @Field boolean successPipeline
 
 @Field PomXmlStructure pomXmlStructure
@@ -29,7 +29,7 @@ def call(Map pipelineParameters) {
     pipelineParams = pipelineParameters
 
     dataSourceFile = ""
-    initGpl = false
+    initAppPortal = false
     successPipeline = false
     pipelineBehaviour = PipelineBehavior.LIKE_ALWAYS
     sendToGitLab = true
@@ -44,7 +44,7 @@ def call(Map pipelineParameters) {
 			timeout(time: 2, unit: 'HOURS')
         }
         environment {
-            GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
+            AppPortal = credentials('IDECUA-JENKINS-USER-TOKEN')
 			JNKMSV = credentials('JNKMSV-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
@@ -127,7 +127,7 @@ def call(Map pipelineParameters) {
             }
             stage('publish-artifact-catalog') {
                 when {
-                    expression { GlobalVars.GSA_ENABLED && !pipelineData.isRebaseOfARelease && !pipelineData.isPushCI() && pipelineData.branchStructure.branchType != BranchType.FEATURE }
+                    expression { GlobalVars.BackEndAppPortal_ENABLED && !pipelineData.isRebaseOfARelease && !pipelineData.isPushCI() && pipelineData.branchStructure.branchType != BranchType.FEATURE }
                 }
                 steps {
                    publishArtifactCatalogStep()
@@ -232,10 +232,10 @@ def initAndValidateStep() {
     } else {
         calculateBuildCode(pomXmlStructure, pipelineData)
 
-        sendPipelineStartToGPL(pomXmlStructure, pipelineData, '')
-        initGpl = true
+        sendPipelineStartToAppPortal(pomXmlStructure, pipelineData, '')
+        initAppPortal = true
 
-        sendStageStartToGPL(pomXmlStructure, pipelineData, "100")
+        sendStageStartToAppPortal(pomXmlStructure, pipelineData, "100")
 
         currentBuild.displayName = "Build_${env.BUILD_ID}_" + pipelineData.getPipelineBuildName()
         debugInfo(pipelineParams, pomXmlStructure, pipelineData)
@@ -246,7 +246,7 @@ def initAndValidateStep() {
             printOpen("${CicsVars.AGILEWORKS_VALIDATION_ENABLED} | ${pipelineData.branchStructure.branchType} | ${pipelineData.isBpiRepo()} | ${pipelineData.isBpiArchRepo()}", EchoLevel.ALL)
             if (CicsVars.AGILEWORKS_VALIDATION_ENABLED && pipelineData.branchStructure.branchType == BranchType.FEATURE && (pipelineData.isBpiRepo() || pipelineData.isBpiArchRepo())) {
                 if (!pipelineData.getExecutionMode().skipAgileworksValidation()) {
-                    sendAgileWorkAuthFeatureToGPL(pomXmlStructure, pipelineData, GlobalVars.DEV_ENVIRONMENT, null, "${branchStructure.featureNumber}", pipelineData.getPushUserEmail())
+                    sendAgileWorkAuthFeatureToAppPortal(pomXmlStructure, pipelineData, GlobalVars.DEV_ENVIRONMENT, null, "${branchStructure.featureNumber}", pipelineData.getPushUserEmail())
                 } else {
                     printOpen("AgileWork skipped by Execution Profile: ${pipelineData.executionProfileName}", EchoLevel.ALL)
                 }
@@ -254,7 +254,7 @@ def initAndValidateStep() {
                 printOpen("Not a BPI artifact. AgileWork will not be checked.", EchoLevel.ALL)
             }
         } catch (Exception e) {
-            sendStageEndToGPL(pomXmlStructure, pipelineData, "100", e.getMessage(), null, "error")
+            sendStageEndToAppPortal(pomXmlStructure, pipelineData, "100", e.getMessage(), null, "error")
             throw e
         }
 
@@ -277,7 +277,7 @@ def initAndValidateStep() {
                     pipelineData.branchStructure.branchType == BranchType.FEATURE &&
                     (pipelineData.isBpiRepo() || pipelineData.isBpiArchRepo())) {
                     if (!pipelineData.getExecutionMode().skipAgileworksValidation()) {
-                        sendAgileWorkAuthFeatureToGPL(pomXmlStructure, pipelineData, GlobalVars.DEV_ENVIRONMENT, null, "${branchStructure.featureNumber}", pipelineData.getPushUserEmail())
+                        sendAgileWorkAuthFeatureToAppPortal(pomXmlStructure, pipelineData, GlobalVars.DEV_ENVIRONMENT, null, "${branchStructure.featureNumber}", pipelineData.getPushUserEmail())
                     } else {
                         printOpen("AgileWork skipped by Execution Profile: ${pipelineData.executionProfileName}", EchoLevel.ALL)
                     }
@@ -286,11 +286,11 @@ def initAndValidateStep() {
                 }
 
             } catch (Exception e) {
-                sendStageEndToGPL(pomXmlStructure, pipelineData, "100", e.getMessage(), null, "error")
+                sendStageEndToAppPortal(pomXmlStructure, pipelineData, "100", e.getMessage(), null, "error")
                 throw e
             }
         }
-        sendStageEndToGPL(pomXmlStructure, pipelineData, "100")
+        sendStageEndToAppPortal(pomXmlStructure, pipelineData, "100")
     }
 }
 
@@ -298,7 +298,7 @@ def initAndValidateStep() {
  * Stage 'updateVersionStep'
  */
 def updateVersionStep() {
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "150")
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "150")
     
     printOpen("Updating Version", EchoLevel.ALL)
     
@@ -308,14 +308,14 @@ def updateVersionStep() {
         pipelineData.buildCode = pomXmlStructure.getArtifactVersionQualifier()
     }
     
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "150")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "150")
 }
 
 /**
  * Stage 'copyConfigFilesStep'
  */
 def copyConfigFilesStep() { 
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "500")
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "500")
     try {
         if (pipelineData.branchStructure.branchType == BranchType.HOTFIX || pipelineData.branchStructure.branchType == BranchType.RELEASE) {
             pushConfigFilesFromCfgProject(pomXmlStructure, GlobalVars.DEV_ENVIRONMENT)
@@ -323,9 +323,9 @@ def copyConfigFilesStep() {
         } else if (pipelineData.branchStructure.branchType == BranchType.MASTER) {
             pushConfigFilesFromCfgProject(pomXmlStructure, GlobalVars.DEV_ENVIRONMENT)
         }
-        sendStageEndToGPL(pomXmlStructure, pipelineData, "500")
+        sendStageEndToAppPortal(pomXmlStructure, pipelineData, "500")
     }catch (Exception e) {
-            sendStageEndToGPLAndThrowError(pomXmlStructure, pipelineData, "500",e)
+            sendStageEndToAppPortalAndThrowError(pomXmlStructure, pipelineData, "500",e)
     }
 }
 
@@ -333,7 +333,7 @@ def copyConfigFilesStep() {
  * Stage 'refreshMicrosStep'
  */
 def refreshMicrosStep() {
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "510")
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "510")
     try {
         if (pipelineData.branchStructure.branchType == BranchType.HOTFIX || pipelineData.branchStructure.branchType == BranchType.RELEASE) {
             refreshDependencyConfig(pomXmlStructure,pipelineData,'BOTH', GlobalVars.DEV_ENVIRONMENT)
@@ -341,9 +341,9 @@ def refreshMicrosStep() {
         } else if (pipelineData.branchStructure.branchType == BranchType.MASTER) {
             refreshDependencyConfig(pomXmlStructure,pipelineData,'BOTH', GlobalVars.DEV_ENVIRONMENT)
         }
-        sendStageEndToGPL(pomXmlStructure, pipelineData, "510")
+        sendStageEndToAppPortal(pomXmlStructure, pipelineData, "510")
     }catch (Exception e) {
-            sendStageEndToGPLAndThrowError(pomXmlStructure, pipelineData, "510",e)
+            sendStageEndToAppPortalAndThrowError(pomXmlStructure, pipelineData, "510",e)
     }
 }
 
@@ -351,7 +351,7 @@ def refreshMicrosStep() {
  * Stage 'changelogFileStep'
  */
 def changelogFileStep() {
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "600")
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "600")
     boolean featureAdded = createChangeLogFromMergerRequestAPI(pipelineData, pomXmlStructure)
     //createChangeLogFromMergeRequest(pipelineData, pomXmlStructure)
     if (featureAdded) {
@@ -361,43 +361,43 @@ def changelogFileStep() {
     printOpen("pipelineData: ", EchoLevel.ALL)
     printOpen("branchStructure: ", EchoLevel.ALL)
     printOpen("targetBranch: ", EchoLevel.ALL)
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "600")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "600")
 }
 
 /**
  * Stage 'pushReleaseToGitStep'
  */
 def pushReleaseToGitStep() {
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "700")
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "700")
     printOpen("antes de tag: ", EchoLevel.ALL)
     tagVersion(pomXmlStructure, pipelineData, false, false)
     printOpen("luego de tag: ", EchoLevel.ALL)
     pushRepo(pomXmlStructure, pipelineData)
     printOpen("luego de pushRepo: ", EchoLevel.ALL)
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "700")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "700")
 }
 
 /**
  * Stage 'deployArtifactoryStep'
  */
 def deployArtifactoryStep() {
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "800")
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "800")
     deployNexus(pomXmlStructure, pipelineData)
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "800")
-    sendPipelineUpdateToGPL(initGpl, pomXmlStructure, pipelineData, '')
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "800")
+    sendPipelineUpdateToAppPortal(initAppPortal, pomXmlStructure, pipelineData, '')
 }
 
 /**
  * Stage 'publishArtifactCatalogStep'
  */
 def publishArtifactCatalogStep() {
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "950")
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "950")
  
     pipelineData.prepareResultData(pomXmlStructure.artifactVersion, pomXmlStructure.artifactMicro, pomXmlStructure.artifactName)
     printOpen("publishing artifact in catalog", EchoLevel.ALL)
 
     publishArtifactInCatalog(pipelineData, pomXmlStructure)
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "950")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "950")
 }
 
 /**
@@ -431,8 +431,8 @@ def endPipelineSuccessStep() {
             printOpen("No Enviamos final state", EchoLevel.ALL)
         }
     }
-    sendPipelineResultadoToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
-    sendPipelineEndedToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
     if (pipelineData.getExecutionMode().invokeNextActionAuto() && !pipelineData.isPushCI() && "MERGE" != pipelineData.gitAction) {
         printOpen("Modo test activado en fase de build", EchoLevel.ALL)
         invokeNextJob(pipelineData, pomXmlStructure)
@@ -457,13 +457,13 @@ def endPipelineFailureStep() {
         }
         printOpen("No Enviamos final state", EchoLevel.ALL)
     }
-    if (initGpl == false) {
-        //init pipeline in GPL with minimun parameters
-        sendPipelineStartToGPL(pipelineData, pipelineParams)
-        initGpl = true
+    if (initAppPortal == false) {
+        //init pipeline in AppPortal with minimun parameters
+        sendPipelineStartToAppPortal(pipelineData, pipelineParams)
+        initAppPortal = true
     }
-    sendPipelineResultadoToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
-    sendPipelineEndedToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
 
     if (pipelineData.getExecutionMode() != null && pipelineData.getExecutionMode().isNotifyforFailureNeeded()) {
         //Mando email

@@ -2,11 +2,11 @@ import com.project.alm.EchoLevel
 import com.project.alm.GlobalVars
 import com.project.alm.PipelineData
 
-def call(boolean initGpl, def pomXmlOrIClientInfo, PipelineData pipelineData, boolean success, boolean notifyDeployment = true) {
+def call(boolean initAppPortal, def pomXmlOrIClientInfo, PipelineData pipelineData, boolean success, boolean notifyDeployment = true) {
 
-    if (initGpl && notificationToGplApplies()) {
+    if (initAppPortal && notificationToAppPortalApplies()) {
 
-        printOpen("Sending to GPL a Pipeline Result operation", EchoLevel.DEBUG)
+        printOpen("Sending to AppPortal a Pipeline Result operation", EchoLevel.DEBUG)
 
         def url = idecuaRoutingUtils.pipelineResultUrl(pipelineData.pipelineStructure.pipelineId)
         def body = pipelineData.pipelineStructure.resultPipelineData.getResult(success, this)
@@ -32,17 +32,17 @@ def call(boolean initGpl, def pomXmlOrIClientInfo, PipelineData pipelineData, bo
         }		
 		
 
-        sendRequestToGpl('PUT', url, "", body, pipelineData, pomXmlOrIClientInfo)
+        sendRequestToAppPortal('PUT', url, "", body, pipelineData, pomXmlOrIClientInfo)
 		
 		//Si es un deploy tenemos que llamar al notifyDeployment
         if (notifyDeployment) {
-		    sendPipelineNotifyDeploymentToGPL(initGpl, pomXmlOrIClientInfo, pipelineData, success )
+		    sendPipelineNotifyDeploymentToAppPortal(initAppPortal, pomXmlOrIClientInfo, pipelineData, success )
         }
 		
 
     } else {
 
-        printOpen("Not send the result to GPL", EchoLevel.DEBUG)
+        printOpen("Not send the result to AppPortal", EchoLevel.DEBUG)
 
 	}
 }

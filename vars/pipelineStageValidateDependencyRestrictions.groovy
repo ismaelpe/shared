@@ -4,7 +4,7 @@ import com.project.alm.PipelineData
 
 def call(PomXmlStructure pomXmlStructure, PipelineData pipelineData, String stageId) {
 
-    sendStageStartToGPL(pomXmlStructure, pipelineData, stageId)
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, stageId)
 
     try {
 
@@ -12,10 +12,10 @@ def call(PomXmlStructure pomXmlStructure, PipelineData pipelineData, String stag
 
     } catch (Exception e) {
 
-        sendStageEndToGPLAndThrowError(pomXmlStructure, pipelineData, stageId, e)
+        sendStageEndToAppPortalAndThrowError(pomXmlStructure, pipelineData, stageId, e)
 
     }
 
-    sendStageEndToGPL(pomXmlStructure, pipelineData, stageId)
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, stageId)
 
 }

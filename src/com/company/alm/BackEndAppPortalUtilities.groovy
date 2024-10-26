@@ -2,7 +2,7 @@ package com.project.alm
 
 import groovy.json.JsonSlurper
 
-class GsaUtilities {
+class BackEndAppPortalUtilities {
 
 
 	public static String getMostRecentVersionInEnvironment(String majorVersion, String versions, String environment) {

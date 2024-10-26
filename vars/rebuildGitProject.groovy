@@ -38,7 +38,7 @@ def call(String gitUrl) {
                 ignoreSslErrors: ingnoreSslErrors,
                 customHeaders: customHeaders,
                 url: "$GlobalVars.gitlabApiDomain$projectPathUrlEncoded",
-                httpProxy: "http://proxyserv.svb.digitalscale.es:8080",
+                httpProxy: "http://proxy.digitalscale.es:8080",
                 validResponseCodes: '200:300'
 
         def json = new JsonSlurperClassic().parseText(projectInfo.content)
@@ -56,7 +56,7 @@ def call(String gitUrl) {
 				customHeaders: customHeaders,
 				requestBody: "merge_requests_author_approval=false",
 				url: "$GlobalVars.gitlabApiDomain$projectId/approvals",
-                httpProxy: "http://proxyserv.svb.digitalscale.es:8080",
+                httpProxy: "http://proxy.digitalscale.es:8080",
 				validResponseCodes: '200:300'        
         printOpen("==========================================================", EchoLevel.INFO)
 		//step 2 - delete previous push_rules
@@ -68,7 +68,7 @@ def call(String gitUrl) {
                 contentType: contentTypeAppForm,
 				customHeaders: customHeaders,
 				url: "$GlobalVars.gitlabApiDomain$projectId/push_rule",
-                httpProxy: "http://proxyserv.svb.digitalscale.es:8080",
+                httpProxy: "http://proxy.digitalscale.es:8080",
 				validResponseCodes: '200:300'
 		printOpen("==========================================================", EchoLevel.INFO)				
 		//step 3 -  set regular expresion (feature|hotfix|release|configfix)\/[.\w -]*$
@@ -81,7 +81,7 @@ def call(String gitUrl) {
 				customHeaders: customHeaders,
 				requestBody: "branch_name_regex=(feature|hotfix|release|configfix)\\/[.\\w -]*\$",
 				url: "$GlobalVars.gitlabApiDomain$projectId/push_rule",
-                httpProxy: "http://proxyserv.svb.digitalscale.es:8080",
+                httpProxy: "http://proxy.digitalscale.es:8080",
 				validResponseCodes: '200:300'
 		printOpen("==========================================================", EchoLevel.INFO)
 		//step 4 -  more configuration
@@ -94,7 +94,7 @@ def call(String gitUrl) {
                 customHeaders: customHeaders,
                 requestBody: "jobs_enabled=true&only_allow_merge_if_pipeline_succeeds=true&only_allow_merge_if_all_discussions_are_resolved=true&default_branch=master&builds_enabled=true&repository_access_level=enabled&builds_access_level=enabled&remove_sorce_branch_after_merge=true",
                 url: "$GlobalVars.gitlabApiDomain$projectId",
-                httpProxy: "http://proxyserv.svb.digitalscale.es:8080",
+                httpProxy: "http://proxy.digitalscale.es:8080",
                 validResponseCodes: '200:300'
         printOpen("==========================================================", EchoLevel.INFO)        
 		printOpen("Step 5 - check approval rules members $projectId - $approvalRuleName", EchoLevel.INFO)
@@ -105,7 +105,7 @@ def call(String gitUrl) {
                 contentType: contentTypeAppForm,
                 customHeaders: customHeaders,
                 url: "$GlobalVars.gitlabApiDomain$projectId/approval_rules",
-                httpProxy: "http://proxyserv.svb.digitalscale.es:8080",
+                httpProxy: "http://proxy.digitalscale.es:8080",
                 validResponseCodes: '200:300'
         
         json = new JsonSlurperClassic().parseText(defaultApprobalRule.content)
@@ -123,7 +123,7 @@ def call(String gitUrl) {
                     contentType: contentTypeAppForm,
                     customHeaders: customHeaders,
                     url: "$GlobalVars.gitlabApiDomain$projectId/approval_rules/$result.id",
-                    httpProxy: "http://proxyserv.svb.digitalscale.es:8080",
+                    httpProxy: "http://proxy.digitalscale.es:8080",
                     validResponseCodes: '200:300'
             }
         }        
@@ -137,7 +137,7 @@ def call(String gitUrl) {
                 contentType: contentTypeAppForm,
                 customHeaders: customHeaders,
                 url: "$GlobalVars.gitlabApiDomain$projectId/members/all?page=1&per_page=400",
-                httpProxy: "http://proxyserv.svb.digitalscale.es:8080",
+                httpProxy: "http://proxy.digitalscale.es:8080",
                 validResponseCodes: '200:300'
 
         json = new JsonSlurperClassic().parseText(members.content)
@@ -170,7 +170,7 @@ def call(String gitUrl) {
                         customHeaders: customHeaders,
                         requestBody: toJson,
                         url: "$GlobalVars.gitlabApiDomain$projectId/approval_rules",
-                        httpProxy: "http://proxyserv.svb.digitalscale.es:8080",
+                        httpProxy: "http://proxy.digitalscale.es:8080",
                         validResponseCodes: '200:300'
             }            
         }
@@ -192,7 +192,7 @@ def validateWebhookToJnkmsvAndSet(def projectId, def projectName) {
                         customHeaders: [[name: 'Private-Token', value: "${GITLAB_API_TOKEN}"], [name: 'Accept', value: "application/json"]],
                         //url: "${GlobalVars.gitlabApiDomain}${projectId}/integrations/jenkins",
 						url: "${GlobalVars.gitlabApiDomain}${projectId}/services/jenkins",
-                        httpProxy: "http://proxyserv.svb.digitalscale.es:8080",
+                        httpProxy: "http://proxy.digitalscale.es:8080",
                         validResponseCodes: '200:499'
 						
 	def jsonJenkinsService = new JsonSlurperClassic().parseText(getJenkinsService.content)
@@ -225,7 +225,7 @@ def validateWebhookToJnkmsvAndSet(def projectId, def projectName) {
 						 customHeaders: [[name: 'Private-Token', value: "${GITLAB_API_TOKEN}"], [name: 'Accept', value: "application/json"]],
 						requestBody: toJson(body),
 						url: "${GlobalVars.gitlabApiDomain}${projectId}/services/jenkins",
-						httpProxy: "http://proxyserv.svb.digitalscale.es:8080",
+						httpProxy: "http://proxy.digitalscale.es:8080",
 						validResponseCodes: '200:300'
 		  return true
 							
@@ -260,7 +260,7 @@ def validateWebhookToJnkmsvAndSet(def projectId, def projectName) {
 				 		    customHeaders: [[name: 'Private-Token', value: "${GITLAB_API_TOKEN}"], [name: 'Accept', value: "application/json"]],
 							requestBody: toJson(body),
 							url: "${GlobalVars.gitlabApiDomain}${projectId}/integrations/jenkins",
-							httpProxy: "http://proxyserv.svb.digitalscale.es:8080",
+							httpProxy: "http://proxy.digitalscale.es:8080",
 							validResponseCodes: '200:300'
 			  return true
 			  

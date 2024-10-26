@@ -29,6 +29,6 @@ class ServicesCatalogQueueHandler extends AbstractQueueHandler implements Serial
  
     @Override
     String getJenkinsUpdaterJobName() {        
-        return "${scriptContext.env.JENKINS_URL}/job/alm/job/services/job/arch/job/alm/job/job-services-catalog-updater/build?token=${scriptContext.env.GPL_PSWR}";
+        return "${scriptContext.env.JENKINS_URL}/job/alm/job/services/job/arch/job/alm/job/job-services-catalog-updater/build?token=${scriptContext.env.AppPortal_PSWR}";
     }
 }

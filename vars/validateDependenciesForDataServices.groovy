@@ -24,14 +24,14 @@ def call(PomXmlStructure pomXmlStructure, PipelineData pipeline, Object whiteLis
 
             printOpen("Validating dependencies for dataservices...", EchoLevel.INFO)
 
-            String dependenciesPath = GsaUtilities.getDependeciesJsonFilePath(pomXmlStructure)
+            String dependenciesPath = BackEndAppPortalUtilities.getDependeciesJsonFilePath(pomXmlStructure)
             printOpen("Reading dependencies from ${dependenciesPath}", EchoLevel.DEBUG)
             def exists = fileExists dependenciesPath
 
             List<String> artifactDataServicesDependecies = new ArrayList<String>()
             if (exists) {
                 def dependenciesJson = readFile(file: dependenciesPath)
-                artifactDataServicesDependecies = GsaUtilities.getDependeciesNamesByType(dependenciesJson, 'SRV.DS')
+                artifactDataServicesDependecies = BackEndAppPortalUtilities.getDependeciesNamesByType(dependenciesJson, 'SRV.DS')
             } else {
                 printOpen("Dependency file doesn't exist.", EchoLevel.ERROR)
             }

@@ -16,7 +16,7 @@ def call(PomXmlStructure pomXmlStructure, PipelineData pipelineData, String stag
         return
     }
 
-    sendStageStartToGPL(pomXmlStructure, pipelineData, stageId)
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, stageId)
     kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.IT_TEST_STARTED, KpiLifeCycleStatus.OK, pipelineData.bmxStructure.environment)
 
     try {
@@ -35,7 +35,7 @@ def call(PomXmlStructure pomXmlStructure, PipelineData pipelineData, String stag
 			printOpen(messageUrl, EchoLevel.INFO)
 		}
 		
-		sendStageEndToGPL(pomXmlStructure, pipelineData, stageId, env.sendLogsToGpl ? null : messageUrl)
+		sendStageEndToAppPortal(pomXmlStructure, pipelineData, stageId, env.sendLogsToAppPortal ? null : messageUrl)
 
     } catch (Exception e) {
 
@@ -49,7 +49,7 @@ def call(PomXmlStructure pomXmlStructure, PipelineData pipelineData, String stag
         }
 
         kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.IT_TEST_FINISHED, KpiLifeCycleStatus.KO, pipelineData.bmxStructure.environment)
-        sendStageEndToGPL(pomXmlStructure, pipelineData, stageId, null, pipelineData.bmxStructure.environment, "error")
+        sendStageEndToAppPortal(pomXmlStructure, pipelineData, stageId, null, pipelineData.bmxStructure.environment, "error")
         abortPipelineCloud(pomXmlStructure, pipelineData, " Resultado ejecucion app ${artifactAppAbort} - ${pipelineData.getPipelineBuildName()}  KO", this.deployCloudPhases, e)
 
     }

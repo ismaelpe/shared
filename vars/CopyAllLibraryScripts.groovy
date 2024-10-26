@@ -53,7 +53,7 @@ def call() {
 	copyFile(destDir, 'scripts/deployArtifactCloud.sh')
 	copyFile(destDir, 'scripts/getArtifactCloud.sh')
 	copyFile(destDir, 'scripts/validateMicroIsUp.sh')
-	copyFile(destDir, 'scripts/getArtifactCatMsv.sh')
+	copyFile(destDir, 'scripts/getArtifactCatalog.sh')
 	copyFile(destDir, 'scripts/compareMicroCloudVsOcp.sh')
 	copyFile(destDir, 'scripts/undeployApps.sh')
 	sh("chmod 777 ${destDir}/*.sh")

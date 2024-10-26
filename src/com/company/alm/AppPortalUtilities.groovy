@@ -2,9 +2,9 @@ package com.project.alm
 
 import com.project.alm.GlobalVars
 
-class GplUtilities {
+class AppPortalUtilities {
 
-    static boolean evaluateResponse(def response, GplRequestStatus statusRequest) {
+    static boolean evaluateResponse(def response, AppPortalRequestStatus statusRequest) {
 
         statusRequest.iteration = statusRequest.iteration + 1
         //Si es 404 o 200 damos por ok el resultado

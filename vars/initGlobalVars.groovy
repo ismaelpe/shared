@@ -54,7 +54,7 @@ def call(def pipelineParams = [:]) {
     // Logging
     if (pipelineParams?.loggerLevel != null) {
         GlobalVars.CONSOLE_LOGGER_LEVEL = pipelineParams?.loggerLevel
-        printOpen("The logger level for this pipeline has been set to ${GlobalVars.CONSOLE_LOGGER_LEVEL} as per Jenkinsfile configuration or GPL-sourced job parameter injection", EchoLevel.INFO)
+        printOpen("The logger level for this pipeline has been set to ${GlobalVars.CONSOLE_LOGGER_LEVEL} as per Jenkinsfile configuration or AppPortal-sourced job parameter injection", EchoLevel.INFO)
     } else if (env.CONSOLE_LOGGER_LEVEL != null) {
         GlobalVars.CONSOLE_LOGGER_LEVEL = env.CONSOLE_LOGGER_LEVEL
         printOpen("The logger level for this pipeline has been set to ${GlobalVars.CONSOLE_LOGGER_LEVEL} as per Jenkins environment variable", EchoLevel.INFO)

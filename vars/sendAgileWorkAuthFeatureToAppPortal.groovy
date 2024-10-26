@@ -4,14 +4,14 @@ import groovy.json.JsonSlurper
 
 def call(def pomXmlOrClientInfo, PipelineData pipelineData, String env, String appCode, String featureName, String userEmail) {
 
-    if (notificationToGplApplies()) {
+    if (notificationToAppPortalApplies()) {
 
-        printOpen("Sending to GPL an AgileWork authFeature validation for ${featureName}", EchoLevel.DEBUG)
+        printOpen("Sending to AppPortal an AgileWork authFeature validation for ${featureName}", EchoLevel.DEBUG)
 
         def url = idecuaRoutingUtils.agileWorkUrl()
         def param = prepareRequest(pipelineData, env, appCode, featureName, userEmail)
 
-        def response = sendRequestToGpl('PUT', url, param, null, pipelineData, pomXmlOrClientInfo)
+        def response = sendRequestToAppPortal('PUT', url, param, null, pipelineData, pomXmlOrClientInfo)
 
         checkIfAgileWorkPasses(response, featureName)
 

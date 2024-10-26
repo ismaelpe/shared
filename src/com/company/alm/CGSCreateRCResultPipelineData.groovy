@@ -2,14 +2,14 @@ package com.project.alm
 
 
 import com.project.alm.GlobalVars
-import com.project.alm.TrazabilidadGPLType
+import com.project.alm.TrazabilidadAppPortalType
 
 class CGSCreateRCResultPipelineData extends CGSProvisioningResultPipelineData {
 
 
     @Override
     def getAuthServiceToInform() {
-        //Restablecer cuando GPL soporte el "succes=true/false"
+        //Restablecer cuando AppPortal soporte el "succes=true/false"
         //return AuthorizationServiceToInformType.MAXIMO.toString()
         return AuthorizationServiceToInformType.WITHOUT_AUTHORIZATION.toString()
     }
@@ -101,7 +101,7 @@ class CGSCreateRCResultPipelineData extends CGSProvisioningResultPipelineData {
 
     @Override
     def getDeployed() {
-        return TrazabilidadGPLType.ALTA.toString()
+        return TrazabilidadAppPortalType.ALTA.toString()
     }
 
     @Override

@@ -83,11 +83,11 @@ def call(CicsHISPipelineData cicsPipelineData, ClientCicsHISInfo clientCicsHISIn
 
         try {
 
-            printOpen("Sending to GSA", EchoLevel.DEBUG)
+            printOpen("Sending to BackEndAppPortal", EchoLevel.DEBUG)
             response = sendRequestToService('POST', url, "", body)
 
         } catch (Exception e) {
-            throw new Exception("Unexpected response when connecting to GSA (${response?.status})! + ${e.getMessage()}")
+            throw new Exception("Unexpected response when connecting to BackEndAppPortal (${response?.status})! + ${e.getMessage()}")
         }
 
     } else {

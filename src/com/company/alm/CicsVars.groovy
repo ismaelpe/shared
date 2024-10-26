@@ -2,7 +2,7 @@ package com.project.alm
 
 class CicsVars {
 
-    static String GPL_APPLICATION_NAME = "cics-client"
+    static String AppPortal_APPLICATION_NAME = "cics-client"
 
     static boolean AGILEWORKS_VALIDATION_ENABLED = true
 

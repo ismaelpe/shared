@@ -23,7 +23,7 @@ import com.project.alm.GarAppType
 @Field String componentName
 @Field String appCloudId
 @Field String appCloud
-@Field boolean initGpl
+@Field boolean initAppPortal
 
 //Pipeline para realizar la baja de una version de un servicio desplegado en
 // El ancient no se desinstalará por si es necesario realizar rollback de la baja
@@ -33,7 +33,7 @@ import com.project.alm.GarAppType
 def call(Map pipelineParameters) {
     pipelineParams = pipelineParameters
 
-    //Mantener estos parametros/variables por si se deben generar estructuras de datos para enviar a GPL
+    //Mantener estos parametros/variables por si se deben generar estructuras de datos para enviar a AppPortal
     artifactSubType = params.artifactSubTypeParam
     artifactType = params.artifactTypeParam
     user = params.userId
@@ -47,12 +47,12 @@ def call(Map pipelineParameters) {
     targetAlmFolderParam = params.targetAlmFolderParam
 
 	successPipeline = false
-	initGpl = false
+	initAppPortal = false
     /*
      * Pasos a seguir:
      *
      * 1 - Verificar si el componente+version está instalado en bluemix
-     * 2 - Verificar en GSA si existen dependencias inversas instaladas en el entorno
+     * 2 - Verificar en BackEndAppPortal si existen dependencias inversas instaladas en el entorno
      * 3 -
      * 1 - Verificar si existe ancient. En caso de no existir pasar al paso 3
      * 2 - En caso de existir ancient:
@@ -68,7 +68,7 @@ def call(Map pipelineParameters) {
 			timeout(time: 2, unit: 'HOURS')
         }
         environment {
-            GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
+            AppPortal = credentials('IDECUA-JENKINS-USER-TOKEN')
 			JNKMSV = credentials('JNKMSV-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
@@ -162,18 +162,18 @@ def initPipelineStep() {
     
     currentBuild.displayName = "Delete_Component_Version_${pomXmlStructure.artifactMajorVersion} of ${pomXmlStructure.artifactName}"
     
-    sendPipelineStartToGPL(pomXmlStructure, pipelineData, pipelineOrigenId)
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "100");
-    initGpl = true
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "100")
+    sendPipelineStartToAppPortal(pomXmlStructure, pipelineData, pipelineOrigenId)
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "100");
+    initAppPortal = true
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "100")
 }
 
 /** 
  * Step validateComponentAndDependeciesStep
  */
 def validateComponentAndDependeciesStep() {
-    //Validar contra el Enpoint de GSA si existen dependencias inversas del componente
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "200")
+    //Validar contra el Enpoint de BackEndAppPortal si existen dependencias inversas del componente
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "200")
     printOpen("Procedemos a buscar el componente ${componentName}", EchoLevel.INFO)
 	//aps/api/publisher/v2/api/application/PCLD/AB3APP/component/
     //CloudApiResponse response=sendRequestToCloudApi("v1/application/${appCloudId}/component",null,"GET","${appCloud}","",false,false, pipelineData, pomXmlStructure)
@@ -186,47 +186,47 @@ def validateComponentAndDependeciesStep() {
 	}catch (Exception e) {
 		componentId=null
 	}
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "200")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "200")
 }
 
 /** 
  * Step deleteComponentFromEnvironmentStep
  */
 def deleteComponentFromEnvironmentStep() {
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "300")
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "300")
     //Only delete when enviroment is PRO
     deleteAppCloud(componentName, componentId, appCloudId, appCloud, enviroment.toUpperCase(), 'ALL', enviroment == GlobalVars.PRO_ENVIRONMENT )
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "300", null, pipelineData.bmxStructure.environment)
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "300", null, pipelineData.bmxStructure.environment)
 }
 
 /** 
  * Step undeployArtifactFromCloudStep
  */
 def undeployArtifactFromCloudStep() {
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "305")
-    undeployArtifactInCatMsv(pipelineData,pomXmlStructure,enviroment,false)
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "305")
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "305")
+    undeployArtifactInCatalog(pipelineData,pomXmlStructure,enviroment,false)
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "305")
 }
 
 /** 
  * Step deleteConfigFilesStep
  */
 def deleteConfigFilesStep() {
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "310")
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "310")
     deleteAppConfigFiles(pomXmlStructure, pipelineData)
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "310")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "310")
 }
 
 /** 
  * Step apimanagerTechnicalservicesTegistrationStep
  */
 def apimanagerTechnicalservicesTegistrationStep() {
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "500")
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "500")
  
     printOpen("Publishing swagger contract to API Manager (adpbdd-micro)", EchoLevel.ALL)
     publishSwaggerContract2ApiManager(pipelineData, pomXmlStructure)
 
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "500")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "500")
 }
 
 /** 
@@ -243,8 +243,8 @@ def endPipelineAlwaysStep() {
 def endPipelineSuccessStep() {
     successPipeline = true
     printOpen("El resultado del pipeline es ${successPipeline}", EchoLevel.ALL)
-    sendPipelineResultadoToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
-    sendPipelineEndedToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
 }
 
 /** 
@@ -253,7 +253,7 @@ def endPipelineSuccessStep() {
 def endPipelineFailureStep() {
     successPipeline = false
     printOpen("El resultado del pipeline es ${successPipeline}", EchoLevel.ALL)
-    sendPipelineResultadoToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
-    sendPipelineEndedToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
 }
 

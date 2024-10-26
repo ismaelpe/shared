@@ -99,7 +99,7 @@ def call(def valuesDeployed, String componentType, String component, String majo
 							kpiAlmEvent: new KpiAlmEvent(
 							null, null,
 							KpiAlmEventStage.UNDEFINED,
-							KpiAlmEventOperation.CATMSV_HTTP_CALL)
+							KpiAlmEventOperation.CATALOG_HTTP_CALL)
 					])
 
     //SRV.MS/demoarqcbk
@@ -121,7 +121,7 @@ def call(def valuesDeployed, String componentType, String component, String majo
 			kpiAlmEvent: new KpiAlmEvent(
 				null, null,
 				KpiAlmEventStage.UNDEFINED,
-				KpiAlmEventOperation.CATMSV_HTTP_CALL)
+				KpiAlmEventOperation.CATALOG_HTTP_CALL)
 		])
 
 	if (response.status == 200) {

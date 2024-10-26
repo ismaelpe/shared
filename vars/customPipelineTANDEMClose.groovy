@@ -6,7 +6,7 @@ import com.project.alm.KpiAlmEventOperation
 
 @Field Map pipelineParams
 
-@Field boolean initGpl
+@Field boolean initAppPortal
 @Field boolean successPipeline
 
 @Field TANDEMPipelineData tandemPipelineData
@@ -37,7 +37,7 @@ import com.project.alm.KpiAlmEventOperation
 def call(Map pipelineParameters) {
     pipelineParams = pipelineParameters
 
-    initGpl = false
+    initAppPortal = false
     successPipeline = true
 
     //Job parameters
@@ -68,7 +68,7 @@ def call(Map pipelineParameters) {
 			timeout(time: 2, unit: 'HOURS')
 		}
         environment {
-            GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
+            AppPortal = credentials('IDECUA-JENKINS-USER-TOKEN')
 			JNKMSV = credentials('JNKMSV-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
@@ -78,7 +78,7 @@ def call(Map pipelineParameters) {
             proxyPort = "${GlobalVars.proxyDigitalscalePort}"            
 			MAVEN_OPTS = " "
             GIT_SSL_NO_VERIFY = 'true'
-			sendLogsToGpl = true
+			sendLogsToAppPortal = true
         }
         stages {
             stage('init-pipeline') {
@@ -133,15 +133,15 @@ def initPipelineStep() {
         KpiAlmEventStage.GENERAL,
         KpiAlmEventOperation.PIPELINE_TANDEM_CLOSE)
     
-    sendPipelineStartToGPL(clientTANDEMInfo, tandemPipelineData, pipelineOrigId)
-    initGpl = true
+    sendPipelineStartToAppPortal(clientTANDEMInfo, tandemPipelineData, pipelineOrigId)
+    initAppPortal = true
 }
 
 /**
  * Stage 'closeReleaseStep'
  */
 def closeReleaseStep() {
-    sendStageStartToGPL(clientTANDEMInfo, tandemPipelineData, "200")
+    sendStageStartToAppPortal(clientTANDEMInfo, tandemPipelineData, "200")
     printOpen("---------------------------", EchoLevel.ALL)
     printOpen("Clone git repo $gitUrl", EchoLevel.ALL)
 
@@ -162,10 +162,10 @@ def closeReleaseStep() {
             git.commitAndPush().deleteBranchOnOrigin(branchToMerge)
 
         })
-        sendStageEndToGPL(clientTANDEMInfo, tandemPipelineData, "200")
+        sendStageEndToAppPortal(clientTANDEMInfo, tandemPipelineData, "200")
     } catch (err) {
 		printOpen(err.getMessage(), EchoLevel.ERROR)
-		sendStageEndToGPL(clientTANDEMInfo, tandemPipelineData, '200', null, null, "error")
+		sendStageEndToAppPortal(clientTANDEMInfo, tandemPipelineData, '200', null, null, "error")
 		throw err
     } finally {
         git.purge()
@@ -183,8 +183,8 @@ def endPipelineSuccessStep() {
         kpiLogger(almEvent.pipelineSuccess(endCallStartMillis-initCallStartMillis))
     }
 
-    sendPipelineEndedToGPL(initGpl, clientTANDEMInfo, tandemPipelineData, successPipeline)
-    sendPipelineResultadoToGPL(initGpl, clientTANDEMInfo, tandemPipelineData, successPipeline)
+    sendPipelineEndedToAppPortal(initAppPortal, clientTANDEMInfo, tandemPipelineData, successPipeline)
+    sendPipelineResultadoToAppPortal(initAppPortal, clientTANDEMInfo, tandemPipelineData, successPipeline)
 }
 
 /**
@@ -197,8 +197,8 @@ def endPipelineFailureStep() {
         long endCallStartMillis = new Date().getTime()
         kpiLogger(almEvent.pipelineFail(endCallStartMillis-initCallStartMillis))						
     }    
-    sendPipelineEndedToGPL(initGpl, clientTANDEMInfo, tandemPipelineData, successPipeline)
-    sendPipelineResultadoToGPL(initGpl, clientTANDEMInfo, tandemPipelineData, successPipeline)
+    sendPipelineEndedToAppPortal(initAppPortal, clientTANDEMInfo, tandemPipelineData, successPipeline)
+    sendPipelineResultadoToAppPortal(initAppPortal, clientTANDEMInfo, tandemPipelineData, successPipeline)
 }
 
 /**

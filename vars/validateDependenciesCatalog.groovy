@@ -8,7 +8,7 @@ import groovy.json.JsonOutput
 
 def call( boolean isCampaign, String environment) {
 	printOpen("Procedemos a enviar las peticiones contra Catalogo en campaña", EchoLevel.ALL)
-	validateDependenciesCatMsv(null,null,isCampaign,environment)
+	validateDependenciesCatalog(null,null,isCampaign,environment)
 }
 
 
@@ -34,9 +34,9 @@ def call(PipelineData pipelineData, PomXmlStructure pomXml, boolean isCampaign, 
 				kpiAlmEvent: new KpiAlmEvent(
 					pomXml, pipelineData,
 					KpiAlmEventStage.UNDEFINED,
-					KpiAlmEventOperation.CATMSV_HTTP_CALL)
+					KpiAlmEventOperation.CATALOG_HTTP_CALL)
 			])
-		printOpen("Ejecucion catmsv Realizada", EchoLevel.ALL)
+		printOpen("Ejecucion catalog Realizada", EchoLevel.ALL)
 	} else {
 		def typeVersion=""
 		if (pomXml.artifactVersionQualifier == null || pomXml.artifactVersionQualifier == "") {
@@ -58,9 +58,9 @@ def call(PipelineData pipelineData, PomXmlStructure pomXml, boolean isCampaign, 
 				kpiAlmEvent: new KpiAlmEvent(
 					pomXml, pipelineData,
 					KpiAlmEventStage.UNDEFINED,
-					KpiAlmEventOperation.CATMSV_HTTP_CALL)
+					KpiAlmEventOperation.CATALOG_HTTP_CALL)
 			])
-		 printOpen("Ejecucion catmsv Realizada", EchoLevel.ALL)
+		 printOpen("Ejecucion catalog Realizada", EchoLevel.ALL)
 	}
 	if (response.status == 200) {
 		

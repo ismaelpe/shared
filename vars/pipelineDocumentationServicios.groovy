@@ -35,7 +35,7 @@ def call(domain) {
 
             stage('Deploy') {
                 environment {
-                    GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
+                    AppPortal = credentials('IDECUA-JENKINS-USER-TOKEN')
                     Cloud_CERT = credentials('cloud-alm-pro-cert')
                     Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')                    
                     BLUEMIX_CREDENTIALS = credentials('BLUEMIX_CREDENTIALS')

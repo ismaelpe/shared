@@ -8,12 +8,12 @@ def call(String method, String url, String param, def body, PipelineData pipelin
                 kpiAlmEvent: new KpiAlmEvent(
                     pomXml, pipelineData,
                     KpiAlmEventStage.UNDEFINED,
-                    KpiAlmEventOperation.GPL_HTTP_CALL),
+                    KpiAlmEventOperation.AppPortal_HTTP_CALL),
                 echoLevel: EchoLevel.ALL
             ])
     } catch (Exception e) {
         def request = sendRequestToService.sanitizeRequest(createMaximoAndThrow.getJsonFromObject(body))
-        createMaximoAndThrow.gplRequestException(pipelineData, pomXml, e, method, url+param, request)
+        createMaximoAndThrow.appPortalRequestException(pipelineData, pomXml, e, method, url+param, request)
     }
 }
 
@@ -25,12 +25,12 @@ def call(String method, String url, String param, def body, PipelineData pipelin
                 kpiAlmEvent: new KpiAlmEvent(
                     clientInfo, pipelineData,
                     KpiAlmEventStage.UNDEFINED,
-                    KpiAlmEventOperation.GPL_HTTP_CALL),
+                    KpiAlmEventOperation.AppPortal_HTTP_CALL),
                 echoLevel: EchoLevel.ALL
             ])
     } catch (Exception e) {
         def request = sendRequestToService.sanitizeRequest(createMaximoAndThrow.getJsonFromObject(body))
-        createMaximoAndThrow.gplRequestException(pipelineData, clientInfo, e, method, url+param, request)
+        createMaximoAndThrow.appPortalRequestException(pipelineData, clientInfo, e, method, url+param, request)
     }
 }
 
@@ -42,12 +42,12 @@ def call(String method, String url, String param, def body, String artifactGarAp
                 kpiAlmEvent: new KpiAlmEvent(
                     null, null,
                     KpiAlmEventStage.UNDEFINED,
-                    KpiAlmEventOperation.GPL_HTTP_CALL),
+                    KpiAlmEventOperation.AppPortal_HTTP_CALL),
                 echoLevel: EchoLevel.ALL
             ])
 
     } catch (Exception e) {
         def request = sendRequestToService.sanitizeRequest(createMaximoAndThrow.getJsonFromObject(body))
-        createMaximoAndThrow.gplRequestException(artifactGarAppName, artifactGarType, e, method, url+param, request)
+        createMaximoAndThrow.appPortalRequestException(artifactGarAppName, artifactGarType, e, method, url+param, request)
     }
 }

@@ -22,7 +22,7 @@ import com.project.alm.*
 
 @Field PomXmlStructure pomXmlStructure
 @Field PipelineData pipelineData
-@Field boolean initGpl = false
+@Field boolean initAppPortal = false
 @Field boolean successPipeline = false
 
 //Pipeline que copia las configs al repo de TST basado en almPipelineCreateRC
@@ -53,7 +53,7 @@ def call(Map pipelineParameters) {
     loggerLevel = params.loggerLevel
     agentParam = params.agent
 
-    initGpl = false
+    initAppPortal = false
     successPipeline = false
     /*
      * Pasos a seguir:
@@ -79,7 +79,7 @@ def call(Map pipelineParameters) {
         //Environment sobre el qual se ejecuta este tipo de job
 
         environment {
-            GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
+            AppPortal = credentials('IDECUA-JENKINS-USER-TOKEN')
 			JNKMSV = credentials('JNKMSV-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
@@ -157,31 +157,31 @@ def prepareRCStep() {
 
     pipelineData.buildCode = pomXmlStructure.getArtifactVersionQualifier()
 
-    sendPipelineStartToGPL(pomXmlStructure, pipelineData, pipelineOrigId)
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "100");
-    initGpl = true
+    sendPipelineStartToAppPortal(pomXmlStructure, pipelineData, pipelineOrigId)
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "100");
+    initAppPortal = true
 
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "100")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "100")
 }
 
 /** 
  * Step nextMinorMasterStep
  */
 def nextMinorMasterStep() {
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "200");
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "200");
     pushRepoUrl(pomXmlStructure, "${GlobalVars.RELEASE_BRANCH}/v${pomXmlStructure.getArtifactVersionWithoutQualifier()}", false, false, GlobalVars.GIT_TAG_CI_PUSH_MESSAGE_RC)
     changeBranch("${GlobalVars.MASTER_BRANCH}")
     updateNextMinor(pomXmlStructure)
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "200")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "200")
 }
 
 /** 
  * Step pushRepoUrlStep
  */
 def pushRepoUrlStep() {
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "300");
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "300");
     pushRepoUrl(pomXmlStructure, "${GlobalVars.MASTER_BRANCH}", false, true, GlobalVars.GIT_TAG_CI_PUSH_MESSAGE_RC)
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "300")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "300")
 }
 
 /** 
@@ -198,8 +198,8 @@ def endPipelineAlwaysStep() {
 def endPipelineSuccessStep() {
     printOpen("Se success el pipeline ${successPipeline}", EchoLevel.INFO)
     successPipeline = true
-    sendPipelineResultadoToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
-    sendPipelineEndedToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
 }
 
 /** 
@@ -208,6 +208,6 @@ def endPipelineSuccessStep() {
 def endPipelineFailureStep() {
     printOpen("Se failure el pipeline ${successPipeline}", EchoLevel.ERROR)
     successPipeline = false
-    sendPipelineResultadoToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
-    sendPipelineEndedToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
 }

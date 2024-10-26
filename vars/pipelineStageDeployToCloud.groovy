@@ -10,7 +10,7 @@ import com.project.alm.BmxUtilities
 
 def call(PomXmlStructure pomXmlStructure, PipelineData pipelineData, String stageId, String deployCloudPhasesPattern) {
 
-    sendStageStartToGPL(pomXmlStructure, pipelineData, stageId)
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, stageId)
     kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.DEPLOY_STARTED, KpiLifeCycleStatus.OK)
 
     try {
@@ -27,7 +27,7 @@ def call(PomXmlStructure pomXmlStructure, PipelineData pipelineData, String stag
 
         this.deployCloudPhases = deployCloudPhasesPattern.replace("<phase>", "post")
         kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.DEPLOY_FINISHED, KpiLifeCycleStatus.OK)
-        sendStageEndToGPL(pomXmlStructure, pipelineData, stageId, null, pipelineData.bmxStructure.environment)
+        sendStageEndToAppPortal(pomXmlStructure, pipelineData, stageId, null, pipelineData.bmxStructure.environment)
         printOpen("The cloudStateUtilitity ${cloudStateUtility}", EchoLevel.DEBUG)
 
         return cloudStateUtility
@@ -44,7 +44,7 @@ def call(PomXmlStructure pomXmlStructure, PipelineData pipelineData, String stag
         }
 
         kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.DEPLOY_FINISHED, KpiLifeCycleStatus.KO)
-        sendStageEndToGPL(pomXmlStructure, pipelineData, stageId, null, pipelineData.bmxStructure.environment, "error")
+        sendStageEndToAppPortal(pomXmlStructure, pipelineData, stageId, null, pipelineData.bmxStructure.environment, "error")
         abortPipelineCloud(pomXmlStructure, pipelineData, " Resultado ejecucion app ${artifactAppAbort} - ${pipelineData.getPipelineBuildName()}  KO", this.deployCloudPhases, e)
 
     }

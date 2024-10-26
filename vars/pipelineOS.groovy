@@ -29,9 +29,9 @@ def call(pipelineParams = [:], body) {
 				 withCredentials([string(credentialsId: 'cloud-alm-pro-cert-passwd', variable: 'Cloud_PASS_CRED'),
 								  file(credentialsId: 'cloud-alm-pro-cert', variable: 'Cloud_CERT_CRED'),
 								  usernamePassword(credentialsId: 'ALM_LOGCOLLECTOR_CREDENTIALS', passwordVariable: 'ALM_LOGCOLLECTOR_PASSWORD_CRED', usernameVariable: 'ALM_LOGCOLLECTOR_USERNAME'),
-								  usernamePassword(credentialsId: 'IDECUA-JENKINS-USER-TOKEN', passwordVariable: 'GPL_PSW', usernameVariable: 'GPL_USR')]){
+								  usernamePassword(credentialsId: 'IDECUA-JENKINS-USER-TOKEN', passwordVariable: 'AppPortal_PSW', usernameVariable: 'AppPortal_USR')]){
 					 
-					 def GPL_USR_VAR="GPL_TEST=${GPL_USR}"
+					 def AppPortal_USR_VAR="AppPortal_TEST=${AppPortal_USR}"
 					 def Cloud_PASS_VAR="Cloud_PASS=${Cloud_PASS_CRED}"
 					 def Cloud_CERT_VAR="Cloud_CERT=${Cloud_CERT_CRED}"				 
 					 def ALM_LOGCOLLECTOR_PASSWORD_VAR="ALM_LOGCOLLECTOR_PASSWORD=${ALM_LOGCOLLECTOR_PASSWORD_CRED}"
@@ -102,9 +102,9 @@ def call(pipelineParams = [:], body) {
 				 withCredentials([string(credentialsId: 'cloud-alm-pro-cert-passwd', variable: 'Cloud_PASS_CRED'),
 								  file(credentialsId: 'cloud-alm-pro-cert', variable: 'Cloud_CERT_CRED'),
 								  usernamePassword(credentialsId: 'ALM_LOGCOLLECTOR_CREDENTIALS', passwordVariable: 'ALM_LOGCOLLECTOR_PASSWORD_CRED', usernameVariable: 'ALM_LOGCOLLECTOR_USERNAME'),
-								  usernamePassword(credentialsId: 'IDECUA-JENKINS-USER-TOKEN', passwordVariable: 'GPL_PSW', usernameVariable: 'GPL_USR')]){
+								  usernamePassword(credentialsId: 'IDECUA-JENKINS-USER-TOKEN', passwordVariable: 'AppPortal_PSW', usernameVariable: 'AppPortal_USR')]){
 					 
-					 def GPL_USR_VAR="GPL_TEST=${GPL_USR}"
+					 def AppPortal_USR_VAR="AppPortal_TEST=${AppPortal_USR}"
 					 def Cloud_PASS_VAR="Cloud_PASS=${Cloud_PASS_CRED}"
 					 def Cloud_CERT_VAR="Cloud_CERT=${Cloud_CERT_CRED}"
 					 def ALM_LOGCOLLECTOR_PASSWORD_VAR="ALM_LOGCOLLECTOR_PASSWORD=${ALM_LOGCOLLECTOR_PASSWORD_CRED}"

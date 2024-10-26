@@ -24,7 +24,7 @@ import com.project.alm.*
 
 @Field PomXmlStructure pomXmlStructure
 @Field PipelineData pipelineData
-@Field boolean initGpl
+@Field boolean initAppPortal
 
 /* ************************************************************************************************************************************** *\
  * Pipeline Definition                                                                                                                    *
@@ -54,7 +54,7 @@ def call(Map pipelineParameters) {
     loggerLevel = params.loggerLevel
     agentParam = params.agent
 
-    initGpl = false
+    initAppPortal = false
 
     pipeline {      
 		agent {	node (almJenkinsAgent(agentParam)) }
@@ -64,7 +64,7 @@ def call(Map pipelineParameters) {
 			timeout(time: 2, unit: 'HOURS')
         }
         environment {
-            GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
+            AppPortal = credentials('IDECUA-JENKINS-USER-TOKEN')
 			JNKMSV = credentials('JNKMSV-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
@@ -124,7 +124,7 @@ def call(Map pipelineParameters) {
             }
 			stage('publish-artifact-catalog') {
 				when {
-					expression { GlobalVars.GSA_ENABLED  }
+					expression { GlobalVars.BackEndAppPortal_ENABLED  }
 				}
 				steps {
                     publishArtifactCatalogStep()
@@ -165,9 +165,9 @@ def getGitRepoStep() {
 
     pipelineData.buildCode = pomXmlStructure.getArtifactVersionQualifier()
 
-    sendPipelineStartToGPL(pomXmlStructure, pipelineData, pipelineOrigId)
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "100")
-    initGpl = true
+    sendPipelineStartToAppPortal(pomXmlStructure, pipelineData, pipelineOrigId)
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "100")
+    initAppPortal = true
 
     //Buscamos version de arquitectura
     //Validamos que sea superior a la minim
@@ -175,19 +175,19 @@ def getGitRepoStep() {
 
     debugInfo(pipelineParams, pomXmlStructure, pipelineData)
 
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "100")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "100")
 }
 
 /**
  * Stage prepareReleaseStep
  */
 def prepareReleaseStep() {
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "200")
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "200")
     validateBranch(pomXmlStructure.getArtifactVersionWithoutQualifier(), pipelineData.branchStructure)
     updateVersionForRelease(pomXmlStructure)
     pipelineData.buildCode = pomXmlStructure.artifactVersion
     currentBuild.displayName = "Creation_${pomXmlStructure.artifactVersion} of ${pomXmlStructure.artifactName}"
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "200")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "200")
 }
 
 /**
@@ -201,56 +201,56 @@ def validateVersionStep() {
  * Stage errorTranslationsStep
  */
 def errorTranslationsStep() {
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "400")
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "400")
     
     printOpen("Upload error translations to errormanagement-micro", EchoLevel.ALL)
     publishErrorManagementTranslations(pipelineData, pomXmlStructure)
 
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "400")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "400")
 }
 
 /**
  * Stage copyConfigFilesStep
  */
 def copyConfigFilesStep() {
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "500")
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "500")
     sh "git config http.sslVerify false"
     
     pushConfigFiles(pomXmlStructure, pipelineData, false, true)
     
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "500")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "500")
 }
 
 /**
  * Stage refreshPropertiesConfigurationStep
  */
 def refreshPropertiesConfigurationStep() {
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "600")
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "600")
 
     refreshConfigurationViaRefreshBus(pomXmlStructure,pipelineData, '1')
     refreshConfigurationViaRefreshBus(pomXmlStructure,pipelineData, '2')
 
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "600")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "600")
 }
 
 /**
  * Stage pushReleaseToGitStep
  */
 def pushReleaseToGitStep() {
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "700")
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "700")
     pushRepoUrl(pomXmlStructure, "${originBranch}", false, true, GlobalVars.GIT_TAG_CI_PUSH_MESSAGE_RELEASE)
     tagVersion(pomXmlStructure, pipelineData, true, false)
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "700")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "700")
 }
 
 /**
  * Stage publishArtifactCatalog
  */
 def publishArtifactCatalogStep() {
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "800")
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "800")
     printOpen("publishing artifact in catalog", EchoLevel.ALL)
     publishArtifactInCatalog(pipelineData, pomXmlStructure)
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "800")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "800")
 }
 
 /**
@@ -262,8 +262,8 @@ def endPipelineSuccessStep() {
     pipelineData.prepareResultData(pomXmlStructure.artifactVersion, pomXmlStructure.artifactMicro, pomXmlStructure.artifactName)
     pipelineData.setBuildCode(pomXmlStructure.artifactVersion)
     printOpen("ResultData ready.", EchoLevel.ALL)
-    sendPipelineResultadoToGPL(initGpl, pomXmlStructure, pipelineData, true)
-    sendPipelineEndedToGPL(initGpl, pomXmlStructure, pipelineData, true)
+    sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, pipelineData, true)
+    sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, pipelineData, true)
 
     if (pipelineData.getExecutionMode().invokeNextActionAuto() && !pipelineData.isPushCI()) {
         printOpen("Modo test activado en fase de crear release de configuracion", EchoLevel.ALL)
@@ -277,8 +277,8 @@ def endPipelineSuccessStep() {
 def endPipelineFailureStep() {                
     printOpen("Pipeline has failed", EchoLevel.ERROR)
     
-    sendPipelineResultadoToGPL(initGpl, pomXmlStructure, pipelineData, false)
-    sendPipelineEndedToGPL(initGpl, pomXmlStructure, pipelineData, false)
+    sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, pipelineData, false)
+    sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, pipelineData, false)
 }
 
 /**

@@ -8,7 +8,7 @@ import com.project.alm.CIPipelineStructure
 import com.project.alm.GlobalVars
 import com.project.alm.GarAppType
 import com.project.alm.ArtifactSubType
-import com.project.alm.TrazabilidadGPLType
+import com.project.alm.TrazabilidadAppPortalType
 
 class CicsHISCreateReleaseResultPipelineData extends CicsHISProvisioningResultPipelineData {
 
@@ -119,7 +119,7 @@ class CicsHISCreateReleaseResultPipelineData extends CicsHISProvisioningResultPi
 
     @Override
     def getDeployed() {
-        return TrazabilidadGPLType.ALTA.toString()
+        return TrazabilidadAppPortalType.ALTA.toString()
     }
 
     @Override

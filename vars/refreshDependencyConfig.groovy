@@ -66,7 +66,7 @@ def call(PomXmlStructure pomXmlStructure, PipelineData pipelineData, String data
             kpiAlmEvent: new KpiAlmEvent(
                 pomXmlStructure, pipelineData,
                 KpiAlmEventStage.UNDEFINED,
-                KpiAlmEventOperation.CATMSV_HTTP_CALL)
+                KpiAlmEventOperation.CATALOG_HTTP_CALL)
         ])
 		
 	if (response.status == 200) {

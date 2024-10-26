@@ -52,7 +52,7 @@ class DeleteComponentVersionResultPipelineJobData extends ResultPipelineData {
 
     @Override
     def getDeployed() {
-        return TrazabilidadGPLType.BAJA.toString()
+        return TrazabilidadAppPortalType.BAJA.toString()
     }
 
     @Override

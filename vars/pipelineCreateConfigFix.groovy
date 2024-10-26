@@ -24,7 +24,7 @@ import com.project.alm.*
 
 @Field PomXmlStructure pomXmlStructure
 @Field PipelineData pipelineData
-@Field boolean initGpl
+@Field boolean initAppPortal
 @Field boolean successPipeline
 
 @Field String executionProfileParam
@@ -62,7 +62,7 @@ def call(Map pipelineParameters) {
 
     commitId = params.commitIdParam
 
-    initGpl = false
+    initAppPortal = false
     successPipeline = false
 
     executionProfileParam = params.executionProfileParam
@@ -80,7 +80,7 @@ def call(Map pipelineParameters) {
             timeout(time: 2, unit: 'HOURS')
         }
         environment {
-            GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
+            AppPortal = credentials('IDECUA-JENKINS-USER-TOKEN')
             JNKMSV = credentials('JNKMSV-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
@@ -150,14 +150,14 @@ def prepareConfigFixStep() {
 
     pipelineData.buildCode = pomXmlStructure.getArtifactVersionQualifier()
 
-    sendPipelineStartToGPL(pomXmlStructure, pipelineData, pipelineOrigId)
-    sendStageStartToGPL(pomXmlStructure, pipelineData, '100')
-    initGpl = true
+    sendPipelineStartToAppPortal(pomXmlStructure, pipelineData, pipelineOrigId)
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, '100')
+    initAppPortal = true
     /**
      * Se consolida el codigo de la nueva rama generada del fix de configuracion en el repo de git
      */
     pushRepoUrl(pomXmlStructure, "${GlobalVars.CONFIGFIX_BRANCH}/v${pomXmlStructure.getArtifactVersionWithoutQualifier()}", true, false, GlobalVars.GIT_TAG_CI_PUSH_MESSAGE_CONFIGFIX)
-    sendStageEndToGPL(pomXmlStructure, pipelineData, '100')
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, '100')
 }
 
 /**
@@ -174,8 +174,8 @@ def endPipelineAlwaysStep() {
 def endPipelineSuccessStep() {
     successPipeline = true
     printOpen('SUCCESS', EchoLevel.INFO)
-    sendPipelineResultadoToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
-    sendPipelineEndedToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
 }
 
 /**
@@ -184,6 +184,6 @@ def endPipelineSuccessStep() {
 def endPipelineFailureStep() {
     successPipeline = false
     printOpen('FAILURE', EchoLevel.ERROR)
-    sendPipelineResultadoToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
-    sendPipelineEndedToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
 }

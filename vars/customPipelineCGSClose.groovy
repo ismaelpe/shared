@@ -6,7 +6,7 @@ import com.project.alm.KpiAlmEventOperation
 
 @Field Map pipelineParams
 
-@Field boolean initGpl
+@Field boolean initAppPortal
 @Field boolean successPipeline
 
 @Field CGSPipelineData cgsPipelineData
@@ -33,7 +33,7 @@ import com.project.alm.KpiAlmEventOperation
 def call(Map pipelineParameters) {
     pipelineParams = pipelineParameters
 
-    initGpl = false
+    initAppPortal = false
     successPipeline = true
 
     //Job parameters
@@ -64,7 +64,7 @@ def call(Map pipelineParameters) {
         }
 
         environment {
-            GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
+            AppPortal = credentials('IDECUA-JENKINS-USER-TOKEN')
             JNKMSV = credentials('JNKMSV-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
@@ -123,7 +123,7 @@ def initPipelineStep() {
     cgsPipelineData.setBuildCode(artifactVersion)
 
     clientCGSInfo = new ClientInfo()
-    clientCGSInfo.setApplicationName(CGSVars.GPL_APPLICATION_NAME)
+    clientCGSInfo.setApplicationName(CGSVars.AppPortal_APPLICATION_NAME)
     clientCGSInfo.setArtifactId(artifactId)
     clientCGSInfo.setArtifactVersion(artifactVersion)
     clientCGSInfo.setArtifactType(ArtifactType.valueOfType(CGSVars.APP_TYPE))
@@ -133,15 +133,15 @@ def initPipelineStep() {
         clientCGSInfo, cgsPipelineData,
         KpiAlmEventStage.GENERAL,
         KpiAlmEventOperation.PIPELINE_CGS_CLOSE)
-    sendPipelineStartToGPL(clientCGSInfo, cgsPipelineData, pipelineOrigId)
-    initGpl = true
+    sendPipelineStartToAppPortal(clientCGSInfo, cgsPipelineData, pipelineOrigId)
+    initAppPortal = true
 }
 
 /**
  Stage 'closeReleaseStep'
  */
 def closeReleaseStep() {
-    sendStageStartToGPL(clientCGSInfo, cgsPipelineData, '200')
+    sendStageStartToAppPortal(clientCGSInfo, cgsPipelineData, '200')
     printOpen('---------------------------', EchoLevel.ALL)
     printOpen("Clone git repo $gitUrl", EchoLevel.ALL)
 
@@ -166,10 +166,10 @@ def closeReleaseStep() {
         throw err
     } finally {
         git.purge()
-        sendStageEndToGPL(clientCGSInfo, cgsPipelineData, '200')
+        sendStageEndToAppPortal(clientCGSInfo, cgsPipelineData, '200')
     }
 
-    sendStageEndToGPL(clientCGSInfo, cgsPipelineData, '200')
+    sendStageEndToAppPortal(clientCGSInfo, cgsPipelineData, '200')
 }
 
 /**
@@ -184,8 +184,8 @@ def endPipelineSuccessStep() {
         kpiLogger(almEvent.pipelineSuccess(endCallStartMillis - initCallStartMillis))
     }
 
-    sendPipelineEndedToGPL(initGpl, clientCGSInfo, cgsPipelineData, successPipeline)
-    sendPipelineResultadoToGPL(initGpl, clientCGSInfo, cgsPipelineData, successPipeline)
+    sendPipelineEndedToAppPortal(initAppPortal, clientCGSInfo, cgsPipelineData, successPipeline)
+    sendPipelineResultadoToAppPortal(initAppPortal, clientCGSInfo, cgsPipelineData, successPipeline)
 }
 
 /**
@@ -200,8 +200,8 @@ def endPipelineFailureStep() {
         kpiLogger(almEvent.pipelineFail(endCallStartMillis - initCallStartMillis))
     }
 
-    sendPipelineEndedToGPL(initGpl, clientCGSInfo, cgsPipelineData, successPipeline)
-    sendPipelineResultadoToGPL(initGpl, clientCGSInfo, cgsPipelineData, successPipeline)
+    sendPipelineEndedToAppPortal(initAppPortal, clientCGSInfo, cgsPipelineData, successPipeline)
+    sendPipelineResultadoToAppPortal(initAppPortal, clientCGSInfo, cgsPipelineData, successPipeline)
 }
 
 /**

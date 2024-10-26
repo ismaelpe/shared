@@ -33,7 +33,7 @@ import com.project.alm.KpiAlmEventOperation
 
 @Field PomXmlStructure pomXmlStructure
 @Field PipelineData pipelineData
-@Field boolean initGpl
+@Field boolean initAppPortal
 @Field boolean successPipeline
 
 @Field KpiAlmEvent almEvent
@@ -64,7 +64,7 @@ def call(Map pipelineParameters) {
     artifactSubType = params.artifactSubTypeParam
     commitId = params.commitIdParam
 
-    initGpl = false
+    initAppPortal = false
     successPipeline = false
 
     almEvent = null
@@ -78,7 +78,7 @@ def call(Map pipelineParameters) {
             timeout(time: 1, unit: 'HOURS')
         }
         environment {
-            GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
+            AppPortal = credentials('IDECUA-JENKINS-USER-TOKEN')
             JNKMSV = credentials('JNKMSV-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
@@ -152,30 +152,30 @@ def initCommandStep() {
     pipelineData.pipelineStructure.resultPipelineData.branchName = originBranch
     pipelineData.pipelineStructure.resultPipelineData.executionProfile = executionProfileParam
     pipelineData.pipelineStructure.resultPipelineData.almSubFolder = targetAlmFolderParam
-    initGpl = true
+    initAppPortal = true
     pipelineData.initDomainProperties(pathToRepo, PipelineData.initFromGitUrlGarApp(pathToRepo, ArtifactSubType.valueOfSubType(artifactSubType)))
     almEvent = new KpiAlmEvent(
         pomXmlStructure, pipelineData,
         KpiAlmEventStage.GENERAL,
         KpiAlmEventOperation.PIPELINE_BBDD_REPORT)
-    sendPipelineStartToGPL(pomXmlStructure, pipelineData, pipelineOrigId)
-    sendStageStartToGPL(pomXmlStructure, pipelineData, '100')
-    sendStageEndToGPL(pomXmlStructure, pipelineData, '100')
+    sendPipelineStartToAppPortal(pomXmlStructure, pipelineData, pipelineOrigId)
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, '100')
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, '100')
 }
 
 /**
  * Stage 'reportBbddStatusStep'
  */
 def reportBbddStatusStep() {
-    sendStageStartToGPL(pomXmlStructure, pipelineData, '110')
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, '110')
     pipelineData.deployFlag = false
     debugInfo(pipelineParams, pomXmlStructure, pipelineData)
     try {
         String result = ''
         result = reportStatusLiquibaseBBDD(pomXmlStructure, pipelineData, commandLiquibase)
-        sendStageEndToGPL(pomXmlStructure, pipelineData, '110', result, null, 'ended')
+        sendStageEndToAppPortal(pomXmlStructure, pipelineData, '110', result, null, 'ended')
     }catch (Exception e) {
-        sendStageEndToGPL(pomXmlStructure, pipelineData, '110', Strings.toHtml(e.getMessage()), null, 'error')
+        sendStageEndToAppPortal(pomXmlStructure, pipelineData, '110', Strings.toHtml(e.getMessage()), null, 'error')
         throw e
     }
 }
@@ -190,8 +190,8 @@ def endPipelineSuccessStep() {
         kpiLogger(almEvent.pipelineSuccess(endCallStartMillis - initCallStartMillis))
     }
 
-    sendPipelineResultadoToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
-    sendPipelineEndedToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
 }
 
 /**
@@ -203,8 +203,8 @@ def endPipelineFailureStep() {
         kpiLogger(almEvent.pipelineFail(endCallStartMillis - initCallStartMillis))
 
         successPipeline = false
-        sendPipelineResultadoToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
-        sendPipelineEndedToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
+        sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
+        sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
     }
 }
 

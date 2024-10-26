@@ -113,7 +113,7 @@ class GlobalVars {
      * Step skipping configuration
      */
     static boolean PUSH_SUREFIRE = false
-    static boolean GSA_ENABLED = true
+    static boolean BackEndAppPortal_ENABLED = true
 
 	/**
 	 * JSON used in publishErrorManagemenTranslations
@@ -219,15 +219,15 @@ class GlobalVars {
     static String ENDPOINT_INFO = "actuator/info"
     static String ENDPOINT_ENV = "actuator/env"
     static String ENDPOINT_THREADDUMP = "actuator/threaddump"
-    static String PLATAFORMA_GPL = "alm"
-    static String GPL_STATE_RUNNING = "running"
+    static String PLATAFORMA_AppPortal = "alm"
+    static String AppPortal_STATE_RUNNING = "running"
 
     static String INTERNAL_BUILDPACK = "git.svb.digitalscale.es/cbk/cf/alm/java-buildpack.git/#"
     static String INTERNAL_BUILDPACK_JAVA8 = GlobalVars.INTERNAL_BUILDPACK + "v4.8_Alm_1.0"
     static String INTERNAL_BUILDPACK_JAVA11 = GlobalVars.INTERNAL_BUILDPACK + "v4.20_Alm_1.2"
 
     /**
-     * END GPL
+     * END AppPortal
      */
 
     static String domainTst = "tst.int.srv.project.com"
@@ -373,7 +373,7 @@ class GlobalVars {
     static String gitlabDomain = "https://git.svb.digitalscale.es/"
     static String gitlabApiDomain = "https://git.svb.digitalscale.es/api/v4/projects/"
     static String gitlabApiDomainRaw = "https://git.svb.digitalscale.es/api/v4/"
-    static String proxyDigitalscaleHost = "proxyserv.svb.digitalscale.es"
+    static String proxyDigitalscaleHost = "proxy.digitalscale.es"
     static String proxyDigitalscalePort = "8080"
     static String proxyDigitalscale = "http://${GlobalVars.proxyDigitalscaleHost}:${GlobalVars.proxyDigitalscalePort}"
 
@@ -488,16 +488,16 @@ class GlobalVars {
     }
 
     /**
-     * GPL
+     * AppPortal
      */
-    static String URL_GPL = "https://idegpl.pro.almcloud.digitalscale.es"
-    static String URL_GPL_PRE = "https://idegpl.pre.almcloud.digitalscale.es"
+    static String URL_AppPortal = "https://ideAppPortal.pro.almcloud.digitalscale.es"
+    static String URL_AppPortal_PRE = "https://ideAppPortal.pre.almcloud.digitalscale.es"
 
-    static String PATH_GPL_PIPELINE = "/api/v1/pipeline"
-    static String PATH_GPL_STAGE = "/api/v1/stage"
+    static String PATH_AppPortal_PIPELINE = "/api/v1/pipeline"
+    static String PATH_AppPortal_STAGE = "/api/v1/stage"
     static String PATH_AUTH_FEATURE_AGILE_WORK = "/api/v1/authFeature"
 
-    static boolean SEND_TO_GPL = true
+    static boolean SEND_TO_AppPortal = true
 
 	/**
 	 * GAR
@@ -509,12 +509,12 @@ class GlobalVars {
     static String PATH_GAR_USUARIOS = "/api/recurso/v1"
 
     /**
-     * GSA
+     * BackEndAppPortal
      */
-    static String CATALOG_URL = "https://idegsa.pro.almcloud.digitalscale.es"
-    static String CATALOG_URL_PRE = "https://idegsa.pre.almcloud.digitalscale.es"
+    static String CATALOG_URL = "https://backEndAppPortal.pro.almcloud.digitalscale.es"
+    static String CATALOG_URL_PRE = "https://backEndAppPortal.pre.almcloud.digitalscale.es"
     static String PATH_CATALOG_PIPELINE = "/api/v1/alm/insertComponenteALM"
-	static String GSA_ACTUAL_INSTALLATION_PATH = "/api/v1/alm/actualInstallationALM/{garType}/{application}/{component}"
+	static String BackEndAppPortal_ACTUAL_INSTALLATION_PATH = "/api/v1/alm/actualInstallationALM/{garType}/{application}/{component}"
 	
 
     static boolean PUSH_CATALOG_PRE = false
@@ -543,17 +543,17 @@ class GlobalVars {
 	static String URL_ERRORMGNT_PRE = "https://api.pre.internal.project.com/apps/almarq/error-management"
 	static String URL_ERRORMGNT_PRO = "https://api.pro.internal.project.com/apps/almarq/error-management"
 	/*
-	static String URL_CATALOGO_ALM_TST = "https://k8sgateway.dev.cloud-1.alm.cloud.digitalscale.es/arch-service/catmsv-micro-server-1"
-	static String URL_CATALOGO_ALM_PRE = "https://k8sgateway.dev.cloud-1.alm.cloud.digitalscale.es/arch-service/catmsv-micro-server-1"
-	static String URL_CATALOGO_ALM_PRO = "https://k8sgateway.dev.cloud-1.alm.cloud.digitalscale.es/arch-service/catmsv-micro-server-1"
+	static String URL_CATALOGO_ALM_TST = "https://k8sgateway.dev.cloud-1.alm.cloud.digitalscale.es/arch-service/catalog-micro-server-1"
+	static String URL_CATALOGO_ALM_PRE = "https://k8sgateway.dev.cloud-1.alm.cloud.digitalscale.es/arch-service/catalog-micro-server-1"
+	static String URL_CATALOGO_ALM_PRO = "https://k8sgateway.dev.cloud-1.alm.cloud.digitalscale.es/arch-service/catalog-micro-server-1"
     */
 	static String CATALOGO_ALM_ENV = "PRO"
-	//static String URL_CATALOGO_ALM_TST = "https://api.tst.internal.project.com/dev/tech/catmsv/1"
-	static String URL_CATALOGO_ALM_TST = "https://catmsv-micro-server-1.tst.int.srv.project.com"
-	static String URL_CATALOGO_ALM_PRE = "https://api.pre.internal.project.com/tech/catmsv/1"
-	//static String URL_CATALOGO_ALM_PRO = "https://api.pro.internal.project.com/tech/catmsv/1"
-	//static String URL_CATALOGO_ALM_PRO = "https://catmsv-micro-server-1.pro.int.srv.project.com"
-	static String URL_CATALOGO_ALM_PRO = "https://catmsv-micro-server-1.pro.int.srv.project.com"  
+	//static String URL_CATALOGO_ALM_TST = "https://api.tst.internal.project.com/dev/tech/catalog/1"
+	static String URL_CATALOGO_ALM_TST = "https://catalog-micro-server-1.tst.int.srv.project.com"
+	static String URL_CATALOGO_ALM_PRE = "https://api.pre.internal.project.com/tech/catalog/1"
+	//static String URL_CATALOGO_ALM_PRO = "https://api.pro.internal.project.com/tech/catalog/1"
+	//static String URL_CATALOGO_ALM_PRO = "https://catalog-micro-server-1.pro.int.srv.project.com"
+	static String URL_CATALOGO_ALM_PRO = "https://catalog-micro-server-1.pro.int.srv.project.com"  
 	static String URL_API_TRANSLATIONS = "/translations"
 	static String URL_API_UNMMAPPED_TRANSLATIONS = "/unmapped-translations"
 	static String TEMP_FILE_UNMAPPED_TRANSLATIONS = "unmapped-translations.json"

@@ -8,7 +8,7 @@ import com.project.alm.CIPipelineStructure
 import com.project.alm.GlobalVars
 import com.project.alm.GarAppType
 import com.project.alm.ArtifactSubType
-import com.project.alm.TrazabilidadGPLType
+import com.project.alm.TrazabilidadAppPortalType
 
 class ADSDeployProResultPipelineData extends ADSProvisioningResultPipelineData {
 
@@ -99,7 +99,7 @@ class ADSDeployProResultPipelineData extends ADSProvisioningResultPipelineData {
 	
     @Override
     def getDeployed() {
-        return TrazabilidadGPLType.ALTA.toString()
+        return TrazabilidadAppPortalType.ALTA.toString()
     }
 
     @Override

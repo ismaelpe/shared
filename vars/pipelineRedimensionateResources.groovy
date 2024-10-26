@@ -4,7 +4,7 @@ import com.project.alm.ArtifactType
 import com.project.alm.EchoLevel
 import com.project.alm.GlobalVars
 import com.project.alm.CloudAppResources
-import com.project.alm.CloudAppResourcesCatMsv
+import com.project.alm.CloudAppResourcesCatalog
 import com.project.alm.PipelineData
 import com.project.alm.PipelineStructureType
 import com.project.alm.Strings
@@ -14,7 +14,7 @@ import com.project.alm.Strings
 @Field PipelineData pipelineData
 
 @Field boolean successPipeline = false
-@Field boolean initGpl = false
+@Field boolean initAppPortal = false
 
 @Field String cloudEnv = "${environmentParam}"
 @Field String namespace = "${namespaceParam}"
@@ -41,7 +41,7 @@ def call(Map pipelineParameters) {
     // las variables que se obtienen como parametro del job no es necesario
     // redefinirlas, se hace por legibilidad del codigo
     successPipeline = false
-    initGpl = false
+    initAppPortal = false
 
     cloudEnv = params.environmentParam
     namespace = params.namespaceParam
@@ -68,7 +68,7 @@ def call(Map pipelineParameters) {
         }
         //Environment sobre el qual se ejecuta este tipo de job
         environment {
-            GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
+            AppPortal = credentials('IDECUA-JENKINS-USER-TOKEN')
             JNKMSV = credentials('JNKMSV-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
@@ -118,24 +118,24 @@ def call(Map pipelineParameters) {
 def initStep() {
     initGlobalVars(pipelineParams)
     pipelineData = new PipelineData(PipelineStructureType.START_STOP, "${env.BUILD_TAG}", env.JOB_NAME, null)
-    sendPipelineStartToGPL(pipelineData, garType, garApp, app-garApp, cloudEnv.toUpperCase(),userId)
-    initGpl = true
+    sendPipelineStartToAppPortal(pipelineData, garType, garApp, app-garApp, cloudEnv.toUpperCase(),userId)
+    initAppPortal = true
 }
 
 /**
  * Stage 'getAppCloudStep'
  */
 def getAppCloudStep() {
-    sendStageStartToGPL(pipelineData, garType, garApp, "100")
+    sendStageStartToAppPortal(pipelineData, garType, garApp, "100")
     currentBuild.displayName = "${app} of ${cloudEnv} and the namespace ${namespace} and the center ${center}"
     try {
         printOpen("Get App ", EchoLevel.ALL)
         valuesDeployed = null
         valuesDeployed = getLastAppInfoCloud(cloudEnv, app, namespace, center)
         printAppCloud(valuesDeployed)
-        sendStageEndToGPL(pipelineData, garType, garApp, "100")
+        sendStageEndToAppPortal(pipelineData, garType, garApp, "100")
     } catch (Exception e) {
-        sendStageEndToGPL(pipelineData, garType, garApp, "100", Strings.toHtml(e.getMessage()), null, "error")
+        sendStageEndToAppPortal(pipelineData, garType, garApp, "100", Strings.toHtml(e.getMessage()), null, "error")
         throw e
     }
 }
@@ -144,7 +144,7 @@ def getAppCloudStep() {
  * Stage 'restartAppCloudStep'
  */
 def restartAppCloudStep() {
-    sendStageStartToGPL(pipelineData, garType, garApp, "200")
+    sendStageStartToAppPortal(pipelineData, garType, garApp, "200")
 	
 	def cloudNamespace=null
 	boolean isArchProject=false
@@ -165,7 +165,7 @@ def restartAppCloudStep() {
 			cloudNamespace=GlobalVars.Cloud_APP_ARCH
 			isArchProject=true
 		}
-        if (  (!"NO".equals(scaleCPUCores) ||  !"NO".equals(scaleMemory) || !"DEFAULT".equals(scaleNumInstances)) && (env.CATMSV_SIZE!=null && "true".equals(env.CATMSV_SIZE))) {
+        if (  (!"NO".equals(scaleCPUCores) ||  !"NO".equals(scaleMemory) || !"DEFAULT".equals(scaleNumInstances)) && (env.CATALOG_SIZE!=null && "true".equals(env.CATALOG_SIZE))) {
             CloudAppResources cloudResources = null
             def sizeCPU="M"
             def sizeMEM="M"
@@ -229,9 +229,9 @@ def restartAppCloudStep() {
 			//Se tiene que clonar OCP
 			almPipelineStageCloneToOcp(app-garApp+'.0.0',garApp+'-micro',garApp,cloudNamespace,cloudEnv,userId,garType,userId,'false','true','start')
         }
-        sendStageEndToGPL(pipelineData, garType, garApp, "200", null, cloudEnv )
+        sendStageEndToAppPortal(pipelineData, garType, garApp, "200", null, cloudEnv )
     } catch (Exception e) {
-        sendStageEndToGPL(pipelineData, garType, garApp, "200", Strings.toHtml(e.getMessage()), cloudEnv, "error")
+        sendStageEndToAppPortal(pipelineData, garType, garApp, "200", Strings.toHtml(e.getMessage()), cloudEnv, "error")
         throw e
     }
 }
@@ -249,7 +249,7 @@ def endPipelineAlwaysStep() {
 def endPipelineSuccessStep() {
     successPipeline = true
     printOpen("Is pipeline successful? ${successPipeline}", EchoLevel.INFO)
-    sendPipelineEndedToGPL(initGpl, pipelineData, garType, garApp, successPipeline)
+    sendPipelineEndedToAppPortal(initAppPortal, pipelineData, garType, garApp, successPipeline)
 }
 
 /**

@@ -10,7 +10,7 @@ import groovy.json.JsonSlurperClassic
 
 def updateDb2Flag(String DS) {
 
-    printOpen("Getting fomr catmsv ${DS}", EchoLevel.DEBUG)
+    printOpen("Getting fomr catalog ${DS}", EchoLevel.DEBUG)
 	
 	def response = sendRequestToAlm3MS(
 		'GET',
@@ -21,7 +21,7 @@ def updateDb2Flag(String DS) {
 			kpiAlmEvent: new KpiAlmEvent(
 				null, null,
 				KpiAlmEventStage.UNDEFINED,
-				KpiAlmEventOperation.CATMSV_HTTP_CALL)
+				KpiAlmEventOperation.CATALOG_HTTP_CALL)
 		])
 	
 	if (response.status == 200) {
@@ -41,7 +41,7 @@ def updateDb2Flag(String DS) {
 					kpiAlmEvent: new KpiAlmEvent(
 						null, null,
 						KpiAlmEventStage.UNDEFINED,
-						KpiAlmEventOperation.CATMSV_HTTP_CALL)
+						KpiAlmEventOperation.CATALOG_HTTP_CALL)
 				])
 			if (response1.status == 200) {
                 printOpen("Cataleg actualitzat correctament", EchoLevel.INFO)
@@ -73,7 +73,7 @@ def call(Map pipelineParameters) {
         }
         //Environment sobre el qual se ejecuta este tipo de job
         environment {
-            GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
+            AppPortal = credentials('IDECUA-JENKINS-USER-TOKEN')
 			JNKMSV = credentials('JNKMSV-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')            

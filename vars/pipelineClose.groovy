@@ -6,11 +6,11 @@ import com.project.alm.KpiAlmEventOperation
 
 @Field Map pipelineParams
 
-//Mantener estos parametros/variables por si se deben generar estructuras de datos para enviar a GPL
+//Mantener estos parametros/variables por si se deben generar estructuras de datos para enviar a AppPortal
 @Field String gitURL
 @Field String gitCredentials
 @Field String jenkinsPath
-@Field boolean initGpl
+@Field boolean initAppPortal
 
 @Field String originBranch
 @Field String pathToRepo
@@ -53,11 +53,11 @@ import com.project.alm.KpiAlmEventOperation
 def call(Map pipelineParameters) {
 	pipelineParams = pipelineParameters
 
-    //Mantener estos parametros/variables por si se deben generar estructuras de datos para enviar a GPL
+    //Mantener estos parametros/variables por si se deben generar estructuras de datos para enviar a AppPortal
     gitURL = "https://git.svb.digitalscale.es/"
     gitCredentials = "GITLAB_CREDENTIALS"
     jenkinsPath = "alm/services"
-    initGpl = false
+    initAppPortal = false
 
     originBranch = params.originBranchParam
     pathToRepo = params.pathToRepoParam
@@ -112,7 +112,7 @@ def call(Map pipelineParameters) {
 			timeout(time: 2, unit: 'HOURS')
         }
         environment {
-            GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
+            AppPortal = credentials('IDECUA-JENKINS-USER-TOKEN')
 			JNKMSV = credentials('JNKMSV-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
@@ -231,8 +231,8 @@ def initPipelineStep() {
     pipelineData.buildCode = pomXmlStructure.artifactVersion
     printOpen("Branch Type: ${pipelineData.branchStructure.branchType}", EchoLevel.INFO)
 
-    sendPipelineStartToGPL(pomXmlStructure, pipelineData, pipelineOrigId)
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "100");
+    sendPipelineStartToAppPortal(pomXmlStructure, pipelineData, pipelineOrigId)
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "100");
     almEvent = new KpiAlmEvent(
         pomXmlStructure, pipelineData,
         KpiAlmEventStage.GENERAL,
@@ -244,8 +244,8 @@ def initPipelineStep() {
     pipelineData.prepareResultData(pomXmlStructure.artifactVersion, pomXmlStructure.artifactMicro, pomXmlStructure.artifactName, pomXmlStructure.artifactType, pomXmlStructure.artifactSubType, originBranch)
     pipelineData.pipelineStructure.resultPipelineData.oldVersionInCurrentEnvironment = oldVersion
 
-    initGpl = true
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "100")
+    initAppPortal = true
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "100")
 }
 
 /**
@@ -253,12 +253,12 @@ def initPipelineStep() {
  */
 def checkCloudAvailabilityStep() {
     printOpen("The artifact ${pomXmlStructure.artifactName} from group ${pomXmlStructure.groupId} is deploying the micro ${pomXmlStructure.artifactMicro}", EchoLevel.DEBUG)
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "110")
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "110")
     try {
         checkCloudAvailability(pomXmlStructure,pipelineData,"PRO","DEPLOY")
-        sendStageEndToGPL(pomXmlStructure, pipelineData, "110")
+        sendStageEndToAppPortal(pomXmlStructure, pipelineData, "110")
     } catch (Exception e) {
-        sendStageEndToGPL(pomXmlStructure, pipelineData, "110", Strings.toHtml(e.getMessage()), null, "error")
+        sendStageEndToAppPortal(pomXmlStructure, pipelineData, "110", Strings.toHtml(e.getMessage()), null, "error")
         throw e
     }
 }
@@ -270,9 +270,9 @@ def closeReleaseBycenterStep() {
     //Es un micro desplegado por IOP por centro
     if (env.DEPLOY_MODE_SPECIAL.contains(pomXmlStructure.artifactName) ) {
         if (originBranch!=null && !originBranch.contains('configfix')) {
-            sendStageStartToGPL(pomXmlStructure, pipelineData, "200")
-            deployArtifactInCatMsv(null, pipelineData, pomXmlStructure, null , "PRO")
-            sendStageEndToGPL(pomXmlStructure, pipelineData, "200")
+            sendStageStartToAppPortal(pomXmlStructure, pipelineData, "200")
+            deployArtifactInCatalog(null, pipelineData, pomXmlStructure, null , "PRO")
+            sendStageEndToAppPortal(pomXmlStructure, pipelineData, "200")
         }
     }
 }
@@ -282,7 +282,7 @@ def closeReleaseBycenterStep() {
  */
 def closeReleaseStep() {
     printOpen("---------------------------", EchoLevel.INFO)
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "200")
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "200")
     pipelineData.deployFlag == true
     initCloudDeploy(pomXmlStructure, pipelineData)	
     def cannaryType=getCannaryType(pomXmlStructure,pipelineData)
@@ -292,7 +292,7 @@ def closeReleaseStep() {
         if (iopCampaignCatalogUtils.getCannaryCampaignValue(pomXmlStructure,pipelineData)>=100) {
             printOpen("Se puede cerrar el micro ya que la Campaña ha terminado", EchoLevel.INFO)
         }else {
-            sendStageEndToGPL(pomXmlStructure, pipelineData, "200", "No se puede cerrar el micro hasta que la campaña finalice, le avisaran", null, "error")
+            sendStageEndToAppPortal(pomXmlStructure, pipelineData, "200", "No se puede cerrar el micro hasta que la campaña finalice, le avisaran", null, "error")
             throw new Exception ("No se puede cerrar el micro hasta que la campaña finalice, le avisaran")
         }
     }					
@@ -301,14 +301,14 @@ def closeReleaseStep() {
         closeBlueGreenCloud(pomXmlStructure, pipelineData, existAncient)
         //Si es una rama del tipo configfix no se tiene que hacer nada.
         if (originBranch!=null && !originBranch.contains('configfix')) {
-            deployArtifactInCatMsv(null, pipelineData, pomXmlStructure, null , "PRO")
+            deployArtifactInCatalog(null, pipelineData, pomXmlStructure, null , "PRO")
         }							
         if (cannaryType==GlobalVars.CANARY_TYPE_CAMPAIGN) {
             printOpen("Procedemos a cerrar la version", EchoLevel.INFO)
             iopCampaignCatalogUtils.closeVersion(pomXmlStructure,pipelineData)
         }
     }
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "200")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "200")
     
 }
 
@@ -323,49 +323,49 @@ def cloneToOcpProStep() {
  * Stage copyConfigFilesStep
  */
 def copyConfigFilesStep() {
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "300");
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "300");
     
     printOpen("Reset canary release flag", EchoLevel.INFO)
     
     pushConfigFiles(pomXmlStructure, pipelineData, true, true, false)
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "300")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "300")
 }
 
 /**
  * Stage refreshMicroStep
  */
 def refreshMicroStep() {
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "400")
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "400")
 
     pipelineData.deployFlag == true
     initCloudDeploy(pomXmlStructure, pipelineData)
 
     if (pipelineData.deployOnCloud) refreshConfigurationViaRefreshBus(pomXmlStructure, pipelineData)
         
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "400")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "400")
 }
 
 /**
  * Stage apiManagerTechnicalServiceRegistrationStep
  */
 def apiManagerTechnicalServiceRegistrationStep() {
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "550")
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "550")
     
     printOpen("Publishing swagger contract to API Manager (adpbdd-micro)", EchoLevel.INFO)
     publishSwaggerContract2ApiManager(pipelineData, pomXmlStructure)
 
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "550")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "550")
 }
 
 /**
  * Stage createMRStep
  */
 def createMRStep() {
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "600")
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "600")
     if (!(pipelineData.getExecutionMode().invokeNextActionAuto() && ObtainNextJobOptionsUtils.hasNextJob(pipelineData.getExecutionMode().actionFlag(), pipelineData.pipelineStructure.resultPipelineData.getAcciones(true)))) {
         mergeRequestToMaster.mergeOnClose(pipelineData, pomXmlStructure, 'master')
     }
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "600")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "600")
 }
 
 /**
@@ -386,8 +386,8 @@ def endPipelineSuccessStep() {
         long endCallStartMillis = new Date().getTime()
         kpiLogger(almEvent.pipelineSuccess(endCallStartMillis-initCallStartMillis))						
     }
-    sendPipelineResultadoToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
-    sendPipelineEndedToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
     kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.DEPLOY_FINISHED, KpiLifeCycleStatus.OK, "PRO")
     kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.CLOSE_FINISHED, KpiLifeCycleStatus.OK)
     kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.PIPELINE_FINISHED, KpiLifeCycleStatus.OK)
@@ -409,8 +409,8 @@ def endPipelineFailureStep() {
         long endCallStartMillis = new Date().getTime()
         kpiLogger(almEvent.pipelineFail(endCallStartMillis-initCallStartMillis))
     }
-    sendPipelineResultadoToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
-    sendPipelineEndedToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
     kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.DEPLOY_FINISHED, KpiLifeCycleStatus.KO, "PRO")
     kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.CLOSE_FINISHED, KpiLifeCycleStatus.KO)
     kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.PIPELINE_FINISHED, KpiLifeCycleStatus.KO)

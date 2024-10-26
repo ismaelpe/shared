@@ -1,6 +1,6 @@
 package com.project.alm
 
-class FeatureGSA {
+class FeatureBackEndAppPortal {
 
 
     private String name;

@@ -87,12 +87,12 @@ def call(TANDEMPipelineData tandemPipelineData, ClientInfo tandemClientInfo) {
 
         try {
 
-            printOpen("Sending to GSA...", EchoLevel.INFO)
+            printOpen("Sending to BackEndAppPortal...", EchoLevel.INFO)
             response = sendRequestToService('POST', url, "", body)
 			printOpen("The artefact has been published in catalog", EchoLevel.INFO)
 
         } catch (Exception e) {
-            throw new Exception("Unexpected response when connecting to GSA (${response?.status})! + ${e.getMessage()}")
+            throw new Exception("Unexpected response when connecting to BackEndAppPortal (${response?.status})! + ${e.getMessage()}")
         }
 
     } else {

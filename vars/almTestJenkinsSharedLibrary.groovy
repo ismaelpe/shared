@@ -45,7 +45,7 @@ def call(Map pipelineParameters) {
             timeout(time: 2, unit: 'HOURS')
         }
         environment {
-            GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
+            AppPortal = credentials('IDECUA-JENKINS-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyDigitalscale}"
@@ -203,7 +203,7 @@ def call(Map pipelineParameters) {
                                     response = httpRequest(consoleLogResponseBody: false,
                                         httpMode: "GET",
                                         url: GlobalVars.URL_ZIP_INITIALIZR_DEV + params,
-                                        httpProxy: "http://proxyserv.svb.digitalscale.es:8080",
+                                        httpProxy: "http://proxy.digitalscale.es:8080",
                                         outputFile: "${Utilities.getNameOfProjectFromProjectPath(value.trim())}.zip"
                                     )
                                     printOpen("Template de proyecto '${Utilities.getNameOfProjectFromProjectPath(value.trim())}' descargado desde el initializr", EchoLevel.INFO)

@@ -2,7 +2,7 @@ import groovy.transform.Field
 import com.project.alm.EchoLevel
 import com.project.alm.GlobalVars
 import com.project.alm.CloudAppResources
-import com.project.alm.CloudAppResourcesCatMsv
+import com.project.alm.CloudAppResourcesCatalog
 import com.project.alm.PipelineData
 import com.project.alm.PipelineStructureType
 import com.project.alm.Strings

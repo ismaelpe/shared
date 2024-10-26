@@ -57,7 +57,7 @@ def call(Map pipelineParameters) {
             timeout(time: 2, unit: 'HOURS')
         }
         environment {
-            GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
+            AppPortal = credentials('IDECUA-JENKINS-USER-TOKEN')
             JNKMSV = credentials('JNKMSV-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
@@ -67,7 +67,7 @@ def call(Map pipelineParameters) {
             proxyPort = "${GlobalVars.proxyDigitalscalePort}"
             executionProfile = "${executionProfileParam ? executionProfileParam : 'DEFAULT'}"
             logsReport = true
-            sendLogsToGpl = true
+            sendLogsToAppPortal = true
         }
         stages {
             stage('get-git-repo') {
@@ -126,11 +126,11 @@ def getGitRepoStep() {
         KpiAlmEventOperation.PIPELINE_ACTUATOR_ENV)
     
     kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.PIPELINE_STARTED, KpiLifeCycleStatus.OK)
-    sendPipelineStartToGPL(pomXmlStructure, pipelineData, pipelineOrigId)
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "100")
-    initGpl = true
+    sendPipelineStartToAppPortal(pomXmlStructure, pipelineData, pipelineOrigId)
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "100")
+    initAppPortal = true
     debugInfo(pipelineParams, pomXmlStructure, pipelineData)
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "100")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "100")
 
 }
 
@@ -141,7 +141,7 @@ def getGitRepoStep() {
  */
 def stageExecuteActuatorEnvStep() {
     
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "200")
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "200")
 
     String type=pipelineData.garArtifactType.getGarName()
 	String application=pomXmlStructure.getApp(pipelineData.garArtifactType)
@@ -310,26 +310,26 @@ def stageExecuteActuatorEnvStep() {
     } catch (Exception e) {
 
         printOpen("Error al consultar la configuración: ${e.getMessage()}", EchoLevel.ERROR)
-        sendStageEndToGPL(pomXmlStructure, pipelineData, "200", null, null, "error")
+        sendStageEndToAppPortal(pomXmlStructure, pipelineData, "200", null, null, "error")
         throw e
 
     }
 
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "200", prettyResult)
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "200", prettyResult)
 		
 }
 
 def stageGetSystemPropertiesStep() {
 
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "210")
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "210")
 
     if (prettySystemResult == "") {
         printOpen("Error al consultar la configuración", EchoLevel.ERROR)
-        sendStageEndToGPL(pomXmlStructure, pipelineData, "210", null, null, "error")
+        sendStageEndToAppPortal(pomXmlStructure, pipelineData, "210", null, null, "error")
         throw new Exception("Error al recuperar las propiedades del sistema")
     }
     
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "210", prettySystemResult)
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "210", prettySystemResult)
 
 }
 
@@ -340,7 +340,7 @@ def stageGetSystemPropertiesStep() {
  */
 def endPipelineSuccessStep() {
     printOpen('SUCCESS', EchoLevel.INFO)
-    sendPipelineEndedToGPL(initGpl, pomXmlStructure, pipelineData, true)
+    sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, pipelineData, true)
 }
 
 /**
@@ -348,7 +348,7 @@ def endPipelineSuccessStep() {
  */
 def endPipelineFailureStep() {
     printOpen('FAILURE', EchoLevel.ERROR)
-    sendPipelineEndedToGPL(initGpl, pomXmlStructure, pipelineData, false)
+    sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, pipelineData, false)
 }
 
 /**

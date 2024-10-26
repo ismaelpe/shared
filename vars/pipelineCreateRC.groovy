@@ -23,7 +23,7 @@ import com.project.alm.*
 @Field PomXmlStructure pomXmlStructure
 @Field PipelineData pipelineData
 
-@Field boolean initGpl
+@Field boolean initAppPortal
 @Field boolean successPipeline
 
 @Field KpiAlmEvent almEvent
@@ -57,7 +57,7 @@ def call(Map pipelineParameters) {
     artifactType = params.artifactTypeParam
     artifactSubType = params.artifactSubTypeParam
     
-    initGpl = false
+    initAppPortal = false
     successPipeline = false
 	
 	almEvent = null
@@ -87,7 +87,7 @@ def call(Map pipelineParameters) {
          gitLabConnection('gitlab')
          }*/
         environment {
-            GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
+            AppPortal = credentials('IDECUA-JENKINS-USER-TOKEN')
 			JNKMSV = credentials('JNKMSV-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
@@ -96,7 +96,7 @@ def call(Map pipelineParameters) {
             proxyHost = "${GlobalVars.proxyDigitalscaleHost}"
             proxyPort = "${GlobalVars.proxyDigitalscalePort}"
             executionProfile = "${executionProfileParam ? executionProfileParam : 'DEFAULT'}"
-            sendLogsToGpl = true
+            sendLogsToAppPortal = true
         }
         //Atencion que en el caso que estemos en un MergeRequest... quizas solo debamos validar la issue
         stages {
@@ -184,17 +184,17 @@ def checkmarxScanStep() {
 
     debugInfo(pipelineParams, pomXmlStructure, pipelineData, params)
 
-    sendPipelineStartToGPL(pomXmlStructure, pipelineData, pipelineOrigId)
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "100")
+    sendPipelineStartToAppPortal(pomXmlStructure, pipelineData, pipelineOrigId)
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "100")
     try {
 
         checkmarxScanWorkspace(pomXmlStructure, pipelineData,true,originBranch,GlobalVars.TST_ENVIRONMENT.toUpperCase())
-        sendStageEndToGPL(pomXmlStructure, pipelineData, "100")
+        sendStageEndToAppPortal(pomXmlStructure, pipelineData, "100")
 
     } catch(Exception e) {
 
         printOpen("Error during Checkmarx Scan: ${e.getMessage()}", EchoLevel.ERROR) 
-        sendStageEndToGPL(pomXmlStructure, pipelineData, "100", null, null, "error")
+        sendStageEndToAppPortal(pomXmlStructure, pipelineData, "100", null, null, "error")
         throw e
 
     }
@@ -206,7 +206,7 @@ def checkmarxScanStep() {
  */   	
 def prepareRCStep() {
     pipelineData.buildCode = pomXmlStructure.getArtifactVersionQualifier()
-    initGpl = true
+    initAppPortal = true
     almPipelineStageValidateDependenciesVersion(pomXmlStructure, pipelineData, "110")
 }
 
@@ -216,7 +216,7 @@ def prepareRCStep() {
 /*
 def verifyProState() {
     try {
-        sendStageStartToGPL(pomXmlStructure, pipelineData, "150")
+        sendStageStartToAppPortal(pomXmlStructure, pipelineData, "150")
 
         def exclusionList = GlobalVars.ALM_SERVICES_SKIP_VALIDATION_CLOSE_RELEASE_LIST.split(";")
         boolean excluded = Arrays.asList(exclusionList).contains(pomXmlStructure.artifactName)
@@ -251,12 +251,12 @@ def verifyProState() {
 
         }
 
-        sendStageEndToGPL(pomXmlStructure, pipelineData, "150")
+        sendStageEndToAppPortal(pomXmlStructure, pipelineData, "150")
 
     } catch (Exception e) {
 
         printOpen("Error verifying PRO state: ${e.getMessage()}", EchoLevel.ERROR)
-        sendStageEndToGPL(pomXmlStructure, pipelineData, "150", null, null, "error")
+        sendStageEndToAppPortal(pomXmlStructure, pipelineData, "150", null, null, "error")
         throw e
         
     }
@@ -267,20 +267,20 @@ def verifyProState() {
  * Step nextMinorMaster
  */
 def nextMinorMaster() {
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "200");
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "200");
     pushRepoUrl(pomXmlStructure, "${GlobalVars.RELEASE_BRANCH}/v${pomXmlStructure.getArtifactVersionWithoutQualifier()}", false, false, GlobalVars.GIT_TAG_CI_PUSH_MESSAGE_RC)
     changeBranch("${GlobalVars.MASTER_BRANCH}")
     updateNextMinor(pomXmlStructure)
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "200")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "200")
 }
 
 /** 
  * Step pushRepoUrlStage
  */
 def pushRepoUrlStage() {
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "300");
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "300");
     pushRepoUrl(pomXmlStructure, "${GlobalVars.MASTER_BRANCH}", false, true, GlobalVars.GIT_TAG_CI_PUSH_MESSAGE_RC)
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "300")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "300")
 }
 
 /** 
@@ -296,8 +296,8 @@ def endPipelineSuccessStep(){
         kpiLogger(almEvent.pipelineSuccess(endCallStartMillis-initCallStartMillis))
     }
 
-    sendPipelineResultadoToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
-    sendPipelineEndedToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
 }
 
 /** 
@@ -313,8 +313,8 @@ def endPipelineFailureStep(){
         kpiLogger(almEvent.pipelineFail(endCallStartMillis-initCallStartMillis))
     }
 
-    sendPipelineResultadoToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
-    sendPipelineEndedToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
 
 }
 

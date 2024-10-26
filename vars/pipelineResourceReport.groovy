@@ -28,7 +28,7 @@ def call(Map pipelineParameters) {
             timeout(time: 3, unit: 'HOURS')
         }
         environment {		
-            proxyHost = "proxyserv.svb.digitalscale.es"
+            proxyHost = "proxy.digitalscale.es"
             proxyPort = "8080"
             CONFLUENCE = credentials('confluence_token')
             GRAFANA = credentials('grafana')

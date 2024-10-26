@@ -36,7 +36,7 @@ import java.util.regex.Pattern
 @Field KpiAlmEvent almEvent
 @Field long initCallStartMillis
 
-@Field boolean initGpl
+@Field boolean initAppPortal
 
 /* ************************************************************************************************************************************** *\
  * Pipeline Definition                                                                                                                    *
@@ -72,7 +72,7 @@ def call(Map pipelineParameters) {
             timeout(time: 2, unit: 'HOURS')
         }
         environment {
-            GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
+            AppPortal = credentials('IDECUA-JENKINS-USER-TOKEN')
             JNKMSV = credentials('JNKMSV-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
@@ -189,7 +189,7 @@ def call(Map pipelineParameters) {
                     allOf {
                         expression { !adsPipelineData.isPushCI() }
                         expression { artifactId?.trim() && adsPipelineData.branchStructure.branchType == BranchType.FEATURE }
-                        expression { GlobalVars.GSA_ENABLED }
+                        expression { GlobalVars.BackEndAppPortal_ENABLED }
                     }
                 }
                 steps {
@@ -382,29 +382,29 @@ def prepareVariablesAndCalculateVersionStep() {
     printOpen("Creating the project ${artifactId} with version ${newTxVersion}", EchoLevel.ALL)
     adsTransactionDefinition = new AdsTransactionDefinition(transactionId, transactionVersion, filePath, modelFilePath, artifactId, newTxVersion)
     artifactVersion = newTxVersion
-    sendPipelineStartToGPL(adsClientInfo, adsPipelineData, '')
-    initGpl = true
-    sendStageStartToGPL(adsClientInfo, adsPipelineData, '070')
+    sendPipelineStartToAppPortal(adsClientInfo, adsPipelineData, '')
+    initAppPortal = true
+    sendStageStartToAppPortal(adsClientInfo, adsPipelineData, '070')
     printOpen("artifactId : $artifactId", EchoLevel.ALL)
     printOpen("artifactVersion : $artifactVersion", EchoLevel.ALL)
-    sendStageEndToGPL(adsClientInfo, adsPipelineData, '070')
+    sendStageEndToAppPortal(adsClientInfo, adsPipelineData, '070')
 }
 
 /**
  * Stage 'createTransactionModelStep'
  */
 def createTransactionModelStep() {
-    sendStageStartToGPL(adsClientInfo, adsPipelineData, '150')
+    sendStageStartToAppPortal(adsClientInfo, adsPipelineData, '150')
     printOpen("Creating yaml from XML for ${adsTransactionDefinition.getModelFilePath()}", EchoLevel.ALL)
     sh "java -jar ${execJavaFile} -t ${adsTransactionDefinition.getTransaction()} -v ${adsTransactionDefinition.getTransactionVersion()} -o ${adsTransactionDefinition.getModelFilePath()}"
-    sendStageEndToGPL(adsClientInfo, adsPipelineData, '150')
+    sendStageEndToAppPortal(adsClientInfo, adsPipelineData, '150')
 }
 
 /**
  * Stage 'createProjectFromArchetype'
  */
 def createProjectFromArchetype() {
-    sendStageStartToGPL(adsClientInfo, adsPipelineData, '250')
+    sendStageStartToAppPortal(adsClientInfo, adsPipelineData, '250')
     sh 'mkdir tmp'
     printOpen("Creating Project From Archetype for ${adsTransactionDefinition.getArtifactId()}", EchoLevel.ALL)
 
@@ -412,14 +412,14 @@ def createProjectFromArchetype() {
     def cmd = "cd tmp && mvn  <Only_Maven_Settings> archetype:generate -DgroupId=${groupId} -DartifactId=${adsTransactionDefinition.getArtifactId()} -Dversion=${adsTransactionDefinition.getVersion()} -DparentArtifactVersion=${env.PROVISIONER_VERSION} -Dtransaction=${adsTransactionDefinition.getTransaction()} -DtransactionVersion=${adsTransactionDefinition.getTransactionVersion()} -DarchetypeGroupId=${archetypeGroupId} -DarchetypeArtifactId=${archetypeArtifactId} -DarchetypeVersion=${env.PROVISIONER_VERSION}  -DmodelFilePath=${adsTransactionDefinition.getModelFilePath()}"
     runMavenCommand(cmd)
 
-    sendStageEndToGPL(adsClientInfo, adsPipelineData, '250')
+    sendStageEndToAppPortal(adsClientInfo, adsPipelineData, '250')
 }
 
 /**
  * Stage 'pushToConfigServerStep'
  */
 def pushToConfigServerStep() {
-    sendStageStartToGPL(adsClientInfo, adsPipelineData, '300')
+    sendStageStartToAppPortal(adsClientInfo, adsPipelineData, '300')
 
     String repoUrl = GlobalVars.GIT_CONFIG_REPO_URL_TST
 
@@ -447,7 +447,7 @@ def pushToConfigServerStep() {
         throw err
     } finally {
         git.purge()
-        sendStageEndToGPL(adsClientInfo, adsPipelineData, '300')
+        sendStageEndToAppPortal(adsClientInfo, adsPipelineData, '300')
     }
 }
 
@@ -455,20 +455,20 @@ def pushToConfigServerStep() {
  * Stage 'removingPreviousDirectoryStep'
  */
 def removingPreviousDirectoryStep() {
-    sendStageStartToGPL(adsClientInfo, adsPipelineData, '350')
+    sendStageStartToAppPortal(adsClientInfo, adsPipelineData, '350')
     String sanitizedDir = artifactId.replace(' ', '\\ ')
     printOpen('Listamos directorio previa elimiacion', EchoLevel.ALL)
     sh 'pwd'
     sh 'ls -la'
     sh "rm -rf temp/${sanitizedDir}"
-    sendStageEndToGPL(adsClientInfo, adsPipelineData, '350', null, adsPipelineData.bmxStructure.environment)
+    sendStageEndToAppPortal(adsClientInfo, adsPipelineData, '350', null, adsPipelineData.bmxStructure.environment)
 }
 
 /**
  * Stage 'deployingNewProjectStep'
  */
 def deployingNewProjectStep() {
-    sendStageStartToGPL(adsClientInfo, adsPipelineData, '400')
+    sendStageStartToAppPortal(adsClientInfo, adsPipelineData, '400')
     def mvnLog = null
     printOpen("Deploying ${artifactId} project", EchoLevel.ALL)
 
@@ -511,7 +511,7 @@ def deployingNewProjectStep() {
         printOpen('Es RELEASE', EchoLevel.ALL)
     }
     printOpen("El buildCode es ${adsPipelineData.buildCode}", EchoLevel.ALL)
-    sendStageEndToGPL(adsClientInfo, adsPipelineData, '400')
+    sendStageEndToAppPortal(adsClientInfo, adsPipelineData, '400')
 }
 
 /**
@@ -522,10 +522,10 @@ def publishArtifactCatalogStep() {
     adsPipelineData.toString()
     printOpen('branchStructure:', EchoLevel.ALL)
     printOpen("${adsPipelineData.branchStructure.toString()}", EchoLevel.ALL)
-    sendStageStartToGPL(adsClientInfo, adsPipelineData, '450')
+    sendStageStartToAppPortal(adsClientInfo, adsPipelineData, '450')
     printOpen('publishing artifact in catalog', EchoLevel.ALL)
     publishArtifactClientADSInCatalog(adsPipelineData, adsClientInfo)
-    sendStageEndToGPL(adsClientInfo, adsPipelineData, '450')
+    sendStageEndToAppPortal(adsClientInfo, adsPipelineData, '450')
 //debugInfo(pipelineParams,pomXmlStructure, pipelineData)
 }
 
@@ -533,19 +533,19 @@ def publishArtifactCatalogStep() {
  * Stage 'refreshConnectorConfigurationStep'
  */
 def refreshConnectorConfigurationStep() {
-    sendStageStartToGPL(adsClientInfo, adsPipelineData, '470')
+    sendStageStartToAppPortal(adsClientInfo, adsPipelineData, '470')
     refreshConfigurationViaRefreshBus('1', 'ARQ.MIA', 'adsconnector', '1', '*', ADSVars.DEV_ENVIROMENT)
     refreshConfigurationViaRefreshBus('2', 'ARQ.MIA', 'adsconnector', '1', '*', ADSVars.DEV_ENVIROMENT)
     refreshConfigurationViaRefreshBus('1', 'ARQ.MIA', 'adsconnector', '1', '*', ADSVars.TST_ENVIRONMENT)
     refreshConfigurationViaRefreshBus('2', 'ARQ.MIA', 'adsconnector', '1', '*', ADSVars.TST_ENVIRONMENT)
-    sendStageEndToGPL(adsClientInfo, adsPipelineData, '470')
+    sendStageEndToAppPortal(adsClientInfo, adsPipelineData, '470')
 }
 
 /**
  * Stage 'prepareResultForNextStep'
  */
 def prepareResultForNextStep() {
-    sendStageStartToGPL(adsClientInfo, adsPipelineData, '500')
+    sendStageStartToAppPortal(adsClientInfo, adsPipelineData, '500')
     adsPipelineData.pipelineStructure.resultPipelineData.xmlFile = xmlFile
     adsPipelineData.pipelineStructure.resultPipelineData.artifactId = artifactId
     adsPipelineData.pipelineStructure.resultPipelineData.artifactGroupId = groupId
@@ -559,7 +559,7 @@ def prepareResultForNextStep() {
     adsPipelineData.pipelineStructure.resultPipelineData.originBranch = adsPipelineData.branchStructure.getBranchName()
     adsPipelineData.pipelineStructure.resultPipelineData.userEmail = adsPipelineData.pushUserEmail
     adsPipelineData.pipelineStructure.resultPipelineData.user = adsPipelineData.pushUser
-    sendStageEndToGPL(adsClientInfo, adsPipelineData, '500')
+    sendStageEndToAppPortal(adsClientInfo, adsPipelineData, '500')
 //debugInfo(pipelineParams,pomXmlStructure, pipelineData)
 }
 
@@ -576,8 +576,8 @@ def endPipelineSuccessStep() {
     }
 
     if (xmlFile?.trim()) {
-        sendPipelineEndedToGPL(initGpl, pomXmlStructure, adsPipelineData, successPipeline)
-        sendPipelineResultadoToGPL(initGpl, pomXmlStructure, adsPipelineData, successPipeline)
+        sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, adsPipelineData, successPipeline)
+        sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, adsPipelineData, successPipeline)
     }
     printOpen('ads-lib info:', EchoLevel.ALL)
     printOpen("ads-libGroupId : $groupId", EchoLevel.ALL)
@@ -598,8 +598,8 @@ def endPipelineFailureStep() {
     }
 
     if (xmlFile?.trim()) {
-        sendPipelineEndedToGPL(initGpl, pomXmlStructure, adsPipelineData, successPipeline)
-        sendPipelineResultadoToGPL(initGpl, pomXmlStructure, adsPipelineData, successPipeline)
+        sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, adsPipelineData, successPipeline)
+        sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, adsPipelineData, successPipeline)
     }
 }
 

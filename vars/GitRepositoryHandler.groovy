@@ -526,7 +526,7 @@ class GitRepositoryHandler implements Serializable {
                     httpMode: 'POST',
                     requestBody: bodyJson,
                     url: url,
-                    httpProxy: "http://proxyserv.svb.digitalscale.es:8080",
+                    httpProxy: "http://proxy.digitalscale.es:8080",
                     validResponseCodes: '200'
             }
         }

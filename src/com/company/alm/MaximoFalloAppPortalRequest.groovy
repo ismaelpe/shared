@@ -1,12 +1,12 @@
 package com.project.alm;
 
-class MaximoFalloGPLRequest extends MaximoAbstractFallo {
+class MaximoFalloAppPortalRequest extends MaximoAbstractFallo {
 
-    MaximoFalloGPLRequest(String applicationName, String stageName, String httpMethod, String url, String body, String log) {
-        this.equipoResponsable = MaximoEquipoResponsable.GPL
-        this.resumen = "Una o más peticiones contra GPL han fallado"
+    MaximoFalloAppPortalRequest(String applicationName, String stageName, String httpMethod, String url, String body, String log) {
+        this.equipoResponsable = MaximoEquipoResponsable.AppPortal
+        this.resumen = "Una o más peticiones contra AppPortal han fallado"
         this.descripcion =
-                "<p>Se han detectado fallos al hacer peticiones a GPL, la hora aproximada es: ${new Date().toString()}.</p>" +
+                "<p>Se han detectado fallos al hacer peticiones a AppPortal, la hora aproximada es: ${new Date().toString()}.</p>" +
                 "<p>El framework de la aplicación es ALM-SRV, la aplicación es ${applicationName} y el stage que ha fallado es ${stageName}</p>" +
                 "<p>La petición que ha generado el error ha sido un ${httpMethod} a la URI <code>${url}</code> con el siguiente body:</p>" +
                 "<pre>${body ? '<code>'+body+'</code>' : '(La petición no tenía body o no era serializable)'}</pre>" +
@@ -14,7 +14,7 @@ class MaximoFalloGPLRequest extends MaximoAbstractFallo {
                 "<pre><code>${log}</code></pre>" +
                 "<p>El log completo del build está como adjunto en este Máximo.</p>"
         this.pipelineExceptionErrorMessage =
-            "Error al hacer peticiones a GPL.\n" +
+            "Error al hacer peticiones a AppPortal.\n" +
                 "Se ha abierto un Máximo automáticamente al Servicio TI: ${this.equipoResponsable.servicioTI} notificando la incidencia.\n" +
                 "La petición que ha generado el error ha sido un ${httpMethod} a la URI ${url} con el siguiente body:" +
                 "\n\n${body ? body : '(La petición no tenía body o no era serializable)'}\n\n" +

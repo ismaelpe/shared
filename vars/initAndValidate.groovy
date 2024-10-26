@@ -2,7 +2,7 @@ import com.project.alm.*
 
 def call(PomXmlStructure pomXmlStructure,PipelineData pipelineData,Map pipelineParams,BranchStructure branchStructure ) {
 	
-	sendStageStartToGPL(pomXmlStructure, pipelineData, "100")
+	sendStageStartToAppPortal(pomXmlStructure, pipelineData, "100")
 	
     //currentBuild.displayName = "Build_${env.BUILD_ID}_" + pipelineData.getPipelineBuildName()
     debugInfo(pipelineParams, pomXmlStructure, pipelineData)
@@ -21,7 +21,7 @@ def call(PomXmlStructure pomXmlStructure,PipelineData pipelineData,Map pipelineP
         printOpen("${CicsVars.AGILEWORKS_VALIDATION_ENABLED} | ${pipelineData.branchStructure.branchType} | ${pipelineData.isBpiRepo()} | ${pipelineData.isBpiArchRepo()}", EchoLevel.ALL)
         if (CicsVars.AGILEWORKS_VALIDATION_ENABLED && pipelineData.branchStructure.branchType == BranchType.FEATURE && (pipelineData.isBpiRepo() || pipelineData.isBpiArchRepo())) {
             if (!pipelineData.getExecutionMode().skipAgileworksValidation()) {
-                sendAgileWorkAuthFeatureToGPL(pomXmlStructure, pipelineData, GlobalVars.DEV_ENVIRONMENT, null, "${branchStructure.featureNumber}", pipelineData.getPushUserEmail())
+                sendAgileWorkAuthFeatureToAppPortal(pomXmlStructure, pipelineData, GlobalVars.DEV_ENVIRONMENT, null, "${branchStructure.featureNumber}", pipelineData.getPushUserEmail())
             } else {
                 printOpen("AgileWork skipped by Execution Profile: ${pipelineData.executionProfileName}", EchoLevel.ALL)
             }
@@ -30,7 +30,7 @@ def call(PomXmlStructure pomXmlStructure,PipelineData pipelineData,Map pipelineP
         }
     } catch (Exception e) {
         printOpen("${e.getMessage()}", EchoLevel.ERROR)
-        sendStageEndToGPL(pomXmlStructure, pipelineData, "100", null, null, "error")
+        sendStageEndToAppPortal(pomXmlStructure, pipelineData, "100", null, null, "error")
         throw e
     }
 
@@ -55,7 +55,7 @@ def call(PomXmlStructure pomXmlStructure,PipelineData pipelineData,Map pipelineP
                 pipelineData.branchStructure.branchType == BranchType.FEATURE &&
                 (pipelineData.isBpiRepo() || pipelineData.isBpiArchRepo())) {
                 if (!pipelineData.getExecutionMode().skipAgileworksValidation()) {
-                    sendAgileWorkAuthFeatureToGPL(pomXmlStructure, pipelineData, GlobalVars.DEV_ENVIRONMENT, null, "${branchStructure.featureNumber}", pipelineData.getPushUserEmail())
+                    sendAgileWorkAuthFeatureToAppPortal(pomXmlStructure, pipelineData, GlobalVars.DEV_ENVIRONMENT, null, "${branchStructure.featureNumber}", pipelineData.getPushUserEmail())
                 } else {
                     printOpen("AgileWork skipped by Execution Profile: ${pipelineData.executionProfileName}", EchoLevel.ALL)
                 }
@@ -69,7 +69,7 @@ def call(PomXmlStructure pomXmlStructure,PipelineData pipelineData,Map pipelineP
             initCloudDeploy(pomXmlStructure, pipelineData)
         } catch (Exception e) {
             printOpen("${e.getMessage()}", EchoLevel.ERROR)
-            sendStageEndToGPL(pomXmlStructure, pipelineData, "100", null, null, "error")
+            sendStageEndToAppPortal(pomXmlStructure, pipelineData, "100", null, null, "error")
             throw e
         }
     }
@@ -86,7 +86,7 @@ def call(PomXmlStructure pomXmlStructure,PipelineData pipelineData,Map pipelineP
 
     }
 
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "100")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "100")
 	
 }
 
@@ -111,7 +111,7 @@ def validateThatSecretsBeingUsedBelongJustToThisApp(PomXmlStructure pomXmlStruct
 
             String message = "Parece que hubo un error leyendo manifest.yml. ¿Es posible que no esté en el root del proyecto?"
             printOpen(message, EchoLevel.ERROR)
-            sendStageEndToGPL(pomXmlStructure, pipelineData, "100", null, null, "error")
+            sendStageEndToAppPortal(pomXmlStructure, pipelineData, "100", null, null, "error")
             error "${message}"
 
         }
@@ -139,7 +139,7 @@ def validateThatSecretsBeingUsedBelongJustToThisApp(PomXmlStructure pomXmlStruct
 
                         String message = "Error validacion secretos sobre "+ domain + " - " + aplicacion + " pero usa: " + domainOnSecret +" - "+ appOnSecret
                         printOpen(message, EchoLevel.ERROR)
-                        sendStageEndToGPL(pomXmlStructure, pipelineData, "100", null, null, "error")
+                        sendStageEndToAppPortal(pomXmlStructure, pipelineData, "100", null, null, "error")
                         error "${message}"
 
                     }
@@ -156,7 +156,7 @@ def validateThatSecretsBeingUsedBelongJustToThisApp(PomXmlStructure pomXmlStruct
 
                         String message = "Error validacion certificado sobre "+ aplicacion + " pero usa: " + appOnSecret
                         printOpen(message, EchoLevel.ERROR)
-                        sendStageEndToGPL(pomXmlStructure, pipelineData, "100", null, null, "error")
+                        sendStageEndToAppPortal(pomXmlStructure, pipelineData, "100", null, null, "error")
                         error "${message}"
 
                     }

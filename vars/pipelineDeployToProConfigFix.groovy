@@ -26,7 +26,7 @@ import com.project.alm.*
 @Field PipelineData pipelineData
 @Field AppDeploymentState center1State
 @Field AppDeploymentState center2State
-@Field boolean initGpl
+@Field boolean initAppPortal
 @Field boolean successPipeline
 @Field boolean hasAncientCloud
 
@@ -67,7 +67,7 @@ def call(Map pipelineParameters) {
      * 3. Desplegar a PRO
      * 3.5. Preparar Canario
      */
-    boolean initGpl = false
+    boolean initAppPortal = false
     boolean successPipeline = false
 	boolean hasAncientCloud = false
     /*
@@ -82,7 +82,7 @@ def call(Map pipelineParameters) {
 			timeout(time: 2, unit: 'HOURS')
         }
         environment {
-            GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
+            AppPortal = credentials('IDECUA-JENKINS-USER-TOKEN')
 			JNKMSV = credentials('JNKMSV-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
@@ -156,12 +156,12 @@ def getGitRepoStep() {
     pipelineData.pushUser = user
     pipelineData.buildCode = pomXmlStructure.artifactVersion
 
-    sendPipelineStartToGPL(pomXmlStructure, pipelineData, pipelineOrigId)
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "100")
+    sendPipelineStartToAppPortal(pomXmlStructure, pipelineData, pipelineOrigId)
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "100")
     currentBuild.displayName = "Deploying_${pomXmlStructure.artifactVersion} of ${pomXmlStructure.artifactName}"
-    initGpl = true
+    initAppPortal = true
     debugInfo(null, pomXmlStructure, pipelineData)
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "100")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "100")
 
     //INIT AND DEPLOY
     if (pipelineData.deployFlag) initCloudDeploy(pomXmlStructure, pipelineData)
@@ -172,32 +172,32 @@ def getGitRepoStep() {
  * Stage def errorTranslationsStep
  */
 def errorTranslationsStep() {
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "200")
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "200")
 
     printOpen("Upload error translations to errormanagement-micro", EchoLevel.ALL)
     publishErrorManagementTranslations(pipelineData, pomXmlStructure)
 
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "200")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "200")
 }
 
 /**
  * Stage copyConfigFilesStep
  */
 def copyConfigFilesStep() {
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "210")
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "210")
     // INICIO - IPE
     // Comentario: Si se definen las variables de entorno para Git esto no hace falta
     sh "git config http.sslVerify false"
     // FIN - IPE
     pushConfigFiles(pomXmlStructure, pipelineData, false, true)
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "210")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "210")
 }
 
 /**
  * Stage refreshPropertiesConfigurationStep
  */
 def refreshPropertiesConfigurationStep() {
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "300")
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "300")
     printOpen("DistributionModePRO is: ${pipelineData.distributionModePRO}", EchoLevel.ALL)
     if (DistributionModePRO.SINGLE_CENTER_ROLLOUT_CENTER_1 == pipelineData.distributionModePRO) {
         refreshConfigurationViaRefreshBus(pomXmlStructure,pipelineData, '1')
@@ -209,7 +209,7 @@ def refreshPropertiesConfigurationStep() {
         printOpen("Refreshing center 2...", EchoLevel.ALL)
         refreshConfigurationViaRefreshBus(pomXmlStructure,pipelineData, '2')
     }
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "300")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "300")
 }
 
 /**
@@ -227,8 +227,8 @@ def endPipelineSuccessStep() {
     printOpen("Pipeline successfully executed.", EchoLevel.ALL)
     pipelineData.prepareResultData(pomXmlStructure.artifactVersion, pomXmlStructure.artifactMicro, pomXmlStructure.artifactName, pomXmlStructure.artifactType, pomXmlStructure.artifactSubType)
     printOpen("Next distribution mode is: ${pipelineData.pipelineStructure.resultPipelineData.nextDistributionMode}", EchoLevel.ALL)
-    sendPipelineResultadoToGPL(initGpl, pomXmlStructure, pipelineData, true)
-    sendPipelineEndedToGPL(initGpl, pomXmlStructure, pipelineData, true)
+    sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, pipelineData, true)
+    sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, pipelineData, true)
 
     if (pipelineData.getExecutionMode().invokeNextActionAuto()) {
         printOpen("Modo test activado en fase de build", EchoLevel.ALL)
@@ -245,6 +245,6 @@ def endPipelineSuccessStep() {
  */
 def endPipelineFailureStep() {
     printOpen("Pipeline executed with failures.", EchoLevel.ALL)
-    sendPipelineResultadoToGPL(initGpl, pomXmlStructure, pipelineData, false)
-    sendPipelineEndedToGPL(initGpl, pomXmlStructure, pipelineData, false)
+    sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, pipelineData, false)
+    sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, pipelineData, false)
 }

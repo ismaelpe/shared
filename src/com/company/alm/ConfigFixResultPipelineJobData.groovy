@@ -26,7 +26,7 @@ class ConfigFixResultPipelineJobData extends ResultPipelineData {
 
     @Override
     def getDeployed() {
-        return TrazabilidadGPLType.NADA.toString()
+        return TrazabilidadAppPortalType.NADA.toString()
     }
 
     @Override

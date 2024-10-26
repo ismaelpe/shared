@@ -19,7 +19,7 @@ def validateEnvironment(String appType, String application, String environment, 
             kpiAlmEvent: new KpiAlmEvent(
                 null, null,
                 KpiAlmEventStage.UNDEFINED,
-                KpiAlmEventOperation.CATMSV_HTTP_CALL)
+                KpiAlmEventOperation.CATALOG_HTTP_CALL)
         ])
 
     if (response.status == 200) {
@@ -126,7 +126,7 @@ def call(PipelineData pipelineData, PomXmlStructure pomXml) {
 			}
 			printOpen("Error sending to alm catalog", EchoLevel.ERROR)
 			if (env.SEND_TO_ALM_CATALOG_REQUIRED!=null && env.SEND_TO_ALM_CATALOG_REQUIRED!="true") {
-				throw new Exception("Unexpected response from CATMSV (services catalog)")
+				throw new Exception("Unexpected response from CATALOG (services catalog)")
 			}
 		}
 	}else {
@@ -139,7 +139,7 @@ def call(PipelineData pipelineData, PomXmlStructure pomXml) {
 }
 
 def call(def body, PipelineData pipelineData, PomXmlStructure pomXml, CloudStateUtility cloudStateUtilitity) {
-	deployArtifactInCatMsv(body, pipelineData, pomXml, cloudStateUtilitity, null)
+	deployArtifactInCatalog(body, pipelineData, pomXml, cloudStateUtilitity, null)
 }
 
 def sendRequestToCatalog(def body) {
@@ -150,14 +150,14 @@ def sendRequestToCatalog(def body) {
 
 		def url = idecuaRoutingUtils.catalogPipelineUrl()
 
-		printOpen("Body to be sent to GSA URL ${url}:\n\n${body}", EchoLevel.ALL)
+		printOpen("Body to be sent to BackEndAppPortal URL ${url}:\n\n${body}", EchoLevel.ALL)
 
 		def response
 
 		try {
-			response = sendRequestToGpl('PUT', url, "", body)
+			response = sendRequestToAppPortal('PUT', url, "", body)
 		} catch (Exception e) {
-			throw new Exception("Unexpected response when connecting to GSA (${response?.status})! + ${e.getMessage()}")
+			throw new Exception("Unexpected response when connecting to BackEndAppPortal (${response?.status})! + ${e.getMessage()}")
 		}
 
 		return response

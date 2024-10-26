@@ -46,7 +46,7 @@ import com.project.alm.CustomExecutionMode
 @Field String commitId
 @Field String user
 @Field String pipelineOrigIdVar
-@Field boolean initGpl
+@Field boolean initAppPortal
 
 @Field String actualVersionCloud
 
@@ -78,7 +78,7 @@ def call(Map pipelineParameters) {
 	user = params.userId
 	pipelineOrigIdVar = params.pipelineOrigId
 
-    initGpl = false
+    initAppPortal = false
 
     actualVersionCloud = null
 	
@@ -97,7 +97,7 @@ def call(Map pipelineParameters) {
         }
         //Environment sobre el qual se ejecuta este tipo de job
         environment {
-            GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
+            AppPortal = credentials('IDECUA-JENKINS-USER-TOKEN')
 			JNKMSV = credentials('JNKMSV-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
@@ -105,7 +105,7 @@ def call(Map pipelineParameters) {
             https_proxy = "${GlobalVars.proxyDigitalscale}"
             proxyHost = "${GlobalVars.proxyDigitalscaleHost}"
             proxyPort = "${GlobalVars.proxyDigitalscalePort}"
-            sendLogsToGpl = true
+            sendLogsToAppPortal = true
         }
         //Atencion que en el caso que estemos en un MergeRequest... quizas solo debamos validar la issue
         stages {
@@ -139,7 +139,7 @@ def call(Map pipelineParameters) {
             }
             stage('publish-artifact-catalog') {
                 when {
-                    expression { GlobalVars.GSA_ENABLED }
+                    expression { GlobalVars.BackEndAppPortal_ENABLED }
                 }
                 steps {
                     publishArtifactCatalogStep()
@@ -245,10 +245,10 @@ def initStep() {
         printOpen("VCAPS ${pipelineData.vcapsServiceIds}", EchoLevel.INFO)
     }
     
-    sendPipelineStartToGPL(pomXmlStructure, pipelineData, pipelineOrigIdVar)
-    initGpl = true
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "100")
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "100")
+    sendPipelineStartToAppPortal(pomXmlStructure, pipelineData, pipelineOrigIdVar)
+    initAppPortal = true
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "100")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "100")
 
 }
 
@@ -260,7 +260,7 @@ def cloneToOcp() {
  */
 def checkCloudAvailiabilityStep() {
     printOpen("The artifact ${pomXmlStructure.artifactName} from group ${pomXmlStructure.groupId} is deploying the micro ${pomXmlStructure.artifactMicro}", EchoLevel.DEBUG)
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "105")
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "105")
     try {
         checkCloudAvailability(pomXmlStructure,pipelineData,"PRE","BOTH")
 
@@ -269,10 +269,10 @@ def checkCloudAvailiabilityStep() {
         if (actualVersionCloudResult != null) {
             actualVersionCloud = actualVersionCloudResult.build.version
         } 
-        sendStageEndToGPL(pomXmlStructure, pipelineData, "105")
+        sendStageEndToAppPortal(pomXmlStructure, pipelineData, "105")
     } catch (Exception e) {
         printOpen("Error checking Cloud availiability: ${e.getMessage()}", EchoLevel.ERROR)
-        sendStageEndToGPL(pomXmlStructure, pipelineData, "105", null, null, "error")
+        sendStageEndToAppPortal(pomXmlStructure, pipelineData, "105", null, null, "error")
         throw e
     }
 }
@@ -282,7 +282,7 @@ def checkCloudAvailiabilityStep() {
  */
 def buildStep() {
 
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "200")
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "200")
     
     try {
         if (pipelineData.manualCopyExecutionMode == CloudVarPipelineCopyType.EX_MODE_ALL && pipelineData.manualCopyElectionOriginArtifact != CloudVarPipelineCopyType.ORIGIN_TAG) {
@@ -297,11 +297,11 @@ def buildStep() {
             deployMicrosNexus(pomXmlStructure, pipelineData)
         }
     } catch (Exception e) {
-        sendStageEndToGPL(pomXmlStructure, pipelineData, "200", null, null, "error")
+        sendStageEndToAppPortal(pomXmlStructure, pipelineData, "200", null, null, "error")
         throw e
     }
     
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "200")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "200")
     
 }
 
@@ -310,14 +310,14 @@ def buildStep() {
  * Stage 'copyConfigFilesStep'
  */
 def copyConfigFilesStep() {
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "220")
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "220")
 
     try {
         pushConfigFiles(pomXmlStructure, pipelineData, false, pipelineData.bmxStructure.usesConfigServer())
-        sendStageEndToGPL(pomXmlStructure, pipelineData, "220")
+        sendStageEndToAppPortal(pomXmlStructure, pipelineData, "220")
     } catch (Exception e) {
         printOpen("Error pushing config files: ${e.getMessage()}", EchoLevel.ERROR)
-        sendStageEndToGPL(pomXmlStructure, pipelineData, "220", null, null, "error")
+        sendStageEndToAppPortal(pomXmlStructure, pipelineData, "220", null, null, "error")
         throw e
     }
 
@@ -328,7 +328,7 @@ def copyConfigFilesStep() {
  */
 def deployStep() {
 
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "300")
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "300")
     
     String deployCloudPhases = "01-pre-deploy"
     String artifactApp = pomXmlStructure.getApp(GarAppType.valueOfType(pipelineData.garArtifactType.name))
@@ -372,12 +372,12 @@ def deployStep() {
 
         deployCloudPhases = "05-post-deployCloud"
 
-        sendStageEndToGPL(pomXmlStructure, pipelineData, "300", null, environmentDest)
-        sendPipelineUpdateToGPL(initGpl, pomXmlStructure, pipelineData, '')
+        sendStageEndToAppPortal(pomXmlStructure, pipelineData, "300", null, environmentDest)
+        sendPipelineUpdateToAppPortal(initAppPortal, pomXmlStructure, pipelineData, '')
                                    
     } catch (Exception e) {
         printOpen("Error en el deploy a Cloud, de momento nos comemos el error hasta que esto sea estable ${e}", EchoLevel.ERROR)
-        sendStageEndToGPL(pomXmlStructure, pipelineData, "300", null, null, "error")
+        sendStageEndToAppPortal(pomXmlStructure, pipelineData, "300", null, null, "error")
         throw e
         
     }
@@ -387,25 +387,25 @@ def deployStep() {
  * Stage 'publishArtifactCatalogStep'
  */
 def publishArtifactCatalogStep() {
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "400")
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "400")
     
     pipelineData.prepareResultData(pomXmlStructure.artifactVersion, pomXmlStructure.artifactMicro, pomXmlStructure.artifactName)
     pipelineData.gitUrl = pathToRepo
 
     publishArtifactInCatalog(pipelineData, pomXmlStructure, cloudStateUtilitity)
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "400")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "400")
 } 
 
 /**
  * Stage 'apimanagerTechnicalservicesRegistrationStep'
  */
 def apimanagerTechnicalservicesRegistrationStep() {
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "405")
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "405")
 
     printOpen("Publishing swagger contract to API Manager (adpbdd-micro)", EchoLevel.INFO)
     publishSwaggerContract2ApiManager(pipelineData, pomXmlStructure)
 
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "405")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "405")
 }
 
 /**
@@ -421,18 +421,18 @@ def endPipelineSuccessStep() {
 
     // Indicamos la versión actual , en caso de ser snapshot le quitamos el qualify para que rollback no añada "-dev".
     // en la URL del micro en TST.
-    def versionToGPL = versionParam =~ /SNAPSHOT/ ? versionTag.split('-')[0] : versionTag
-    pipelineData.pipelineStructure.resultPipelineData.version = versionToGPL
+    def versionToAppPortal = versionParam =~ /SNAPSHOT/ ? versionTag.split('-')[0] : versionTag
+    pipelineData.pipelineStructure.resultPipelineData.version = versionToAppPortal
 
     pipelineData.pipelineStructure.resultPipelineData.oldVersionInCurrentEnvironment = actualVersionCloud
-    pipelineData.pipelineStructure.resultPipelineData.onlyDeploy = true; // FOrzamos a que se actualice GPL con la nueva version.
+    pipelineData.pipelineStructure.resultPipelineData.onlyDeploy = true; // FOrzamos a que se actualice AppPortal con la nueva version.
 
     pipelineData.pipelineStructure.resultPipelineData.nextDistributionMode = DistributionModePRO.CANARY_ON_ALL_CENTERS
     pipelineData.pipelineStructure.resultPipelineData.executionProfile = PipelineExecutionMode.DEFAULT_MODE
     pipelineData.pipelineStructure.resultPipelineData.almSubFolder = ""
 
-    sendPipelineResultadoToGPL(initGpl, pomXmlStructure, pipelineData, true)
-    sendPipelineEndedToGPL(initGpl, pomXmlStructure, pipelineData, true)
+    sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, pipelineData, true)
+    sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, pipelineData, true)
     
 }
 
@@ -442,13 +442,13 @@ def endPipelineSuccessStep() {
 def endPipelineFailureStep() {
     successPipeline=false
     
-    if (initGpl == false) {
-        //init pipeline in GPL with minimun parameters
-        sendPipelineStartToGPL(pipelineData, pipelineParams)
-        initGpl = true
+    if (initAppPortal == false) {
+        //init pipeline in AppPortal with minimun parameters
+        sendPipelineStartToAppPortal(pipelineData, pipelineParams)
+        initAppPortal = true
     }
-    sendPipelineResultadoToGPL(initGpl, pomXmlStructure, pipelineData, false)
-    sendPipelineEndedToGPL(initGpl, pomXmlStructure, pipelineData, false)
+    sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, pipelineData, false)
+    sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, pipelineData, false)
     
 }
 

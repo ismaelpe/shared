@@ -1,7 +1,7 @@
 import static java.util.Map.entry
 import com.project.alm.GlobalVars
-import com.project.alm.GplRequestStatus
-import com.project.alm.GplUtilities
+import com.project.alm.AppPortalRequestStatus
+import com.project.alm.AppPortalUtilities
 import groovy.json.JsonSlurper
 import java.util.Date
 import com.project.alm.*
@@ -196,7 +196,7 @@ def call(String empresa,String nameApp,String typeApp,String domain,String zipFi
 							  )
 	
     def response = null
-	GplRequestStatus statusGpl = new GplRequestStatus()
+	AppPortalRequestStatus statusAppPortal = new AppPortalRequestStatus()
 	def fecha = null
 	
     timeout(GlobalVars.DEFAULT_ALM_MS_REQUEST_RETRIES_TIMEOUT) {
@@ -210,7 +210,7 @@ def call(String empresa,String nameApp,String typeApp,String domain,String zipFi
 					response = httpRequest consoleLogResponseBody: false,
 						httpMode: "GET",
 						url: url ,
-						httpProxy: "http://proxyserv.svb.digitalscale.es:8080",
+						httpProxy: "http://proxy.digitalscale.es:8080",
 						outputFile: "${zipFileName}.zip"
 
 						printOpen("Template de proyecto '${nameApp}' descargado desde el initializr", EchoLevel.ALL)
@@ -219,7 +219,7 @@ def call(String empresa,String nameApp,String typeApp,String domain,String zipFi
                 return true
             } catch (Exception e) {
 				printOpen(e.getMessage(), EchoLevel.ERROR)
-                return GplUtilities.evaluateResponse(response, statusGpl)
+                return AppPortalUtilities.evaluateResponse(response, statusAppPortal)
             }
         }
     }

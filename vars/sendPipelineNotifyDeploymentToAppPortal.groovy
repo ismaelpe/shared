@@ -1,29 +1,29 @@
 import com.project.alm.EchoLevel
 import com.project.alm.GlobalVars
 import com.project.alm.PipelineData
-import com.project.alm.TrazabilidadGPLType
+import com.project.alm.TrazabilidadAppPortalType
 import com.project.alm.AuthorizationServiceToInformType
 
-def call(boolean initGpl, def pomXmlOrIClientInfo, PipelineData pipelineData, boolean success) {
+def call(boolean initAppPortal, def pomXmlOrIClientInfo, PipelineData pipelineData, boolean success) {
 
-	// TrazabilidadGPLType.NADA.toString()
+	// TrazabilidadAppPortalType.NADA.toString()
 	
 	printOpen("La trazabilidad es de ${pipelineData.pipelineStructure.resultPipelineData.getDeployed()}", EchoLevel.ALL)
 	
-    if (initGpl && notificationToGplApplies() && !TrazabilidadGPLType.NADA.toString().equals(pipelineData.pipelineStructure.resultPipelineData.getDeployed())) {
+    if (initAppPortal && notificationToAppPortalApplies() && !TrazabilidadAppPortalType.NADA.toString().equals(pipelineData.pipelineStructure.resultPipelineData.getDeployed())) {
 
-        printOpen("Sending to GPL a Pipeline Result operation", EchoLevel.DEBUG)
+        printOpen("Sending to AppPortal a Pipeline Result operation", EchoLevel.DEBUG)
 
         def url = idecuaRoutingUtils.pipelineDeployUrl(pipelineData.pipelineStructure.pipelineId)
         def body = pipelineData.pipelineStructure.resultPipelineData.getTrazabilidad(success, this)
         body.acciones = getDeployActions(pipelineData, pomXmlOrIClientInfo)
 
-        sendRequestToGpl('POST', url, "", body, pipelineData, pomXmlOrIClientInfo)		
+        sendRequestToAppPortal('POST', url, "", body, pipelineData, pomXmlOrIClientInfo)		
 	
 
     } else {
         
-		printOpen("Not send notify to GPL", EchoLevel.DEBUG)
+		printOpen("Not send notify to AppPortal", EchoLevel.DEBUG)
 
 	}
 }

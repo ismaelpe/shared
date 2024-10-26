@@ -20,7 +20,7 @@ def call(String componentType, String component) {
 				kpiAlmEvent: new KpiAlmEvent(
 					null, null,
 					KpiAlmEventStage.UNDEFINED,
-					KpiAlmEventOperation.CATMSV_HTTP_CALL)
+					KpiAlmEventOperation.CATALOG_HTTP_CALL)
 			])
 		//def json = new groovy.json.JsonSlurperClassic().parseText(response.content)
 		def json = response.content
@@ -46,7 +46,7 @@ def call(PomXmlStructure pomXml, PipelineData pipeline, CloudDeployStructure dep
                 kpiAlmEvent: new KpiAlmEvent(
                     pomXml, pipeline,
                     KpiAlmEventStage.UNDEFINED,
-                    KpiAlmEventOperation.CATMSV_HTTP_CALL)
+                    KpiAlmEventOperation.CATALOG_HTTP_CALL)
             ])
 
         //SRV.MS/demoarqcbk

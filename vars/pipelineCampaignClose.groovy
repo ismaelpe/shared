@@ -11,7 +11,7 @@ import com.project.alm.KpiAlmEventOperation
 @Field String pipelineOriginId
 @Field ClientInfo clientInfo
 @Field PipelineData pipelineData
-@Field boolean initGpl
+@Field boolean initAppPortal
 @Field boolean successPipeline
 @Field int currentPercentage
 @Field KpiAlmEvent almEvent
@@ -29,7 +29,7 @@ def call(Map pipelineParameters) {
     user = params.userId
     targetAlmFolder = params.targetAlmFolder
     pipelineOriginId = params.pipelineOriginId
-    initGpl = false
+    initAppPortal = false
     successPipeline = false
     currentPercentage = 100
     almEvent = null
@@ -43,7 +43,7 @@ def call(Map pipelineParameters) {
             timeout(time: 2, unit: 'HOURS')
         }
         environment {
-            GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
+            AppPortal = credentials('IDECUA-JENKINS-USER-TOKEN')
             JNKMSV = credentials('JNKMSV-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
@@ -128,47 +128,47 @@ def initDataStep() {
                             clientInfo, pipelineData,
                             KpiAlmEventStage.GENERAL,
                             KpiAlmEventOperation.PIPELINE_CAMPAING_CLOSE_RELEASE)
-    sendPipelineStartToGPL(clientInfo, pipelineData, pipelineOriginId)
-    sendStageStartToGPL(clientInfo, pipelineData, '100')
-    initGpl = true
-    sendStageEndToGPL(clientInfo, pipelineData, '100')
+    sendPipelineStartToAppPortal(clientInfo, pipelineData, pipelineOriginId)
+    sendStageStartToAppPortal(clientInfo, pipelineData, '100')
+    initAppPortal = true
+    sendStageEndToAppPortal(clientInfo, pipelineData, '100')
 }
 
 /**
  * Stage 'resetPercentageStep'
  */
 def resetPercentageStep() {
-    sendStageStartToGPL(clientInfo, pipelineData, '200')
+    sendStageStartToAppPortal(clientInfo, pipelineData, '200')
 
     printOpen("Modifying percentage ${pipelineData.bmxStructure.environment}", EchoLevel.INFO)
     increaseCampaignCannary(0, pipelineData.bmxStructure.environment)
-    sendStageEndToGPL(clientInfo, pipelineData, '200')
+    sendStageEndToAppPortal(clientInfo, pipelineData, '200')
 }
 
 /**
  * Stage 'refreshApigatewayStep'
  */
 def refreshApigatewayStep() {
-    sendStageStartToGPL(clientInfo, pipelineData, '300')
+    sendStageStartToAppPortal(clientInfo, pipelineData, '300')
 
     refreshConfigurationViaRefreshBus('1', 'ARQ.MIA', 'apigateway', '1', '*', pipelineData.bmxStructure.environment)
     refreshConfigurationViaRefreshBus('2', 'ARQ.MIA', 'apigateway', '1', '*', pipelineData.bmxStructure.environment)
 
-    sendStageEndToGPL(clientInfo, pipelineData, '300')
+    sendStageEndToAppPortal(clientInfo, pipelineData, '300')
 }
 
 /**
  * Stage 'closeCampaignStep'
  */
 def closeCampaignStep() {
-    sendStageStartToGPL(clientInfo, pipelineData, '400')
+    sendStageStartToAppPortal(clientInfo, pipelineData, '400')
 
     printOpen('Closing Campaign', EchoLevel.INFO)
     try {
         iopCampaignCatalogUtils.startOrStop(false)
-        sendStageEndToGPL(clientInfo, pipelineData, '400')
+        sendStageEndToAppPortal(clientInfo, pipelineData, '400')
     }catch (Exception e) {
-        sendStageEndToGPL(clientInfo, pipelineData, '400', e.getMessage(), null, 'error')
+        sendStageEndToAppPortal(clientInfo, pipelineData, '400', e.getMessage(), null, 'error')
         throw e
     }
 }
@@ -177,11 +177,11 @@ def closeCampaignStep() {
  * Stage 'endPipelineStep'
  */
 def endPipelineStep() {
-    sendStageStartToGPL(clientInfo, pipelineData, '500')
+    sendStageStartToAppPortal(clientInfo, pipelineData, '500')
 
     pipelineData.prepareResultData(clientInfo.artifactVersion, clientInfo.artifactId, clientInfo.applicationName)
 
-    sendStageEndToGPL(clientInfo, pipelineData, '500')
+    sendStageEndToAppPortal(clientInfo, pipelineData, '500')
 }
 
 /**
@@ -194,8 +194,8 @@ def endPipelineSuccessStep() {
         long endCallStartMillis = new Date().getTime()
         kpiLogger(almEvent.pipelineSuccess(endCallStartMillis - initCallStartMillis))
     }
-    sendPipelineResultadoToGPL(initGpl, clientInfo, pipelineData, successPipeline)
-    sendPipelineEndedToGPL(initGpl, clientInfo, pipelineData, successPipeline)
+    sendPipelineResultadoToAppPortal(initAppPortal, clientInfo, pipelineData, successPipeline)
+    sendPipelineEndedToAppPortal(initAppPortal, clientInfo, pipelineData, successPipeline)
 }
 
 /**
@@ -209,8 +209,8 @@ def endPipelineFailureStep() {
         kpiLogger(almEvent.pipelineFail(endCallStartMillis - initCallStartMillis))
     }
 
-    sendPipelineResultadoToGPL(initGpl, clientInfo, pipelineData, successPipeline)
-    sendPipelineEndedToGPL(initGpl, clientInfo, pipelineData, successPipeline)
+    sendPipelineResultadoToAppPortal(initAppPortal, clientInfo, pipelineData, successPipeline)
+    sendPipelineEndedToAppPortal(initAppPortal, clientInfo, pipelineData, successPipeline)
 }
 
 /**

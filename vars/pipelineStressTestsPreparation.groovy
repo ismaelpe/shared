@@ -23,7 +23,7 @@ def call(Map pipelineParams) {
     PipelineData pipelineData
 
     boolean successPipeline = false
-    boolean initGpl = false
+    boolean initAppPortal = false
 
     String cloudEnv = GlobalVars.PRE_ENVIRONMENT
 	
@@ -49,7 +49,7 @@ def call(Map pipelineParams) {
         }
         //Environment sobre el qual se ejecuta este tipo de job
         environment {
-            GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
+            AppPortal = credentials('IDECUA-JENKINS-USER-TOKEN')
             JNKMSV = credentials('JNKMSV-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
@@ -57,7 +57,7 @@ def call(Map pipelineParams) {
             https_proxy = "${GlobalVars.proxyDigitalscale}"
             proxyHost = "${GlobalVars.proxyDigitalscaleHost}"
             proxyPort = "${GlobalVars.proxyDigitalscalePort}"
-			sendLogsToGpl = true
+			sendLogsToAppPortal = true
         }
         stages {
 			stage('get-git-repo') {
@@ -82,16 +82,16 @@ def call(Map pipelineParams) {
 							KpiAlmEventStage.GENERAL,
 							KpiAlmEventOperation.PIPELINE_STRESS_TEST_PREPARATION)
 						
-						sendPipelineStartToGPL(pomXmlStructure, pipelineData, pipelineOrigId)
-						sendStageStartToGPL(pomXmlStructure, pipelineData, "100")
-						initGpl = true
+						sendPipelineStartToAppPortal(pomXmlStructure, pipelineData, pipelineOrigId)
+						sendStageStartToAppPortal(pomXmlStructure, pipelineData, "100")
+						initAppPortal = true
 
 						debugInfo(pipelineParams, pomXmlStructure, pipelineData)
 
 						//INIT AND DEPLOY
 						initCloudDeploy(pomXmlStructure, pipelineData)
 
-						sendStageEndToGPL(pomXmlStructure, pipelineData, "100")
+						sendStageEndToAppPortal(pomXmlStructure, pipelineData, "100")
 
 					}
 				}
@@ -99,13 +99,13 @@ def call(Map pipelineParams) {
 			stage("prepare-wiremock-server") {
 				steps {
 					script {
-						sendStageStartToGPL(pomXmlStructure, pipelineData, "200")
+						sendStageStartToAppPortal(pomXmlStructure, pipelineData, "200")
 						try {
 							printOpen("Preparing wiremock server...", EchoLevel.INFO)
 							deployWiremockServerToKubernetes(pomXmlStructure, pipelineData, cloudEnv)
-							sendStageEndToGPL(pomXmlStructure, pipelineData, "200", null, cloudEnv)
+							sendStageEndToAppPortal(pomXmlStructure, pipelineData, "200", null, cloudEnv)
 						} catch (Exception e) {
-							sendStageEndToGPL(pomXmlStructure, pipelineData, "200", null, cloudEnv, "error")
+							sendStageEndToAppPortal(pomXmlStructure, pipelineData, "200", null, cloudEnv, "error")
 							throw e
 						}
 					}
@@ -114,12 +114,12 @@ def call(Map pipelineParams) {
 			stage("prepare-stress-micro") {
 				steps {
 					script {
-						sendStageStartToGPL(pomXmlStructure, pipelineData, "300")
+						sendStageStartToAppPortal(pomXmlStructure, pipelineData, "300")
 						try {
 							deployStressMicroToKubernetes(pomXmlStructure, pipelineData, requestedCPU, requestedMemory, cloudEnv)
-							sendStageEndToGPL(pomXmlStructure, pipelineData, "300", null, cloudEnv)
+							sendStageEndToAppPortal(pomXmlStructure, pipelineData, "300", null, cloudEnv)
 						} catch (Exception e) {
-							sendStageEndToGPL(pomXmlStructure, pipelineData, "300", null, cloudEnv, "error")
+							sendStageEndToAppPortal(pomXmlStructure, pipelineData, "300", null, cloudEnv, "error")
 							throw e
 						}
 					}
@@ -130,13 +130,13 @@ def call(Map pipelineParams) {
             success {
                 script {
                     printOpen("SUCCESS", EchoLevel.INFO)
-					sendPipelineEndedToGPL(initGpl, pomXmlStructure, pipelineData, true)
+					sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, pipelineData, true)
                 }
             }
             failure {
                 script {
                     printOpen("FAILURE", EchoLevel.INFO)
-					sendPipelineEndedToGPL(initGpl, pomXmlStructure, pipelineData, false)
+					sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, pipelineData, false)
                 }
             }
             always {

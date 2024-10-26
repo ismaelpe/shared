@@ -2,48 +2,48 @@ import com.project.alm.*
 import groovy.json.JsonSlurperClassic
 
 def agileWorkUrl() {
-    return getGplBase() + GlobalVars.PATH_AUTH_FEATURE_AGILE_WORK
+    return getAppPortalBase() + GlobalVars.PATH_AUTH_FEATURE_AGILE_WORK
 }
 
 def pipelineUrlById(String pipelineId) {
-    return getGplBase() + GlobalVars.PATH_GPL_PIPELINE + "/" + pipelineId + "/"
+    return getAppPortalBase() + GlobalVars.PATH_AppPortal_PIPELINE + "/" + pipelineId + "/"
 }
 
 def pipelineResultUrl(String pipelineId) {
-    //return getGplBase() + GlobalVars.PATH_GPL_PIPELINE + "/resultado/" + pipelineId
-	return getGplBase() + GlobalVars.PATH_GPL_PIPELINE + "/updateResult/" + pipelineId
+    //return getAppPortalBase() + GlobalVars.PATH_AppPortal_PIPELINE + "/resultado/" + pipelineId
+	return getAppPortalBase() + GlobalVars.PATH_AppPortal_PIPELINE + "/updateResult/" + pipelineId
 }
 
 def pipelineDeployUrl(String pipelineId) {
-    return getGplBase() + GlobalVars.PATH_GPL_PIPELINE + "/notifyDeployment/" + pipelineId
+    return getAppPortalBase() + GlobalVars.PATH_AppPortal_PIPELINE + "/notifyDeployment/" + pipelineId
 }
 
 def pipelineUrl() {
-    return getGplBase() + GlobalVars.PATH_GPL_PIPELINE
+    return getAppPortalBase() + GlobalVars.PATH_AppPortal_PIPELINE
 }
 
 def stageUrl(String stageId) {
-    return getGplBase() + GlobalVars.PATH_GPL_STAGE + "/" + stageId
+    return getAppPortalBase() + GlobalVars.PATH_AppPortal_STAGE + "/" + stageId
 }
 
 def catalogPipelineUrl() {
-    return getGsaBase() + GlobalVars.PATH_CATALOG_PIPELINE;
+    return getBackEndAppPortalBase() + GlobalVars.PATH_CATALOG_PIPELINE;
 }
 
 def instalationsUrl(String garType, String application, String component) {
-	return getGsaBase() + GlobalVars.GSA_ACTUAL_INSTALLATION_PATH.replace("{garType}",garType).replace("{application}",application).replace("{component}",component);
+	return getBackEndAppPortalBase() + GlobalVars.BackEndAppPortal_ACTUAL_INSTALLATION_PATH.replace("{garType}",garType).replace("{application}",application).replace("{component}",component);
 }
 
-private String getGplBase() {
-    if (hasToInvokeGplPRE(env.executionProfile)) {
-        return GlobalVars.URL_GPL_PRE
+private String getAppPortalBase() {
+    if (hasToInvokeAppPortalPRE(env.executionProfile)) {
+        return GlobalVars.URL_AppPortal_PRE
     } else {
-        return GlobalVars.URL_GPL
+        return GlobalVars.URL_AppPortal
     }
 }
 
-private String getGsaBase() {
-    if (hasToInvokeGplPRE(env.executionProfile)) {
+private String getBackEndAppPortalBase() {
+    if (hasToInvokeAppPortalPRE(env.executionProfile)) {
         return GlobalVars.CATALOG_URL_PRE
     } else {
         return GlobalVars.CATALOG_URL
@@ -51,7 +51,7 @@ private String getGsaBase() {
 }
 
 private String getGarBase() {
-	if (hasToInvokeGplPRE(env.executionProfile)) {
+	if (hasToInvokeAppPortalPRE(env.executionProfile)) {
 		return GlobalVars.URL_GAR_PRE
 	} else {
 		return GlobalVars.URL_GAR
@@ -241,7 +241,7 @@ private boolean weHaveValidMatriculaAvailable(String matricula) {
 
 }
 
-private boolean hasToInvokeGplPRE(String executionProfile) {
+private boolean hasToInvokeAppPortalPRE(String executionProfile) {
     if (
         PipelineExecutionMode.COMPLETE_TEST_AUTO.equals(executionProfile) ||
         PipelineExecutionMode.COMPLETE_TEST_AUTO_HOTFIX.equals(executionProfile) ||

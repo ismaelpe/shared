@@ -4,10 +4,10 @@ import com.project.alm.PomXmlStructure
 import com.project.alm.ClientInfo
 import com.project.alm.MavenVersionUtilities
 
-def call(boolean initGpl, ClientInfo clientInfo, PipelineData pipelineData) {
-	if (initGpl && notificationToGplApplies()) {
+def call(boolean initAppPortal, ClientInfo clientInfo, PipelineData pipelineData) {
+	if (initAppPortal && notificationToAppPortalApplies()) {
 		
-				printOpen("Sending to GPL a Pipeline Update operation", EchoLevel.DEBUG)
+				printOpen("Sending to AppPortal a Pipeline Update operation", EchoLevel.DEBUG)
 		
 				def url = idecuaRoutingUtils.pipelineUrlById(pipelineData.pipelineStructure.pipelineId)
 				def body = [
@@ -23,17 +23,17 @@ def call(boolean initGpl, ClientInfo clientInfo, PipelineData pipelineData) {
 						branch            : "${pipelineData.branchStructure.branchName}"
 				]
 		
-				def response = sendRequestToGpl('PUT', url, "", body, pipelineData, clientInfo)
+				def response = sendRequestToAppPortal('PUT', url, "", body, pipelineData, clientInfo)
 		
 				return response
 			}
 }
 
-def call(boolean initGpl, PomXmlStructure pomXml, PipelineData pipelineData, String pipelineOrigId) {
+def call(boolean initAppPortal, PomXmlStructure pomXml, PipelineData pipelineData, String pipelineOrigId) {
 
-    if (initGpl && notificationToGplApplies()) {
+    if (initAppPortal && notificationToAppPortalApplies()) {
 
-        printOpen("Sending to GPL a Pipeline Update operation", EchoLevel.DEBUG)
+        printOpen("Sending to AppPortal a Pipeline Update operation", EchoLevel.DEBUG)
 
         def url = idecuaRoutingUtils.pipelineUrlById(pipelineData.pipelineStructure.pipelineId)
         def body = [
@@ -50,7 +50,7 @@ def call(boolean initGpl, PomXmlStructure pomXml, PipelineData pipelineData, Str
                 anteriorPipelineId: "${pipelineOrigId}"
         ]
 
-        def response = sendRequestToGpl('PUT', url, "", body, pipelineData, pomXml)
+        def response = sendRequestToAppPortal('PUT', url, "", body, pipelineData, pomXml)
 
         return response
     }

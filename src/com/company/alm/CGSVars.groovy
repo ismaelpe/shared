@@ -2,7 +2,7 @@ package com.project.alm
 
 class CGSVars {
 
-    static String GPL_APPLICATION_NAME = "cgsoperation"
+    static String AppPortal_APPLICATION_NAME = "cgsoperation"
 
 
     static String DEV_ENVIROMENT = "DEV"

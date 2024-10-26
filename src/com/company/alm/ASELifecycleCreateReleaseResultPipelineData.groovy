@@ -84,7 +84,7 @@ class ASELifecycleCreateReleaseResultPipelineData extends ASELifecycleProvisioni
 
     @Override
     def getDeployed() {
-        return TrazabilidadGPLType.ALTA.toString()
+        return TrazabilidadAppPortalType.ALTA.toString()
     }
 
     @Override

@@ -43,7 +43,7 @@ def call(String repoGit) {
                 ignoreSslErrors: true,
                 customHeaders: [[name: 'Private-Token', value: "${GITLAB_API_TOKEN}"], [name: 'Accept', value: "application/json"]],
                 url: "${GlobalVars.gitlabApiDomain}${projectPathUrlEncoded}",
-                httpProxy: "http://proxyserv.svb.digitalscale.es:8080",
+                httpProxy: "http://proxy.digitalscale.es:8080",
                 validResponseCodes: '200:300'
 
         def json = new JsonSlurperClassic().parseText(projectInfo.content)
@@ -59,7 +59,7 @@ def call(String repoGit) {
                 ignoreSslErrors: true,
                 customHeaders: [[name: 'Private-Token', value: "${GITLAB_API_TOKEN}"], [name: 'Accept', value: "application/json"]],
                 url: "${GlobalVars.gitlabApiDomain}${projectId}/repository/branches?page=1&per_page=400",
-                httpProxy: "http://proxyserv.svb.digitalscale.es:8080",
+                httpProxy: "http://proxy.digitalscale.es:8080",
                 validResponseCodes: '200:300'
 
         printOpen("Done", EchoLevel.ALL)
@@ -106,7 +106,7 @@ def call(String repoGit) {
                             ignoreSslErrors: true,
                             customHeaders: [[name: 'Private-Token', value: "${GITLAB_API_TOKEN}"], [name: 'Accept', value: "application/json"]],
                             url: "${GlobalVars.gitlabApiDomain}${projectId}/merge_requests?source_branch=${branchActual.branchName}",
-                            httpProxy: "http://proxyserv.svb.digitalscale.es:8080",
+                            httpProxy: "http://proxy.digitalscale.es:8080",
                             validResponseCodes: '200:300'
 
                     def jsonMR = new JsonSlurperClassic().parseText(mergeRequests.content)

@@ -2,7 +2,7 @@ package com.project.alm
 
 class ADSVars {
 
-    static String GPL_APPLICATION_NAME = "adstransaction"
+    static String AppPortal_APPLICATION_NAME = "adstransaction"
 
 
     static String DEV_ENVIROMENT = "DEV"

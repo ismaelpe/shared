@@ -23,7 +23,7 @@ class RollbackFinishPipelineStructure extends PipelineStructure {
         return [
                 [id       : pipelineId + "100",
                  estado   : "inactive",
-                 nombre   : "100-send-ancient-version-restored-to-GPL",
+                 nombre   : "100-send-ancient-version-restored-to-AppPortal",
                  resultado: "",
                  orden    : 0
                 ],

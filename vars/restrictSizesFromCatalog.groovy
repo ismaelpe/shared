@@ -1,5 +1,5 @@
 import com.project.alm.CloudAppResources
-import com.project.alm.CloudAppResourcesCatMsv
+import com.project.alm.CloudAppResourcesCatalog
 import com.project.alm.GlobalVars
 
 ///config/micro-size/{namespace}/{type}/{env}/{replicas}/{cpu}/{memory}

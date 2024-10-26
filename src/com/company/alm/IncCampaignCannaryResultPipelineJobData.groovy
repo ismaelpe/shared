@@ -8,7 +8,7 @@ import com.project.alm.CIPipelineStructure
 import com.project.alm.GlobalVars
 import com.project.alm.GarAppType
 import com.project.alm.ArtifactSubType
-import com.project.alm.TrazabilidadGPLType
+import com.project.alm.TrazabilidadAppPortalType
 
 
 class IncCampaignCannaryResultPipelineJobData extends ResultPipelineData {
@@ -204,7 +204,7 @@ class IncCampaignCannaryResultPipelineJobData extends ResultPipelineData {
 
     @Override
     def getDeployed() {
-        return TrazabilidadGPLType.NADA.toString()
+        return TrazabilidadAppPortalType.NADA.toString()
     }
 
     @Override

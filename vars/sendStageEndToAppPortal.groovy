@@ -30,10 +30,10 @@ def call(PipelineData pipelineData, String garAppType, String garAppName, String
 
 def call(def pomXmlOrIClientInfo, PipelineData pipelineData, String stageId, String log, String environment, String state) {
 
-    if (notificationToGplApplies()) {
+    if (notificationToAppPortalApplies()) {
         stageId = pipelineData?.pipelineStructure?.pipelineId+stageId
 
-        printOpen("Sending to GPL a Pipeline Stage End Operation: ${stageId}", EchoLevel.DEBUG)
+        printOpen("Sending to AppPortal a Pipeline Stage End Operation: ${stageId}", EchoLevel.DEBUG)
 
         def url = idecuaRoutingUtils.stageUrl(stageId)
         def estado = "ended"
@@ -48,7 +48,7 @@ def call(def pomXmlOrIClientInfo, PipelineData pipelineData, String stageId, Str
         
 
         if (log) {
-            if(env.sendLogsToGpl) {
+            if(env.sendLogsToAppPortal) {
                 log ="############ Main Log ############<br><pre>"+log+"</pre>"
                 log += Strings.toHtml("\n\n"+
                                         "############ Complete Logs ############\n"+
@@ -58,7 +58,7 @@ def call(def pomXmlOrIClientInfo, PipelineData pipelineData, String stageId, Str
             }
             body.put("log", prepareLogBeforeSendingIt(log))
         } else {
-            if(env.sendLogsToGpl) {
+            if(env.sendLogsToAppPortal) {
                 log = Strings.toHtml(GlobalVars.STAGE_LOGS)
                 body.put("log", prepareLogBeforeSendingIt(log))
             }
@@ -69,12 +69,12 @@ def call(def pomXmlOrIClientInfo, PipelineData pipelineData, String stageId, Str
         }
     
         try {
-            def response = sendRequestToGpl('PUT', url, "", body, pipelineData, pomXmlOrIClientInfo)
+            def response = sendRequestToAppPortal('PUT', url, "", body, pipelineData, pomXmlOrIClientInfo)
     
             return response
         } catch (Exception e) {
             body.remove("log")
-            def response = sendRequestToGpl('PUT', url, "", body, pipelineData, pomXmlOrIClientInfo)
+            def response = sendRequestToAppPortal('PUT', url, "", body, pipelineData, pomXmlOrIClientInfo)
             return response
         }
     }
@@ -82,10 +82,10 @@ def call(def pomXmlOrIClientInfo, PipelineData pipelineData, String stageId, Str
 
 def call(PipelineData pipelineData, String garAppType, String garAppName, String stageId, String log, String environment, String state) {
 
-    if (notificationToGplApplies()) {
+    if (notificationToAppPortalApplies()) {
         stageId = pipelineData?.pipelineStructure?.pipelineId+stageId
 
-        printOpen("Sending to GPL a Pipeline Stage End Operation: ${stageId}", EchoLevel.DEBUG)
+        printOpen("Sending to AppPortal a Pipeline Stage End Operation: ${stageId}", EchoLevel.DEBUG)
 
         def url = idecuaRoutingUtils.stageUrl(stageId)
         def estado = "ended"
@@ -99,7 +99,7 @@ def call(PipelineData pipelineData, String garAppType, String garAppName, String
         ]
 
         if (log) {
-            if(env.sendLogsToGpl) {
+            if(env.sendLogsToAppPortal) {
                 log ="############ Main Log ############<br><pre>"+log+"</pre>"
                 log += Strings.toHtml("\n\n"+
                                         "############ Complete Logs ############\n"+
@@ -109,7 +109,7 @@ def call(PipelineData pipelineData, String garAppType, String garAppName, String
             }
             body.put("log", prepareLogBeforeSendingIt(log))
         } else {
-            if(env.sendLogsToGpl) {
+            if(env.sendLogsToAppPortal) {
                 log = Strings.toHtml(GlobalVars.STAGE_LOGS)
                 body.put("log", prepareLogBeforeSendingIt(log))
             }
@@ -120,12 +120,12 @@ def call(PipelineData pipelineData, String garAppType, String garAppName, String
         }
         
         try {
-            def response = sendRequestToGpl('PUT', url, "", body, garAppName, garAppType)
+            def response = sendRequestToAppPortal('PUT', url, "", body, garAppName, garAppType)
     
             return response
         } catch (Exception e) {
             body.remove("log")
-            def response = sendRequestToGpl('PUT', url, "", body, garAppName, garAppType)
+            def response = sendRequestToAppPortal('PUT', url, "", body, garAppName, garAppType)
             return response
         }
     }

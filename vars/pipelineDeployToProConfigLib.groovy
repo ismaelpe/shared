@@ -24,7 +24,7 @@ import com.project.alm.*
 @Field PomXmlStructure pomXmlStructure
 @Field PipelineData pipelineData
 
-@Field boolean initGpl
+@Field boolean initAppPortal
 @Field boolean successPipeline
 
 //Pipeline unico que construye todos los tipos de artefactos
@@ -56,7 +56,7 @@ def call(Map pipelineParameters) {
     loggerLevel = params.loggerLevel
     agentParam = params.agent
 
-    initGpl = false
+    initAppPortal = false
     successPipeline = false
 
     pipeline {      
@@ -68,7 +68,7 @@ def call(Map pipelineParameters) {
         }
         //Environment sobre el qual se ejecuta este tipo de job
         environment {
-            GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
+            AppPortal = credentials('IDECUA-JENKINS-USER-TOKEN')
 			JNKMSV = credentials('JNKMSV-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
@@ -134,13 +134,13 @@ def getGitRepoStep() {
 
     pipelineData.buildCode = pomXmlStructure.artifactVersion
 
-    sendPipelineStartToGPL(pomXmlStructure, pipelineData, pipelineOrigId)
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "100")
+    sendPipelineStartToAppPortal(pomXmlStructure, pipelineData, pipelineOrigId)
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "100")
     currentBuild.displayName = "Deploying_${pomXmlStructure.artifactVersion} of ${pomXmlStructure.artifactName}"
-    initGpl = true
+    initAppPortal = true
 
     debugInfo(null, pomXmlStructure, pipelineData)
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "100")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "100")
 }
 
 /**
@@ -155,23 +155,23 @@ def copyConfigFilesStep() {
 
     pipelineData.prepareResultData(pomXmlStructure.artifactVersion, pomXmlStructure.artifactName, pomXmlStructure.artifactName, pomXmlStructure.artifactType, pomXmlStructure.artifactSubType)
 
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "300")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "300")
 }
 
 /**
  * Stage refreshMicrosStep
  */
 def refreshMicrosStep() {
-     sendStageStartToGPL(pomXmlStructure, pipelineData, "310")						
+     sendStageStartToAppPortal(pomXmlStructure, pipelineData, "310")						
      try {
          if (pipelineData.branchStructure.branchType == BranchType.HOTFIX) {
              refreshDependencyConfig(pomXmlStructure,pipelineData,'BOTH',GlobalVars.PRO_ENVIRONMENT)
          }
          pipelineData.prepareResultData(pomXmlStructure.artifactVersion, pomXmlStructure.artifactName, pomXmlStructure.artifactName)
          publishArtifactInCatalog(pipelineData, pomXmlStructure)
-	 sendStageEndToGPL(pomXmlStructure, pipelineData, "310")
+	 sendStageEndToAppPortal(pomXmlStructure, pipelineData, "310")
      }catch (Exception e) {
-         sendStageEndToGPLAndThrowError(pomXmlStructure, pipelineData, "310",e)
+         sendStageEndToAppPortalAndThrowError(pomXmlStructure, pipelineData, "310",e)
      }	
 }
 
@@ -190,8 +190,8 @@ def endPipelineSuccessStep() {
     printOpen("Se success el pipeline ${successPipeline}", EchoLevel.INFO)
 
     successPipeline = true
-    sendPipelineResultadoToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
-    sendPipelineEndedToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
 
     if (pipelineData.getExecutionMode().invokeNextActionAuto()) {
         printOpen("Modo test activado en fase de deploy to pro ConfigLib", EchoLevel.ALL)
@@ -205,6 +205,6 @@ def endPipelineSuccessStep() {
 def endPipelineFailureStep() {
     printOpen("Se failure el pipeline ${successPipeline}", EchoLevel.ERROR)
     successPipeline = false
-    sendPipelineResultadoToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
-    sendPipelineEndedToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
 }

@@ -150,7 +150,7 @@ def migrateResourcesTo(Map resources, String environment,String micro, String ma
 			kpiAlmEvent: new KpiAlmEvent(
 				null, null,
 				KpiAlmEventStage.UNDEFINED,
-				KpiAlmEventOperation.CATMSV_HTTP_CALL)
+				KpiAlmEventOperation.CATALOG_HTTP_CALL)
 		])
 	
 	if (response.status == 200) {
@@ -473,9 +473,9 @@ def generateArtifact(def path, def micro, def namespace, def versionScript, def 
 def getInfoApp(def path, def micro, def namespace, def versionScript, def microType, def componentPom, def environment, def buildCode) {
 	try {
 		
-		printOpen("${path}/getArtifactCatMsv.sh -h '${GlobalVars.URL_CATALOGO_ALM_PRO}' -M ${micro}"+
+		printOpen("${path}/getArtifactCatalog.sh -h '${GlobalVars.URL_CATALOGO_ALM_PRO}' -M ${micro}"+
 			" -l '${GlobalVars.URL_ALMMETRICS}' -A ${namespace} -V ${versionScript} -T ${microType} -C ${micro}-micro -E ${environment} -B '${buildCode}'  ",EchoLevel.INFO)
-		resultScript = sh( returnStdout: true, script: "${path}/getArtifactCatMsv.sh -h '${GlobalVars.URL_CATALOGO_ALM_PRO}' -M ${micro}"+
+		resultScript = sh( returnStdout: true, script: "${path}/getArtifactCatalog.sh -h '${GlobalVars.URL_CATALOGO_ALM_PRO}' -M ${micro}"+
 			" -l '${GlobalVars.URL_ALMMETRICS}' -A ${namespace} -V ${versionScript} -T ${microType} -C ${componentPom} -E ${environment} -B '${buildCode}' "
 			)
 		//Tenemos un fichero dado de alta

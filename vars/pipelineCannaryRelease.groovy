@@ -30,7 +30,7 @@ import com.project.alm.KpiAlmEventOperation
 
 @Field PomXmlStructure pomXmlStructure
 @Field PipelineData pipelineData
-@Field boolean initGpl
+@Field boolean initAppPortal
 @Field boolean successPipeline
 
 //FIXME: You can remove this when parallel tests are completed
@@ -82,7 +82,7 @@ def call(Map pipelineParameters) {
      * 3. Desplegar a PRO
      * 3.5. Preparar Canario
      */
-    initGpl = false
+    initAppPortal = false
     successPipeline = false
 
     //FIXME: You can remove this when parallel tests are completed
@@ -104,7 +104,7 @@ def call(Map pipelineParameters) {
             timeout(time: 2, unit: 'HOURS')
         }
         environment {
-            GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
+            AppPortal = credentials('IDECUA-JENKINS-USER-TOKEN')
             JNKMSV = credentials('JNKMSV-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
@@ -241,14 +241,14 @@ def initDataStep() {
     pipelineData.pipelineStructure.resultPipelineData.oldVersionInCurrentEnvironment = oldVersion
     
     kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.PIPELINE_STARTED, KpiLifeCycleStatus.OK)
-    sendPipelineStartToGPL(pomXmlStructure, pipelineData, pipelineOrigId)
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "100");
-    initGpl = true
+    sendPipelineStartToAppPortal(pomXmlStructure, pipelineData, pipelineOrigId)
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "100");
+    initAppPortal = true
     debugInfo(null, pomXmlStructure, pipelineData)
 
     kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.INCREASE_CANARY_$_STARTED, KpiLifeCycleStatus.OK, "BETA")
     
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "100")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "100")
     printOpen("Init deploy with canary on ${pipelineData.pipelineStructure.resultPipelineData.cannaryPercentage}%", EchoLevel.INFO)
 }
 
@@ -256,12 +256,12 @@ def initDataStep() {
  * Stage validateDependenciesStep
  */
 def validateDependenciesStep() {
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "110");                       
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "110");                       
     try {
-        validateDependenciesCatMsv(pipelineData, pomXmlStructure, false,"BETA")
-        sendStageEndToGPL(pomXmlStructure, pipelineData, "110")
+        validateDependenciesCatalog(pipelineData, pomXmlStructure, false,"BETA")
+        sendStageEndToAppPortal(pomXmlStructure, pipelineData, "110")
     }catch(Exception e) {
-        sendStageEndToGPL(pomXmlStructure, pipelineData, "110", e.getMessage(), null, "warning")
+        sendStageEndToAppPortal(pomXmlStructure, pipelineData, "110", e.getMessage(), null, "warning")
     }
 }
 
@@ -269,12 +269,12 @@ def validateDependenciesStep() {
  * Stage modifyPercentatgeStep
  */
 def modifyPercentatgeStep() {
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "200");
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "200");
     //build the workspace
     printOpen("Building the branch", EchoLevel.DEBUG)
 
     pushConfigFiles(pomXmlStructure, pipelineData, true, true, false)
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "200")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "200")
 
     //FIXME: You can remove this when parallel tests are completed
     microNameAndMajor = BmxUtilities.calculateArtifactId(pomXmlStructure, pipelineData.branchStructure,true).toLowerCase()
@@ -285,22 +285,22 @@ def modifyPercentatgeStep() {
  * Stage refreshAppStep
  */
 def refreshAppStep() {
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "300");
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "300");
 
     pipelineData.deployFlag == true // FIXME: ¿?
     initCloudDeploy(pomXmlStructure, pipelineData)
 
     if (pipelineData.deployOnCloud) refreshConfigurationViaRefreshBus(pomXmlStructure, pipelineData)
 
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "300")
-    sendPipelineUpdateToGPL(initGpl, pomXmlStructure, pipelineData, '')
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "300")
+    sendPipelineUpdateToAppPortal(initAppPortal, pomXmlStructure, pipelineData, '')
 }
 
 /**
  * Stage refreshAppParallelStep
  */        
 def refreshAppParallelStep(){
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "300");
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "300");
     pipelineData.deployFlag == true
     initCloudDeploy(pomXmlStructure, pipelineData)
 
@@ -324,8 +324,8 @@ def refreshAppParallelStep(){
         printOpen("No refresh will be done", EchoLevel.INFO)
     }
     
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "300")
-    sendPipelineUpdateToGPL(initGpl, pomXmlStructure, pipelineData, '')
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "300")
+    sendPipelineUpdateToAppPortal(initAppPortal, pomXmlStructure, pipelineData, '')
 }
 
 /**
@@ -415,9 +415,9 @@ def threaddumpCenter2Step() {
  * Stage endPipelineStep
  */
 def endPipelineStep() {
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "400");
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "400");
     pipelineData.prepareResultData(pomXmlStructure.artifactVersion, pomXmlStructure.artifactMicro, component)
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "400")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "400")
 }
 
 /**
@@ -438,8 +438,8 @@ def endPipelineSuccessStep() {
         long endCallStartMillis = new Date().getTime()
         kpiLogger(almEvent.pipelineSuccess(endCallStartMillis-initCallStartMillis))                        
     }
-    sendPipelineResultadoToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
-    sendPipelineEndedToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
     kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.INCREASE_CANARY_$_FINISHED, KpiLifeCycleStatus.OK, "BETA")
     kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.PIPELINE_FINISHED, KpiLifeCycleStatus.OK)
     if (pipelineData.getExecutionMode().invokeNextActionAuto()) {
@@ -460,8 +460,8 @@ def endPipelineFailureStep() {
         kpiLogger(almEvent.pipelineFail(endCallStartMillis-initCallStartMillis))
     }
 
-    sendPipelineResultadoToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
-    sendPipelineEndedToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
     kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.INCREASE_CANARY_$_FINISHED, KpiLifeCycleStatus.KO, "BETA")
     kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.PIPELINE_FINISHED, KpiLifeCycleStatus.KO)
 }

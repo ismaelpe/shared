@@ -11,7 +11,7 @@ import com.project.alm.*
 @Field PomXmlStructure pomXmlStructure
 
 @Field boolean successPipeline = false
-@Field boolean initGpl = false
+@Field boolean initAppPortal = false
 
 //Pipeline que valida la estructura del repositorio de datos canonicos
 /* ************************************************************************************************************************************** *\
@@ -24,7 +24,7 @@ def call(Map pipelineParameters) {
     commitId = env.gitlabMergeRequestLastCommit
 
     successPipeline = false
-    initGpl = false
+    initAppPortal = false
 
     pipeline {
         agent { node(almJenkinsAgent(pipelineParams)) }
@@ -35,7 +35,7 @@ def call(Map pipelineParameters) {
             timeout(time: 2, unit: 'HOURS')
         }
         environment {
-            GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
+            AppPortal = credentials('IDECUA-JENKINS-USER-TOKEN')
             JNKMSV = credentials('JNKMSV-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
@@ -116,11 +116,11 @@ def getGitInfoStep() {
 
     pipelineData.initFromConfigurationRepo(branchStructure, ArtifactType.valueOfType(pipelineParams.type), ArtifactSubType.valueOfSubType(pipelineParams.subType), env.gitlabSourceRepoHttpUrl)
     currentBuild.displayName = "Build_${env.BUILD_ID}_" + pipelineData.getPipelineBuildName() != null ? pipelineData.getPipelineBuildName() : 'dev'
-    initGpl = true
+    initAppPortal = true
 
-    sendPipelineStartToGPL(clientInfo, pipelineData, '')
-    sendStageStartToGPL(clientInfo, pipelineData, '100')
-    sendStageEndToGPL(clientInfo, pipelineData, '100')
+    sendPipelineStartToAppPortal(clientInfo, pipelineData, '')
+    sendStageStartToAppPortal(clientInfo, pipelineData, '100')
+    sendStageEndToAppPortal(clientInfo, pipelineData, '100')
     updateCommitStatus(pipelineData, pomXmlStructure, 'running')
     debugInfo(pipelineParams, pomXmlStructure, pipelineData)
 }
@@ -130,11 +130,11 @@ def getGitInfoStep() {
  */
 def validateFilesStep() {
     try {
-        sendStageStartToGPL(clientInfo, pipelineData, '200')
+        sendStageStartToAppPortal(clientInfo, pipelineData, '200')
         validateFiles()
-        sendStageEndToGPL(clientInfo, pipelineData, '200')
+        sendStageEndToAppPortal(clientInfo, pipelineData, '200')
     } catch (Exception e) {
-        sendStageEndToGPLAndThrowError(pomXmlStructure, pipelineData, '200', e)
+        sendStageEndToAppPortalAndThrowError(pomXmlStructure, pipelineData, '200', e)
     }
 }
 
@@ -145,8 +145,8 @@ def endPipelineSuccessStep() {
     successPipeline = true
 
     printOpen('SUCCESS', EchoLevel.INFO)
-    sendPipelineResultadoToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
-    sendPipelineEndedToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
 
     updateCommitStatus(pipelineData, pomXmlStructure, 'success')
 }
@@ -156,8 +156,8 @@ def endPipelineSuccessStep() {
  */
 def endPipelineFailureStep() {
     printOpen('FAILURE', EchoLevel.ERROR)
-    sendPipelineResultadoToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
-    sendPipelineEndedToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
 
     updateCommitStatus(pipelineData, pomXmlStructure, 'failed')
 }

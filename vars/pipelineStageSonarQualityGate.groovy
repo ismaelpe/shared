@@ -10,7 +10,7 @@ def call(PomXmlStructure pomXmlStructure, PipelineData pipelineData, String stag
 	if (skipSonarFeature(pomXmlStructure,pipelineData)) {
 		printOpen("Sonar disabled in this feature ${pipelineData.branchStructure}",EchoLevel.INFO)
 	}else {
-		sendStageStartToGPL(pomXmlStructure, pipelineData, stageId)
+		sendStageStartToAppPortal(pomXmlStructure, pipelineData, stageId)
 		boolean ifSonarQualityGateOK = false
 	
 		boolean sonarScanDisabled =
@@ -27,7 +27,7 @@ def call(PomXmlStructure pomXmlStructure, PipelineData pipelineData, String stag
 		if (sonarScanDisabled && ( ! sonarQualityGateDisabled ) ) {
 			def msg = "It seems that Sonar Scan has been disabled globally or just for this component but Sonar Quality Gate is enabled." +
 				"Please contact administrators to have this configurations mismatch solved"
-			sendStageEndToGPL(pomXmlStructure, pipelineData, stageId, msg, null, "error")
+			sendStageEndToAppPortal(pomXmlStructure, pipelineData, stageId, msg, null, "error")
 			error msg
 		}
 	
@@ -54,7 +54,7 @@ def call(PomXmlStructure pomXmlStructure, PipelineData pipelineData, String stag
 			if ( (pipelineData.branchStructure.branchType == BranchType.RELEASE) && pipelineData.isPushCreateRC()) {
 	
 				pipelineData.pipelineStructure.resultPipelineData.ifSonarQualityGateOK = false
-				sendStageEndToGPL(
+				sendStageEndToAppPortal(
 					pomXmlStructure, pipelineData, stageId,
 					Strings.toHtml(exceptionPrintout),
 					null, "error")
@@ -71,11 +71,11 @@ def call(PomXmlStructure pomXmlStructure, PipelineData pipelineData, String stag
             pipelineData.pipelineStructure.resultPipelineData.ifSonarQualityGateOK = true
 			if (sonarQualityGateDisabled) {
 	
-				sendStageEndToGPL(pomXmlStructure, pipelineData, stageId, "Sonar Quality Gate was skipped due to current configuration settings", null, "warning")
+				sendStageEndToAppPortal(pomXmlStructure, pipelineData, stageId, "Sonar Quality Gate was skipped due to current configuration settings", null, "warning")
 	
 			} else {
 	
-				sendStageEndToGPL(pomXmlStructure, pipelineData, stageId)
+				sendStageEndToAppPortal(pomXmlStructure, pipelineData, stageId)
 	
 			}
 	
@@ -98,7 +98,7 @@ private void dealWithSonarQualityGateFailure(PomXmlStructure pomXmlStructure, Pi
 
     if (!Arrays.asList(whiteListApps).contains(pomXmlStructure.artifactName)) {
 
-        sendStageEndToGPL(pomXmlStructure, pipelineData, stageId, Strings.toHtml(errorQualityGate.replace("<Warning_or_Error>", "Error")), null, "warning")
+        sendStageEndToAppPortal(pomXmlStructure, pipelineData, stageId, Strings.toHtml(errorQualityGate.replace("<Warning_or_Error>", "Error")), null, "warning")
         //error "sonar-quality-gate result is ERROR, pipeline aborted"
 
     } else {
@@ -110,7 +110,7 @@ private void dealWithSonarQualityGateFailure(PomXmlStructure pomXmlStructure, Pi
 			pipelineData.pipelineStructure.resultPipelineData.ifSonarQualityGateOK = true
 		}
 
-        sendStageEndToGPL(pomXmlStructure, pipelineData, stageId, "${msg}", null, "warning")
+        sendStageEndToAppPortal(pomXmlStructure, pipelineData, stageId, "${msg}", null, "warning")
 
     }
 

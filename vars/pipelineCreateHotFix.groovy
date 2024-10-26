@@ -23,7 +23,7 @@ import com.project.alm.*
 
 @Field PomXmlStructure pomXmlStructure
 @Field PipelineData pipelineData
-@Field boolean initGpl
+@Field boolean initAppPortal
 @Field boolean successPipeline
 
 //Pipeline unico que construye todos los tipos de artefactos
@@ -56,7 +56,7 @@ def call(Map pipelineParameters) {
     loggerLevel = params.loggerLevel
     agentParam = params.agent
 
-    initGpl = false
+    initAppPortal = false
     successPipeline = false
    
     pipeline {      
@@ -67,7 +67,7 @@ def call(Map pipelineParameters) {
 			timeout(time: 2, unit: 'HOURS')
         }
         environment {
-            GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
+            AppPortal = credentials('IDECUA-JENKINS-USER-TOKEN')
 			JNKMSV = credentials('JNKMSV-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
@@ -140,14 +140,14 @@ def prepareHotFixStep() {
 
     kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.PIPELINE_STARTED, KpiLifeCycleStatus.OK)
     kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.HOTFIX_CREATION_STARTED, KpiLifeCycleStatus.OK)
-    sendPipelineStartToGPL(pomXmlStructure, pipelineData, pipelineOrigId)
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "100");
-    initGpl = true
+    sendPipelineStartToAppPortal(pomXmlStructure, pipelineData, pipelineOrigId)
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "100");
+    initAppPortal = true
     /**
       * Se consolida el codigo de la nueva rama generada del hotfix en el repo de git
       */
     pushRepoUrl(pomXmlStructure, "${GlobalVars.HOTFIX_BRANCH}/v${pomXmlStructure.getArtifactVersionWithoutQualifier()}", true, false, GlobalVars.GIT_TAG_CI_PUSH_MESSAGE_HOTFIX)
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "100")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "100")
 }
 
 /**
@@ -164,8 +164,8 @@ def endPipelineAlwaysStep() {
 def endPipelineSuccessStep() {
     printOpen("Se success el pipeline ${successPipeline}", EchoLevel.INFO)
     successPipeline = true
-    sendPipelineResultadoToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
-    sendPipelineEndedToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
     kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.HOTFIX_CREATION_FINISHED, KpiLifeCycleStatus.OK)
     kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.PIPELINE_FINISHED, KpiLifeCycleStatus.OK)
 }
@@ -176,8 +176,8 @@ def endPipelineSuccessStep() {
 def endPipelineFailureStep() { 
     successPipeline = false
     printOpen("Se failure el pipeline ${successPipeline}", EchoLevel.ERROR)
-    sendPipelineResultadoToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
-    sendPipelineEndedToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
     kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.HOTFIX_CREATION_FINISHED, KpiLifeCycleStatus.KO)
     kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.PIPELINE_FINISHED, KpiLifeCycleStatus.KO)
 }

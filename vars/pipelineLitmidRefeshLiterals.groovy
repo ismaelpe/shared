@@ -17,7 +17,7 @@ import com.project.alm.*
 
 @Field ClientInfo clientInfo
 @Field PipelineData pipelineData
-@Field boolean initGpl
+@Field boolean initAppPortal
 @Field boolean successPipeline
 
 /* ************************************************************************************************************************************** *\
@@ -41,7 +41,7 @@ def call(Map pipelineParameters) {
 
     mapResult = []
 
-    initGpl = false
+    initAppPortal = false
     successPipeline = false
 
     pipeline {		
@@ -52,7 +52,7 @@ def call(Map pipelineParameters) {
             timeout(time: 3, unit: 'HOURS')
         }
         environment {
-            GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
+            AppPortal = credentials('IDECUA-JENKINS-USER-TOKEN')
 			JNKMSV = credentials('JNKMSV-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
@@ -133,43 +133,43 @@ def initPipelineStep() {
     pipelineData.branchStructure.branchName = 'master'
     pipelineData.branchStructure.init()
 
-    sendPipelineStartToGPL(clientInfo, pipelineData, "")
+    sendPipelineStartToAppPortal(clientInfo, pipelineData, "")
 
-    sendStageStartToGPL(clientInfo, pipelineData, "100");
-    initGpl = true
-    sendStageEndToGPL(clientInfo, pipelineData, "100")
+    sendStageStartToAppPortal(clientInfo, pipelineData, "100");
+    initAppPortal = true
+    sendStageEndToAppPortal(clientInfo, pipelineData, "100")
 }
 
 /**
  * Stage 'extractLitmidLiteralsStep'
  */
 def extractLitmidLiteralsStep() {
-    sendStageStartToGPL(clientInfo, pipelineData, "200")
+    sendStageStartToAppPortal(clientInfo, pipelineData, "200")
     
     printOpen("Extracting litmid literals", EchoLevel.INFO)
     def adaptedLitmidResponse = sendLitmidRequest(artifactName, typeApp)
     mapResult = adaptedLitmidResponse[LitmidLiteralType.APPLICATION.literalType()]
 
-    sendStageEndToGPL(clientInfo, pipelineData,  "200")
+    sendStageEndToAppPortal(clientInfo, pipelineData,  "200")
 }
 
 /**
  * Stage 'transformLitmidLiteralsStep'
  */
 def transformLitmidLiteralsStep() {
-    sendStageStartToGPL(clientInfo, pipelineData, "300")
+    sendStageStartToAppPortal(clientInfo, pipelineData, "300")
 
     printOpen("Transforming litmid literals", EchoLevel.INFO)
     mapResult = litmidApplicationLiteralsManagement(mapResult, limitParamsMap)
 
-    sendStageEndToGPL(clientInfo, pipelineData, "300")
+    sendStageEndToAppPortal(clientInfo, pipelineData, "300")
 }
 
 /**
  * Stage 'loadLitmidLiteralsStep'
  */
 def loadLitmidLiteralsStep() {
-    sendStageStartToGPL(clientInfo, pipelineData, "400")
+    sendStageStartToAppPortal(clientInfo, pipelineData, "400")
 
     printOpen("Uploading litmid literals", EchoLevel.INFO)
     def configRepoUrlAndBranch = GitUtils.getConfigRepoUrlAndBranch(environmentConfigServer)
@@ -196,21 +196,21 @@ def loadLitmidLiteralsStep() {
 
     }
 
-    sendStageEndToGPL(clientInfo, pipelineData, "400")
+    sendStageEndToAppPortal(clientInfo, pipelineData, "400")
 }
 
 /**
  * Stage 'refreshMicroLitmidLiterals'
  */
 def refreshMicroLitmidLiterals() {
-    sendStageStartToGPL(clientInfo, pipelineData, "500")
+    sendStageStartToAppPortal(clientInfo, pipelineData, "500")
 
     printOpen("Refreshing Component: $typeApp.$artifactName-$majorVersion, dataCenter: 1, color: *", EchoLevel.INFO)
     refreshConfigurationViaRefreshBus("1", typeApp, artifactName, majorVersion, "*", environmentConfigServer)
     printOpen("Refreshing Component: $typeApp.$artifactName-$majorVersion, dataCenter: 2, color: *", EchoLevel.INFO)
     refreshConfigurationViaRefreshBus("2", typeApp, artifactName, majorVersion, "*", environmentConfigServer)
 
-    sendStageEndToGPL(clientInfo, pipelineData, "500")
+    sendStageEndToAppPortal(clientInfo, pipelineData, "500")
 }
 
 /**
@@ -226,8 +226,8 @@ def endPipelineAlwaysStep() {
 def endPipelineSuccessStep() {
     successPipeline = true
     printOpen("Se success el pipeline ${successPipeline}", EchoLevel.INFO)
-    sendPipelineResultadoToGPL(initGpl, clientInfo, pipelineData, successPipeline)
-    sendPipelineEndedToGPL(initGpl, clientInfo, pipelineData, successPipeline)
+    sendPipelineResultadoToAppPortal(initAppPortal, clientInfo, pipelineData, successPipeline)
+    sendPipelineEndedToAppPortal(initAppPortal, clientInfo, pipelineData, successPipeline)
 }
 
 /**
@@ -236,6 +236,6 @@ def endPipelineSuccessStep() {
 def endPipelineFailureStep() {
     successPipeline = false
     printOpen("Se failure el pipeline ${successPipeline}", EchoLevel.ERROR)
-    sendPipelineResultadoToGPL(initGpl, clientInfo, pipelineData, successPipeline)
-    sendPipelineEndedToGPL(initGpl, clientInfo, pipelineData, successPipeline)
+    sendPipelineResultadoToAppPortal(initAppPortal, clientInfo, pipelineData, successPipeline)
+    sendPipelineEndedToAppPortal(initAppPortal, clientInfo, pipelineData, successPipeline)
 }

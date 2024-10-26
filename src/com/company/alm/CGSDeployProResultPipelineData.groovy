@@ -2,7 +2,7 @@ package com.project.alm
 
 
 import com.project.alm.GlobalVars
-import com.project.alm.TrazabilidadGPLType
+import com.project.alm.TrazabilidadAppPortalType
 
 class CGSDeployProResultPipelineData extends CGSProvisioningResultPipelineData {
 
@@ -97,7 +97,7 @@ class CGSDeployProResultPipelineData extends CGSProvisioningResultPipelineData {
 	
     @Override
     def getDeployed() {
-        return TrazabilidadGPLType.ALTA.toString()
+        return TrazabilidadAppPortalType.ALTA.toString()
     }
 
     @Override

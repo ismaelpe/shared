@@ -8,7 +8,7 @@ import com.project.alm.CIPipelineStructure
 import com.project.alm.GlobalVars
 import com.project.alm.GarAppType
 import com.project.alm.ArtifactSubType
-import com.project.alm.TrazabilidadGPLType
+import com.project.alm.TrazabilidadAppPortalType
 
 
 class IncCannaryResultPipelineJobData extends ResultPipelineData {
@@ -17,7 +17,7 @@ class IncCannaryResultPipelineJobData extends ResultPipelineData {
     def getAuthServiceToInform() {
         if (isBpiRepo()) return AuthorizationServiceToInformType.WITHOUT_AUTHORIZATION.toString()
         else {
-            //Restablecer cuando GPL soporte el "succes=true/false"
+            //Restablecer cuando AppPortal soporte el "succes=true/false"
             //return AuthorizationServiceToInformType.MAXIMO.toString()
              if (isAuthExcluded()) return AuthorizationServiceToInformType.WITHOUT_AUTHORIZATION.toString()
 			 else return AuthorizationServiceToInformType.MAXIMO.toString()
@@ -498,7 +498,7 @@ class IncCannaryResultPipelineJobData extends ResultPipelineData {
 
     @Override
     def getDeployed() {
-        return TrazabilidadGPLType.NADA.toString()
+        return TrazabilidadAppPortalType.NADA.toString()
     }
 
     @Override

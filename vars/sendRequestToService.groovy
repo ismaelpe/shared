@@ -247,7 +247,7 @@ private call(String method, String url, String param, def body, Map parameters =
 
 }
 
-// We'll convert "valor":null strings to "valor":"null" in the JSON for attributes which we know for sure will cause an error in GPL
+// We'll convert "valor":null strings to "valor":"null" in the JSON for attributes which we know for sure will cause an error in AppPortal
 // We could sanitize all "valor":null strings but we do not know the impact
 String sanitizeRequest(def request) {
 

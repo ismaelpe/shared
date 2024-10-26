@@ -4,9 +4,9 @@ import com.project.alm.PipelineData
 
 def call(def pomXmlOrIClientInfo, PipelineData pipelineData, String stageId) {
 
-    if (notificationToGplApplies()) {
+    if (notificationToAppPortalApplies()) {
     
-        if(env.sendLogsToGpl) GlobalVars.STAGE_LOGS = ""
+        if(env.sendLogsToAppPortal) GlobalVars.STAGE_LOGS = ""
 
 		stageId = pipelineData?.pipelineStructure?.pipelineId+stageId
 		
@@ -15,7 +15,7 @@ def call(def pomXmlOrIClientInfo, PipelineData pipelineData, String stageId) {
             GlobalVars.PIPELINE_LOGS += "\n######### STAGE ${stageName} #########\n"
         }
 		
-        printOpen("Sending to GPL a Pipeline Stage Start Operation: ${stageId}", EchoLevel.DEBUG)
+        printOpen("Sending to AppPortal a Pipeline Stage Start Operation: ${stageId}", EchoLevel.DEBUG)
 
         def url = idecuaRoutingUtils.stageUrl(stageId)
         def body = [
@@ -24,7 +24,7 @@ def call(def pomXmlOrIClientInfo, PipelineData pipelineData, String stageId) {
             fechaInicio: new Date(),
         ]
 
-        def response = sendRequestToGpl('PUT', url, "", body, pipelineData, pomXmlOrIClientInfo)
+        def response = sendRequestToAppPortal('PUT', url, "", body, pipelineData, pomXmlOrIClientInfo)
 
         return response
     }
@@ -32,9 +32,9 @@ def call(def pomXmlOrIClientInfo, PipelineData pipelineData, String stageId) {
 
 def call(PipelineData pipelineData, String garAppType, String garAppName, String stageId) {
 
-    if (notificationToGplApplies()) {
+    if (notificationToAppPortalApplies()) {
     
-        if(env.sendLogsToGpl) GlobalVars.STAGE_LOGS = ""
+        if(env.sendLogsToAppPortal) GlobalVars.STAGE_LOGS = ""
 
         stageId = pipelineData?.pipelineStructure?.pipelineId+stageId
 
@@ -43,7 +43,7 @@ def call(PipelineData pipelineData, String garAppType, String garAppName, String
             GlobalVars.PIPELINE_LOGS += "\n######### STAGE ${stageName} #########\n"
         }
 
-        printOpen("Sending to GPL a Pipeline Stage Start Operation: ${stageId}", EchoLevel.DEBUG)
+        printOpen("Sending to AppPortal a Pipeline Stage Start Operation: ${stageId}", EchoLevel.DEBUG)
 
         def url = idecuaRoutingUtils.stageUrl(stageId)
         def body = [
@@ -52,7 +52,7 @@ def call(PipelineData pipelineData, String garAppType, String garAppName, String
             fechaInicio: new Date(),
         ]
 
-        def response = sendRequestToGpl('PUT', url, "", body, garAppName, garAppType)
+        def response = sendRequestToAppPortal('PUT', url, "", body, garAppName, garAppType)
 
         return response
     }

@@ -2,7 +2,7 @@ package com.project.alm
 
 
 import com.project.alm.GlobalVars
-import com.project.alm.TrazabilidadGPLType
+import com.project.alm.TrazabilidadAppPortalType
 
 class CGSCloseResultPipelineData extends CGSProvisioningResultPipelineData {
 
@@ -30,7 +30,7 @@ class CGSCloseResultPipelineData extends CGSProvisioningResultPipelineData {
 
     @Override
     def getDeployed() {
-        return TrazabilidadGPLType.NADA.toString()
+        return TrazabilidadAppPortalType.NADA.toString()
     }
 
     @Override

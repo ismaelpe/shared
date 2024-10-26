@@ -28,7 +28,7 @@ import com.project.alm.KpiAlmEventOperation
 
 @Field PomXmlStructure pomXmlStructure
 @Field PipelineData pipelineData
-@Field boolean initGpl
+@Field boolean initAppPortal
 @Field boolean successPipeline
 
 @Field KpiAlmEvent almEvent
@@ -59,7 +59,7 @@ def call(Map pipelineParameters) {
 
     commitId = params.commitIdParam
 
-    initGpl = false
+    initAppPortal = false
     successPipeline = false
 
     almEvent = null
@@ -73,7 +73,7 @@ def call(Map pipelineParameters) {
             timeout(time: 1, unit: 'HOURS')
         }
         environment {
-            GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
+            AppPortal = credentials('IDECUA-JENKINS-USER-TOKEN')
             JNKMSV = credentials('JNKMSV-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
@@ -145,25 +145,25 @@ def initCommandStep() {
                             KpiAlmEventOperation.PIPELINE_BBDD_VALIDATION)
     env.pipelineBehavior = 'PUSH_NO_MR'
     pipelineData.branchStructure = getBranchInfo(originBranch)
-    initGpl = true
-    sendPipelineStartToGPL(pomXmlStructure, pipelineData, pipelineOrigId)
-    sendStageStartToGPL(pomXmlStructure, pipelineData, '100')
-    sendStageEndToGPL(pomXmlStructure, pipelineData, '100')
+    initAppPortal = true
+    sendPipelineStartToAppPortal(pomXmlStructure, pipelineData, pipelineOrigId)
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, '100')
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, '100')
 }
 
 /**
  * Stage 'validateDdlBbddStep'
  */
 def validateDdlBbddStep() {
-    sendStageStartToGPL(pomXmlStructure, pipelineData, '110')
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, '110')
     pipelineData.deployFlag = false
     debugInfo(pipelineParams, pomXmlStructure, pipelineData)
     try {
         String result = ''
         result = generateSqlScript(pomXmlStructure, pipelineData)
-        sendStageEndToGPL(pomXmlStructure, pipelineData, '110', result, null, 'ended')
+        sendStageEndToAppPortal(pomXmlStructure, pipelineData, '110', result, null, 'ended')
                         }catch (Exception e) {
-        sendStageEndToGPL(pomXmlStructure, pipelineData, '110', Strings.toHtml(e.getMessage()), null, 'error')
+        sendStageEndToAppPortal(pomXmlStructure, pipelineData, '110', Strings.toHtml(e.getMessage()), null, 'error')
         throw e
     }
 }
@@ -178,8 +178,8 @@ def endPipelineSuccessStep() {
             kpiLogger(almEvent.pipelineSuccess(endCallStartMillis - initCallStartMillis))
         }
     }
-    sendPipelineResultadoToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
-    sendPipelineEndedToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
 }
 
 /**
@@ -192,8 +192,8 @@ def endPipelineFailureStep() {
             long endCallStartMillis = new Date().getTime()
             kpiLogger(almEvent.pipelineFail(endCallStartMillis - initCallStartMillis))
         }
-        sendPipelineResultadoToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
-        sendPipelineEndedToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
+        sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
+        sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
     }
 }
 

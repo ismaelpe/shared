@@ -23,10 +23,10 @@ def validateMicroIsUpAnReturnError(String url) {
     return microIsUp
 }
 
-def CloudAppResourcesCatMsv generateCloudResources(String requestedCpu, String requestedMemory, String environment, boolean isArchProject, String type) {
+def CloudAppResourcesCatalog generateCloudResources(String requestedCpu, String requestedMemory, String environment, boolean isArchProject, String type) {
 	String namespace = isArchProject ? "AB3COR" : "AB3APP"
 
-	CloudAppResourcesCatMsv cloudResources=getSizesFromCatalog(namespace, type, "PRO", isArchProject, requestedMemory, requestedCpu, "S");
+	CloudAppResourcesCatalog cloudResources=getSizesFromCatalog(namespace, type, "PRO", isArchProject, requestedMemory, requestedCpu, "S");
 	cloudResources.replicasSize="S"
 	cloudResources.memSize=requestedMemory
 	cloudResources.cpuSize=requestedCpu
@@ -64,7 +64,7 @@ def buildArtifactOnCloud(PipelineData pipeline, PomXmlStructure pomXml, String r
 	return responseCloud
 }
 
-def generateResourcesInCloud(String environment, String componentName, String cloudAppName, CloudAppResourcesCatMsv cloudResources) {
+def generateResourcesInCloud(String environment, String componentName, String cloudAppName, CloudAppResourcesCatalog cloudResources) {
 	environment = environment.toUpperCase()
 	componentName = componentName.toUpperCase()
 
@@ -118,7 +118,7 @@ def getComponentInformationFromOriginal(PomXmlStructure pomXml, PipelineData pip
 
 }
 
-def generateComponentInCloud(PomXmlStructure pomXml, PipelineData pipeline, CloudAppResourcesCatMsv cloudResources, String environment) {
+def generateComponentInCloud(PomXmlStructure pomXml, PipelineData pipeline, CloudAppResourcesCatalog cloudResources, String environment) {
 	def cloudAppMetadata = CloudUtils.calculateCloudComponentName(pipeline, pomXml, [isStressMicro: true])
 	String aplicacion = cloudAppMetadata.aplicacion
 	String nameComponentInCloud = cloudAppMetadata.cloudComponentName
@@ -166,7 +166,7 @@ def call(PomXmlStructure artifactPom, PipelineData pipeline, String requestedCPU
 	String version = artifactPom.artifactVersion
 	String garAppType  = pipeline.garArtifactType.name
 	boolean archProject = artifactPom.isArchProject();
-	CloudAppResourcesCatMsv cloudResources = generateCloudResources(requestedCPU, requestedMemory, environmentDest, archProject, garAppType)
+	CloudAppResourcesCatalog cloudResources = generateCloudResources(requestedCPU, requestedMemory, environmentDest, archProject, garAppType)
 	_deployStressMicroToKubernetes(group,artifact,version,artifactPom,pipeline,environmentDest, cloudResources)
 }
 
@@ -180,7 +180,7 @@ def call(PomXmlStructure artifactPom, PipelineData pipeline, String requestedCPU
  * @param environmentDest viene desde GLOBALVARS. ejemplo GlobalVars.PRE_ENVIRONMENT
  * @return
  */
-def _deployStressMicroToKubernetes(String group, String artifact, String version, PomXmlStructure artifactPom, PipelineData pipeline, String environmentDest, CloudAppResourcesCatMsv cloudResources) {
+def _deployStressMicroToKubernetes(String group, String artifact, String version, PomXmlStructure artifactPom, PipelineData pipeline, String environmentDest, CloudAppResourcesCatalog cloudResources) {
 
     long wholeCallDuration
     long wholeCallStartMillis = new Date().getTime()

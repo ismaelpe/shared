@@ -75,7 +75,7 @@ def call(Map pipelineParameters) {
         }
         //Environment sobre el qual se ejecuta este tipo de job
         environment {
-            GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
+            AppPortal = credentials('IDECUA-JENKINS-USER-TOKEN')
             JNKMSV = credentials('JNKMSV-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
@@ -250,7 +250,7 @@ def restartAppCloudStep() {
             startAndStop = true
         }
 
-        if ("yes".equals(useCatalogSize) || (!"NO".equals(scaleCPUCores) || !"NO".equals(scaleMemory) || !"DEFAULT".equals(scaleNumInstances)) && (env.CATMSV_SIZE!=null && "true".equals(env.CATMSV_SIZE))) {
+        if ("yes".equals(useCatalogSize) || (!"NO".equals(scaleCPUCores) || !"NO".equals(scaleMemory) || !"DEFAULT".equals(scaleNumInstances)) && (env.CATALOG_SIZE!=null && "true".equals(env.CATALOG_SIZE))) {
             cloudResources = null
             sizeCPU = "M"
             sizeMEM = "M"

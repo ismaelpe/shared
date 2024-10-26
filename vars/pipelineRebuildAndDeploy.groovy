@@ -2,7 +2,7 @@ import groovy.transform.Field
 import com.project.alm.EchoLevel
 import com.project.alm.GlobalVars
 import com.project.alm.CloudAppResources
-import com.project.alm.CloudAppResourcesCatMsv
+import com.project.alm.CloudAppResourcesCatalog
 
 @Field Map pipelineParams
 
@@ -65,7 +65,7 @@ def call(Map pipelineParameters) {
             timeout(time: 1, unit: 'HOURS')
 		}		
 		environment {
-			GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
+			AppPortal = credentials('IDECUA-JENKINS-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyDigitalscale}"

@@ -7,7 +7,7 @@ def call(PomXmlStructure pomXmlStructure, PipelineData pipelineData, String stag
     if (skipSonarFeature(pomXmlStructure,pipelineData)) {
 		printOpen("Sonar disabled in this feature ${pipelineData.branchStructure}",EchoLevel.INFO)
 	}else {
-		sendStageStartToGPL(pomXmlStructure, pipelineData, stageId)
+		sendStageStartToAppPortal(pomXmlStructure, pipelineData, stageId)
 		
 			def whiteListDataServicesAllowedClients = "${env.ALM_DATA_SERVICES_ALLOWED_ANY_CLIENT}".split(";")
 			//step must be after build in order to check json dependencies
@@ -25,17 +25,17 @@ def call(PomXmlStructure pomXmlStructure, PipelineData pipelineData, String stag
 		
 					printOpen("Sonar Quality Gate will not be executed as ${pomXmlStructure.artifactName} is whitelisted or Sonar Scan is globally disabled",EchoLevel.INFO)
 		
-					sendStageEndToGPL(pomXmlStructure, pipelineData, stageId, "Sonar Scan was skipped due to current configuration settings", null, "warning")
+					sendStageEndToAppPortal(pomXmlStructure, pipelineData, stageId, "Sonar Scan was skipped due to current configuration settings", null, "warning")
 		
 				} else {
 					sonarScanWorkspace(pomXmlStructure, pipelineData)
-					sendStageEndToGPL(pomXmlStructure, pipelineData, stageId)
+					sendStageEndToAppPortal(pomXmlStructure, pipelineData, stageId)
 		
 				}
 		
 			} catch(Exception err) {
 		
-				sendStageEndToGPL(pomXmlStructure, pipelineData, stageId, "Warning stage sonar-scan technical error", null, "error")
+				sendStageEndToAppPortal(pomXmlStructure, pipelineData, stageId, "Warning stage sonar-scan technical error", null, "error")
 				
 				throw err
 		

@@ -24,7 +24,7 @@ def call(def typeApp, def nameApp) {
 				 kpiAlmEvent: new KpiAlmEvent(
 					 null, null,
 					 KpiAlmEventStage.UNDEFINED,
-					 KpiAlmEventOperation.CATMSV_HTTP_CALL)
+					 KpiAlmEventOperation.CATALOG_HTTP_CALL)
 			 ])
 		 
 		 if (response1.status == 200) {
@@ -44,7 +44,7 @@ def call(def typeApp, def nameApp) {
 				kpiAlmEvent: new KpiAlmEvent(
 					null, null,
 					KpiAlmEventStage.UNDEFINED,
-					KpiAlmEventOperation.CATMSV_HTTP_CALL)
+					KpiAlmEventOperation.CATALOG_HTTP_CALL)
 			])
 		
 		if (response.status == 200) {

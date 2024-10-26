@@ -40,7 +40,7 @@ class ManualCopyResultPipelineJobData extends ResultPipelineData {
     @Override
     def getAcciones(boolean result) {
         if (result) {
-            // En caso de que los test vayan correctamente se ofrece la opción de hacer rollback en GPL.
+            // En caso de que los test vayan correctamente se ofrece la opción de hacer rollback en AppPortal.
             // enviamos una tupla con una accion dentro.
             return [
                 getAccionesRollback()
@@ -54,7 +54,7 @@ class ManualCopyResultPipelineJobData extends ResultPipelineData {
 
     @Override
     def getDeployed() {
-        return TrazabilidadGPLType.ALTA.toString()        
+        return TrazabilidadAppPortalType.ALTA.toString()        
     }
 
     @Override

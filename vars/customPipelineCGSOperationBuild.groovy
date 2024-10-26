@@ -36,7 +36,7 @@ import com.project.alm.*
 @Field KpiAlmEvent almEvent
 @Field long initCallStartMillis
 
-@Field String initGpl
+@Field String initAppPortal
 
 /* ************************************************************************************************************************************** *\
  * Pipeline Definition                                                                                                                    *
@@ -75,7 +75,7 @@ def call(Map pipelineParameters) {
             timeout(time: 2, unit: 'HOURS')
         }
         environment {
-            GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
+            AppPortal = credentials('IDECUA-JENKINS-USER-TOKEN')
             JNKMSV = credentials('JNKMSV-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
@@ -193,7 +193,7 @@ def call(Map pipelineParameters) {
                     allOf {
                         expression { !cgsPipelineData.isPushCI() }
                         expression { artifactId?.trim() && cgsPipelineData.branchStructure.branchType == BranchType.FEATURE }
-                        expression { GlobalVars.GSA_ENABLED }
+                        expression { GlobalVars.BackEndAppPortal_ENABLED }
                     }
                 }
                 steps {
@@ -387,43 +387,43 @@ def prepareVariablesAndCalculateVersionStep() {
         KpiAlmEventStage.GENERAL,
         KpiAlmEventOperation.PIPELINE_CGS_BUILD)
 
-    sendPipelineStartToGPL(cgsClientInfo, cgsPipelineData, '')
-    initGpl = true
-    sendStageStartToGPL(cgsClientInfo, cgsPipelineData, '070')
+    sendPipelineStartToAppPortal(cgsClientInfo, cgsPipelineData, '')
+    initAppPortal = true
+    sendStageStartToAppPortal(cgsClientInfo, cgsPipelineData, '070')
     printOpen("artifactId : $artifactId", EchoLevel.ALL)
     printOpen("artifactVersion : $artifactVersion", EchoLevel.ALL)
-    sendStageEndToGPL(cgsClientInfo, cgsPipelineData, '070')
+    sendStageEndToAppPortal(cgsClientInfo, cgsPipelineData, '070')
 }
 
 /**
  Stage 'createOperationModelStep'
  */
 def createOperationModelStep() {
-    sendStageStartToGPL(cgsClientInfo, cgsPipelineData, '150')
+    sendStageStartToAppPortal(cgsClientInfo, cgsPipelineData, '150')
     printOpen("Creating yaml from XML for ${cgsOperationDefinition.getModelFilePath()}", EchoLevel.ALL)
     sh "java -jar ${execJavaFile} -t ${cgsOperationDefinition.getOperation()} -v ${cgsOperationDefinition.getOperationVersion()} -o ${cgsOperationDefinition.getModelFilePath()}"
-    sendStageEndToGPL(cgsClientInfo, cgsPipelineData, '150')
+    sendStageEndToAppPortal(cgsClientInfo, cgsPipelineData, '150')
 }
 
 /**
  Stage 'createProjectFromArchetypeStep'
  */
 def createProjectFromArchetypeStep() {
-    sendStageStartToGPL(cgsClientInfo, cgsPipelineData, '250')
+    sendStageStartToAppPortal(cgsClientInfo, cgsPipelineData, '250')
     sh 'mkdir tmp'
     printOpen("Creating Project From Archetype for ${cgsOperationDefinition.getArtifactId()}", EchoLevel.ALL)
 
     def cmd = "cd tmp && mvn -Dhttp.proxyHost=${env.proxyHost} -Dhttp.proxyPort=${env.proxyPort} -Dhttps.proxyHost=${env.proxyHost} -Dhttps.proxyPort=${env.proxyPort} <Only_Maven_Settings> archetype:generate -DgroupId=${groupId} -DartifactId=${cgsOperationDefinition.getArtifactId()} -Dversion=${cgsOperationDefinition.getVersion()} -DparentArtifactVersion=${libraryOperationVersion} -Doperation=${cgsOperationDefinition.getOperation()} -DoperationVersion=${cgsOperationDefinition.getOperationVersion()} -DarchetypeGroupId=${archetypeGroupId} -DarchetypeArtifactId=${archetypeArtifactId} -DarchetypeVersion=${libraryOperationVersion}  -DmodelFilePath=${cgsOperationDefinition.getModelFilePath()} "
     runMavenCommand(cmd)
 
-    sendStageEndToGPL(cgsClientInfo, cgsPipelineData, '250')
+    sendStageEndToAppPortal(cgsClientInfo, cgsPipelineData, '250')
 }
 
 /**
  Stage 'pushToConfigServerStep'
  */
 def pushToConfigServerStep() {
-    sendStageStartToGPL(cgsClientInfo, cgsPipelineData, '300')
+    sendStageStartToAppPortal(cgsClientInfo, cgsPipelineData, '300')
 
     String repoUrl = GlobalVars.GIT_CONFIG_REPO_URL_TST
 
@@ -451,7 +451,7 @@ def pushToConfigServerStep() {
         throw err
     } finally {
         git.purge()
-        sendStageEndToGPL(cgsClientInfo, cgsPipelineData, '300')
+        sendStageEndToAppPortal(cgsClientInfo, cgsPipelineData, '300')
     }
 }
 
@@ -459,13 +459,13 @@ def pushToConfigServerStep() {
  Stage 'removingPreviousDirectoryStep'
  */
 def removingPreviousDirectoryStep() {
-    sendStageStartToGPL(cgsClientInfo, cgsPipelineData, '350')
+    sendStageStartToAppPortal(cgsClientInfo, cgsPipelineData, '350')
     String sanitizedDir = artifactId.replace(' ', '\\ ')
     printOpen('Listamos directorio previa elimiacion', EchoLevel.ALL)
     sh 'pwd'
     sh 'ls -la'
     sh "rm -rf temp/${sanitizedDir}"
-    sendStageEndToGPL(cgsClientInfo, cgsPipelineData, '350', null, cgsPipelineData.bmxStructure.environment)
+    sendStageEndToAppPortal(cgsClientInfo, cgsPipelineData, '350', null, cgsPipelineData.bmxStructure.environment)
 }
 
 /**
@@ -473,7 +473,7 @@ def removingPreviousDirectoryStep() {
 '
  */
 def deployNewProjectStep() {
-    sendStageStartToGPL(cgsClientInfo, cgsPipelineData, '400')
+    sendStageStartToAppPortal(cgsClientInfo, cgsPipelineData, '400')
     def mvnLog = null
     printOpen("Deploying ${artifactId} project", EchoLevel.ALL)
 
@@ -515,7 +515,7 @@ def deployNewProjectStep() {
         printOpen('Es RELEASE', EchoLevel.ALL)
     }
     printOpen("El buildCode es ${cgsPipelineData.buildCode}", EchoLevel.ALL)
-    sendStageEndToGPL(cgsClientInfo, cgsPipelineData, '400')
+    sendStageEndToAppPortal(cgsClientInfo, cgsPipelineData, '400')
 }
 
 /**
@@ -526,17 +526,17 @@ def plublishArtifactCatalogStep() {
     cgsPipelineData.toString()
     printOpen('branchStructure:', EchoLevel.ALL)
     printOpen("${cgsPipelineData.branchStructure.toString()}", EchoLevel.ALL)
-    sendStageStartToGPL(cgsClientInfo, cgsPipelineData, '450')
+    sendStageStartToAppPortal(cgsClientInfo, cgsPipelineData, '450')
     printOpen('publishing artifact in catalog', EchoLevel.ALL)
     publishArtifactClientCGSInCatalog(cgsPipelineData, cgsClientInfo)
-    sendStageEndToGPL(cgsClientInfo, cgsPipelineData, '450')
+    sendStageEndToAppPortal(cgsClientInfo, cgsPipelineData, '450')
 }
 
 /**
  Stage 'prepareResultForNextStepStep'
  */
 def prepareResultForNextStepStep() {
-    sendStageStartToGPL(cgsClientInfo, cgsPipelineData, '500')
+    sendStageStartToAppPortal(cgsClientInfo, cgsPipelineData, '500')
     cgsPipelineData.pipelineStructure.resultPipelineData.xmlFileIn = xmlFileIn
     cgsPipelineData.pipelineStructure.resultPipelineData.xmlFileOut = xmlFileOut
     cgsPipelineData.pipelineStructure.resultPipelineData.artifactId = artifactId
@@ -551,7 +551,7 @@ def prepareResultForNextStepStep() {
     cgsPipelineData.pipelineStructure.resultPipelineData.originBranch = cgsPipelineData.branchStructure.getBranchName()
     cgsPipelineData.pipelineStructure.resultPipelineData.userEmail = cgsPipelineData.pushUserEmail
     cgsPipelineData.pipelineStructure.resultPipelineData.user = cgsPipelineData.pushUser
-    sendStageEndToGPL(cgsClientInfo, cgsPipelineData, '500')
+    sendStageEndToAppPortal(cgsClientInfo, cgsPipelineData, '500')
 }
 
 /**
@@ -568,8 +568,8 @@ def endPipelineSuccessStep() {
     }
 
     if (xmlFileIn?.trim() || xmlFileOut?.trim()) {
-        sendPipelineEndedToGPL(initGpl, pomXmlStructure, cgsPipelineData, successPipeline)
-        sendPipelineResultadoToGPL(initGpl, pomXmlStructure, cgsPipelineData, successPipeline)
+        sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, cgsPipelineData, successPipeline)
+        sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, cgsPipelineData, successPipeline)
     }
     printOpen('cgs-lib info:', EchoLevel.ALL)
     printOpen("cgs-libGroupId : $groupId", EchoLevel.ALL)
@@ -590,8 +590,8 @@ def endPipelineFailureStep() {
     }
 
     if (xmlFileIn?.trim() || xmlFileOut?.trim()) {
-        sendPipelineEndedToGPL(initGpl, pomXmlStructure, cgsPipelineData, successPipeline)
-        sendPipelineResultadoToGPL(initGpl, pomXmlStructure, cgsPipelineData, successPipeline)
+        sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, cgsPipelineData, successPipeline)
+        sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, cgsPipelineData, successPipeline)
     }
 }
 

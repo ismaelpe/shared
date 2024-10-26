@@ -156,17 +156,17 @@ def deployBuildDockerImageFailure(PipelineData pipelineData, PomXmlStructure pom
 
 }
 
-def gplRequestException(PipelineData pipelineData, def pomXmlOrIClientInfo, def responseOrException, String httpMethod, String url, String body) {
+def appPortalRequestException(PipelineData pipelineData, def pomXmlOrIClientInfo, def responseOrException, String httpMethod, String url, String body) {
 
     String log = getLogFromObject(responseOrException)
 
     if (pipelineData == null) {
         throw new Exception(
-            "Unexpected exception when sending request to GPL:\n" +
+            "Unexpected exception when sending request to AppPortal:\n" +
                 "${log}\n\n" +
                 "La llamada ha sido un ${httpMethod} a la URI ${url} con el siguiente body:\n\n" +
                 "${body}\n\n" +
-                "Crear Maximo a GPL en Incidencias, Maximo: Servicio TI: APLICACION \\ HERRAMIENTAS \\ IDEGPL.PCLD")
+                "Crear Maximo a AppPortal en Incidencias, Maximo: Servicio TI: APLICACION \\ HERRAMIENTAS \\ IDEAppPortal.PCLD")
     }
 
     String applicationName = pomXmlOrIClientInfo instanceof PomXmlStructure ?
@@ -175,16 +175,16 @@ def gplRequestException(PipelineData pipelineData, def pomXmlOrIClientInfo, def 
 
     String stageName = url.substring(url.lastIndexOf("/") + 1)
 
-    MaximoAbstractFallo fallo = new MaximoFalloGPLRequest(applicationName, stageName, httpMethod, url, body, log)
+    MaximoAbstractFallo fallo = new MaximoFalloAppPortalRequest(applicationName, stageName, httpMethod, url, body, log)
 
-    boolean weShouldCreateMaximo = ( ! env.gplRequestMaximoHasBeenCreated ) && weShouldCreateMaximoAccordingToEnvironment(pipelineData)
+    boolean weShouldCreateMaximo = ( ! env.appPortalRequestMaximoHasBeenCreated ) && weShouldCreateMaximoAccordingToEnvironment(pipelineData)
 
     if (GlobalVars.KPILOGGER_IS_NOW_ACTIVE) {
 
-        printOpen("Ibamos a crear un máximo por fallo en GPL pero hemos detectado que el logger de KPIs estaba en ejecución por lo que entendemos que el fallo estaba en este último. No crearemos un máximo", EchoLevel.INFO)
+        printOpen("Ibamos a crear un máximo por fallo en AppPortal pero hemos detectado que el logger de KPIs estaba en ejecución por lo que entendemos que el fallo estaba en este último. No crearemos un máximo", EchoLevel.INFO)
         GlobalVars.KPILOGGER_IS_NOW_ACTIVE = false
 
-        throw new Exception("Ibamos a crear un máximo por fallo en GPL pero hemos detectado que el logger de KPIs estaba en ejecución por lo que entendemos que el fallo estaba en este último")
+        throw new Exception("Ibamos a crear un máximo por fallo en AppPortal pero hemos detectado que el logger de KPIs estaba en ejecución por lo que entendemos que el fallo estaba en este último")
 
     } else if (weShouldCreateMaximo) {
 
@@ -193,7 +193,7 @@ def gplRequestException(PipelineData pipelineData, def pomXmlOrIClientInfo, def 
                 .emailUsuarioCreador(idecuaRoutingUtils.getUsuarioEmailFromPipelineMetadata(pipelineData, pomXmlOrIClientInfo))
                 .tipoFallo(fallo)
 
-        env.gplRequestMaximoHasBeenCreated = crearMaximo(request)
+        env.appPortalRequestMaximoHasBeenCreated = crearMaximo(request)
 
         throw new Exception(validateAndReplace(fallo.pipelineExceptionErrorMessage))
 
@@ -204,37 +204,37 @@ def gplRequestException(PipelineData pipelineData, def pomXmlOrIClientInfo, def 
     } else {
         printOpen("Ya se ha creado Máximo para este caso de uso en esta pipeline. No lo haremos de nuevo", EchoLevel.INFO)
 
-        throw new Exception("Ibamos a crear un máximo por fallo en GPL pero ya se ha creado")
+        throw new Exception("Ibamos a crear un máximo por fallo en AppPortal pero ya se ha creado")
     }
 
 }
 
-def gplRequestException(String artifactGarAppName, String artifactGarType, def responseOrException, String httpMethod, String url, String body) {
+def appPortalRequestException(String artifactGarAppName, String artifactGarType, def responseOrException, String httpMethod, String url, String body) {
 
     String log = getLogFromObject(responseOrException)
 
     if (artifactGarAppName == null || artifactGarType == null) {
         throw new Exception(
-            "Unexpected exception when sending request to GPL:\n" +
+            "Unexpected exception when sending request to AppPortal:\n" +
                 "${log}\n\n" +
                 "La llamada ha sido un ${httpMethod} a la URI ${url} con el siguiente body:\n\n" +
                 "${body}\n\n" +
-                "Crear Maximo a GPL en Incidencias, Maximo: Servicio TI: APLICACION \\ HERRAMIENTAS \\ IDEGPL.PCLD")
+                "Crear Maximo a AppPortal en Incidencias, Maximo: Servicio TI: APLICACION \\ HERRAMIENTAS \\ IDEAppPortal.PCLD")
     }
 
     String applicationName = artifactGarAppName
     String stageName = url.substring(url.lastIndexOf("/") + 1)
 
-    MaximoAbstractFallo fallo = new MaximoFalloGPLRequest(applicationName, stageName, httpMethod, url, body, log)
+    MaximoAbstractFallo fallo = new MaximoFalloAppPortalRequest(applicationName, stageName, httpMethod, url, body, log)
 
-    boolean weShouldCreateMaximo = ( ! env.gplRequestMaximoHasBeenCreated )
+    boolean weShouldCreateMaximo = ( ! env.appPortalRequestMaximoHasBeenCreated )
 
     if (GlobalVars.KPILOGGER_IS_NOW_ACTIVE) {
 
-        printOpen("Ibamos a crear un máximo por fallo en GPL pero hemos detectado que el logger de KPIs estaba en ejecución por lo que entendemos que el fallo estaba en este último. No crearemos un máximo", EchoLevel.INFO)
+        printOpen("Ibamos a crear un máximo por fallo en AppPortal pero hemos detectado que el logger de KPIs estaba en ejecución por lo que entendemos que el fallo estaba en este último. No crearemos un máximo", EchoLevel.INFO)
         GlobalVars.KPILOGGER_IS_NOW_ACTIVE = false
 
-        throw new Exception("Ibamos a crear un máximo por fallo en GPL pero hemos detectado que el logger de KPIs estaba en ejecución por lo que entendemos que el fallo estaba en este último")
+        throw new Exception("Ibamos a crear un máximo por fallo en AppPortal pero hemos detectado que el logger de KPIs estaba en ejecución por lo que entendemos que el fallo estaba en este último")
 
     } else if (weShouldCreateMaximo) {
 
@@ -243,7 +243,7 @@ def gplRequestException(String artifactGarAppName, String artifactGarType, def r
                 .emailUsuarioCreador(idecuaRoutingUtils.getUsuarioEmailFromPipelineMetadata(artifactGarAppName, artifactGarType))
                 .tipoFallo(fallo)
 
-        env.gplRequestMaximoHasBeenCreated = crearMaximo(request)
+        env.appPortalRequestMaximoHasBeenCreated = crearMaximo(request)
 
         throw new Exception(validateAndReplace(fallo.pipelineExceptionErrorMessage))
 
@@ -254,7 +254,7 @@ def gplRequestException(String artifactGarAppName, String artifactGarType, def r
     } else {
         printOpen("Ya se ha creado Máximo para este caso de uso en esta pipeline. No lo haremos de nuevo", EchoLevel.INFO)
 
-        throw new Exception("Ibamos a crear un máximo por fallo en GPL pero ya se ha creado")
+        throw new Exception("Ibamos a crear un máximo por fallo en AppPortal pero ya se ha creado")
     }
 
     

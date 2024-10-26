@@ -2,11 +2,11 @@ package com.project.alm
 
 import com.project.alm.GlobalVars
 
-class GplRequestStatus {
+class AppPortalRequestStatus {
     int iteration = 0
     boolean returnStatus = true
 
-    GplRequestStatus() {
+    AppPortalRequestStatus() {
         iteration = 0
         returnStatus = true
     }

@@ -101,7 +101,7 @@ private def updateCat(def type, def app, def environment, def garApp, CloudAppRe
 	if (env.SEND_TO_ALM_CATALOG!="" && env.SEND_TO_ALM_CATALOG=="true" && cloudResources!=null) {
 		
 		def major=app-garApp
-		//https://catmsv-micro-server-1.pro.int.srv.project.com/app/ARQ.MIA/catmsv/version/1/environment/PRO
+		//https://catalog-micro-server-1.pro.int.srv.project.com/app/ARQ.MIA/catalog/version/1/environment/PRO
 
         def response = sendRequestToAlm3MS(
             'GET',			
@@ -113,7 +113,7 @@ private def updateCat(def type, def app, def environment, def garApp, CloudAppRe
                 kpiAlmEvent: new KpiAlmEvent(
                     null, null,
                     KpiAlmEventStage.UNDEFINED,
-                    KpiAlmEventOperation.CATMSV_HTTP_CALL)
+                    KpiAlmEventOperation.CATALOG_HTTP_CALL)
             ])
 
 		if (response.status == 200) {
@@ -121,7 +121,7 @@ private def updateCat(def type, def app, def environment, def garApp, CloudAppRe
 			def json = response.content
 			printOpen("Recuperado los datos ${json}", EchoLevel.ALL)
 			
-			updateCatMsv(type,garApp,major,json.minor,json.fix,json.typeVersion,environment,cloudResources)
+			updateCatalog(type,garApp,major,json.minor,json.fix,json.typeVersion,environment,cloudResources)
 		}else {
 			printOpen("Error al proceder al despliegue del micro", EchoLevel.ALL)
 		}
@@ -129,7 +129,7 @@ private def updateCat(def type, def app, def environment, def garApp, CloudAppRe
 } 
 
 //Tenemos que recoger esta info del catalogo
-private def updateCatMsv(def type, def app, def major, def minor, def fix, def typeVersion, def environmetNew, CloudAppResources cloudResources) {
+private def updateCatalog(def type, def app, def major, def minor, def fix, def typeVersion, def environmetNew, CloudAppResources cloudResources) {
 	if (env.SEND_TO_ALM_CATALOG!="" && env.SEND_TO_ALM_CATALOG=="true" && cloudResources!=null) {
 
 		def deployParams = 
@@ -154,7 +154,7 @@ private def updateCatMsv(def type, def app, def major, def minor, def fix, def t
                 kpiAlmEvent: new KpiAlmEvent(
                     null, null,
                     KpiAlmEventStage.UNDEFINED,
-                    KpiAlmEventOperation.CATMSV_HTTP_CALL)
+                    KpiAlmEventOperation.CATALOG_HTTP_CALL)
             ])
 
 		if (response.status == 200) {

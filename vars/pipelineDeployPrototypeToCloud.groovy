@@ -38,8 +38,8 @@ import com.project.alm.KpiAlmEventOperation
 @Field String environmentDest = "${environmentDestParam}"
 
 @Field String user = "${userId}"
-@Field boolean sendToGpl = "${sendToGplParam}".toBoolean()
-@Field boolean initGpl = false
+@Field boolean sendToAppPortal = "${sendToAppPortalParam}".toBoolean()
+@Field boolean initAppPortal = false
 
 @Field String group = "${groupParam}"
 @Field String artifact = "${artifactParam}"
@@ -69,8 +69,8 @@ def call(Map pipelineParameters) {
     environmentDest = params.environmentDestParam
 
 	user = params.userId
-	sendToGpl = params.sendToGplParam.toString().toBoolean()
-    initGpl = false
+	sendToAppPortal = params.sendToAppPortalParam.toString().toBoolean()
+    initAppPortal = false
 	
 	group = params.groupParam
 	artifact = params.artifactParam
@@ -87,7 +87,7 @@ def call(Map pipelineParameters) {
         }
         //Environment sobre el qual se ejecuta este tipo de job
         environment {
-            GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
+            AppPortal = credentials('IDECUA-JENKINS-USER-TOKEN')
 			JNKMSV = credentials('JNKMSV-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
@@ -154,10 +154,10 @@ def initStep() {
 		KpiAlmEventStage.GENERAL,
 		KpiAlmEventOperation.PIPELINE_DEPLOY_PROTO)
 	
-	if (sendToGpl) {
-		sendPipelineStartToGPL(pomXmlStructure, pipelineData, pipelineOrigId)
-		initGpl = true
-		sendStageStartToGPL(pomXmlStructure, pipelineData, "100")
+	if (sendToAppPortal) {
+		sendPipelineStartToAppPortal(pomXmlStructure, pipelineData, pipelineOrigId)
+		initAppPortal = true
+		sendStageStartToAppPortal(pomXmlStructure, pipelineData, "100")
 	}
 	
 	if (environmentDest != "NONE") {
@@ -168,8 +168,8 @@ def initStep() {
 	currentBuild.displayName = "DeployPrototype_to_" + environmentDest + "_${env.BUILD_ID}_" + " " + artifact + " " + version
 
 	
-	if (sendToGpl) {
-		sendStageEndToGPL(pomXmlStructure, pipelineData, "100")
+	if (sendToAppPortal) {
+		sendStageEndToAppPortal(pomXmlStructure, pipelineData, "100")
 	}
 }
 
@@ -177,8 +177,8 @@ def initStep() {
  * Stage 'checkCloudAavailiabilityStep'
  */
 def checkCloudAavailiabilityStep() {
-	if (sendToGpl) {
-		sendStageStartToGPL(pomXmlStructure, pipelineData, "200")
+	if (sendToAppPortal) {
+		sendStageStartToAppPortal(pomXmlStructure, pipelineData, "200")
 	}
 	printOpen("The artifact ${artifact}  from group ${group} the micro to deploy is ${pomXmlStructure.artifactMicro}", EchoLevel.ALL)
 	
@@ -187,12 +187,12 @@ def checkCloudAavailiabilityStep() {
 		printOpen("environment is ${pipelineData.bmxStructure.environment}", EchoLevel.ALL)
 		checkCloudAvailability(pomXmlStructure,pipelineData,"CALCULATE","DEPLOY")
 		
-		if (sendToGpl) {
-			sendStageEndToGPL(pomXmlStructure, pipelineData, "200")
+		if (sendToAppPortal) {
+			sendStageEndToAppPortal(pomXmlStructure, pipelineData, "200")
 		}
 	} catch (Exception e) {
-		if (sendToGpl) {
-			sendStageEndToGPL(pomXmlStructure, pipelineData, "200", Strings.toHtml(e.getMessage()), null, "error")
+		if (sendToAppPortal) {
+			sendStageEndToAppPortal(pomXmlStructure, pipelineData, "200", Strings.toHtml(e.getMessage()), null, "error")
 		}
 		throw e
 	}
@@ -202,8 +202,8 @@ def checkCloudAavailiabilityStep() {
  * Stage 'deployPrototypeStep'
  */
 def deployPrototypeStep() {
-	if (sendToGpl) {
-		sendStageStartToGPL(pomXmlStructure, pipelineData, "300")
+	if (sendToAppPortal) {
+		sendStageStartToAppPortal(pomXmlStructure, pipelineData, "300")
 	}
 
 	try {
@@ -212,12 +212,12 @@ def deployPrototypeStep() {
 		
 		printOpen("Result deploy prototype: $result.messageDeploy", EchoLevel.INFO)
 		
-		if (sendToGpl) {
-			sendStageEndToGPL(pomXmlStructure, pipelineData, "300", messageUrl, pipelineData.bmxStructure.environment)
+		if (sendToAppPortal) {
+			sendStageEndToAppPortal(pomXmlStructure, pipelineData, "300", messageUrl, pipelineData.bmxStructure.environment)
 		}
 	} catch (Exception e) {
-		if (sendToGpl) {
-			sendStageEndToGPL(pomXmlStructure, pipelineData, "300", Strings.toHtml(e.getMessage()), null, "error")
+		if (sendToAppPortal) {
+			sendStageEndToAppPortal(pomXmlStructure, pipelineData, "300", Strings.toHtml(e.getMessage()), null, "error")
 		}
 		throw e
 	}
@@ -232,9 +232,9 @@ def endPipelineSuccessStep() {
 		long endCallStartMillis = new Date().getTime()
 		kpiLogger(almEvent.pipelineSuccess(endCallStartMillis-initCallStartMillis))
 	}
-	if (sendToGpl) {
-		sendPipelineResultadoToGPL(initGpl, pomXmlStructure, pipelineData, true)
-		sendPipelineEndedToGPL(initGpl, pomXmlStructure, pipelineData, true)
+	if (sendToAppPortal) {
+		sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, pipelineData, true)
+		sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, pipelineData, true)
 	}
 }
 
@@ -247,14 +247,14 @@ def endPipelineFailureStep() {
 		long endCallStartMillis = new Date().getTime()
 		kpiLogger(almEvent.pipelineFail(endCallStartMillis-initCallStartMillis))
 	}
-	if (sendToGpl) {
-		if (initGpl == false) {
-			//init pipeline in GPL with minimun parameters
-			sendPipelineStartToGPL(pipelineData, pipelineParams)
-			initGpl = true
+	if (sendToAppPortal) {
+		if (initAppPortal == false) {
+			//init pipeline in AppPortal with minimun parameters
+			sendPipelineStartToAppPortal(pipelineData, pipelineParams)
+			initAppPortal = true
 		}
-		sendPipelineResultadoToGPL(initGpl, pomXmlStructure, pipelineData, false)
-		sendPipelineEndedToGPL(initGpl, pomXmlStructure, pipelineData, false)
+		sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, pipelineData, false)
+		sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, pipelineData, false)
 	}
 }
 

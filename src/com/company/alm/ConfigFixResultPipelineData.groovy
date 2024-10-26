@@ -100,7 +100,7 @@ class ConfigFixResultPipelineData extends ResultPipelineData {
 
     @Override
     def getDeployed() {
-		return TrazabilidadGPLType.ALTA.toString()
+		return TrazabilidadAppPortalType.ALTA.toString()
     }
 
     @Override

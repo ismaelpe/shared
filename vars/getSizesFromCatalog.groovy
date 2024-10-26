@@ -1,4 +1,4 @@
-import com.project.alm.CloudAppResourcesCatMsv
+import com.project.alm.CloudAppResourcesCatalog
 import com.project.alm.GlobalVars
 import com.project.alm.KpiAlmEvent
 import com.project.alm.KpiAlmEventOperation
@@ -7,11 +7,11 @@ import com.project.alm.KpiAlmEventStage
 ///config/micro-size/{namespace}/{type}/{env}/{replicas}/{cpu}/{memory}
 
 def call(String namespace, String type, String environment, boolean isArchProject, String memory, String cpu, String replicas) {
-	CloudAppResourcesCatMsv cloudResources = new CloudAppResourcesCatMsv()
+	CloudAppResourcesCatalog cloudResources = new CloudAppResourcesCatalog()
 	environment=environment.toUpperCase()
 	
 	if (environment=='EDEN') environment='DEV'
-	if ( type!=null && env.CATMSV_SIZE!=null && "true".equals(env.CATMSV_SIZE)) {
+	if ( type!=null && env.CATALOG_SIZE!=null && "true".equals(env.CATALOG_SIZE)) {
 		def response = sendRequestToAlm3MS(
             'GET',
             "${GlobalVars.URL_CATALOGO_ALM_PRO}/config/micro-size/${namespace}/${type}/${environment}/${replicas}/${cpu}/${memory}",
@@ -21,7 +21,7 @@ def call(String namespace, String type, String environment, boolean isArchProjec
                 kpiAlmEvent: new KpiAlmEvent(
                     null, null,
                     KpiAlmEventStage.UNDEFINED,
-                    KpiAlmEventOperation.CATMSV_HTTP_CALL)
+                    KpiAlmEventOperation.CATALOG_HTTP_CALL)
             ])
 		
 		if (response.status == 200) {

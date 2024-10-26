@@ -34,7 +34,7 @@ import java.util.regex.Pattern
 @Field KpiAlmEvent almEvent
 @Field long initCallStartMillis
 
-@Field boolean initGpl
+@Field boolean initAppPortal
 
 @Field ArtifactType artifactType = ArtifactType.SIMPLE
 @Field ArtifactSubType artifactSubtype = ArtifactSubType.ARCH_LIB
@@ -73,7 +73,7 @@ def call(Map pipelineParameters) {
             timeout(time: 2, unit: 'HOURS')
         }
         environment {
-            GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
+            AppPortal = credentials('IDECUA-JENKINS-USER-TOKEN')
             JNKMSV = credentials('JNKMSV-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
@@ -81,7 +81,7 @@ def call(Map pipelineParameters) {
             https_proxy = "${GlobalVars.proxyDigitalscale}"
             proxyHost = "${GlobalVars.proxyDigitalscaleHost}"
             proxyPort = "${GlobalVars.proxyDigitalscalePort}"
-			sendLogsToGpl = true
+			sendLogsToAppPortal = true
         }        
         stages {
             stage('get-git-code') {
@@ -191,7 +191,7 @@ def call(Map pipelineParameters) {
                     allOf {
                         expression { !tandemPipelineData.isPushCI() }
                         expression { artifactId?.trim() && tandemPipelineData.branchStructure.branchType == BranchType.FEATURE }
-                        expression { GlobalVars.GSA_ENABLED }
+                        expression { GlobalVars.BackEndAppPortal_ENABLED }
                     }
                 }
                 steps {
@@ -368,26 +368,26 @@ def prepareVariablesAndCalculateVersionStep() {
     printOpen("Creating the project ${artifactId} with version ${newTxVersion}", EchoLevel.INFO)
     tandemTransactionDefinition = new TandemTransactionDefinition(transactionId, transactionVersion, filePath, modelFilePath, artifactId, newTxVersion)
     artifactVersion = newTxVersion
-    sendPipelineStartToGPL(tandemClientInfo, tandemPipelineData, '')
-    initGpl = true
-    sendStageStartToGPL(tandemClientInfo, tandemPipelineData, '070')
+    sendPipelineStartToAppPortal(tandemClientInfo, tandemPipelineData, '')
+    initAppPortal = true
+    sendStageStartToAppPortal(tandemClientInfo, tandemPipelineData, '070')
     printOpen("artifactId : $artifactId", EchoLevel.INFO)
     printOpen("artifactVersion : $artifactVersion", EchoLevel.INFO)
-    sendStageEndToGPL(tandemClientInfo, tandemPipelineData, '070')
+    sendStageEndToAppPortal(tandemClientInfo, tandemPipelineData, '070')
 }
 
 /**
  * Stage 'createTransactionModelStep'
  */
 def createTransactionModelStep() {
-    sendStageStartToGPL(tandemClientInfo, tandemPipelineData, '150')
+    sendStageStartToAppPortal(tandemClientInfo, tandemPipelineData, '150')
 	try {
 	    printOpen("Creating yaml from XML for ${tandemTransactionDefinition.getModelFilePath()}", EchoLevel.INFO)
 	    sh "java -jar ${execJavaFile} -t ${tandemTransactionDefinition.getTransaction()} -v ${tandemTransactionDefinition.getTransactionVersion()} -o ${tandemTransactionDefinition.getModelFilePath()}"
-	    sendStageEndToGPL(tandemClientInfo, tandemPipelineData, '150')
+	    sendStageEndToAppPortal(tandemClientInfo, tandemPipelineData, '150')
 	} catch (Exception e) {
 		printOpen(e.getMessage(), EchoLevel.ERROR)
-		sendStageEndToGPL(tandemClientInfo, tandemPipelineData, '150', null, null, "error")
+		sendStageEndToAppPortal(tandemClientInfo, tandemPipelineData, '150', null, null, "error")
 		throw e
 	}
 }
@@ -396,7 +396,7 @@ def createTransactionModelStep() {
  * Stage 'createProjectFromArchetype'
  */
 def createProjectFromArchetype() {
-    sendStageStartToGPL(tandemClientInfo, tandemPipelineData, '250')
+    sendStageStartToAppPortal(tandemClientInfo, tandemPipelineData, '250')
 	try {
 		sh 'mkdir tmp'
 	    printOpen("Creating Project From Archetype for ${tandemTransactionDefinition.getArtifactId()}", EchoLevel.INFO)
@@ -404,10 +404,10 @@ def createProjectFromArchetype() {
 	    def cmd = "cd tmp && mvn  <Only_Maven_Settings> archetype:generate -DgroupId=${groupId} -DartifactId=${tandemTransactionDefinition.getArtifactId()} -Dversion=${tandemTransactionDefinition.getVersion()} -DparentArtifactVersion=${env.TANDEM_PROVISIONER_VERSION} -Dtransaction=${tandemTransactionDefinition.getTransaction()} -DtransactionVersion=${tandemTransactionDefinition.getTransactionVersion()} -DarchetypeGroupId=${archetypeGroupId} -DarchetypeArtifactId=${archetypeArtifactId} -DarchetypeVersion=${env.TANDEM_PROVISIONER_VERSION}  -DmodelFilePath=${tandemTransactionDefinition.getModelFilePath()}"
 	    runMavenCommand(cmd)
 	
-	    sendStageEndToGPL(tandemClientInfo, tandemPipelineData, '250')
+	    sendStageEndToAppPortal(tandemClientInfo, tandemPipelineData, '250')
 	} catch (Exception e) {
 		printOpen(e.getMessage(), EchoLevel.ERROR)
-		sendStageEndToGPL(tandemClientInfo, tandemPipelineData, '250', null, null, "error")
+		sendStageEndToAppPortal(tandemClientInfo, tandemPipelineData, '250', null, null, "error")
 		throw e
 	}
 }
@@ -416,7 +416,7 @@ def createProjectFromArchetype() {
  * Stage 'pushToConfigServerStep'
  */
 def pushToConfigServerStep() {
-    sendStageStartToGPL(tandemClientInfo, tandemPipelineData, '300')
+    sendStageStartToAppPortal(tandemClientInfo, tandemPipelineData, '300')
     
 	String repoUrl = GlobalVars.GIT_CONFIG_REPO_URL_TST
     printOpen("Pushing XML file to configServer in ${repoUrl}", EchoLevel.INFO)
@@ -438,10 +438,10 @@ def pushToConfigServerStep() {
 
             git.add('services/tandem/tandem-app-transactions').commitAndPush("Pushing ${xmlFile}")
         })
-        sendStageEndToGPL(tandemClientInfo, tandemPipelineData, '300')
+        sendStageEndToAppPortal(tandemClientInfo, tandemPipelineData, '300')
     } catch (err) {
         printOpen(err.getMessage(), EchoLevel.ERROR)
-		sendStageEndToGPL(tandemClientInfo, tandemPipelineData, '300', null, null, "error")
+		sendStageEndToAppPortal(tandemClientInfo, tandemPipelineData, '300', null, null, "error")
         throw err
     } finally {
         git.purge()
@@ -452,17 +452,17 @@ def pushToConfigServerStep() {
  * Stage 'removingPreviousDirectoryStep'
  */
 def removingPreviousDirectoryStep() {
-    sendStageStartToGPL(tandemClientInfo, tandemPipelineData, '350')
+    sendStageStartToAppPortal(tandemClientInfo, tandemPipelineData, '350')
 	try {
 	    String sanitizedDir = artifactId.replace(' ', '\\ ')
 	    printOpen('Listamos directorio previa elimiacion', EchoLevel.ALL)
 	    sh 'pwd'
 	    sh 'ls -la'
 	    sh "rm -rf temp/${sanitizedDir}"
-	    sendStageEndToGPL(tandemClientInfo, tandemPipelineData, '350')
+	    sendStageEndToAppPortal(tandemClientInfo, tandemPipelineData, '350')
 	} catch (Exception e) {
 		printOpen(e.getMessage(), EchoLevel.ERROR)
-		sendStageEndToGPL(tandemClientInfo, tandemPipelineData, '350', null, null, "error")
+		sendStageEndToAppPortal(tandemClientInfo, tandemPipelineData, '350', null, null, "error")
 		throw e
 	}
 }
@@ -471,7 +471,7 @@ def removingPreviousDirectoryStep() {
  * Stage 'deployingNewProjectStep'
  */
 def deployingNewProjectStep() {
-    sendStageStartToGPL(tandemClientInfo, tandemPipelineData, '400')
+    sendStageStartToAppPortal(tandemClientInfo, tandemPipelineData, '400')
     def mvnLog = null
     printOpen("Deploying ${artifactId} to Artifactory", EchoLevel.INFO)
 	try {
@@ -515,12 +515,12 @@ def deployingNewProjectStep() {
 	        printOpen('Es RELEASE', EchoLevel.ALL)
 	    }
 	    printOpen("Build code: ${tandemPipelineData.buildCode}", EchoLevel.INFO)
-		sendPipelineUpdateToGPL(true,tandemClientInfo, tandemPipelineData)
-	    sendStageEndToGPL(tandemClientInfo, tandemPipelineData, '400')		
+		sendPipelineUpdateToAppPortal(true,tandemClientInfo, tandemPipelineData)
+	    sendStageEndToAppPortal(tandemClientInfo, tandemPipelineData, '400')		
 	} catch (Exception e) {
 		printOpen("Error deploying artifact: ${e}", EchoLevel.ERROR)
 		printOpen("Error deploying artifact: ${e.getMessage()}", EchoLevel.ERROR)
-		sendStageEndToGPL(tandemClientInfo, tandemPipelineData, '400', null, null, "error")
+		sendStageEndToAppPortal(tandemClientInfo, tandemPipelineData, '400', null, null, "error")
 		throw e
 	}
 }
@@ -533,14 +533,14 @@ def publishArtifactCatalogStep() {
     tandemPipelineData.toString()
     printOpen('branchStructure:', EchoLevel.ALL)
     printOpen("${tandemPipelineData.branchStructure.toString()}", EchoLevel.ALL)
-    sendStageStartToGPL(tandemClientInfo, tandemPipelineData, '450')
+    sendStageStartToAppPortal(tandemClientInfo, tandemPipelineData, '450')
 	try {
 	    printOpen('publishing artifact in catalog', EchoLevel.ALL)
 	    publishArtifactClientTANDEMInCatalog(tandemPipelineData, tandemClientInfo)
-	    sendStageEndToGPL(tandemClientInfo, tandemPipelineData, '450')
+	    sendStageEndToAppPortal(tandemClientInfo, tandemPipelineData, '450')
 	} catch (Exception e) {
 		printOpen(e.getMessage(), EchoLevel.ERROR)
-		sendStageEndToGPL(tandemClientInfo, tandemPipelineData, '450', null, null, "error")
+		sendStageEndToAppPortal(tandemClientInfo, tandemPipelineData, '450', null, null, "error")
 		throw e
 	}
 }
@@ -549,16 +549,16 @@ def publishArtifactCatalogStep() {
  * Stage 'refreshConnectorConfigurationStep'
  */
 def refreshConnectorConfigurationStep() {
-    sendStageStartToGPL(tandemClientInfo, tandemPipelineData, '470')
+    sendStageStartToAppPortal(tandemClientInfo, tandemPipelineData, '470')
 	try {
 	    refreshConfigurationViaRefreshBus('1', 'ARQ.MIA', 'tandemconnector', '1', '*', Environment.DEV.name())
 	    refreshConfigurationViaRefreshBus('2', 'ARQ.MIA', 'tandemconnector', '1', '*', Environment.DEV.name())
 	    refreshConfigurationViaRefreshBus('1', 'ARQ.MIA', 'tandemconnector', '1', '*', Environment.TST.name())
 	    refreshConfigurationViaRefreshBus('2', 'ARQ.MIA', 'tandemconnector', '1', '*', Environment.TST.name())
-	    sendStageEndToGPL(tandemClientInfo, tandemPipelineData, '470')
+	    sendStageEndToAppPortal(tandemClientInfo, tandemPipelineData, '470')
 	} catch (Exception e) {
 		printOpen(e.getMessage(), EchoLevel.ERROR)
-		sendStageEndToGPL(tandemClientInfo, tandemPipelineData, '470', null, null, "error")
+		sendStageEndToAppPortal(tandemClientInfo, tandemPipelineData, '470', null, null, "error")
 		throw e
 	}
 }
@@ -567,7 +567,7 @@ def refreshConnectorConfigurationStep() {
  * Stage 'prepareResultForNextStep'
  */
 def prepareResultForNextStep() {
-    sendStageStartToGPL(tandemClientInfo, tandemPipelineData, '500')
+    sendStageStartToAppPortal(tandemClientInfo, tandemPipelineData, '500')
 	try {
 	    tandemPipelineData.pipelineStructure.resultPipelineData.xmlFile = xmlFile
 	    tandemPipelineData.pipelineStructure.resultPipelineData.artifactId = artifactId
@@ -582,10 +582,10 @@ def prepareResultForNextStep() {
 	    tandemPipelineData.pipelineStructure.resultPipelineData.originBranch = tandemPipelineData.branchStructure.getBranchName()
 	    tandemPipelineData.pipelineStructure.resultPipelineData.userEmail = tandemPipelineData.pushUserEmail
 	    tandemPipelineData.pipelineStructure.resultPipelineData.user = tandemPipelineData.pushUser
-		sendStageEndToGPL(tandemClientInfo, tandemPipelineData, '500')
+		sendStageEndToAppPortal(tandemClientInfo, tandemPipelineData, '500')
 	} catch (Exception e) {
 		printOpen(e.getMessage(), EchoLevel.ERROR)
-		sendStageEndToGPL(tandemClientInfo, tandemPipelineData, '500', null, null, "error")
+		sendStageEndToAppPortal(tandemClientInfo, tandemPipelineData, '500', null, null, "error")
 		throw e
 	}
 }
@@ -603,8 +603,8 @@ def endPipelineSuccessStep() {
     }
 
     if (xmlFile?.trim()) {
-    	sendPipelineResultadoToGPL(initGpl, pomXmlStructure, tandemPipelineData, successPipeline)
-        sendPipelineEndedToGPL(initGpl, pomXmlStructure, tandemPipelineData, successPipeline)
+    	sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, tandemPipelineData, successPipeline)
+        sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, tandemPipelineData, successPipeline)
     }
     printOpen('tandem-lib info:', EchoLevel.INFO)
     printOpen("tandem-libGroupId : $groupId", EchoLevel.INFO)
@@ -625,8 +625,8 @@ def endPipelineFailureStep() {
     }
 
     if (xmlFile?.trim()) {
-    	sendPipelineResultadoToGPL(initGpl, pomXmlStructure, tandemPipelineData, successPipeline)
-        sendPipelineEndedToGPL(initGpl, pomXmlStructure, tandemPipelineData, successPipeline)
+    	sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, tandemPipelineData, successPipeline)
+        sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, tandemPipelineData, successPipeline)
     }
 }
 

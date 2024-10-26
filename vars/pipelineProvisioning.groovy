@@ -94,7 +94,7 @@ def call(Map pipelineParameters) {
 			timeout(time: 2, unit: 'HOURS')
         }
         environment {
-            GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
+            AppPortal = credentials('IDECUA-JENKINS-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
 			JNKMSV = credentials('JNKMSV-USER-TOKEN')
@@ -451,7 +451,7 @@ def addToProvisioning() {
             kpiAlmEvent: new KpiAlmEvent(
                 null, null,
                 KpiAlmEventStage.UNDEFINED,
-                KpiAlmEventOperation.CATMSV_HTTP_CALL)
+                KpiAlmEventOperation.CATALOG_HTTP_CALL)
         ])
 }
 

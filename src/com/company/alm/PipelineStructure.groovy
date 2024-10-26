@@ -3,7 +3,7 @@ package com.project.alm
 
 abstract class PipelineStructure {
 
-    String plataforma = GlobalVars.PLATAFORMA_GPL
+    String plataforma = GlobalVars.PLATAFORMA_AppPortal
     String nombre = ""
     String pipelineId
     ResultPipelineData resultPipelineData

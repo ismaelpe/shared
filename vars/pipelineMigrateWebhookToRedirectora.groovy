@@ -166,7 +166,7 @@ def call(Map pipelineParameters) {
                                                 ignoreSslErrors: true,
                                                 customHeaders: [[name: 'Private-Token', value: "${GITLAB_API_TOKEN}"], [name: 'Accept', value: 'application/json']],
                                                 url: "${GlobalVars.gitlabApiDomain}${projectPathUrlEncoded}",
-                                                httpProxy: 'http://proxyserv.svb.digitalscale.es:8080',
+                                                httpProxy: 'http://proxy.digitalscale.es:8080',
                                                 validResponseCodes: '200:300'
 
                                             def json = new JsonSlurperClassic().parseText(projectInfo.content)

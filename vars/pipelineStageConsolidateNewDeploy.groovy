@@ -10,7 +10,7 @@ def call(PomXmlStructure pomXmlStructure, PipelineData pipelineData, String stag
 
     try {
 
-        sendStageStartToGPL(pomXmlStructure, pipelineData, stageId)
+        sendStageStartToAppPortal(pomXmlStructure, pipelineData, stageId)
         
         this.deployCloudPhases = deployCloudPhasesPattern.replace("<phase>", "pre")
         def microUrl = consolidateNewDeployCloud(pomXmlStructure, pipelineData, cloudStateUtility)
@@ -23,7 +23,7 @@ def call(PomXmlStructure pomXmlStructure, PipelineData pipelineData, String stag
 			printOpen(messageUrl, EchoLevel.INFO)
 		}
 		
-        sendStageEndToGPL(pomXmlStructure, pipelineData, stageId, env.sendLogsToGpl ? null : messageUrl, pipelineData.bmxStructure.environment)
+        sendStageEndToAppPortal(pomXmlStructure, pipelineData, stageId, env.sendLogsToAppPortal ? null : messageUrl, pipelineData.bmxStructure.environment)
 
     } catch (Exception e) {
 
@@ -36,7 +36,7 @@ def call(PomXmlStructure pomXmlStructure, PipelineData pipelineData, String stag
             sendEmail(" Resultado ejecucion app ${artifactAppAbort} - ${pipelineData.getPipelineBuildName()}  KO - ${this.deployCloudPhases}", env.ALM_SERVICES_EMAIL_Cloud_DEPLOY_RESULT, "${artifactAppAbort} rama ${pipelineData.getPipelineBuildName()}", "KO en el paso ${this.deployCloudPhases}")
         }
 
-        sendStageEndToGPL(pomXmlStructure, pipelineData, stageId, null, pipelineData.bmxStructure.environment, "error")
+        sendStageEndToAppPortal(pomXmlStructure, pipelineData, stageId, null, pipelineData.bmxStructure.environment, "error")
         abortPipelineCloud(pomXmlStructure, pipelineData, " Resultado ejecucion app ${artifactAppAbort} - ${pipelineData.getPipelineBuildName()}  KO", this.deployCloudPhases, e)
 
     }

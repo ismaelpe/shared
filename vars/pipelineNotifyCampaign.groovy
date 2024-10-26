@@ -16,7 +16,7 @@ import com.project.alm.KpiAlmEventOperation
 
 @Field ClientInfo clientInfo
 @Field PipelineData pipelineData
-@Field boolean initGpl
+@Field boolean initAppPortal
 @Field boolean successPipeline = false
 @Field def iop
 @Field def appsPendientes
@@ -40,7 +40,7 @@ def call(Map pipelineParameters) {
     pipelineOriginId = params.pipelineOriginId
     rollbackOrIncrease = params.isRollbackParam
 
-    initGpl = false
+    initAppPortal = false
     successPipeline = false
     iop = null
     appsPendientes = null
@@ -56,7 +56,7 @@ def call(Map pipelineParameters) {
             timeout(time: 2, unit: 'HOURS')
         }
         environment {
-            GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
+            AppPortal = credentials('IDECUA-JENKINS-USER-TOKEN')
             JNKMSV = credentials('JNKMSV-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
@@ -134,24 +134,24 @@ def initDataStep() {
         clientInfo, pipelineData,
         KpiAlmEventStage.GENERAL,
         KpiAlmEventOperation.PIPELINE_CAMPAING_NOTIFY)
-    sendPipelineStartToGPL(clientInfo, pipelineData, pipelineOriginId)
-    sendStageStartToGPL(clientInfo, pipelineData, '100')
+    sendPipelineStartToAppPortal(clientInfo, pipelineData, pipelineOriginId)
+    sendStageStartToAppPortal(clientInfo, pipelineData, '100')
     
-    initGpl = true
-    sendStageEndToGPL(clientInfo, pipelineData, '100')
+    initAppPortal = true
+    sendStageEndToAppPortal(clientInfo, pipelineData, '100')
 }
 
 /**
  * Stage 'getIopStep'
  */
 def getIopStep() {
-    sendStageStartToGPL(clientInfo, pipelineData, '110')
+    sendStageStartToAppPortal(clientInfo, pipelineData, '110')
     try {
         iop = iopCampaignCatalogUtils.getIop()
-        sendStageEndToGPL(clientInfo, pipelineData, '110')
+        sendStageEndToAppPortal(clientInfo, pipelineData, '110')
     }catch (Exception e) {
         printOpen("Error en la validacion de dependencias ${e.getMessage()}", EchoLevel.ALL)
-        sendStageEndToGPL(clientInfo, pipelineData, '110', e.getMessage(), null, 'error')
+        sendStageEndToAppPortal(clientInfo, pipelineData, '110', e.getMessage(), null, 'error')
         throw e
     }
 }
@@ -160,17 +160,17 @@ def getIopStep() {
  * Stage 'notifyIopAppsStep'
  */
 def notifyIopAppsStep() {
-    sendStageStartToGPL(clientInfo, pipelineData, '200')
+    sendStageStartToAppPortal(clientInfo, pipelineData, '200')
     try {
         appsPendientes = iopCampaignCatalogUtils.notifyCloseIop(iop)
         if (appsPendientes == null) {
-            sendStageEndToGPL(clientInfo, pipelineData, '200')
+            sendStageEndToAppPortal(clientInfo, pipelineData, '200')
         }else {
-            sendStageEndToGPL(clientInfo, pipelineData, '200', appsPendientes, null, 'warning')
+            sendStageEndToAppPortal(clientInfo, pipelineData, '200', appsPendientes, null, 'warning')
         }
     }catch (Exception e) {
         printOpen("Error en la validacion de dependencias ${e.getMessage()}", EchoLevel.ALL)
-        sendStageEndToGPL(clientInfo, pipelineData, '200', e.getMessage(), null, 'error')
+        sendStageEndToAppPortal(clientInfo, pipelineData, '200', e.getMessage(), null, 'error')
         throw e
     }
 }
@@ -179,7 +179,7 @@ def notifyIopAppsStep() {
  * Stage 'endPipelineStep'
  */
 def endPipelineStep() {
-    sendStageStartToGPL(clientInfo, pipelineData, '300')
+    sendStageStartToAppPortal(clientInfo, pipelineData, '300')
 
     pipelineData.prepareResultData(clientInfo.artifactVersion, clientInfo.artifactId, clientInfo.applicationName)
     if (appsPendientes != null) {
@@ -187,7 +187,7 @@ def endPipelineStep() {
         pipelineData.pipelineStructure.resultPipelineData.areAppsPending = true
     }
 
-    sendStageEndToGPL(clientInfo, pipelineData, '300')
+    sendStageEndToAppPortal(clientInfo, pipelineData, '300')
 }
 
 /**
@@ -200,8 +200,8 @@ def endPipelineSuccessStep() {
         long endCallStartMillis = new Date().getTime()
         kpiLogger(almEvent.pipelineSuccess(endCallStartMillis - initCallStartMillis))
     }
-    sendPipelineResultadoToGPL(initGpl, clientInfo, pipelineData, successPipeline)
-    sendPipelineEndedToGPL(initGpl, clientInfo, pipelineData, successPipeline)
+    sendPipelineResultadoToAppPortal(initAppPortal, clientInfo, pipelineData, successPipeline)
+    sendPipelineEndedToAppPortal(initAppPortal, clientInfo, pipelineData, successPipeline)
 }
 
 /**
@@ -216,8 +216,8 @@ def endPipelineFailureStep() {
         kpiLogger(almEvent.pipelineFail(endCallStartMillis - initCallStartMillis))
     }
 
-    sendPipelineResultadoToGPL(initGpl, clientInfo, pipelineData, successPipeline)
-    sendPipelineEndedToGPL(initGpl, clientInfo, pipelineData, successPipeline)
+    sendPipelineResultadoToAppPortal(initAppPortal, clientInfo, pipelineData, successPipeline)
+    sendPipelineEndedToAppPortal(initAppPortal, clientInfo, pipelineData, successPipeline)
 }
 
 /**

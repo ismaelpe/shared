@@ -8,7 +8,7 @@ import com.project.alm.KpiAlmEventOperation
 
 @Field NexusUtils nexus
 
-@Field boolean initGpl
+@Field boolean initAppPortal
 @Field boolean successPipeline
 
 @Field ADSPipelineData adsPipelineData
@@ -45,7 +45,7 @@ def call(Map pipelineParameters) {
     
     nexus = new NexusUtils(this)
 
-    initGpl = false
+    initAppPortal = false
     successPipeline = true
 
     //Job parameters
@@ -76,7 +76,7 @@ def call(Map pipelineParameters) {
             timeout(time: 2, unit: 'HOURS')
         }
         environment {
-            GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
+            AppPortal = credentials('IDECUA-JENKINS-USER-TOKEN')
             JNKMSV = credentials('JNKMSV-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
@@ -227,7 +227,7 @@ def downloadAdsArtifactAndUpdateVersionStep() {
 
     printOpen("artifactVersion: ${artifactVersion}", EchoLevel.ALL)
     adsClientInfo = new ClientInfo()
-    adsClientInfo.setApplicationName(ADSVars.GPL_APPLICATION_NAME)
+    adsClientInfo.setApplicationName(ADSVars.AppPortal_APPLICATION_NAME)
     adsClientInfo.setArtifactId(artifactId)
     adsClientInfo.setArtifactVersion(artifactVersion)
     adsClientInfo.setArtifactType(ArtifactType.valueOfType(ADSVars.APP_TYPE))
@@ -240,18 +240,18 @@ def downloadAdsArtifactAndUpdateVersionStep() {
         KpiAlmEventOperation.PIPELINE_ADS_PROVISIONING)
 
     printOpen("adsClientInfo = ${adsClientInfo.toString()}", EchoLevel.ALL)
-    sendPipelineStartToGPL(adsClientInfo, adsPipelineData, pipelineOrigId)
-    initGpl = true
-    sendStageStartToGPL(adsClientInfo, adsPipelineData, '020')
+    sendPipelineStartToAppPortal(adsClientInfo, adsPipelineData, pipelineOrigId)
+    initAppPortal = true
+    sendStageStartToAppPortal(adsClientInfo, adsPipelineData, '020')
 
-    sendStageEndToGPL(adsClientInfo, adsPipelineData, '020')
+    sendStageEndToAppPortal(adsClientInfo, adsPipelineData, '020')
 }
 
 /**
  * Stage pushToConfigServerStep
  */
 def pushToConfigServerStep() {
-    sendStageStartToGPL(adsClientInfo, adsPipelineData, '050')
+    sendStageStartToAppPortal(adsClientInfo, adsPipelineData, '050')
 
     if (ADSVars.TST_ENVIRONMENT == nextEnvironment) {
         repo = GlobalVars.GIT_CONFIG_REPO_URL_TST
@@ -295,7 +295,7 @@ def pushToConfigServerStep() {
     } finally {
         gitActual.purge()
         gitAnterior.purge()
-        sendStageEndToGPL(adsClientInfo, adsPipelineData, '050')
+        sendStageEndToAppPortal(adsClientInfo, adsPipelineData, '050')
     }
 }
 
@@ -303,25 +303,25 @@ def pushToConfigServerStep() {
  * Stage deployNewVersionADSLibTransactionStep
  */
 def deployNewVersionADSLibTransactionStep() {
-    sendStageStartToGPL(adsClientInfo, adsPipelineData, '060')
+    sendStageStartToAppPortal(adsClientInfo, adsPipelineData, '060')
     deployFileNexus(artifactGroupId, artifactId, artifactVersion, 'jar', "${artifactId}-${artifactVersion}.jar")
-    sendStageEndToGPL(adsClientInfo, adsPipelineData, '060')
+    sendStageEndToAppPortal(adsClientInfo, adsPipelineData, '060')
 }
 
 /**
  * Stage publishArtifactStep
  */
 def publishArtifactStep() {
-    sendStageStartToGPL(adsClientInfo, adsPipelineData, '070')
+    sendStageStartToAppPortal(adsClientInfo, adsPipelineData, '070')
     publishArtifactClientADSInCatalog(adsPipelineData, adsClientInfo)
-    sendStageEndToGPL(adsClientInfo, adsPipelineData, '070')
+    sendStageEndToAppPortal(adsClientInfo, adsPipelineData, '070')
 }
 
 /**
  * Stage refreshConnectorConfigurationStep
  */
 def refreshConnectorConfigurationStep() {
-    sendStageStartToGPL(adsClientInfo, adsPipelineData, '470')
+    sendStageStartToAppPortal(adsClientInfo, adsPipelineData, '470')
 
     if (ADSVars.TST_ENVIRONMENT == nextEnvironment) {
         refreshConfigurationViaRefreshBus('1', 'ARQ.MIA', 'adsconnector', '1', '*', ADSVars.DEV_ENVIROMENT)
@@ -336,14 +336,14 @@ def refreshConnectorConfigurationStep() {
         refreshConfigurationViaRefreshBus('2', 'ARQ.MIA', 'adsconnector', '1', '*', ADSVars.PRO_ENVIRONMENT)
     }
 
-    sendStageEndToGPL(adsClientInfo, adsPipelineData, '470')
+    sendStageEndToAppPortal(adsClientInfo, adsPipelineData, '470')
 }
 
 /**
  * Stage prepareNextSteps
  */
 def prepareNextSteps() {
-    sendStageStartToGPL(adsClientInfo, adsPipelineData, '080')
+    sendStageStartToAppPortal(adsClientInfo, adsPipelineData, '080')
     adsPipelineData.pipelineStructure.resultPipelineData.xmlFile = xmlFile
     adsPipelineData.pipelineStructure.resultPipelineData.artifactId = artifactId
     adsPipelineData.pipelineStructure.resultPipelineData.artifactGroupId = artifactGroupId
@@ -364,7 +364,7 @@ def prepareNextSteps() {
     adsPipelineData.pipelineStructure.resultPipelineData.user = user
 
     adsPipelineData.pipelineStructure.resultPipelineData.pipelineOrigId = adsPipelineData.pipelineStructure.pipelineId
-    sendStageEndToGPL(adsClientInfo, adsPipelineData, '080')
+    sendStageEndToAppPortal(adsClientInfo, adsPipelineData, '080')
 }
 
 /**
@@ -378,8 +378,8 @@ def endPipelineSuccessStep() {
         kpiLogger(almEvent.pipelineSuccess(endCallStartMillis - initCallStartMillis))
     }
 
-    sendPipelineEndedToGPL(initGpl, pomXmlStructure, adsPipelineData, successPipeline)
-    sendPipelineResultadoToGPL(initGpl, pomXmlStructure, adsPipelineData, successPipeline)
+    sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, adsPipelineData, successPipeline)
+    sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, adsPipelineData, successPipeline)
 }
 
 /**
@@ -393,8 +393,8 @@ def endPipelineFailureStep() {
         kpiLogger(almEvent.pipelineFail(endCallStartMillis - initCallStartMillis))
     }
 
-    sendPipelineEndedToGPL(initGpl, pomXmlStructure, adsPipelineData, successPipeline)
-    sendPipelineResultadoToGPL(initGpl, pomXmlStructure, adsPipelineData, successPipeline)
+    sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, adsPipelineData, successPipeline)
+    sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, adsPipelineData, successPipeline)
 }
 
 /**

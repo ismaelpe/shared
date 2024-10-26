@@ -17,7 +17,7 @@ import com.project.alm.*
 
 @Field PomXmlStructure pomXmlStructure
 @Field PipelineData pipelineData
-@Field boolean initGpl
+@Field boolean initAppPortal
 @Field boolean successPipeline
 
 //Pipeline que ejecuta el stage checkmarx on demand
@@ -44,7 +44,7 @@ def call(Map pipelineParameters) {
     user = params.userId
     artifactType = params.artifactTypeParam
     artifactSubType = params.artifactSubTypeParam
-    initGpl = false
+    initAppPortal = false
     successPipeline = false
     
     pipeline {		
@@ -56,7 +56,7 @@ def call(Map pipelineParameters) {
         }
 
         environment {
-            GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
+            AppPortal = credentials('IDECUA-JENKINS-USER-TOKEN')
 			JNKMSV = credentials('JNKMSV-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')

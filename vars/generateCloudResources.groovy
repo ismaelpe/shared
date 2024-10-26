@@ -1,6 +1,6 @@
 import com.project.alm.EchoLevel
 import com.project.alm.CloudAppResources
-import com.project.alm.CloudAppResourcesCatMsv
+import com.project.alm.CloudAppResourcesCatalog
 import com.project.alm.GlobalVars
 import com.project.alm.KpiAlmEvent
 import com.project.alm.KpiAlmEventOperation
@@ -9,7 +9,7 @@ import com.project.alm.KpiAlmEventStage
 
 def setCloudResources( def type, def app, def major, def environment, def namespace){
 	//CloudAppResources cloudResources=new CloudAppResources()
-	CloudAppResourcesCatMsv cloudResources=new CloudAppResourcesCatMsv()
+	CloudAppResourcesCatalog cloudResources=new CloudAppResourcesCatalog()
  
 	printOpen("Requesting application's sizes to Open's catalogue...", EchoLevel.INFO)
 
@@ -22,7 +22,7 @@ def setCloudResources( def type, def app, def major, def environment, def namesp
             kpiAlmEvent: new KpiAlmEvent(
                 null, null,
                 KpiAlmEventStage.UNDEFINED,
-                KpiAlmEventOperation.CATMSV_HTTP_CALL)
+                KpiAlmEventOperation.CATALOG_HTTP_CALL)
         ])
 	
 	if (response.status == 200) {
@@ -74,7 +74,7 @@ def setCloudResources( def type, def app, def major, def environment, def namesp
                 kpiAlmEvent: new KpiAlmEvent(
                     null, null,
                     KpiAlmEventStage.UNDEFINED,
-                    KpiAlmEventOperation.CATMSV_HTTP_CALL)
+                    KpiAlmEventOperation.CATALOG_HTTP_CALL)
             ])
 
         if (response.status == 200) {
@@ -108,8 +108,8 @@ def call(String memory, String environment, boolean isArchProjectOrSkipMinimum, 
 	CloudAppResources cloudResources=null
 	if (environment=='EDEN') environment='DEV'
 	
-	if ( type!=null && env.CATMSV_SIZE!=null && "true".equals(env.CATMSV_SIZE) && major!=null && applicationNameWithoutVersion!=null) {
-		//CloudAppResourcesCatMsv cloudResources=new CloudAppResourcesCatMsv()
+	if ( type!=null && env.CATALOG_SIZE!=null && "true".equals(env.CATALOG_SIZE) && major!=null && applicationNameWithoutVersion!=null) {
+		//CloudAppResourcesCatalog cloudResources=new CloudAppResourcesCatalog()
 		cloudResources=setCloudResources(type,applicationNameWithoutVersion,major,environment,namespace)
 		//return cloudResources		
 	}

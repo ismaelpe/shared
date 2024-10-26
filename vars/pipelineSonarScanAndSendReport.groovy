@@ -28,7 +28,7 @@ import com.project.alm.*
 
 @Field long initCallStartMillis
 
-@Field boolean initGpl
+@Field boolean initAppPortal
 @Field boolean successPipeline
 
 @Field String microUrlGatewayForTesting
@@ -44,7 +44,7 @@ def call() {
 
     pipelineParams.loggerLevel = params.loggerLevel
 
-    initGpl = false
+    initAppPortal = false
     sendToGitLab = false
     successPipeline = false
     agent = pipelineParams ? pipelineParams.get('agent', 'standard') : 'standard'
@@ -73,7 +73,7 @@ def call() {
             timeout(time: 2, unit: 'HOURS')
         }
         environment {
-            GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
+            AppPortal = credentials('IDECUA-JENKINS-USER-TOKEN')
             JNKMSV = credentials('JNKMSV-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
@@ -86,7 +86,7 @@ def call() {
             jenkinsPath = 'alm/services'
             APIGW_TOKEN = credentials('ALM_TOKEN_PRO')
             SONAR_TOKEN = credentials('sonartoken')
-            sendLogsToGpl = true
+            sendLogsToAppPortal = true
         }
         //Atencion que en el caso que estemos en un MergeRequest... quizas solo debamos validar la issue
         stages {
@@ -190,8 +190,8 @@ def getGitRepoStep() {
         KpiAlmEventStage.GENERAL,
         KpiAlmEventOperation.MVN_SONAR_SCAN)
 
-    sendPipelineStartToGPL(pomXmlStructure, pipelineData, '')
-    initGpl = true
+    sendPipelineStartToAppPortal(pomXmlStructure, pipelineData, '')
+    initAppPortal = true
 
 }
 
@@ -202,7 +202,7 @@ def checkMicroVersionStep() {
     
     printOpen("Checking version of deployed micro", EchoLevel.INFO)
     
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "100")
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "100")
 
     try {
         // Get the JSON with app-id and info
@@ -225,11 +225,11 @@ def checkMicroVersionStep() {
             throw new Exception("No se ha podido obtener la url deployada de la aplicación.\nIntente desplegarla de nuevo y ejecutar de nuevo esta pipeline.")
         }
     } catch (Exception e) {
-        sendStageEndToGPL(pomXmlStructure, pipelineData, "100", e.getMessage(), null, "error")
+        sendStageEndToAppPortal(pomXmlStructure, pipelineData, "100", e.getMessage(), null, "error")
         throw e
     }
 
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "100")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "100")
 }
 
 /**
@@ -238,7 +238,7 @@ def checkMicroVersionStep() {
 def buildAndTestStep() {
     kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.BUILD_STARTED, KpiLifeCycleStatus.OK)
 
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "200")
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "200")
 
     try {
 
@@ -247,14 +247,14 @@ def buildAndTestStep() {
     } catch (Exception e) {
 
         kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.BUILD_FINISHED, KpiLifeCycleStatus.KO)
-        sendStageEndToGPL(pomXmlStructure, pipelineData, "200", null, null, "error")
+        sendStageEndToAppPortal(pomXmlStructure, pipelineData, "200", null, null, "error")
         throw e
     }
 
     kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.BUILD_FINISHED, KpiLifeCycleStatus.OK)
 
 
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "200")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "200")
 }
 
 /**
@@ -275,7 +275,7 @@ def sonarQualityGateStep() {
  * Stage 'send-sonar-report'
  */
 def sonarSendReportStep() {
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "500")
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "500")
 
         def sonarResult = pipelineData.pipelineStructure.resultPipelineData.ifSonarQualityGateOK
 
@@ -312,7 +312,7 @@ def sonarSendReportStep() {
                 msgFinal = "Se le ha enviado un mail, junto con los responsables de la aplicación, con el resultado del análisis de sonar."
             }
 
-            sendStageEndToGPL(pomXmlStructure, pipelineData, "500", msgFinal + "\n\nEl resultado de sonar es: " + sonarResult, null, sonarResult ? "ended" : "warning")
+            sendStageEndToAppPortal(pomXmlStructure, pipelineData, "500", msgFinal + "\n\nEl resultado de sonar es: " + sonarResult, null, sonarResult ? "ended" : "warning")
         } catch (Exception sendException) {
             def msg = "No se ha podido obtener de GAR la información necesaria para el envío del reporte.\n" + 
                     "Puede que que los responsables o el usuario en GAR no estén debidamente configurados.\n" + 
@@ -321,7 +321,7 @@ def sonarSendReportStep() {
 
             printOpen(msg, EchoLevel.ERROR)
 
-            sendStageEndToGPL(pomXmlStructure, pipelineData, "500", msg, null, "warning")
+            sendStageEndToAppPortal(pomXmlStructure, pipelineData, "500", msg, null, "warning")
         }
 }
 
@@ -346,8 +346,8 @@ def endPipelineSuccessStep() {
     }
 
     // Marcamos a false el notifyDeployment para esta pipeline
-    sendPipelineResultadoToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline, false)
-    sendPipelineEndedToGPL(initGpl, pomXmlStructure, pipelineData, pipelineData?.pipelineEndsWithWarning ? "warning" : "ended")
+    sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline, false)
+    sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, pipelineData, pipelineData?.pipelineEndsWithWarning ? "warning" : "ended")
     if (pipelineData.getExecutionMode().invokeNextActionAuto()) {
         printOpen("Modo test activado en fase de analisis de sonar", EchoLevel.INFO)
         invokeNextJob(pipelineData, pomXmlStructure)
@@ -367,18 +367,18 @@ def endPipelineFailureStep() {
     debugInfo(pipelineParams, pomXmlStructure, pipelineData)
 
 
-    if (initGpl == false) {
-        //init pipeline in GPL with minimun parameters
-        sendPipelineStartToGPL(pipelineData, pipelineParams)
-        initGpl = true
+    if (initAppPortal == false) {
+        //init pipeline in AppPortal with minimun parameters
+        sendPipelineStartToAppPortal(pipelineData, pipelineParams)
+        initAppPortal = true
     }
 
     if ( almEvent!=null ) {
         long endCallStartMillis = new Date().getTime()
         kpiLogger(almEvent.pipelineFail(endCallStartMillis-initCallStartMillis))
     }
-    sendPipelineResultadoToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
-    sendPipelineEndedToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
 
     kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.PIPELINE_FINISHED, KpiLifeCycleStatus.KO)
 

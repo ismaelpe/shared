@@ -10,11 +10,11 @@ def call(PipelineData pipelineData, PomXmlStructure pomXml, String oldVersionInC
     String artifactGarType = pipelineData.garArtifactType.getGarName()
     def url = idecuaRoutingUtils.instalationsUrl(artifactGarType, pomXml.getApp(pipelineData.garArtifactType), pomXml.artifactName)
 
-    def response = sendRequestToGpl('GET', url, "", null, pipelineData, pomXml)
+    def response = sendRequestToAppPortal('GET', url, "", null, pipelineData, pomXml)
 
     if( ! oldVersionInCurrentEnvironment ) {
 
-        oldVersionInCurrentEnvironment = GsaUtilities.getMostRecentVersionInEnvironment(pomXml.majorVersion, response.content, pipelineData.bmxStructure.environment)
+        oldVersionInCurrentEnvironment = BackEndAppPortalUtilities.getMostRecentVersionInEnvironment(pomXml.majorVersion, response.content, pipelineData.bmxStructure.environment)
 		if (oldVersionInCurrentEnvironment == null) {
             oldVersionInCurrentEnvironment = ""
 		}
@@ -26,7 +26,7 @@ def call(PipelineData pipelineData, PomXmlStructure pomXml, String oldVersionInC
     String nextEnvironment = calculateNextEnvironment(pipelineData.bmxStructure.environment)
     if (nextEnvironment) {
 
-        String oldVersionInNextEnvironment = GsaUtilities.getMostRecentVersionInEnvironment(pomXml.majorVersion, response.content, nextEnvironment)
+        String oldVersionInNextEnvironment = BackEndAppPortalUtilities.getMostRecentVersionInEnvironment(pomXml.majorVersion, response.content, nextEnvironment)
         if (oldVersionInNextEnvironment == null) {
             oldVersionInNextEnvironment = ""
         }

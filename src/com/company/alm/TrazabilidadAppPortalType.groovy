@@ -1,13 +1,13 @@
 package com.project.alm
 
-public enum TrazabilidadGPLType {
+public enum TrazabilidadAppPortalType {
     ALTA("I"),
     BAJA("R"),
     NADA("NO")
 
     private String name;
 
-    private TrazabilidadGPLType(String s) {
+    private TrazabilidadAppPortalType(String s) {
         name = s;
     }
 
@@ -15,7 +15,7 @@ public enum TrazabilidadGPLType {
         return name.equals(other);
     }
 
-    static TrazabilidadGPLType valueOfType(String other) {
+    static TrazabilidadAppPortalType valueOfType(String other) {
         values().find { it.name == other }
     }
 

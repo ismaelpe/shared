@@ -28,7 +28,7 @@ def call(Map pipelineParameters) {
             timestamps()
         }
         environment {
-            GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
+            AppPortal = credentials('IDECUA-JENKINS-USER-TOKEN')
             CIPHER_PASSWORD = credentials('cloud-alm-cipher-password')
             CIPHER_IV = credentials('cloud-alm-cipher-iv')
             http_proxy = "${GlobalVars.proxyDigitalscale}"

@@ -42,7 +42,7 @@ def call(Map pipelineParameters) {
             timeout(time: 1, unit: 'HOURS')
         }
         environment {
-            GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
+            AppPortal = credentials('IDECUA-JENKINS-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
             http_proxy = "$GlobalVars.proxyDigitalscale"
@@ -89,7 +89,7 @@ def call(Map pipelineParameters) {
  */
 def resizeAppStep() {
     printOpen("Resizing the app ${app} and the type ${type} size: ${memSize}, ${cpuSize} ", EchoLevel.ALL)
-    resizeAppInCatMsv(namespaceId,type,app,major,envi,cpuSize,memSize,replicaSize)
+    resizeAppInCatalog(namespaceId,type,app,major,envi,cpuSize,memSize,replicaSize)
 }
 
 /**
@@ -97,7 +97,7 @@ def resizeAppStep() {
  */
 def getSizeAppStep() {
     currentBuild.displayName = "${env.BUILD_ID}_${command} ${type}.${app}.${major}"
-    getSizeAppInCatMsv(namespaceId,type,app,major,envi)
+    getSizeAppInCatalog(namespaceId,type,app,major,envi)
 }
 
 /**

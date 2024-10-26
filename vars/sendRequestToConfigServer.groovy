@@ -1,7 +1,7 @@
 import com.project.alm.EchoLevel
 import com.project.alm.GlobalVars
-import com.project.alm.GplRequestStatus
-import com.project.alm.GplUtilities
+import com.project.alm.AppPortalRequestStatus
+import com.project.alm.AppPortalUtilities
 import com.project.alm.HttpRequestUtilities
 import groovy.json.JsonSlurper
 import java.util.Date
@@ -17,7 +17,7 @@ def call(String method, String path, String environment,String datacenter) {
     if (environment=='eden') environ='DEV'
 
     def response = null
-    GplRequestStatus statusGpl = new GplRequestStatus()
+    AppPortalRequestStatus statusAppPortal = new AppPortalRequestStatus()
     def fecha = null
     
     timeout(GlobalVars.DEFAULT_ALM_MS_REQUEST_RETRIES_TIMEOUT) {
@@ -34,15 +34,15 @@ def call(String method, String path, String environment,String datacenter) {
                     String microHttpBasicCredentials = "${CONFIGSERVER_USERNAME}:${CONFIGSERVER_PASSWORD}"
                     String auth = microHttpBasicCredentials.bytes.encodeBase64().toString()
 
-                    response = httpRequest consoleLogResponseBody: true, contentType: 'APPLICATION_JSON', httpMode: method, url: url, httpProxy: "http://proxyserv.svb.digitalscale.es:8080", validResponseCodes: "${GlobalVars.ALM_MS_VALID_RESPONSE_STATUS}", timeout: GlobalVars.ALM_MS_TIMEOUT, customHeaders: [[name: 'Authorization', value: "Basic ${auth}"]]
+                    response = httpRequest consoleLogResponseBody: true, contentType: 'APPLICATION_JSON', httpMode: method, url: url, httpProxy: "http://proxy.digitalscale.es:8080", validResponseCodes: "${GlobalVars.ALM_MS_VALID_RESPONSE_STATUS}", timeout: GlobalVars.ALM_MS_TIMEOUT, customHeaders: [[name: 'Authorization', value: "Basic ${auth}"]]
                     printOpen("Invoking url [${method}] ${url}", EchoLevel.ALL)
                 }
 
-                return shallWeStopDoingRequests(response, statusGpl, 404)
+                return shallWeStopDoingRequests(response, statusAppPortal, 404)
 
             } catch (Exception e) {
 
-                return GplUtilities.evaluateResponse(null, statusGpl)
+                return AppPortalUtilities.evaluateResponse(null, statusAppPortal)
 
             } finally {
                 printOpen("Response:\n${response?.content}")
@@ -67,7 +67,7 @@ def call(String method, String path, String environment,String datacenter) {
 
 }
 
-private shallWeStopDoingRequests(def response, GplRequestStatus statusGpl, int maxStatusCodeAllowed) {
+private shallWeStopDoingRequests(def response, AppPortalRequestStatus statusAppPortal, int maxStatusCodeAllowed) {
 
     if (response.status <= maxStatusCodeAllowed) {
 
@@ -75,7 +75,7 @@ private shallWeStopDoingRequests(def response, GplRequestStatus statusGpl, int m
 
     } else {
 
-        return GplUtilities.evaluateResponse(response, statusGpl)
+        return AppPortalUtilities.evaluateResponse(response, statusAppPortal)
 
     }
 

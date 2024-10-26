@@ -43,7 +43,7 @@ def call(PipelineData pipelineData, PomXmlStructure pomXml, String environment, 
                     kpiAlmEvent: new KpiAlmEvent(
                         pomXml, pipelineData,
                         KpiAlmEventStage.UNDEFINED,
-                        KpiAlmEventOperation.CATMSV_HTTP_CALL)
+                        KpiAlmEventOperation.CATALOG_HTTP_CALL)
                 ])
 
             if (response.status == 200) {
@@ -59,7 +59,7 @@ def call(PipelineData pipelineData, PomXmlStructure pomXml, String environment, 
 		}catch(Exception ex) {
 			printOpen("Error en el envio al catalogo de alm ", EchoLevel.ALL)
 			if (env.SEND_TO_ALM_CATALOG_REQUIRED!=null && env.SEND_TO_ALM_CATALOG_REQUIRED!="true") {
-				throw new Exception("Unexpected response from CATMSV, services catalog ")
+				throw new Exception("Unexpected response from CATALOG, services catalog ")
 			}
 		}
 	}else {
@@ -71,5 +71,5 @@ def call(PipelineData pipelineData, PomXmlStructure pomXml, String environment, 
 }
 
 def call(def body, PipelineData pipelineData, PomXmlStructure pomXml, CloudStateUtility cloudStateUtilitity) {
-	deployArtifactInCatMsv(body, pipelineData, pomXml, cloudStateUtilitity, null)
+	deployArtifactInCatalog(body, pipelineData, pomXml, cloudStateUtilitity, null)
 }

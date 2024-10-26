@@ -31,7 +31,7 @@ import com.project.alm.KpiAlmEventOperation
 
 @Field PomXmlStructure pomXmlStructure
 @Field PipelineData pipelineData
-@Field boolean initGpl
+@Field boolean initAppPortal
 @Field boolean successPipeline
 
 @Field KpiAlmEvent almEvent
@@ -71,7 +71,7 @@ def call(Map pipelineParameters) {
     resultDeployCloud = "OK"
     cloudStateUtilitity = null
 
-    initGpl = false
+    initAppPortal = false
     successPipeline = false
 
 	almEvent = null
@@ -92,7 +92,7 @@ def call(Map pipelineParameters) {
 			timeout(time: 2, unit: 'HOURS')
         }
         environment {
-            GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
+            AppPortal = credentials('IDECUA-JENKINS-USER-TOKEN')
 			JNKMSV = credentials('JNKMSV-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
@@ -193,9 +193,9 @@ def getGitRepoStep() {
     }
     
     kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.PIPELINE_STARTED, KpiLifeCycleStatus.OK)
-    sendPipelineStartToGPL(pomXmlStructure, pipelineData, pipelineOrigId)
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "100")
-    initGpl = true
+    sendPipelineStartToAppPortal(pomXmlStructure, pipelineData, pipelineOrigId)
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "100")
+    initAppPortal = true
 
     //Buscamos version de arquitectura
     //Validamos que sea superior a la minim
@@ -209,7 +209,7 @@ def getGitRepoStep() {
         }
         //pomXmlStructure.validateArtifact()
     } catch (Exception e) {
-        sendStageEndToGPL(pomXmlStructure, pipelineData, "100", e.getMessage(), null, "error")
+        sendStageEndToAppPortal(pomXmlStructure, pipelineData, "100", e.getMessage(), null, "error")
         throw e
     }
 
@@ -218,7 +218,7 @@ def getGitRepoStep() {
     //INIT AND DEPLOY
     initCloudDeploy(pomXmlStructure, pipelineData)
 
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "100")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "100")
 }
 
 /**
@@ -226,12 +226,12 @@ def getGitRepoStep() {
  */
 def checkCloudAvailiabilityStep() {
     printOpen("The artifact ${pomXmlStructure.artifactName}  from group ${pomXmlStructure.groupId} the micro to deploy is ${pomXmlStructure.artifactMicro}", EchoLevel.INFO)
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "110")
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "110")
     try {
         checkCloudAvailability(pomXmlStructure,pipelineData,envParam,"BOTH")
-        sendStageEndToGPL(pomXmlStructure, pipelineData, "110")
+        sendStageEndToAppPortal(pomXmlStructure, pipelineData, "110")
     } catch (Exception e) {
-        sendStageEndToGPL(pomXmlStructure, pipelineData, "110", Strings.toHtml(e.getMessage()), null, "error")
+        sendStageEndToAppPortal(pomXmlStructure, pipelineData, "110", Strings.toHtml(e.getMessage()), null, "error")
         throw e
     }
 }
@@ -241,13 +241,13 @@ def checkCloudAvailiabilityStep() {
  */
 def prepareReleaseStep() {
     kpiLogger(pomXmlStructure, pipelineData,KpiLifeCycleStage.CREATE_RELEASE_STARTED, KpiLifeCycleStatus.OK)
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "200")
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "200")
     validateBranch(pomXmlStructure.getArtifactVersionWithoutQualifier(), pipelineData.branchStructure)
     updateVersionForRelease(pomXmlStructure)
     calculatePreviousInstalledVersionInEnvironment(pipelineData, pomXmlStructure)
     pipelineData.buildCode = pomXmlStructure.artifactVersion
     currentBuild.displayName = "Creation_${pomXmlStructure.artifactVersion} of ${pomXmlStructure.artifactName}"
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "200")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "200")
     
     printOpen("Prepare release ${pipelineData.isPushCI()}", EchoLevel.INFO)
 }
@@ -257,21 +257,21 @@ def prepareReleaseStep() {
  */
 def deployBbddScriptsStep() {
     if (hasBBDD(pomXmlStructure,pipelineData,true)) {
-        sendStageStartToGPL(pomXmlStructure, pipelineData, "406")
+        sendStageStartToAppPortal(pomXmlStructure, pipelineData, "406")
         printOpen("Deploying sql to the BBDD", EchoLevel.INFO)
         pipelineData.pipelineStructure.resultPipelineData.environment=envParam
         try {
             def missatge=generateSqlScriptRelease(pomXmlStructure,pipelineData,false)
-            sendStageEndToGPL(pomXmlStructure, pipelineData, "406",missatge,null,"ended")
+            sendStageEndToAppPortal(pomXmlStructure, pipelineData, "406",missatge,null,"ended")
         }catch(Exception e) {
-            sendStageEndToGPL(pomXmlStructure, pipelineData, "406", Strings.toHtml(e.getMessage()), null, "error")
+            sendStageEndToAppPortal(pomXmlStructure, pipelineData, "406", Strings.toHtml(e.getMessage()), null, "error")
             throw e
         }	
     }else {
         String nombreFicheroRelease="${GlobalVars.SQL_RELEASE_DIRECTORY}changeSet-${pomXmlStructure.artifactVersion}.yml"
-        sendStageStartToGPL(pomXmlStructure, pipelineData, "406")
+        sendStageStartToAppPortal(pomXmlStructure, pipelineData, "406")
         printOpen("No tiene el script release con la nomenclatura pactada. Revise el fichero dentro del directorio release. El nombre del fichero debe ser este (el fichero es este ${nombreFicheroRelease}.", EchoLevel.ERROR)
-        sendStageEndToGPL(pomXmlStructure, pipelineData, "406", Strings.toHtml("No tiene el script release con la nomenclatura pactada. Revise el fichero dentro del directorio release. El nombre del fichero debe ser este (el fichero es este ${nombreFicheroRelease}."), null, "error")
+        sendStageEndToAppPortal(pomXmlStructure, pipelineData, "406", Strings.toHtml("No tiene el script release con la nomenclatura pactada. Revise el fichero dentro del directorio release. El nombre del fichero debe ser este (el fichero es este ${nombreFicheroRelease}."), null, "error")
         throw new Exception("No tiene el script release con la nomenclatura pactada")
     }
 }
@@ -280,9 +280,9 @@ def deployBbddScriptsStep() {
  * Stage 'createMRStep'
  */
 def createMRStep() {
-    sendStageStartToGPL(pomXmlStructure, pipelineData, "500")
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, "500")
     mergeRequestToMaster(pipelineData, pomXmlStructure, 'master')						
-    sendStageEndToGPL(pomXmlStructure, pipelineData, "500")
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, "500")
 }
 
 /**
@@ -295,8 +295,8 @@ def endPipelineSuccessStep() {
         long endCallStartMillis = new Date().getTime()
         kpiLogger(almEvent.pipelineSuccess(endCallStartMillis-initCallStartMillis))
     }
-    sendPipelineResultadoToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
-    sendPipelineEndedToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
     kpiLogger(pomXmlStructure, pipelineData,KpiLifeCycleStage.CREATE_RELEASE_FINISHED, KpiLifeCycleStatus.OK)
     kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.PIPELINE_FINISHED, KpiLifeCycleStatus.OK)
 
@@ -318,8 +318,8 @@ def endPipelineFailureStep() {
     printOpen("Se failure el pipeline ${successPipeline}", EchoLevel.ERROR)
     kpiLogger(pomXmlStructure, pipelineData,KpiLifeCycleStage.CREATE_RELEASE_FINISHED, KpiLifeCycleStatus.KO)
     kpiLogger(pomXmlStructure, pipelineData, KpiLifeCycleStage.PIPELINE_FINISHED, KpiLifeCycleStatus.KO)
-    sendPipelineResultadoToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
-    sendPipelineEndedToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
 }
 
 /**

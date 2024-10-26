@@ -87,7 +87,7 @@ class ASELifecycleNewYAMLResultPipelineData extends ASELifecycleProvisioningResu
 
     @Override
     def getDeployed() {
-        return TrazabilidadGPLType.ALTA.toString()
+        return TrazabilidadAppPortalType.ALTA.toString()
     }
 
     @Override

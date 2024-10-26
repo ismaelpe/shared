@@ -7,7 +7,7 @@ import com.project.alm.KpiAlmEventOperation
 @Field Map pipelineParams
 
 @Field NexusUtils nexus
-@Field boolean initGpl
+@Field boolean initAppPortal
 @Field boolean buildingSnapshot
 @Field boolean provisioningLifecycle
 
@@ -41,7 +41,7 @@ import com.project.alm.KpiAlmEventOperation
 def call(Map pipelineParameters) {
     pipelineParams = pipelineParameters
     nexus = new NexusUtils(this)
-    initGpl = false
+    initAppPortal = false
     buildingSnapshot = false
     provisioningLifecycle = false
 
@@ -68,7 +68,7 @@ def call(Map pipelineParameters) {
             timeout(time: 2, unit: 'HOURS')
         }
         environment {
-            GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
+            AppPortal = credentials('IDECUA-JENKINS-USER-TOKEN')
             JNKMSV = credentials('JNKMSV-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
@@ -143,7 +143,7 @@ def call(Map pipelineParameters) {
                         expression { yamlFilePath?.trim() }
                         expression { archetypeLastVersion?.trim() }
                         expression { aseClientVersion?.trim() }
-                        expression { GlobalVars.GSA_ENABLED }
+                        expression { GlobalVars.BackEndAppPortal_ENABLED }
                     }
                 }
                 steps {
@@ -297,14 +297,14 @@ def prepareVariablesAndCalculateVersionStep() {
         clientInfo, asePipelineData,
         KpiAlmEventStage.GENERAL,
         KpiAlmEventOperation.PIPELINE_ASE_BUILD)
-    sendPipelineStartToGPL(clientInfo, asePipelineData, '')
-    initGpl = true
-    sendStageStartToGPL(clientInfo, asePipelineData, '010')
-    sendStageEndToGPL(clientInfo, asePipelineData, '010')
-    sendStageStartToGPL(clientInfo, asePipelineData, '020')
-    sendStageEndToGPL(clientInfo, asePipelineData, '020')
-    sendStageStartToGPL(clientInfo, asePipelineData, '030')
-    sendStageEndToGPL(clientInfo, asePipelineData, '030')
+    sendPipelineStartToAppPortal(clientInfo, asePipelineData, '')
+    initAppPortal = true
+    sendStageStartToAppPortal(clientInfo, asePipelineData, '010')
+    sendStageEndToAppPortal(clientInfo, asePipelineData, '010')
+    sendStageStartToAppPortal(clientInfo, asePipelineData, '020')
+    sendStageEndToAppPortal(clientInfo, asePipelineData, '020')
+    sendStageStartToAppPortal(clientInfo, asePipelineData, '030')
+    sendStageEndToAppPortal(clientInfo, asePipelineData, '030')
 }
 
 /**
@@ -312,7 +312,7 @@ def prepareVariablesAndCalculateVersionStep() {
  */
 def createProjectFromArchetypeStep() {
     printOpen('mkdir generated-client', EchoLevel.DEBUG)
-    sendStageStartToGPL(clientInfo, asePipelineData, '040')
+    sendStageStartToAppPortal(clientInfo, asePipelineData, '040')
     sh 'if [ -d generated-client ]; then rm -rf generated-client; fi && mkdir generated-client'
     printOpen("Creating project ${aseClientArtifactId} from Archetype ${ASEVars.ARCHETYPE_ARTIFACT_ID}", EchoLevel.INFO)
 
@@ -320,14 +320,14 @@ def createProjectFromArchetypeStep() {
     runMavenCommand(cmd)
     sh "cp ${yamlFilePath} generated-client/${aseClientArtifactId}/contract/swagger-micro-contract.yaml"
 
-    sendStageEndToGPL(clientInfo, asePipelineData, '040')
+    sendStageEndToAppPortal(clientInfo, asePipelineData, '040')
 }
 
 /**
  * Stage deployingNewProjectStep
  */
 def deployingNewProjectStep() {
-    sendStageStartToGPL(clientInfo, asePipelineData, '050')
+    sendStageStartToAppPortal(clientInfo, asePipelineData, '050')
     def mvnLog = null
     printOpen("Deploying ${aseClientArtifactId} project", EchoLevel.INFO)
 
@@ -349,7 +349,7 @@ def deployingNewProjectStep() {
     //Requerimos el build id
     asePipelineData.buildCode = NexusUtils.getBuildId(artifactDeployedOnNexus, aseClientVersion)
     printOpen("El buildCode es ${asePipelineData.buildCode}", EchoLevel.INFO)
-    sendStageEndToGPL(clientInfo, asePipelineData, '050')
+    sendStageEndToAppPortal(clientInfo, asePipelineData, '050')
 }
 
 /**
@@ -360,17 +360,17 @@ def publishArtifactCatalogStep() {
     asePipelineData.toString()
     printOpen('branchStructure:', EchoLevel.ALL)
     asePipelineData.branchStructure.toString()
-    sendStageStartToGPL(clientInfo, asePipelineData, '060')
+    sendStageStartToAppPortal(clientInfo, asePipelineData, '060')
     printOpen('Publishing artifact to catalog', EchoLevel.ALL)
     publishArtifactInCatalog(asePipelineData, clientInfo)
-    sendStageEndToGPL(clientInfo, asePipelineData, '060')
+    sendStageEndToAppPortal(clientInfo, asePipelineData, '060')
 }
 
 /**
  * Stage prepareResultForNextStep
  */
 def prepareResultForNextStep() {
-    sendStageStartToGPL(clientInfo, asePipelineData, '070')
+    sendStageStartToAppPortal(clientInfo, asePipelineData, '070')
     ASELifecycleProvisioningResultPipelineData pipelineResult = asePipelineData.pipelineStructure.resultPipelineData
     pipelineResult.yamlFilePath = yamlFilePath
     pipelineResult.artifactGroupId = ASEVars.CLIENT_GROUP_ID
@@ -383,7 +383,7 @@ def prepareResultForNextStep() {
 
     pipelineResult.contractGitCommit = contractGitCommit
 
-    sendStageEndToGPL(clientInfo, asePipelineData, '070')
+    sendStageEndToAppPortal(clientInfo, asePipelineData, '070')
 }
 
 /**
@@ -398,9 +398,9 @@ def endPipelineSuccessStep() {
         kpiLogger(almEvent.pipelineSuccess(endCallStartMillis - initCallStartMillis))
     }
 
-    if (initGpl) {
-        sendPipelineEndedToGPL(initGpl, clientInfo, asePipelineData, successPipeline)
-        sendPipelineResultadoToGPL(initGpl, clientInfo, asePipelineData, successPipeline)
+    if (initAppPortal) {
+        sendPipelineEndedToAppPortal(initAppPortal, clientInfo, asePipelineData, successPipeline)
+        sendPipelineResultadoToAppPortal(initAppPortal, clientInfo, asePipelineData, successPipeline)
     }
     printOpen('ase-lib info:', EchoLevel.ALL)
     printOpen("ase-lib groupId : ${ASEVars.CLIENT_GROUP_ID}", EchoLevel.ALL)
@@ -421,9 +421,9 @@ def endPipelineFailureStep() {
         kpiLogger(almEvent.pipelineFail(endCallStartMillis - initCallStartMillis))
     }
 
-    if (initGpl) {
-        sendPipelineEndedToGPL(initGpl, clientInfo, asePipelineData, successPipeline)
-        sendPipelineResultadoToGPL(initGpl, clientInfo, asePipelineData, successPipeline)
+    if (initAppPortal) {
+        sendPipelineEndedToAppPortal(initAppPortal, clientInfo, asePipelineData, successPipeline)
+        sendPipelineResultadoToAppPortal(initAppPortal, clientInfo, asePipelineData, successPipeline)
     }
 }
 

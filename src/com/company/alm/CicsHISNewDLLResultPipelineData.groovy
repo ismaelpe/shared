@@ -111,7 +111,7 @@ class CicsHISNewDLLResultPipelineData extends CicsHISProvisioningResultPipelineD
 
     @Override
     def getDeployed() {
-        return TrazabilidadGPLType.ALTA.toString()
+        return TrazabilidadAppPortalType.ALTA.toString()
     }
 
     @Override

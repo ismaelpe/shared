@@ -14,7 +14,7 @@ import java.util.Map
 @Field PipelineData pipelineData
 
 @Field boolean successPipeline
-@Field boolean initGpl
+@Field boolean initAppPortal
 
 @Field String cloudEnv
 @Field String namespace
@@ -35,7 +35,7 @@ def call(Map pipelineParameters) {
     // las variables que se obtienen como parametro del job no es necesario
     // redefinirlas, se hace por legibilidad del codigo
     successPipeline = false
-    initGpl = false
+    initAppPortal = false
 
     cloudEnv = params.environmentParam
     namespace = params.namespaceParam
@@ -56,7 +56,7 @@ def call(Map pipelineParameters) {
         }
         //Environment sobre el qual se ejecuta este tipo de job
         environment {
-            GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
+            AppPortal = credentials('IDECUA-JENKINS-USER-TOKEN')
             JNKMSV = credentials('JNKMSV-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
@@ -105,24 +105,24 @@ def call(Map pipelineParameters) {
  */
 def initStep() {
     pipelineData = new PipelineData(PipelineStructureType.RESTART_APP, "${env.BUILD_TAG}", env.JOB_NAME, null)
-    sendPipelineStartToGPL(pipelineData, garType, garApp, app-garApp, cloudEnv.toUpperCase(),userId)
-    initGpl = true
+    sendPipelineStartToAppPortal(pipelineData, garType, garApp, app-garApp, cloudEnv.toUpperCase(),userId)
+    initAppPortal = true
 }
 
 /**
  * Stage 'getAppCloudStep'
  */
 def getAppCloudStep() {
-    sendStageStartToGPL(pipelineData, garType, garApp, "100")
+    sendStageStartToAppPortal(pipelineData, garType, garApp, "100")
     currentBuild.displayName = "RestartingApp_${app} of ${cloudEnv} and the namespace ${namespace} and the center ${center}"
     try {
         printOpen("Get App ", EchoLevel.ALL)
         valuesDeployed = null
         valuesDeployed=getLastAppInfoCloud(cloudEnv, app, namespace,center)
         printAppCloud(valuesDeployed)
-        sendStageEndToGPL(pipelineData, garType, garApp, "100")
+        sendStageEndToAppPortal(pipelineData, garType, garApp, "100")
     } catch (Exception e) {
-        sendStageEndToGPL(pipelineData, garType, garApp, "100", Strings.toHtml(e.getMessage()), null, "error")
+        sendStageEndToAppPortal(pipelineData, garType, garApp, "100", Strings.toHtml(e.getMessage()), null, "error")
         throw e
     }
 }
@@ -131,14 +131,14 @@ def getAppCloudStep() {
  * Stage 'restartAppCloudStep'
  */
 def restartAppCloudStep() {
-    sendStageStartToGPL(pipelineData, garType, garApp, "200")
+    sendStageStartToAppPortal(pipelineData, garType, garApp, "200")
     try {
         printOpen("Restart App ", EchoLevel.ALL)
         restartApp(valuesDeployed,app,center,namespace,cloudEnv)
-        sendStageEndToGPL(pipelineData, garType, garApp, "200", null, cloudEnv )
+        sendStageEndToAppPortal(pipelineData, garType, garApp, "200", null, cloudEnv )
 
     } catch (Exception e) {
-        sendStageEndToGPL(pipelineData, garType, garApp, "200", Strings.toHtml(e.getMessage()), cloudEnv, "error")
+        sendStageEndToAppPortal(pipelineData, garType, garApp, "200", Strings.toHtml(e.getMessage()), cloudEnv, "error")
         throw e
     }
 }
@@ -156,7 +156,7 @@ def endPipelineAlwaysStep() {
 def endPipelineSuccessStep() {
     successPipeline = true
     printOpen("Is pipeline successful? ${successPipeline}", EchoLevel.INFO)
-    sendPipelineEndedToGPL(initGpl, pipelineData, garType, garApp, successPipeline)
+    sendPipelineEndedToAppPortal(initAppPortal, pipelineData, garType, garApp, successPipeline)
 }
 
 /**
@@ -165,5 +165,5 @@ def endPipelineSuccessStep() {
 def endPipelineFailureStep() {
     printOpen("Is pipeline unsuccessful? ${successPipeline}", EchoLevel.ERROR)
     successPipeline = false
-    sendPipelineEndedToGPL(initGpl, pipelineData, garType, garApp, successPipeline)
+    sendPipelineEndedToAppPortal(initAppPortal, pipelineData, garType, garApp, successPipeline)
 }

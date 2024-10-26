@@ -26,7 +26,7 @@ import com.project.alm.KpiAlmEventOperation
 
 @Field PomXmlStructure pomXmlStructure
 @Field PipelineData pipelineData
-@Field boolean initGpl = false
+@Field boolean initAppPortal = false
 @Field boolean successPipeline = false
 
 @Field KpiAlmEvent almEvent = null
@@ -62,7 +62,7 @@ def call(Map pipelineParameters) {
 
     PomXmlStructure pomXmlStructure
     PipelineData pipelineData
-    boolean initGpl = false
+    boolean initAppPortal = false
     boolean successPipeline = false
 
     KpiAlmEvent almEvent = null
@@ -92,7 +92,7 @@ def call(Map pipelineParameters) {
         //Environment sobre el qual se ejecuta este tipo de job
 
         environment {
-            GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
+            AppPortal = credentials('IDECUA-JENKINS-USER-TOKEN')
             JNKMSV = credentials('JNKMSV-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
@@ -173,31 +173,31 @@ def prepareRCStep() {
         KpiAlmEventStage.GENERAL,
         KpiAlmEventOperation.PIPELINE_RELEASE_BBDD)
 
-    sendPipelineStartToGPL(pomXmlStructure, pipelineData, pipelineOrigId)
-    sendStageStartToGPL(pomXmlStructure, pipelineData, '100')
-    initGpl = true
+    sendPipelineStartToAppPortal(pomXmlStructure, pipelineData, pipelineOrigId)
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, '100')
+    initAppPortal = true
 
-    sendStageEndToGPL(pomXmlStructure, pipelineData, '100')
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, '100')
 }
 
 /**
  * Stage 'nextMinorMasterStep'
  */
 def nextMinorMasterStep() {
-    sendStageStartToGPL(pomXmlStructure, pipelineData, '200')
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, '200')
     pushRepoUrl(pomXmlStructure, "${GlobalVars.RELEASE_BRANCH}/BBDDv${pomXmlStructure.getArtifactVersionWithoutQualifier()}", true, false, GlobalVars.GIT_TAG_CI_PUSH_MESSAGE_RC)
     changeBranch("${GlobalVars.MASTER_BRANCH}")
     updateNextMinor(pomXmlStructure)
-    sendStageEndToGPL(pomXmlStructure, pipelineData, '200')
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, '200')
 }
 
 /**
  * Stage 'pushRepoUrlStep'
  */
 def pushRepoUrlStep() {
-    sendStageStartToGPL(pomXmlStructure, pipelineData, '300')
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, '300')
     pushRepoUrl(pomXmlStructure, "${GlobalVars.MASTER_BRANCH}", false, true, GlobalVars.GIT_TAG_CI_PUSH_MESSAGE_RC)
-    sendStageEndToGPL(pomXmlStructure, pipelineData, '300')
+    sendStageEndToAppPortal(pomXmlStructure, pipelineData, '300')
 }
 
 /**
@@ -211,8 +211,8 @@ def endPipelineSuccessStep() {
         kpiLogger(almEvent.pipelineSuccess(endCallStartMillis - initCallStartMillis))
     }
 
-    sendPipelineResultadoToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
-    sendPipelineEndedToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
 }
 
 /**
@@ -225,8 +225,8 @@ def endPipelineFailureStep() {
         long endCallStartMillis = new Date().getTime()
         kpiLogger(almEvent.pipelineFail(endCallStartMillis - initCallStartMillis))
     }
-    sendPipelineResultadoToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
-    sendPipelineEndedToGPL(initGpl, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineResultadoToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
+    sendPipelineEndedToAppPortal(initAppPortal, pomXmlStructure, pipelineData, successPipeline)
 }
 
 /**

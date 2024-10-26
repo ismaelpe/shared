@@ -6,7 +6,7 @@ class IopProResultPipelineJobData extends ResultPipelineData {
     def getAuthServiceToInform() {
         if (isBpiRepo()) return AuthorizationServiceToInformType.WITHOUT_AUTHORIZATION.toString()
         else {
-            //Restablecer cuando GPL soporte el "succes=true/false"
+            //Restablecer cuando AppPortal soporte el "succes=true/false"
             return AuthorizationServiceToInformType.MAXIMO.toString()
             //return AuthorizationServiceToInformType.WITHOUT_AUTHORIZATION.toString()
         }
@@ -894,12 +894,12 @@ class IopProResultPipelineJobData extends ResultPipelineData {
     @Override
     def getDeployed() {
         if (isConfigLib()) {
-            return TrazabilidadGPLType.ALTA.toString()
+            return TrazabilidadAppPortalType.ALTA.toString()
         }
         if (hasDeployedToCloud) {
-            return TrazabilidadGPLType.ALTA.toString()
+            return TrazabilidadAppPortalType.ALTA.toString()
         } else {
-            return TrazabilidadGPLType.NADA.toString()
+            return TrazabilidadAppPortalType.NADA.toString()
         }
     }
 

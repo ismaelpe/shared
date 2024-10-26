@@ -9,7 +9,7 @@ import com.project.alm.NexusUtils
 import com.project.alm.GarAppType
 
 def call(PomXmlStructure pomXmlStructure, PipelineData pipelineData, String stageId) {
-    sendStageStartToGPL(pomXmlStructure, pipelineData, stageId)
+    sendStageStartToAppPortal(pomXmlStructure, pipelineData, stageId)
     try {
         if (pomXmlStructure.contractVersion) {
             printOpen("Contract Version '$pomXmlStructure.contractVersion', pomArtifactVersion '$pomXmlStructure.artifactVersion'", EchoLevel.INFO)
@@ -18,7 +18,7 @@ def call(PomXmlStructure pomXmlStructure, PipelineData pipelineData, String stag
             
             if (contractVersionParts[0] == pomVersionParts[0]) {
                 printOpen("It skips this stage because the 'contract.version' it's defined in property pom.xml, ALM will be configured to connect to remote contract", EchoLevel.INFO)
-                sendStageEndToGPL(pomXmlStructure, pipelineData, stageId)
+                sendStageEndToAppPortal(pomXmlStructure, pipelineData, stageId)
             } else {
                 def message = "Contract Break deteted, check contract-version and artifact.version in pom.xml"
                 printOpen(message, EchoLevel.ERROR)
@@ -29,18 +29,18 @@ def call(PomXmlStructure pomXmlStructure, PipelineData pipelineData, String stag
                 printOpen("This artifact has a swagger contract => Revapi", EchoLevel.INFO)
                 try {
                     validateVersion(pomXmlStructure, pipelineData)
-                    sendStageEndToGPL(pomXmlStructure, pipelineData, stageId)
+                    sendStageEndToAppPortal(pomXmlStructure, pipelineData, stageId)
                 } catch(Exception ex) {
                     printOpen("Version's validation failed, but the pipeline will continue", EchoLevel.ERROR)
-                    sendStageEndToGPL(pomXmlStructure, pipelineData, stageId, "${GlobalVars.REVAPI_SKIP_VALIDATION}", null, 'warning')
+                    sendStageEndToAppPortal(pomXmlStructure, pipelineData, stageId, "${GlobalVars.REVAPI_SKIP_VALIDATION}", null, 'warning')
                 }
             } else {
                 validateVersion(pomXmlStructure, pipelineData)
-                sendStageEndToGPL(pomXmlStructure, pipelineData, stageId)
+                sendStageEndToAppPortal(pomXmlStructure, pipelineData, stageId)
             }
         }
     } catch (Exception e) {
-        sendStageEndToGPL(pomXmlStructure, pipelineData, stageId, null, null, "error")
+        sendStageEndToAppPortal(pomXmlStructure, pipelineData, stageId, null, null, "error")
         throw e
     }
 }

@@ -45,7 +45,7 @@ public String getK8sGatewayURL(String envCloud, String center = "AZ1") {
 def sendRequest(String url,String httpMethod) {
 
 	def	response = httpRequest url: "${url}",
-								httpProxy: "proxyserv.svb.digitalscale.es:8080",
+								httpProxy: "proxy.digitalscale.es:8080",
 								consoleLogResponseBody: true,
 								contentType: 'APPLICATION_JSON',
 								httpMode: "${httpMethod}",

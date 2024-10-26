@@ -18,7 +18,7 @@ import com.project.alm.KpiAlmEventOperation
 
 @Field ClientInfo clientInfo
 @Field PipelineData pipelineData
-@Field boolean initGpl
+@Field boolean initAppPortal
 @Field boolean successPipeline
 @Field def duplicatedMicrosDev
 @Field def existentMicrosTst
@@ -44,7 +44,7 @@ def call(Map pipelineParameters) {
 	microsToClean = microsToCleanParam	
 	maxDeaysToClean = maxDaysToCleanParam as Integer
 
-	initGpl = false
+	initAppPortal = false
 	successPipeline = false
 	duplicatedMicrosDev = null
 	existentMicrosTst = null
@@ -61,7 +61,7 @@ def call(Map pipelineParameters) {
 			timeout(time: 2, unit: 'HOURS')
 		}
 		environment {
-            GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
+            AppPortal = credentials('IDECUA-JENKINS-USER-TOKEN')
 			JNKMSV = credentials('JNKMSV-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
@@ -137,7 +137,7 @@ def initDataStep() {
 		KpiAlmEventStage.GENERAL,
 		KpiAlmEventOperation.PIPELINE_JOB_CLEAN_DEV_DUPLICATED_PODS)
 	pipelineData.pipelineStructure.pipelineId = pipelineData.pipelineStructure.pipelineId + "-" + pipelineData.pipelineStructure.resultPipelineData.cannaryPercentage
-	initGpl = true
+	initAppPortal = true
 }
 
 /**

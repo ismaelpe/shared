@@ -127,15 +127,15 @@ class ReleaseBBDDResultPipelineData extends ResultPipelineData {
         if (deployFlag) {
             if (hasDeployedToCloud) {
                 if (remoteITOk) {
-                    return TrazabilidadGPLType.ALTA.toString()
+                    return TrazabilidadAppPortalType.ALTA.toString()
                 } else {
-                    return TrazabilidadGPLType.NADA.toString()
+                    return TrazabilidadAppPortalType.NADA.toString()
                 }
             } else {
-                return TrazabilidadGPLType.NADA.toString()
+                return TrazabilidadAppPortalType.NADA.toString()
             }
         } else {
-            return TrazabilidadGPLType.ALTA.toString()
+            return TrazabilidadAppPortalType.ALTA.toString()
         }
     }
 

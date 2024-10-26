@@ -93,7 +93,7 @@ class CGSNewXMLResultPipelineData extends CGSProvisioningResultPipelineData {
 
     @Override
     def getDeployed() {
-        return TrazabilidadGPLType.ALTA.toString()
+        return TrazabilidadAppPortalType.ALTA.toString()
     }
 
     @Override

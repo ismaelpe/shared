@@ -10,7 +10,7 @@ import com.project.alm.ArtifactType
 @Field String artifactSubType
 @Field String targetBranch
 @Field String gitLabActionType
-@Field boolean initGpl
+@Field boolean initAppPortal
 @Field boolean successPipeline
 @Field String deployCloudPhases
 @Field String resultDeployCloud
@@ -38,7 +38,7 @@ def call(Map pipelineParameters) {
     artifactSubType
     targetBranch
     gitLabActionType
-    initGpl = false
+    initAppPortal = false
     successPipeline = false
     deployCloudPhases = "01-pre-deploy"
     resultDeployCloud = "OK"
@@ -58,7 +58,7 @@ def call(Map pipelineParameters) {
 			timeout(time: 3, unit: 'HOURS')
         }
         environment {
-            GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
+            AppPortal = credentials('IDECUA-JENKINS-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
             http_proxy = "${GlobalVars.proxyDigitalscale}"

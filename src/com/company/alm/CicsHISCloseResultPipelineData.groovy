@@ -2,7 +2,7 @@ package com.project.alm
 
 
 import com.project.alm.GlobalVars
-import com.project.alm.TrazabilidadGPLType
+import com.project.alm.TrazabilidadAppPortalType
 
 class CicsHISCloseResultPipelineData extends CicsHISProvisioningResultPipelineData {
 
@@ -30,7 +30,7 @@ class CicsHISCloseResultPipelineData extends CicsHISProvisioningResultPipelineDa
 
     @Override
     def getDeployed() {
-        return TrazabilidadGPLType.ALTA.toString()
+        return TrazabilidadAppPortalType.ALTA.toString()
     }
 
     @Override

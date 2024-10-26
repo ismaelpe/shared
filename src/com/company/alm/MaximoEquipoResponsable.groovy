@@ -4,7 +4,7 @@ enum MaximoEquipoResponsable {
 
     ARQUITECTURA_ALM("ALMCORE.ARQ.LIB"),
     Cloud("CLDALM.PCLD"),
-    GPL("IDEGPL.PCLD"),
+    AppPortal("IDEAppPortal.PCLD"),
     ELK("RECA3I.PCLD"), //Esto parece pertenecer al grupo de la recolectora de Canal y no ELK. Confirmar que podemos abrir máximos ahí por el tema de KPIs
     GIT("IDESCM.IDE"),
     NEXUS("IDENEX.IDE"),

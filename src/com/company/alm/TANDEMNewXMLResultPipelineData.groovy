@@ -82,7 +82,7 @@ class TANDEMNewXMLResultPipelineData extends TANDEMProvisioningResultPipelineDat
 
     @Override
     def getDeployed() {
-        return TrazabilidadGPLType.ALTA.toString()
+        return TrazabilidadAppPortalType.ALTA.toString()
     }
 
     @Override

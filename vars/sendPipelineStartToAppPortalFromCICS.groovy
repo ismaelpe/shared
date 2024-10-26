@@ -6,7 +6,7 @@ import com.project.alm.ClientCicsHISInfo
 
 def call(ClientCicsHISInfo clientCicsHISInfo, PipelineData pipelineData, String pipelineOrigId) {
 
-    if (notificationToGplApplies()) {
+    if (notificationToAppPortalApplies()) {
         def url = idecuaRoutingUtils.pipelineUrl();
 
         String commitId = ''
@@ -30,21 +30,21 @@ def call(ClientCicsHISInfo clientCicsHISInfo, PipelineData pipelineData, String 
                 commit            : "${commitId}",
                 branch            : "${pipelineData.branchStructure.branchName}",
                 nombre            : pipelineData.pipelineStructure.nombre,
-                estado            : "${GlobalVars.GPL_STATE_RUNNING}",
+                estado            : "${GlobalVars.AppPortal_STATE_RUNNING}",
                 fechaCreacion     : new Date(),
                 anteriorPipelineId: "${pipelineOrigId}",
                 stages            : pipelineData.pipelineStructure.getStages(),
                 path              : "${env.JOB_NAME}",
                 runId             : "${env.BUILD_NUMBER}",
                 //serverUrl         : "${env.JENKINS_URL}",
-                //jenkinsUserId     : "${GPL_USR}",
-                //jenkinsUserToken  : "${GPL_PSW}"
+                //jenkinsUserId     : "${AppPortal_USR}",
+                //jenkinsUserToken  : "${AppPortal_PSW}"
 				serverUrl         : "${env.JNKMSV_DEVPORTAL_URL}",
 				jenkinsUserId     : "${JNKMSV_USR}",
 				jenkinsUserToken  : "${JNKMSV_PSW}"
         ]
 
-        def response = sendRequestToGpl('POST', url, "", body, pipelineData, clientCicsHISInfo)
+        def response = sendRequestToAppPortal('POST', url, "", body, pipelineData, clientCicsHISInfo)
 
         return response
     }

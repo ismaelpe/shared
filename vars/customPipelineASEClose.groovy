@@ -8,7 +8,7 @@ import com.project.alm.KpiAlmEventOperation
 
 @Field GitUtils gitUtils
 
-@Field boolean initGpl
+@Field boolean initAppPortal
 @Field boolean successPipeline
 
 @Field ASEPipelineData asePipelineData
@@ -40,7 +40,7 @@ def call(Map pipelineParameters) {
 
     gitUtils = new GitUtils(this, false)
 
-    initGpl = false
+    initAppPortal = false
     successPipeline = true
 
     //Job parameters
@@ -71,7 +71,7 @@ def call(Map pipelineParameters) {
             timeout(time: 2, unit: 'HOURS')
         }
         environment {
-            GPL = credentials('IDECUA-JENKINS-USER-TOKEN')
+            AppPortal = credentials('IDECUA-JENKINS-USER-TOKEN')
             JNKMSV = credentials('JNKMSV-USER-TOKEN')
             Cloud_CERT = credentials('cloud-alm-pro-cert')
             Cloud_PASS = credentials('cloud-alm-pro-cert-passwd')
@@ -144,17 +144,17 @@ def initPipelineStep() {
         clientInfo, asePipelineData,
         KpiAlmEventStage.GENERAL,
         KpiAlmEventOperation.PIPELINE_ASE_CLOSE)
-    sendPipelineStartToGPL(clientInfo, asePipelineData, pipelineOrigId)
-    initGpl = true
-    sendStageStartToGPL(clientInfo, asePipelineData, '010')
-    sendStageEndToGPL(clientInfo, asePipelineData, '010')
+    sendPipelineStartToAppPortal(clientInfo, asePipelineData, pipelineOrigId)
+    initAppPortal = true
+    sendStageStartToAppPortal(clientInfo, asePipelineData, '010')
+    sendStageEndToAppPortal(clientInfo, asePipelineData, '010')
 }
 
 /**
  * Stage 'getGitRepoStep'
  */
 def closeReleaseStep() {
-    sendStageStartToGPL(clientInfo, asePipelineData, '020')
+    sendStageStartToAppPortal(clientInfo, asePipelineData, '020')
     printOpen('---------------------------', EchoLevel.ALL)
     printOpen("Clone git repo $gitUrl", EchoLevel.ALL)
 
@@ -197,7 +197,7 @@ def closeReleaseStep() {
         git.purge()
     }
 
-    sendStageEndToGPL(clientInfo, asePipelineData, '020')
+    sendStageEndToAppPortal(clientInfo, asePipelineData, '020')
 }
 
 /**
@@ -210,8 +210,8 @@ def endPipelineSuccessStep() {
         long endCallStartMillis = new Date().getTime()
         kpiLogger(almEvent.pipelineSuccess(endCallStartMillis - initCallStartMillis))
     }
-    sendPipelineEndedToGPL(initGpl, clientInfo, asePipelineData, successPipeline)
-    sendPipelineResultadoToGPL(initGpl, clientInfo, asePipelineData, successPipeline)
+    sendPipelineEndedToAppPortal(initAppPortal, clientInfo, asePipelineData, successPipeline)
+    sendPipelineResultadoToAppPortal(initAppPortal, clientInfo, asePipelineData, successPipeline)
 }
 
 /**
@@ -224,8 +224,8 @@ def endPipelineFailureStep() {
         long endCallStartMillis = new Date().getTime()
         kpiLogger(almEvent.pipelineFail(endCallStartMillis - initCallStartMillis))
     }
-    sendPipelineEndedToGPL(initGpl, clientInfo, asePipelineData, successPipeline)
-    sendPipelineResultadoToGPL(initGpl, clientInfo, asePipelineData, successPipeline)
+    sendPipelineEndedToAppPortal(initAppPortal, clientInfo, asePipelineData, successPipeline)
+    sendPipelineResultadoToAppPortal(initAppPortal, clientInfo, asePipelineData, successPipeline)
 }
 
 /**

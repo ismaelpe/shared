@@ -82,7 +82,7 @@ def call(def body, PipelineData pipelineData, PomXmlStructure pomXml, CloudState
                     kpiAlmEvent: new KpiAlmEvent(
                         pomXml, pipelineData,
                         KpiAlmEventStage.UNDEFINED,
-                        KpiAlmEventOperation.CATMSV_HTTP_CALL)
+                        KpiAlmEventOperation.CATALOG_HTTP_CALL)
                 ])
 
             if (response.status == 200) {
@@ -97,7 +97,7 @@ def call(def body, PipelineData pipelineData, PomXmlStructure pomXml, CloudState
 		}catch(Exception ex) {
 			printOpen("Error sending sending data to Open's catalogue", EchoLevel.ERROR)
 			if (env.SEND_TO_ALM_CATALOG_REQUIRED!=null && env.SEND_TO_ALM_CATALOG_REQUIRED!="true") {
-				throw new Exception("Unexpected response from CATMSV, services catalog ")
+				throw new Exception("Unexpected response from CATALOG, services catalog ")
 			}
 		}
 	}else {
@@ -108,7 +108,7 @@ def call(def body, PipelineData pipelineData, PomXmlStructure pomXml, CloudState
 }
 
 def call(def body, PipelineData pipelineData, PomXmlStructure pomXml, CloudStateUtility cloudStateUtilitity) {
-	deployArtifactInCatMsv(body, pipelineData, pomXml, cloudStateUtilitity, null)
+	deployArtifactInCatalog(body, pipelineData, pomXml, cloudStateUtilitity, null)
 }
 
 def sendRequestToCatalog(def body) {
@@ -119,14 +119,14 @@ def sendRequestToCatalog(def body) {
 
 		def url = idecuaRoutingUtils.catalogPipelineUrl()
 
-		printOpen("Body to be sent to GSA URL ${url}:\n\n${body}", EchoLevel.DEBUG)
+		printOpen("Body to be sent to BackEndAppPortal URL ${url}:\n\n${body}", EchoLevel.DEBUG)
 
 		def response
 
 		try {
-			response = sendRequestToGpl('PUT', url, "", body)
+			response = sendRequestToAppPortal('PUT', url, "", body)
 		} catch (Exception e) {
-			throw new Exception("Unexpected response when connecting to GSA (${response?.status})! + ${e.getMessage()}")
+			throw new Exception("Unexpected response when connecting to BackEndAppPortal (${response?.status})! + ${e.getMessage()}")
 		}
 
 		return response
